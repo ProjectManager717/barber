@@ -57,7 +57,7 @@ class SignUpScreen extends Component {
   };
 
   onSignUp = () => {
-    alert('Sign up');
+    this.props.navigation.navigate('SMSScreen');
   };
 
   onFacebook = () => {

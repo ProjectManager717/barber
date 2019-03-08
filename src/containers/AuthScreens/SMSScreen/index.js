@@ -21,7 +21,7 @@ class SMSScreen extends Component {
   onContinue = () => {
     const { number } = this.state;
     if (checkPhoneNumberValidation(number)) {
-      alert('continue');
+      this.props.navigation.navigate('ConfirmSMSScreen');
     } else {
       alert('invalid format');
     }
