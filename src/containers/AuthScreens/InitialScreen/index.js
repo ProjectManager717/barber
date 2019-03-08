@@ -16,7 +16,7 @@ class InitialScreen extends Component {
   };
 
   onSignIn = () => {
-    alert('signIn');
+    this.props.navigation.navigate('SignInScreen');
   };
 
   render() {
