@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
-import { ImageBackground, View } from 'react-native';
+import { Text, View, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-navigation';
+import CodeInput from 'react-native-confirmation-code-input';
 import { styles } from './styles';
+import { CloseButton, RedButton } from '../../../components';
+import { Colors } from '../../../themes';
 
 class ConfirmSMSScreen extends Component {
   constructor(props) {
@@ -10,9 +13,65 @@ class ConfirmSMSScreen extends Component {
     }
   }
 
+  onClose = () => {
+    alert('onClose');
+  };
+
+  onFinishCheckingCode = (isValid, code) => {
+    console.info('isValid', isValid);
+    console.info('code', code);
+    if (isValid) {
+
+    } else {
+      alert('invalid');
+    }
+  };
+
+  onSubmit = () => {
+    alert('submit');
+  };
+
   render() {
     return (
-      <ImageBackground/>
+      <SafeAreaView style={styles.container}>
+        <View style={styles.closeContainer}>
+          <CloseButton onPress={this.onClose} />
+        </View>
+        <View style={styles.mainContainer}>
+          <Text style={styles.whiteBoldBigText}>
+            Confirmation
+          </Text>
+          <View style={styles.descriptionContainer}>
+            <Text style={styles.whiteText}>
+              {`We just sent on SMS to\n (+1 210 254 1896)\n with your verification code.\nEnter the 2-step verification code below.`}
+            </Text>
+          </View>
+          <View style={styles.inputContainer}>
+            <CodeInput
+              ref="codeInputRef2"
+              keyboardType="numeric"
+              codeLength={5}
+              className="border-b"
+              compareWithCode={'12345'}
+              autoFocus={false}
+              codeInputStyle={styles.codeInputStyle}
+              onFulfill={this.onFinishCheckingCode}
+              inactiveColor={Colors.border}
+            />
+          </View>
+          <View style={styles.resendContainer}>
+            <Text style={styles.whiteSmallText}>
+              {`Didn't get it? `}
+            </Text>
+            <TouchableOpacity style={styles.resendButton}>
+              <Text style={styles.whiteSmallBoldText}>
+                Resend code
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <RedButton label="Submit" onPress={this.onSubmit} />
+        </View>
+      </SafeAreaView>
     )
   }
 }
