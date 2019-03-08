@@ -6,6 +6,31 @@ import { styles } from './styles';
 import { CloseButton, Input, RedButton, ImageButton } from '../../../components';
 import { checkEmail } from '../../../utils';
 
+const INPUTS_DATA = [{
+  iconSource: require('../../../assets/icon_name.png'),
+  placeholder: 'First & Last Name',
+  key: 'fullName',
+}, {
+  iconSource: require('../../../assets/icon_instagram.png'),
+  placeholder: 'Instagram Username',
+  key: 'instaUserName',
+}, {
+  iconSource: require('../../../assets/icon_email.png'),
+  placeholder: 'Email',
+  key: 'email',
+  keyboardType: 'email-address'
+}, {
+  iconSource: require('../../../assets/icon_password.png'),
+  placeholder: 'Password',
+  key: 'password',
+  secureTextEntry: true,
+}, {
+  iconSource: require('../../../assets/icon_password_confirm.png'),
+  placeholder: 'Confirm Your Password',
+  key: 'confirmPassword',
+  secureTextEntry: true,
+}];
+
 class SignUpScreen extends Component {
   constructor(props) {
     super(props);
@@ -42,53 +67,20 @@ class SignUpScreen extends Component {
     const isValidEmail = checkEmail(userInfo.email);
     const isValidPassword = userInfo.password.length >= 8;
     const isValidPasswordConfirm = userInfo.confirmPassword.length >= 8 && (userInfo.password === userInfo.confirmPassword);
-    return (
-      <View>
-        <Input
-          iconSource={require('../../../assets/icon_name.png')}
-          style={styles.inputContainer}
-          placeholder="First & Last Name"
-          value={userInfo.fullName}
-          onChangeText={(text) => this.onChangeText('fullName', text)}
-          isValid={isValidFullName}
-        />
-        <Input
-          iconSource={require('../../../assets/icon_instagram.png')}
-          style={styles.inputContainer}
-          value={userInfo.instaUserName}
-          placeholder="Instagram Username"
-          onChangeText={(text) => this.onChangeText('instaUserName', text)}
-          isValid={isValidInstaUsername}
-        />
-        <Input
-          iconSource={require('../../../assets/icon_email.png')}
-          style={styles.inputContainer}
-          value={userInfo.email}
-          placeholder="Email"
-          onChangeText={(text) => this.onChangeText('email', text)}
-          isValid={isValidEmail}
-          keyboardType="email-address"
-        />
-        <Input
-          iconSource={require('../../../assets/icon_password.png')}
-          style={styles.inputContainer}
-          value={userInfo.password}
-          placeholder="Password"
-          onChangeText={(text) => this.onChangeText('password', text)}
-          secureTextEntry
-          isValid={isValidPassword}
-        />
-        <Input
-          iconSource={require('../../../assets/icon_password_confirm.png')}
-          style={styles.inputContainer}
-          value={userInfo.confirmPassword}
-          placeholder="Confirm Your Password"
-          onChangeText={(text) => this.onChangeText('confirmPassword', text)}
-          secureTextEntry
-          isValid={isValidPasswordConfirm}
-        />
-      </View>
-    )
+    const inputsValid = [isValidFullName, isValidInstaUsername, isValidEmail, isValidPassword, isValidPasswordConfirm];
+    return INPUTS_DATA.map((item, index) => (
+      <Input
+        iconSource={INPUTS_DATA[index].iconSource}
+        style={styles.inputContainer}
+        placeholder={INPUTS_DATA[index].placeholder}
+        value={userInfo[INPUTS_DATA[index].key]}
+        onChangeText={(text) => this.onChangeText(INPUTS_DATA[index].key, text)}
+        isValid={inputsValid[index]}
+        keyboardType={INPUTS_DATA[index].keyboardType}
+        secureTextEntry={INPUTS_DATA[index].secureTextEntry}
+        key={`key-${index}`}
+      />
+    ));
   };
 
   render() {
