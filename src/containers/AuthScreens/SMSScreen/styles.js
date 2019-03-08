@@ -63,7 +63,8 @@ export const styles = StyleSheet.create({
     marginLeft: 10,
     width: Metric.width / 5 * 2.5,
     ...Metric.font.big,
-    color: Colors.white
+    color: Colors.white,
+    marginBottom: 5
   }
 });
 

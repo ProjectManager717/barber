@@ -2,13 +2,15 @@ import React, { Component } from 'react';
 import { ImageBackground, View, Text, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-navigation';
 import { styles } from './styles';
-import {CloseButton, RedButton} from "../../../components/Buttons";
+import { CloseButton, RedButton } from '../../../components/Buttons';
+import { formatPhoneNumber, checkPhoneNumberValidation } from '../../../utils';
 
 class SMSScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      number: ''
+      number: '',
+      formattedNumber: ''
     }
   }
 
@@ -17,15 +19,22 @@ class SMSScreen extends Component {
   };
 
   onContinue = () => {
-    alert('continue');
+    const { number } = this.state;
+    if (checkPhoneNumberValidation(number)) {
+      alert('continue');
+    } else {
+      alert('invalid format');
+    }
   };
 
-  onChangeText = (number) => {
-    this.setState({ number });
+  onChangeText = (str) => {
+    const number = str.replace(/\D/g, '');
+    const formattedNumber = formatPhoneNumber(str);
+    this.setState({ number, formattedNumber });
   };
 
   render() {
-    const { number } = this.state;
+    const { formattedNumber } = this.state;
     return (
       <View style={styles.container}>
         <SafeAreaView style={styles.parentContainer}>
@@ -50,8 +59,10 @@ class SMSScreen extends Component {
                 <TextInput
                   style={styles.input}
                   onChangeText={this.onChangeText}
-                  value={number}
+                  value={formattedNumber}
                   keyboardType="numeric"
+                  maxLength={12}
+                  autoFocus={true}
                 />
               </View>
               <Text style={styles.whiteText}>
