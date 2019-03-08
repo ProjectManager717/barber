@@ -41,9 +41,9 @@ export const styles = StyleSheet.create({
     height: 35
   },
   iconClose: {
-    width: 20,
-    height: 20,
-    resizeMode: 'contain'
+    width: 15,
+    height: 15,
+    resizeMode: 'cover'
   },
   imageCircleButton: {
     width: 60,
