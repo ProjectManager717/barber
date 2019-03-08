@@ -60,6 +60,14 @@ class SignUpScreen extends Component {
     alert('Sign up');
   };
 
+  onFacebook = () => {
+    alert('facebook');
+  };
+
+  onGoogle = () => {
+    alert('google');
+  };
+
   renderInputs = () => {
     const { userInfo } = this.state;
     const isValidFullName = !!userInfo.fullName.length;
@@ -118,9 +126,15 @@ class SignUpScreen extends Component {
                 Or
               </Text>
               <View style={styles.buttonsSubContainer}>
-                <ImageButton iconSource={require('../../../assets/icon_facebook.png')} />
+                <ImageButton
+                  iconSource={require('../../../assets/icon_facebook.png')}
+                  onPress={this.onFacebook}
+                />
                 <View style={styles.space}/>
-                <ImageButton iconSource={require('../../../assets/icon_gmail.png')} />
+                <ImageButton
+                  iconSource={require('../../../assets/icon_gmail.png')}
+                  onPress={this.onGoogle}
+                />
               </View>
             </View>
           </KeyboardAwareScrollView>
