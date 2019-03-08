@@ -40,8 +40,8 @@ class SignUpScreen extends Component {
     const isValidFullName = !!userInfo.fullName.length;
     const isValidInstaUsername = !!userInfo.instaUserName.length;
     const isValidEmail = checkEmail(userInfo.email);
-    const isValidPassword = userInfo.password.length > 8;
-    const isValidPasswordConfirm = !!userInfo.password.length && (userInfo.password === userInfo.confirmPassword);
+    const isValidPassword = userInfo.password.length >= 8;
+    const isValidPasswordConfirm = userInfo.confirmPassword.length >= 8 && (userInfo.password === userInfo.confirmPassword);
     return (
       <View>
         <Input
