@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-navigation';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { styles } from './styles';
 import {CloseButton, ImageButton, Input, RedButton} from '../../../components';
+import { checkEmail } from '../../../utils';
 
 class SignInScreen extends Component {
   constructor(props) {
@@ -32,6 +33,8 @@ class SignInScreen extends Component {
 
   render() {
     const { email, password } = this.state;
+    const isValidEmail = checkEmail(email);
+    const isValidPassword = password.length >= 8;
     return (
       <ImageBackground
         source={require('../../../assets/img_background2.png')}
@@ -55,6 +58,7 @@ class SignInScreen extends Component {
                 placeholder="Email"
                 onChangeText={(text) => this.onChangeText('email', text)}
                 keyboardType="email-address"
+                isValid={isValidEmail}
               />
               <Input
                 iconSource={require('../../../assets/icon_email.png')}
@@ -63,6 +67,7 @@ class SignInScreen extends Component {
                 placeholder="Password"
                 onChangeText={(text) => this.onChangeText('password', text)}
                 secureTextEntry
+                isValid={isValidPassword}
               />
             </View>
             <View style={styles.forgotPasswordContainer}>
