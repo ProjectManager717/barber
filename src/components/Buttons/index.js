@@ -53,9 +53,10 @@ export const CloseButton = ({
 export const ImageButton = ({
   onPress,
   style,
-  iconSource
+  iconSource,
+  iconStyle
 }) => (
   <TouchableOpacity onPress={onPress} style={[styles.imageCircleButton, style]}>
-    <Image source={iconSource} style={styles.iconButton}/>
+    <Image source={iconSource} style={[styles.iconButton, iconStyle]}/>
   </TouchableOpacity>
 );
