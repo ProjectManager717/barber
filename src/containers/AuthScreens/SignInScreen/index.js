@@ -20,7 +20,7 @@ class SignInScreen extends Component {
   };
 
   onLogin = () => {
-    alert('login');
+    this.props.navigation.navigate('TabNavigator');
   };
 
   onChangeText = (key, value) => {

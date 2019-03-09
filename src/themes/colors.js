@@ -12,4 +12,8 @@ export default {
   green: '#46d400',
   darkGreen: '#2b4331',
   darkBlack: '#1e1d25',
+  themeBackground :"#29243A",
+  bottomTabTintColor:"#FF0609",
+  buttonColor:"#FF0000",
+  btn_bg_color: "#202230"
 }
