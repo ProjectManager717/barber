@@ -12,6 +12,9 @@ import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import TopTabs from "../../components/ScreenTabs";
 import colors from "../../themes/colors";
 import GraphComp from "../../components/Graph/";
+import  Clients  from "./Clients";
+import  Notifications  from "./Notifications";
+
 const { height, width } = Dimensions.get("window");
 
 export default class Home extends Component {
@@ -61,8 +64,8 @@ export default class Home extends Component {
           <TopTabs
             data={[
               () => <GraphComp />,
-              () => <View style={{ height, width }} />,
-              () => <View style={{ height, width }} />
+              () => <Clients />,
+              () => <Notifications />
             ]}
           />
         </View>

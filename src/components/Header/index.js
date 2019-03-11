@@ -18,14 +18,14 @@ export const Header = ({}) => (
       <TouchableOpacity style={styles.imageButton}>
         <Image
           source={require("../../assets/images/qr.png")}
-          style={styles.image}
+          style={[styles.image,{marginLeft : 4}]}
           resizeMode="contain"
         />
       </TouchableOpacity>
       <TouchableOpacity style={styles.imageButton} >
         <Image
           source={require("../../assets/images/share.png")}
-          style={styles.image}
+          style={[styles.image,{marginRight : 20}]}
           resizeMode="contain"
         />
       </TouchableOpacity>
@@ -46,6 +46,8 @@ const styles = StyleSheet.create({
     alignSelf: "center"
   },
   image: {
+    marginTop:20,
+    tintColor:'#fff',
     height: 35,
     width: 49
   },
