@@ -4,6 +4,7 @@ import { StyleSheet, View, FlatList, Text, Image } from "react-native";
 //import all the components we will need
 import { Colors } from "../../../themes";
 import { styles } from "./styles";
+import { Avatar } from "react-native-elements";
 
 export default class Notifications extends Component {
   constructor() {
@@ -73,8 +74,10 @@ export default class Notifications extends Component {
                 />
               </View>
               <View style={{ flexDirection: "row",marginTop:30,height:60 }}>
-                <Image
-                  source={require("../../../assets/images/personface.png")}
+                <Avatar
+                  source={{ uri: "https://loremflickr.com/240/240/actor" }}
+                  rounded
+                  size="large"
                   style={{
                     marginLeft: 10,
                     height: 60,

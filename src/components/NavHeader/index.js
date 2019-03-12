@@ -8,11 +8,11 @@ import {
 import colors from "../../themes/colors";
 const { height, width } = Dimensions.get("window");
 
-export default class Reviews extends Component {
+export default class NavHeader extends Component {
   render() {
     return (
         <View style={styles.container}>
-          <Text style={{textAlign: 'center', fontSize: 30, color: 'white'}}>Reviews</Text>
+          <Text style={{textAlign: 'center', fontSize: 30, color: 'white'}}>Settings</Text>
         </View>
     );
   }

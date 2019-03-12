@@ -7,7 +7,7 @@ import {
   ImageBackground,
   Image
 } from "react-native";
-import { Header } from "../../components/Header/";
+import  Header  from "../../components/Header/";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import TopTabs from "../../components/ScreenTabs";
 import colors from "../../themes/colors";
@@ -22,7 +22,10 @@ export default class Home extends Component {
     return (
       <ScrollView>
         <View style={styles.container}>
-          <Header />
+          <Header 
+            bgIcon={require("../../assets/images/header.png")} 
+            rightIcon = {require("../../assets/images/share.png")}
+            leftIcon={require("../../assets/images/qr.png")} />
           <View style={styles.detailsContainer}>
             <View style={styles.profileImageContainer}>
               <ImageBackground
@@ -55,7 +58,9 @@ export default class Home extends Component {
                     (17 Reviews)
                   </Text>
                 </View>
-                <TouchableOpacity style={styles.button}>
+                <TouchableOpacity style={styles.button} onPress={()=>{
+                  this.props.navigation.navigate('BarberProfile');
+                }}>
                   <Text style={styles.buttonText}>View Profile</Text>
                 </TouchableOpacity>
               </View>

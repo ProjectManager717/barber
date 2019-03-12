@@ -19,8 +19,9 @@ import {
 
 import Home from "./containers/Home";
 import Calendar from "./containers/Calendar";
-import Reviews from "./containers/Reviews";
+import Reviews from "./containers/Barber/Reviews";
 import Settings from "./containers/Settings";
+import BarberProfile from "./containers/Barber/Profile";
 
 import colors from "./themes/colors";
 
@@ -42,13 +43,18 @@ const TabNavigator = createBottomTabNavigator(
       screen: Reviews,
       navigationOptions: {
         tabBarLabel: "Reviews"
-      }
+      },
+      headerTitleStyle: {
+        fontWeight: "bold",
+        color: "#fff",
+      },
+      headerTintColor: "#fff"
     },
     Settings: {
       screen: Settings,
       navigationOptions: {
         tabBarLabel: "Settings"
-      }
+      },
     }
   },  
   { 
@@ -97,9 +103,10 @@ const AuthStack = createStackNavigator({
   SignInScreen: SignInScreen,
   SignUpScreen: SignUpScreen,
   SMSScreen: SMSScreen,
+  BarberProfile : BarberProfile,
   TabNavigator: TabNavigator
 }, {
-  initialRouteName: 'SelectScreen',
+  initialRouteName: 'TabNavigator',
   headerMode: 'none'
 });
 

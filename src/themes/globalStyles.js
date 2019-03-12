@@ -1,4 +1,7 @@
 import { Colors } from "../themes";
+import {
+  Dimensions} from "react-native";
+const { height, width } = Dimensions.get("window");
 export const globalStyles = {
   rowBackground: {
     marginLeft: 10,
@@ -11,5 +14,15 @@ export const globalStyles = {
     flex: 1,
     flexDirection: "row",
     margin: 1
+  },
+  buttonText: { color: "white", fontSize: 15, fontWeight: "500" },
+  button: {
+    width: width / 2.2,
+    backgroundColor: "#FF0000",
+    justifyContent: "center",
+    alignSelf: "center",
+    borderRadius: 30,
+    height: height / 19,
+    alignItems: "center"
   }
 };

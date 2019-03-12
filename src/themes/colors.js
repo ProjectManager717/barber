@@ -15,5 +15,6 @@ export default {
   themeBackground :"#29243A",
   bottomTabTintColor:"#FF0609",
   buttonColor:"#FF0000",
-  btn_bg_color: "#202230"
+  btn_bg_color: "#202230",
+  btn_new_color: "#e4ff00",
 }

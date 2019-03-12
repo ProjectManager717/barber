@@ -9,29 +9,34 @@ import {
 } from "react-native";
 const { height, width } = Dimensions.get("window");
 
-export const Header = ({}) => (
-  <ImageBackground
-    source={require("../../assets/images/header.png")}
-    style={styles.mainContainer}
-  >
-    <View style={styles.imageContainer}>
-      <TouchableOpacity style={styles.imageButton}>
-        <Image
-          source={require("../../assets/images/qr.png")}
-          style={[styles.image,{marginLeft : 4}]}
-          resizeMode="contain"
-        />
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.imageButton} >
-        <Image
-          source={require("../../assets/images/share.png")}
-          style={[styles.image,{marginRight : 20}]}
-          resizeMode="contain"
-        />
-      </TouchableOpacity>
-    </View>
-  </ImageBackground>
-);
+export default class Header extends Component {
+  render() {
+    this.props.bgIcon
+    return (
+      <ImageBackground
+        source= {this.props.bgIcon}
+        style={styles.mainContainer}
+      >
+        <View style={styles.imageContainer}>
+          <TouchableOpacity style={styles.imageButton}>
+            <Image
+              source={this.props.leftIcon}
+              style={[styles.image, { marginLeft: 4 }]}
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.imageButton}>
+            <Image
+              source={this.props.rightIcon}
+              style={[styles.image, { marginRight: 20 }]}
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
+        </View>
+      </ImageBackground>
+    );
+  }
+}
 
 const styles = StyleSheet.create({
   mainContainer: {
@@ -46,8 +51,8 @@ const styles = StyleSheet.create({
     alignSelf: "center"
   },
   image: {
-    marginTop:20,
-    tintColor:'#fff',
+    marginTop: 20,
+    tintColor: "#fff",
     height: 35,
     width: 49
   },
