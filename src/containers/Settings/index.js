@@ -64,13 +64,23 @@ export default class Settings extends Component {
           <View style={[globalStyles.rowBackground, styles.row]}>
           {this.renderRow({title:"Booking Preferences",ic:require("../../assets/images/ic_settings_booking_pref.png")})}
           {this.renderSeperator()}
-          {this.renderRow({title:"Cancellations & No-Shows",ic:require("../../assets/images/ic_settings_cancellation.png")})}
+          <TouchableOpacity onPress={()=>{
+            this.props.navigation.navigate('Cancellations');
+          }}>
+            {this.renderRow({title:"Cancellations & No-Shows",ic:require("../../assets/images/ic_settings_cancellation.png")})}
+          </TouchableOpacity>
+          
           {this.renderSeperator()}
           {this.renderRow({title:"Surge Pricing",ic:require("../../assets/images/ic_settings_surge.png")})}
           </View>
           <Text style={styles.txtHeader}>PROMOTIONS</Text>
           <View style={[globalStyles.rowBackground, styles.row]}>
-          {this.renderRow({title:"Discover Me",ic:require("../../assets/images/ic_setting_alert.png")})}
+            <TouchableOpacity onPress={()=>{
+              this.props.navigation.navigate('DiscoverMe');
+            }}>
+              {this.renderRow({title:"Discover Me",ic:require("../../assets/images/ic_siren.png")})}
+            </TouchableOpacity>
+          
           </View>
           <Text style={styles.txtHeader}>SHARE</Text>
           <View style={[globalStyles.rowBackground, styles.row]}>
@@ -125,8 +135,9 @@ const styles = StyleSheet.create({
     color:Colors.lightGrey,
     marginTop : 16,
     marginBottom:4,
-    marginLeft:26,
-    fontSize:12
+    marginLeft:30,
+    fontSize:12,
+    fontFamily: "AvertaStd-Regular"
   },
   leftIcon:{
     height:16,
@@ -137,9 +148,10 @@ const styles = StyleSheet.create({
   },
   row_title:{
     color:Colors.white,
+    marginTop:4,
     marginLeft:10,
     alignSelf:'center',
-    //fontFamily: "AvertaStandard-Regular"
+    fontFamily: "AvertaStd-Regular"
   },
   right_arrow:{
     position:'absolute',

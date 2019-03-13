@@ -18,14 +18,14 @@ export default class Header extends Component {
         style={styles.mainContainer}
       >
         <View style={styles.imageContainer}>
-          <TouchableOpacity style={styles.imageButton}>
+          <TouchableOpacity style={styles.imageButton} onPress={this.props.leftAction} >
             <Image
               source={this.props.leftIcon}
               style={[styles.image, { marginLeft: 4 }]}
               resizeMode="contain"
             />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.imageButton}>
+          <TouchableOpacity style={styles.imageButton} onPress={this.props.rightAction} >
             <Image
               source={this.props.rightIcon}
               style={[styles.image, { marginRight: 20 }]}

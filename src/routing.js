@@ -22,6 +22,10 @@ import Calendar from "./containers/Calendar";
 import Reviews from "./containers/Barber/Reviews";
 import Settings from "./containers/Settings";
 import BarberProfile from "./containers/Barber/Profile";
+import QRCheckIn from "./containers/Barber/QRCheckIn";
+import Cancellations from "./containers/Settings/Cancellations";
+import DiscoverMe from "./containers/Settings/DiscoverMe";
+
 
 import colors from "./themes/colors";
 
@@ -104,9 +108,12 @@ const AuthStack = createStackNavigator({
   SignUpScreen: SignUpScreen,
   SMSScreen: SMSScreen,
   BarberProfile : BarberProfile,
-  TabNavigator: TabNavigator
+  QRCheckIn : QRCheckIn,
+  Cancellations,Cancellations,
+  TabNavigator: TabNavigator,
+  DiscoverMe:DiscoverMe
 }, {
-  initialRouteName: 'TabNavigator',
+  initialRouteName: 'SelectScreen',
   headerMode: 'none'
 });
 

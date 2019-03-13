@@ -18,11 +18,15 @@ import  Notifications  from "./Notifications";
 const { height, width } = Dimensions.get("window");
 
 export default class Home extends Component {
+  leftAction(){
+    this.props.navigation.navigate('QRCheckIn');
+  }
   render() {
     return (
       <ScrollView>
         <View style={styles.container}>
           <Header 
+            leftAction = {this.leftAction.bind(this)}
             bgIcon={require("../../assets/images/header.png")} 
             rightIcon = {require("../../assets/images/share.png")}
             leftIcon={require("../../assets/images/qr.png")} />

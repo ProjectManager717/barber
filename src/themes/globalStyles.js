@@ -15,7 +15,13 @@ export const globalStyles = {
     flexDirection: "row",
     margin: 1
   },
-  buttonText: { color: "white", fontSize: 15, fontWeight: "500" },
+  buttonText: { 
+    color: "white", 
+    fontSize: 15, 
+    marginTop:4,
+    fontFamily: "AvertaStd-ExtraBold",
+    alignSelf:"center",
+    fontWeight: "500" },
   button: {
     width: width / 2.2,
     backgroundColor: "#FF0000",

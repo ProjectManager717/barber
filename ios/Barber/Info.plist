@@ -72,6 +72,22 @@
 		<string>SimpleLineIcons.ttf</string>
 		<string>Zocial.ttf</string>
 		<string>AvenirNext-Bold.ttf</string>
+		<string>AvertaStd-Black.ttf</string>
+		<string>AvertaStd-BlackItalic.ttf</string>
+		<string>AvertaStd-Bold.ttf</string>
+		<string>AvertaStd-BoldItalic.ttf</string>
+		<string>AvertaStd-ExtraBold.ttf</string>
+		<string>AvertaStd-ExtraBoldItalic.ttf</string>
+		<string>AvertaStd-Extrathin.ttf</string>
+		<string>AvertaStd-ExtrathinItalic.ttf</string>
+		<string>AvertaStd-Light.ttf</string>
+		<string>AvertaStd-LightItalic.ttf</string>
+		<string>AvertaStd-Regular.ttf</string>
+		<string>AvertaStd-RegularItalic.ttf</string>
+		<string>AvertaStd-Semibold.ttf</string>
+		<string>AvertaStd-SemiboldItalic.ttf</string>
+		<string>AvertaStd-Thin.ttf</string>
+		<string>AvertaStd-ThinItalic.ttf</string>
 	</array>
 </dict>
 </plist>
