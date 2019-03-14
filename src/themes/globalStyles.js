@@ -11,7 +11,6 @@ export const globalStyles = {
     borderColor: Colors.border,
     borderRadius: 5,
     height: 90,
-    flex: 1,
     flexDirection: "row",
     margin: 1
   },

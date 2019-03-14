@@ -14,11 +14,10 @@ export default class Clients extends Component {
     };
   }
   componentDidMount() {
-    var that = this;
     let items = Array.apply(null, Array(4)).map((v, i) => {
       return { id: i, title: "Title " + i };
     });
-    that.setState({
+    this.setState({
       dataSource: items
     });
   }

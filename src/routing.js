@@ -18,7 +18,8 @@ import {
 } from './containers';
 
 import Home from "./containers/Home";
-import Calendar from "./containers/Calendar";
+import Calendar from "./containers/Barber/Calendar";
+import ChooseTimings from "./containers/Barber/ChooseTimings";
 import Reviews from "./containers/Barber/Reviews";
 import Settings from "./containers/Settings";
 import BarberProfile from "./containers/Barber/Profile";
@@ -62,7 +63,7 @@ const TabNavigator = createBottomTabNavigator(
     }
   },  
   { 
-    initialRouteName: "Home",
+    initialRouteName: "Calendar",
     defaultNavigationOptions: ({ navigation }) => ({
       tabBarIcon: ({ focused, horizontal, tintColor }) => {
         const { routeName } = navigation.state;
@@ -110,6 +111,7 @@ const AuthStack = createStackNavigator({
   BarberProfile : BarberProfile,
   QRCheckIn : QRCheckIn,
   Cancellations,Cancellations,
+  ChooseTimings:ChooseTimings,
   TabNavigator: TabNavigator,
   DiscoverMe:DiscoverMe
 }, {
