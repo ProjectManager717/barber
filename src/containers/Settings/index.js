@@ -58,20 +58,34 @@ export default class Settings extends Component {
           </View>
           <Text style={styles.txtHeader}>PAYMENT</Text>
           <View style={[globalStyles.rowBackground, styles.row]}>
+              <TouchableOpacity onPress={()=>{
+                  this.props.navigation.navigate('MobilePay');
+              }}>
+
           {this.renderRow({title:"Mobile Pay",ic:require("../../assets/images/ic_setting_mobile_pay.png")})}
+              </TouchableOpacity>
           </View>
           <Text style={styles.txtHeader}>APPOINTMENTS</Text>
           <View style={[globalStyles.rowBackground, styles.row]}>
+            <TouchableOpacity onPress={()=>{
+              this.props.navigation.navigate('BookingPreferences');
+            }}>
           {this.renderRow({title:"Booking Preferences",ic:require("../../assets/images/ic_settings_booking_pref.png")})}
+            </TouchableOpacity>
           {this.renderSeperator()}
           <TouchableOpacity onPress={()=>{
             this.props.navigation.navigate('Cancellations');
           }}>
             {this.renderRow({title:"Cancellations & No-Shows",ic:require("../../assets/images/ic_settings_cancellation.png")})}
-          </TouchableOpacity>
+          </TouchableOpacity   >
           
           {this.renderSeperator()}
+              <TouchableOpacity onPress={()=>{
+                  this.props.navigation.navigate('SurgePricing');
+              }}>
+
           {this.renderRow({title:"Surge Pricing",ic:require("../../assets/images/ic_settings_surge.png")})}
+              </TouchableOpacity>
           </View>
           <Text style={styles.txtHeader}>PROMOTIONS</Text>
           <View style={[globalStyles.rowBackground, styles.row]}>

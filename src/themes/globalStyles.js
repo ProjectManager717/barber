@@ -21,6 +21,12 @@ export const globalStyles = {
     fontFamily: "AvertaStd-ExtraBold",
     alignSelf:"center",
     fontWeight: "500" },
+  receiptButtonText: {
+    color: "white",
+    fontSize: 10,
+    fontFamily: "AvertaStd-ExtraBold",
+    alignSelf:"center",
+    fontWeight: "500" },
   button: {
     width: width / 2.2,
     backgroundColor: "#FF0000",
@@ -28,6 +34,15 @@ export const globalStyles = {
     alignSelf: "center",
     borderRadius: 30,
     height: height / 19,
+    alignItems: "center"
+  },
+  reciptButton: {
+    width: width / 2.2,
+    backgroundColor: "grey",
+    justifyContent: "center",
+    alignSelf: "center",
+    borderRadius: 30,
+    height: 30,
     alignItems: "center"
   }
 };
