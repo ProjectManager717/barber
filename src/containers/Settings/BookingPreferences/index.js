@@ -131,11 +131,15 @@ export default class BookingPreferences extends Component {
                             ic: require("../../../assets/images/mins_30.png")
                         })}
                         <Text  style={{marginStart:30,color: "grey",fontSize:12,fontStyle:"italic"}}>{"Limited"}</Text>
-                        <View style={{marginStart: 30, height: 15,marginBottom:3}}>
+                        <View style={{marginStart: 30, marginEnd:10,height: 15,marginBottom:3, backgroundColor:"#5A5B68",
+                            borderRadius:10  }}>
                             <Text style={{
-                                fontSize: 12,
+                                marginStart:5,
+
+                                fontSize: 10,
                                 color: "white",
-                            }}>{"Client can Book Appointment with you uptil Last Minute "}</Text>
+
+                            }}>{"Client can Book Appointment with you up until last minutes "}</Text>
                         </View>
                     </View>
                     {this.renderRowWithCheck({title: "Every 15 Minutes"})}

@@ -28,18 +28,19 @@ export default class Receipt extends Component {
     }
 
     renderRowButtons(item) {
-        return  <TouchableOpacity>
-            <ImageBackground
-                source={item.image}
-                style={{
-                    width: "100%",
-                    height: 28,
-                    marginTop: 8,
-                    alignItems: "center",
-                    justifyContent: "center"
-                }}>
-                <Text style={globalStyles.receiptButtonText}>{item.text}</Text>
-            </ImageBackground>
+        return <TouchableOpacity
+            style={{
+                width: "95%",
+                height: 26,
+                marginTop: 8,
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius:12,
+                borderWidth: 2, borderColor: item.clor,
+                backgroundColor:"#626371"
+            }}>
+            <Text style={globalStyles.receiptButtonText}>{item.text}</Text>
+
         </TouchableOpacity>;
     }
 
@@ -91,7 +92,7 @@ export default class Receipt extends Component {
                                     color: "white",
                                     justifyContent: "flex-end",
                                     marginEnd: 30,
-                                    fontSize: 12
+                                    fontSize: 10
                                 }}>12th September
                                     2019.9:30am</Text>
                             </View>
@@ -171,7 +172,7 @@ export default class Receipt extends Component {
                                         flexDirection: "column",
                                         width: "27%",
                                         height: "100%",
-                                        marginStart:15,
+                                        marginStart: 15,
                                         marginTop: 10
                                     }}>
                                         <AirbnbRating
@@ -183,24 +184,35 @@ export default class Receipt extends Component {
                                         />
                                         <Text style={{marginStart: 10, color: Colors.white}}>{ratings} of 5.0</Text>
                                     </View>
-                                    <View style={{flexDirection: "column", width: "32%",marginStart:5}}>
+                                    <View style={{flexDirection: "column", width: "32%", marginStart: 5}}>
                                         {this.renderRowButtons({
                                             text: "Good Quality",
-                                            image: require("../../../assets/images/good_quality.png"),
+                                            clor:"#D05916"
+
                                         })}
                                         {this.renderRowButtons({
-                                            text: "Cleanliness",
-                                            image: require("../../../assets/images/cleanliness.png"),
+                                            text: " Cleanliness",
+                                            clor:"#47EF00"
+
                                         })}
+
                                     </View>
-                                    <View style={{flexDirection: "column", width: "32%",marginStart:5,marginBottom:10}}>
+                                    <View style={{
+                                        flexDirection: "column",
+                                        width: "32%",
+                                        marginStart: 5,
+                                        marginBottom: 10
+                                    }}>
                                         {this.renderRowButtons({
                                             text: "Punctuality",
-                                            image: require("../../../assets/images/punctuality.png"),
+                                            clor:"#1358CA"
+
                                         })}
+
                                         {this.renderRowButtons({
                                             text: "Professional",
-                                            image: require("../../../assets/images/professional_.png"),
+                                            clor:"#FF39F4"
+
                                         })}
                                     </View>
                                 </View>

@@ -18,8 +18,8 @@ export default class SurgePricing extends Component {
     }
 
     renderRowSurge(item) {
-        return <View style={{flex: 1, flexDirection: 'column', height: 45}}>
-            <View style={{flex: 1, flexDirection: 'row', height: 30}}>
+        return <View style={{flex: 1, flexDirection: 'column'}}>
+            <View style={{flex: 1, flexDirection: 'row',height:36}}>
                 <Image style={styles.leftIcon} source={item.ic}/>
                 <Text style={styles.row_title}>{item.title}</Text>
                 <Switch
@@ -30,7 +30,7 @@ export default class SurgePricing extends Component {
                     top: 5,
                     right: 14,
                     alignSelf: 'center',
-                    tintColor: 'white'
+                    tintColor: 'white',
                 }}/>
             </View>
             <Text style={{marginStart: 30, color: "grey", fontStyle: "italic", height: 20}}>{item.hint}</Text>
@@ -106,12 +106,19 @@ export default class SurgePricing extends Component {
                             </TouchableOpacity>
                         </View>
                     </View>
-                    <TouchableOpacity style={[globalStyles.button, {marginTop: 150, width: 300}]}>
-                        <Text style={globalStyles.buttonText}>DONE</Text>
-                    </TouchableOpacity>
 
 
                 </ScrollView>
+
+                <TouchableOpacity style={[globalStyles.button, {
+                    marginTop: 70,
+                    height: 40,
+                    width: 260,
+                    position: "absolute",
+                    bottom: 40
+                }]}>
+                    <Text style={globalStyles.buttonText}>DONE</Text>
+                </TouchableOpacity>
 
 
             </View>
