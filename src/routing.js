@@ -29,7 +29,9 @@ import ClientQR from "./containers/Settings/ClientQR";
 import Receipt from "./containers/Settings/Receipt";
 import DiscoverMe from "./containers/Settings/DiscoverMe";
 import SurgePricing from "./containers/Settings/SurgePricing";
-import MobilePay from "./containers/Settings/MobilePay"
+import MobilePay from "./containers/Settings/MobilePay";
+import MobilePaySettings from "./containers/Settings/MobilePay/MobilePaySettings"
+import Appointments from "./containers/Barber/Appointments"
 
 
 import colors from "./themes/colors";
@@ -123,6 +125,8 @@ const AuthStack = createStackNavigator({
     DiscoverMe: DiscoverMe,
     SurgePricing: SurgePricing,
     MobilePay: MobilePay,
+    MobilePaySettings:MobilePaySettings,
+    Appointments:Appointments
 
 }, {
     initialRouteName: 'SelectScreen',

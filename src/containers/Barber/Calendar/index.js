@@ -92,7 +92,7 @@ export default class Calendar extends Component {
         var m = moment(new Date(2011, 2, 12, 0, 0, 0));
         m.add(item.id * 30, "minutes");
         return (
-            <TouchableOpacity onPress={()=>this.props.navigation.navigate("Receipt")}>
+            <TouchableOpacity onPress={()=>this.props.navigation.navigate("Appointments")}>
                 <View style={{height: 70, flexDirection: "row"}} cellKey={item.id}>
                     <Text
                         style={{

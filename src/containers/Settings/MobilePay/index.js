@@ -66,7 +66,10 @@ export default class MobilePay extends Component {
                         }}>{"GET STARTED TODAY!"}</Text>
                         <Image resizeMode={"contain"} source={require("../../../assets/images/down_arrow.png")}
                                style={{width: 12}}/>
-                        <TouchableOpacity style={[globalStyles.button, {marginTop: 60, width: 300}]}>
+                        <TouchableOpacity style={[globalStyles.button, {marginTop: 60, width: 300}]}
+                                          onPress={()=>
+                                              this.props.navigation.navigate('MobilePaySettings')}
+                        >
                             <Text style={globalStyles.buttonText}>Enable Mobile Pay</Text>
                         </TouchableOpacity>
                     </View>
