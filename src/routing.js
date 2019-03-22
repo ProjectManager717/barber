@@ -32,6 +32,8 @@ import SurgePricing from "./containers/Settings/SurgePricing";
 import MobilePay from "./containers/Settings/MobilePay";
 import MobilePaySettings from "./containers/Settings/MobilePay/MobilePaySettings"
 import Appointments from "./containers/Barber/Appointments"
+import SurgePricingRate from "./containers/Settings/SurgePricing/SurgePricingRate"
+import PaymentMethod from "./containers/Settings/MobilePay/PaymentMethod"
 
 
 import colors from "./themes/colors";
@@ -126,7 +128,9 @@ const AuthStack = createStackNavigator({
     SurgePricing: SurgePricing,
     MobilePay: MobilePay,
     MobilePaySettings:MobilePaySettings,
-    Appointments:Appointments
+    Appointments:Appointments,
+    SurgePricingRate:SurgePricingRate,
+    PaymentMethod:PaymentMethod
 
 }, {
     initialRouteName: 'SelectScreen',

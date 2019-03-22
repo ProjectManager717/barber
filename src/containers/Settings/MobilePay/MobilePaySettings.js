@@ -175,7 +175,10 @@ export default class MobilePaySettings extends Component {
 
 
                 </View>
-                <TouchableOpacity style={[globalStyles.button, {
+                <TouchableOpacity onPress={()=>{
+                    this.props.navigation.navigate('PaymentMethod');
+                }}
+                    style={[globalStyles.button, {
                     marginTop:70,
                     height: 40,
                     width: 260,
