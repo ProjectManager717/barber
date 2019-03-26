@@ -40,21 +40,21 @@ export default class Header extends Component {
 
 const styles = StyleSheet.create({
   mainContainer: {
-    height: height / 3,
+    height: 240,
     width
   },
   imageContainer: {
     width: "95%",
     justifyContent: "space-between",
     flexDirection: "row",
-    marginTop: 20,
+    marginTop: 40,
     alignSelf: "center"
   },
   image: {
-    marginTop: 20,
+    marginTop: 0,
     tintColor: "#fff",
-    height: 35,
-    width: 49
+    height: 20,
+    width: 30
   },
   imageButton: {
     height: 40,

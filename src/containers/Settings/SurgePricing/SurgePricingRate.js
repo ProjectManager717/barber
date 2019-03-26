@@ -63,7 +63,7 @@ export default class SurgePricingRate extends Component {
                             }]}>
                                 <Text style={{fontSize:14,fontWeight:"bold",color:"white"}}>Accept Higher Rate</Text>
                             </TouchableOpacity>
-                            <Text style={{textAlign: "center", color: "white",marginTop:10,fontSize:12}}>
+                            <Text style={{textAlign: "center", color: "white",marginTop:20,fontSize:12}}>
                                 Current Rate Expires in 10 Minutes</Text>
                         </View>
                     </View>

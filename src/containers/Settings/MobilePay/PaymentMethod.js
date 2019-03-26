@@ -92,7 +92,7 @@ export default class PaymentMethod extends Component {
                         <View style={[globalStyles.rowBackground, {flex: 1, flexDirection: 'row', height: 40}]}>
 
                             <Image style={[styles.right_arrow]} source={require("../../../assets/images/vcircle.png")}/>
-                            <TextInput style={{fontSize: 15, color: 'white'}} placeholder={"4242 - 4242 - 4242 - 4242"}
+                <TextInput style={{fontSize: 15, color: 'white',marginStarts:5}} placeholder={" 4242 - 4242 - 4242 - 4242"}
                                        placeholderTextColor={"white"}/>
 
 
@@ -125,7 +125,7 @@ export default class PaymentMethod extends Component {
                             </View>
 
                             <View style={[styles.row_back, {width: "25%"}]}>
-                                <TextInput style={{fontSize: 15, color: 'white'}} placeholder={"424"}
+                <TextInput style={{fontSize: 15, color: 'white',marginStart:5}} placeholder={"424"}
                                            placeholderTextColor={"white"}/>
 
                             </View>

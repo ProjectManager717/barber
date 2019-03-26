@@ -105,7 +105,7 @@ export default class Appointments extends Component {
                     barStyle="light-content" // or directly
                     style={{backgroundColor: "yellow"}}
                     outerContainerStyles={{backgroundColor: "#1999CE"}}
-                    centerComponent={{text: "SURGE PRICING", style: {color: "#fff"}}}
+                    centerComponent={{text: "APPOINTMENTS", style: {color: "#fff"}}}
                     rightComponent={{color: "#fff"}}
                     containerStyle={{
                         backgroundColor: Colors.dark,

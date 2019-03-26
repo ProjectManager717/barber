@@ -21,7 +21,7 @@ import Calendar from "./containers/Barber/Calendar";
 import ChooseTimings from "./containers/Barber/ChooseTimings";
 import Reviews from "./containers/Barber/Reviews";
 import Settings from "./containers/Settings";
-import BarberProfile from "./containers/Barber/Profile";
+import Profile from "./containers/Barber/Profile";
 import QRCheckIn from "./containers/Barber/QRCheckIn";
 import Cancellations from "./containers/Settings/Cancellations";
 import BookingPreferences from "./containers/Settings/BookingPreferences";
@@ -34,6 +34,7 @@ import MobilePaySettings from "./containers/Settings/MobilePay/MobilePaySettings
 import Appointments from "./containers/Barber/Appointments"
 import SurgePricingRate from "./containers/Settings/SurgePricing/SurgePricingRate"
 import PaymentMethod from "./containers/Settings/MobilePay/PaymentMethod"
+import BarberEditProfile from "./containers/Barber/Profile/BarberEditProfile"
 
 
 import colors from "./themes/colors";
@@ -116,7 +117,7 @@ const AuthStack = createStackNavigator({
     SignInScreen: SignInScreen,
     SignUpScreen: SignUpScreen,
     SMSScreen: SMSScreen,
-    BarberProfile: BarberProfile,
+    Profile: Profile,
     QRCheckIn: QRCheckIn,
     ClientQR: ClientQR,
     Cancellations: Cancellations,
@@ -130,7 +131,8 @@ const AuthStack = createStackNavigator({
     MobilePaySettings:MobilePaySettings,
     Appointments:Appointments,
     SurgePricingRate:SurgePricingRate,
-    PaymentMethod:PaymentMethod
+    PaymentMethod:PaymentMethod,
+    BarberEditProfile:BarberEditProfile,
 
 }, {
     initialRouteName: 'SelectScreen',
