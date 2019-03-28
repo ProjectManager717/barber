@@ -17,4 +17,6 @@ export default {
   buttonColor:"#FF0000",
   btn_bg_color: "#202230",
   btn_new_color: "#e4ff00",
+    purple:"#DF00FF",
+    magenta: "#00B6FF"
 }

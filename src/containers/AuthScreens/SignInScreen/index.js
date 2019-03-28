@@ -9,11 +9,20 @@ import { checkEmail } from '../../../utils';
 class SignInScreen extends Component {
   constructor(props) {
     super(props);
+      const { navigation } = this.props;
+      const itemId = navigation.getParam('User');
+      console.log("gettingUSersignIn--->"+itemId);
     this.state = {
       email: '',
-      password: ''
-    }
+      password: '',
+        userName: undefined,
+    };
+      this.state.userName = itemId;
+
+
   }
+
+
 
   onClose = () => {
     alert('onClose');
@@ -49,7 +58,7 @@ class SignInScreen extends Component {
           <KeyboardAwareScrollView style={styles.mainContainer}>
             <View style={styles.subContainer}>
               <Text style={styles.whiteBoldBigText}>
-                Login • Barber
+                Login • {this.state.userName}
               </Text>
               <Input
                 iconSource={require('../../../assets/icon_email.png')}

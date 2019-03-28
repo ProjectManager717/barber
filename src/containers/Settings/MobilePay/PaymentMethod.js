@@ -141,7 +141,8 @@ export default class PaymentMethod extends Component {
                             </View>
                             <View style={{height: 0.5, backgroundColor: "#52525D", marginStart: 10}}></View>
                         </View>
-                        <TouchableOpacity style={[globalStyles.button, {
+                        <TouchableOpacity  onPress={() => {
+                            this.props.navigation.navigate("Settings");}}  style={[globalStyles.button, {
                             marginTop: 40,
                             height: 35,
                             width: 260,

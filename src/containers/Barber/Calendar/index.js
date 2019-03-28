@@ -19,7 +19,8 @@ export default class Calendar extends Component {
         super();
         this.state = {
             dataSource: [],
-            dayData: []
+            dayData: [],
+
         };
     }
 
@@ -74,9 +75,10 @@ export default class Calendar extends Component {
             var newDate = weekDate.addDays(i);
             items.push(this.renderWeekDay({k: i, d: newDate}));
         }
-        let hours = Array.apply(null, Array(48)).map((v, i) => {
+        let hours = Array.apply(null, Array(10)).map((v, i) => {
             return {id: i, title: "Title " + i};
         });
+        console.log("slotsData-->" + JSON.stringify(hours));
         this.setState({
             dayData: hours,
             dataSource: items
@@ -85,14 +87,28 @@ export default class Calendar extends Component {
 
     renderItem(item) {
         //item.id*30
-        var bgColor = Colors.red;
-        if (item.id % 2 == 0) {
+        let bgColor = Colors.themeBackground;
+        if (item.id == 0) {
             bgColor = Colors.green;
         }
+        if (item.id == 1) {
+            bgColor = Colors.purple
+        }
+        if (item.id == 2) {
+            bgColor = Colors.magenta
+        }
+        if (item.id == 3) {
+            bgColor = Colors.magenta
+        }
+        if (item.id == 6) {
+            bgColor = Colors.magenta
+        }
+
+
         var m = moment(new Date(2011, 2, 12, 0, 0, 0));
         m.add(item.id * 30, "minutes");
         return (
-            <TouchableOpacity onPress={()=>this.props.navigation.navigate("Appointments")}>
+            <TouchableOpacity onPress={() => this.props.navigation.navigate("Appointments")}>
                 <View style={{height: 70, flexDirection: "row"}} cellKey={item.id}>
                     <Text
                         style={{
@@ -107,9 +123,68 @@ export default class Calendar extends Component {
                         {m.format("HH:mm")}
                     </Text>
                     <View style={{width: 6, backgroundColor: bgColor}}/>
+                    <View style={{
+                        backgroundColor: "#454656",
+                        width: "75%",
+                        flexDirection: "row",
+                        borderTopLeftRadius: 0,
+                        borderBottomLeftRadius: 0,
+                        borderRadius: 5,
+                        borderWidth: 0.5,
+                        borderColor: "white",
+                        borderBottomWidth: 0,
+                        borderLeftWidth: 0,
+                    }}>
+                        <View style={{flexDirection: "row", width: "100%"}}>
+                            <View style={{flexDirection: "column", alignItems: "center", justifyContent: "center"}}>
+                                <View style={{flexDirection: "row", marginStart: 10}}>
+                                    <Text style={{
+                                        fontWeight: "bold", color: "white",
+                                        fontSize: 11
+                                    }}>Haircut & Beard</Text>
+                                    <Text style={{marginStart: 8,marginTop:1, color: "white", fontSize: 10}}>Sergio
+                                        Ramos</Text>
+                                </View>
+                                <View style={{flexDirection: "row", marginStart: 10, marginTop: 7}}>
+                                    <Image source={require("../../../assets/images/chair.png")} resizeMode={"contain"}
+                                           style={{
+                                               position: "absolute",
+                                               height: 12,
+                                               width: 12,
+                                               marginStart: -20,
+                                               marginTop: 3
+
+                                           }}
+                                    />
+                                    <Text style={{color: "#95A2B5", fontSize: 12}}>30 mins</Text>
+                                    <View style={{
+                                        flexDirection: "column",
+                                        width: 1,height:13,
+                                        marginTop:3,
+                                        backgroundColor: "grey",
+                                        marginStart: 10,
+                                        marginEnd: 10
+                                    }}/>
+                                    <Text style={{color: "#95A2B5", fontSize: 12}}>$30.00</Text>
+                                </View>
+                            </View>
+
+                        </View>
+                        <Image resizeMode={"cover"}
+                               style={{width: 60, height: "100%", position: "absolute", right: 0, top: 0}}
+                               source={require("../../../assets/images/completed.png")}
+                        />
+                        <Text style={{color: "#5AD800", fontSize: 7,fontWeight:"bold",position:"absolute",right:6,bottom:15}}>{"COMPLETED"}</Text>
+                    </View>
                 </View>
+
             </TouchableOpacity>
         );
+    }
+
+    renderRow(item) {
+
+
     }
 
     render() {
@@ -139,7 +214,7 @@ export default class Calendar extends Component {
                     rightComponent={
                         <TouchableOpacity
                             onPress={() => {
-                                this.props.navigation.goBack();
+                                this.props.navigation.navigate("ClientBlast");
                             }}
                         >
                             <Image
@@ -181,10 +256,12 @@ export default class Calendar extends Component {
                 <FlatList
                     keyExtractor={(item, index) => index.toString()}
                     data={this.state.dayData}
-                    renderItem={({item}) =>this.renderItem(item)}
+                    renderItem={({item}) => this.renderItem(item)}
                     numColumns={1}
                     keyExtractor={(item, index) => index}
                 />
+
+
             </View>
         );
     }

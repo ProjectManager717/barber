@@ -1,6 +1,6 @@
 import { Colors } from "../../themes";
 import { Dimensions } from "react-native";
-const { width } = Dimensions.get("window");
+const { width,height } = Dimensions.get("window");
 export const styles = {
   tip_price_container: {
     backgroundColor: Colors.border,

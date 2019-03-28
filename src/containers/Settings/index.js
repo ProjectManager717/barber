@@ -37,8 +37,13 @@ export default class Settings extends Component {
         <ScrollView>
           <Text style={styles.txtHeader} >ACCOUNT</Text>
           <View style={[globalStyles.rowBackground, styles.row]}>
+              <TouchableOpacity onPress={()=>{
+                  this.props.navigation.navigate('Subscription');
+              }}>
             {this.renderRow({title:"Edit Account",ic:require("../../assets/images/ic_settings_account.png")})}
+              </TouchableOpacity>
             {this.renderSeperator()}
+
             {this.renderRow({title:"Change Password",ic:require("../../assets/images/ic_settings_lock.png")})}
             {this.renderSeperator()}
             {this.renderRow({title:"Share Profile",ic:require("../../assets/images/share.png")})}
@@ -116,7 +121,9 @@ export default class Settings extends Component {
           <View style={[globalStyles.rowBackground, styles.row]}>
           {this.renderRow({title:"Website",ic:require("../../assets/images/ic_settings_website.png")})}
           {this.renderSeperator()}
+
           {this.renderRow({title:"Terms of Service",ic:require("../../assets/images/ic_settings_tns.png")})}
+
           {this.renderSeperator()}
           {this.renderRow({title:"Privacy Policy",ic:require("../../assets/images/ic_settings_pp.png")})}
           </View>

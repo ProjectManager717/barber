@@ -35,6 +35,8 @@ import Appointments from "./containers/Barber/Appointments"
 import SurgePricingRate from "./containers/Settings/SurgePricing/SurgePricingRate"
 import PaymentMethod from "./containers/Settings/MobilePay/PaymentMethod"
 import BarberEditProfile from "./containers/Barber/Profile/BarberEditProfile"
+import Subscription from "./containers/Settings/Subscription"
+import ClientBlast from "./containers/Settings/ClientBlast"
 
 
 import colors from "./themes/colors";
@@ -133,7 +135,9 @@ const AuthStack = createStackNavigator({
     SurgePricingRate:SurgePricingRate,
     PaymentMethod:PaymentMethod,
     BarberEditProfile:BarberEditProfile,
-
+    Subscription:Subscription,
+    ClientBlast:ClientBlast,
+    Settings:Settings,
 }, {
     initialRouteName: 'SelectScreen',
     headerMode: 'none'

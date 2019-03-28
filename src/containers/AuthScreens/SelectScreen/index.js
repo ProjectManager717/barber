@@ -12,11 +12,11 @@ class SelectScreen extends Component {
   }
 
   onBarber = () => {
-    this.props.navigation.navigate('InitialScreen');
+    this.props.navigation.navigate('InitialScreen',{User:"Barber"});
   };
 
   onClient = () => {
-    this.props.navigation.navigate('InitialScreen');
+    this.props.navigation.navigate('InitialScreen',{User:"Client"});
   };
 
   render() {
