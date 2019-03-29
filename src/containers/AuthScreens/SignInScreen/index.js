@@ -5,12 +5,12 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { styles } from './styles';
 import {CloseButton, ImageButton, Input, RedButton} from '../../../components';
 import { checkEmail } from '../../../utils';
-
+let itemId="";
 class SignInScreen extends Component {
   constructor(props) {
     super(props);
       const { navigation } = this.props;
-      const itemId = navigation.getParam('User');
+      itemId = navigation.getParam('User');
       console.log("gettingUSersignIn--->"+itemId);
     this.state = {
       email: '',
@@ -25,11 +25,18 @@ class SignInScreen extends Component {
 
 
   onClose = () => {
-    alert('onClose');
+    this.props.navigation.goBack();
   };
 
   onLogin = () => {
-    this.props.navigation.navigate('TabNavigator');
+    if(itemId==="Client")
+    {
+      alert("Please use Barber SignIn to go Further");
+    }else
+    {
+        this.props.navigation.navigate('TabNavigator');
+    }
+
   };
 
   onChangeText = (key, value) => {

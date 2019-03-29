@@ -23,6 +23,27 @@ class InitialScreen extends Component {
     onSignIn = () => {
         this.props.navigation.navigate('SignInScreen', {User:this.state.userName});
     };
+    componentDidMount(){
+        this.getEvents();
+    }
+
+    getEvents()
+    {
+        console.log("LandingScreenResult:-->"+ "calling APi");
+        fetch('http://ec2-34-211-183-21.us-west-2.compute.amazonaws.com/event?user_id=281&latitude=49.2834317&longitude=-123.11491930000001&search_distance=10000', {
+            method: 'GET',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json; charset=UTF-8',
+            }
+        }).then((response) => response.json())
+            .then((responseJson) => {
+                console.log("LandingScreenResult:-->"+JSON.stringify(responseJson) );
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+    }
 
     render() {
         return (

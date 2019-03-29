@@ -20,6 +20,87 @@ export default class Calendar extends Component {
         this.state = {
             dataSource: [],
             dayData: [],
+            listData:[
+
+                {
+                 id:1,
+                 service:"Haircut & Beard",
+                 clientName:"Sergio Ramos",
+                 duration:'30 mins',
+                 price:'$30.00',
+                    imagep:require("../../../assets/images/completed.png"),
+                 imgText:"COMPLETED",
+                    imgTextcolor:Colors.green
+                },
+                {
+                    id:2,
+                    service:"Haircut",
+                    clientName:"Sir Alex Ferguson",
+                    duration:'30 mins',
+                    price:'$25.00',
+                    imagep:require("../../../assets/images/progress.png"),
+                    imgText:"IN PROGRESS",
+                    imgTextcolor:Colors.purple
+                },
+                {
+                    id:3,
+                    service:"Haircut, Beard & Shave",
+                    clientName:"Leo Messi",
+                    duration:'1 hr',
+                    price:'$45.00',
+                    imagep:require("../../../assets/images/confirmed.png"),
+                    imgText:"CONFIRMED",
+                    imgTextcolor:Colors.magenta
+                },
+                {
+                    id:4,
+                    service:"Haircut, Beard & Shave",
+                    clientName:"Leo Messi",
+                    duration:'1 hr',
+                    price:'$45.00',
+                    imagep:require("../../../assets/images/confirmed.png"),
+                    imgText:"CONFIRMED",
+                    imgTextcolor:Colors.magenta
+
+
+                },
+                {
+                    id:5,
+                    service:"Haircut & Beard",
+                    clientName:"Anthony Martial",
+                    duration:'30 mins',
+                    price:'$30.00',
+                    imagep:require("../../../assets/images/pending.png"),
+                    imgText:"PENDING",
+                    imgTextcolor:Colors.yellow,
+                },
+
+                {
+                    id:6,
+                    service:"Haircut & Beard",
+                    clientName:"Anthony Martial",
+                    duration:'$45 mins',
+                    price:'$28.00',
+                    imagep:require("../../../assets/images/cancelled.png"),
+                    imgText:"CANCELLED",
+                    imgTextcolor:Colors.red
+
+                },
+                {
+                    id:7,
+                    service:"Haircut & Beard",
+                    clientName:"Anthony Martial",
+                    duration:'$30.00',
+                    price:'$30.00',
+                    imagep:require("../../../assets/images/noShow.png"),
+                    imgText:"NO SHOW",
+                    imgTextcolor:Colors.grey
+                },
+
+
+
+            ]
+
 
         };
     }
@@ -88,20 +169,26 @@ export default class Calendar extends Component {
     renderItem(item) {
         //item.id*30
         let bgColor = Colors.themeBackground;
-        if (item.id == 0) {
+        if (item.id == 1) {
             bgColor = Colors.green;
         }
-        if (item.id == 1) {
-            bgColor = Colors.purple
-        }
         if (item.id == 2) {
-            bgColor = Colors.magenta
+            bgColor = Colors.purple;
         }
         if (item.id == 3) {
             bgColor = Colors.magenta
         }
-        if (item.id == 6) {
+        if (item.id ==4) {
             bgColor = Colors.magenta
+        }
+        if (item.id == 5) {
+            bgColor = Colors.yellow
+        }
+        if (item.id == 6) {
+            bgColor = Colors.red
+        }
+        if (item.id == 7) {
+            bgColor = Colors.grey
         }
 
 
@@ -136,27 +223,27 @@ export default class Calendar extends Component {
                         borderLeftWidth: 0,
                     }}>
                         <View style={{flexDirection: "row", width: "100%"}}>
-                            <View style={{flexDirection: "column", alignItems: "center", justifyContent: "center"}}>
-                                <View style={{flexDirection: "row", marginStart: 10}}>
+                            <View style={{flexDirection: "column", alignItems: "flex-start", justifyContent: "center",
+                            width:"100%",marginStart:20}}>
+                                <View style={{flexDirection: "row",}}>
                                     <Text style={{
                                         fontWeight: "bold", color: "white",
                                         fontSize: 11
-                                    }}>Haircut & Beard</Text>
-                                    <Text style={{marginStart: 8,marginTop:1, color: "white", fontSize: 10}}>Sergio
-                                        Ramos</Text>
+                                    }}>{item.service}</Text>
+                                    <Text style={{marginStart: 8,marginTop:1, color: "white", fontSize: 10}}>
+                                        {item.clientName}
+                                    </Text>
                                 </View>
-                                <View style={{flexDirection: "row", marginStart: 10, marginTop: 7}}>
+                                <View style={{flexDirection: "row",  marginTop: 7}}>
                                     <Image source={require("../../../assets/images/chair.png")} resizeMode={"contain"}
                                            style={{
-                                               position: "absolute",
                                                height: 12,
                                                width: 12,
-                                               marginStart: -20,
                                                marginTop: 3
 
                                            }}
                                     />
-                                    <Text style={{color: "#95A2B5", fontSize: 12}}>30 mins</Text>
+                                    <Text style={{color: "#95A2B5", fontSize: 12}}>{item.duration}</Text>
                                     <View style={{
                                         flexDirection: "column",
                                         width: 1,height:13,
@@ -165,16 +252,16 @@ export default class Calendar extends Component {
                                         marginStart: 10,
                                         marginEnd: 10
                                     }}/>
-                                    <Text style={{color: "#95A2B5", fontSize: 12}}>$30.00</Text>
+                                    <Text style={{color: "#95A2B5", fontSize: 12}}>{item.price}</Text>
                                 </View>
                             </View>
 
                         </View>
                         <Image resizeMode={"cover"}
                                style={{width: 60, height: "100%", position: "absolute", right: 0, top: 0}}
-                               source={require("../../../assets/images/completed.png")}
+                               source={item.imagep}
                         />
-                        <Text style={{color: "#5AD800", fontSize: 7,fontWeight:"bold",position:"absolute",right:6,bottom:15}}>{"COMPLETED"}</Text>
+                        <Text style={{color:[item.imgTextcolor], fontSize: 7,fontWeight:"bold",position:"absolute",right:6,bottom:15}}>{item.imgText}</Text>
                     </View>
                 </View>
 
@@ -255,7 +342,8 @@ export default class Calendar extends Component {
                 />
                 <FlatList
                     keyExtractor={(item, index) => index.toString()}
-                    data={this.state.dayData}
+                    //data={this.state.dayData}
+                    data={this.state.listData}
                     renderItem={({item}) => this.renderItem(item)}
                     numColumns={1}
                     keyExtractor={(item, index) => index}
