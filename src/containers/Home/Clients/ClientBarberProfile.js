@@ -439,9 +439,8 @@ export default class ClientBarberProfile extends Component {
                                     height: "100%",
                                     width: "100%",
                                     marginStart: 25,
-                                    marginBottom: 10
-
-
+                                    marginBottom: 10,
+                                    marginTop:5
                                 }}>
                                     <Text style={{
                                         fontSize: 16, color: "white",
