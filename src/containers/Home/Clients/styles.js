@@ -1,4 +1,6 @@
 import { Colors } from "../../../themes";
+import { Dimensions } from "react-native";
+const { width } = Dimensions.get("window");
 export const styles = {
     tip_price_container:{
         backgroundColor: Colors.border,
@@ -23,5 +25,21 @@ export const styles = {
         height:20,
         width:20
       },
-      
-}
+
+    container: {
+        flex: 1,
+        paddingTop: 0,
+        backgroundColor: Colors.themeBackground
+    },
+    calendar_weekly_header: {
+        height: 60,
+        flexDirection: "row"
+    },
+    week_day_container: {
+        alignSelf: "center",
+        color: "white",
+        fontFamily: "AvertaStd-Semibold",
+        fontSize:12
+    }
+
+};

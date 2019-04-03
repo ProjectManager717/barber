@@ -6,8 +6,16 @@ import {globalStyles} from "../../../themes/globalStyles";
 import {Header} from "react-native-elements";
 import CheckBoxSquare from "../../../components/CheckBox";
 
-
+let clr = "";
 export default class Appointments extends Component {
+
+    constructor(props) {
+
+        super(props);
+        const {navigation} = this.props;
+        clr = navigation.getParam('bgc');
+        console.log("gettingUSersignIn--->" + clr);
+    }
 
 
     renderRowSurge(item) {
@@ -29,7 +37,6 @@ export default class Appointments extends Component {
             <Text style={{marginStart: 30, color: "grey", fontStyle: "italic", height: 20}}>{item.hint}</Text>
         </View>
     }
-
 
     renderRowapp(item) {
         return <View style={{
@@ -119,9 +126,7 @@ export default class Appointments extends Component {
                                 style={{tintColor: 'white', height: 20, resizeMode: 'contain'}}
                                 source={require("../../../assets/images/ic_back.png")}
                             />
-                        </TouchableOpacity>
-                    }
-                />
+                        </TouchableOpacity>}/>
                 <ScrollView>
                     <View style={{flexDirection: "column"}}>
                         <View style={{height: 300, width: "100%"}}>
@@ -142,6 +147,8 @@ export default class Appointments extends Component {
                                     Pequie</Text>
                             </View>
                         </View>
+                        {/*CONFIRMED*/}
+                        {clr === "#00B6FF" &&
                         <View style={{
                             flexDirection: "row",
                             width: "100%",
@@ -168,12 +175,61 @@ export default class Appointments extends Component {
                                 })}
                             </View>
                         </View>
+                        }
+                        {/*//complete*/}
+                        {clr === "#46d400" &&
+                        <View style={{
+                            flexDirection: "row",
+                            width: "100%",
+                            height: 80,
+                            backgroundColor: "grey",
+                            marginTop: 15
+                        }}>
+                            <View style={{width: "100%", backgroundColor: "#5BD900", height: "100%"}}>
+                                {this.renderRowBox({
+                                    img: require("../../../assets/images/tick-2.png"),
+                                    title: "Completed!"
+                                })}</View>
+                        </View>}
+                        {/*NO-SHOW*/}
+                        {clr === "#6c6f79" &&
+                        <View style={{
+                            flexDirection: "row",
+                            width: "100%",
+                            height: 80,
+                            backgroundColor: "grey",
+                            marginTop: 15
+                        }}>
+                            <View style={{width: "100%", backgroundColor: "#A5AAAE", height: "100%"}}>
+                                {this.renderRowBox({
+                                    img: require("../../../assets/images/-.png"),
+                                    title: "No-Show"
+                                })}
+                            </View>
+                        </View>}
+                        {/*CANCEL*/}
+                        {clr === "#f40323" &&
+                        <View style={{
+                            flexDirection: "row",
+                            width: "100%",
+                            height: 80,
+                            backgroundColor: "grey",
+                            marginTop: 15
+                        }}>
+                            <View style={{width: "100%", backgroundColor: "#F7001E", height: "100%"}}>
+                                {this.renderRowBox({
+                                    img: require("../../../assets/images/x.png"),
+                                    title: "Cancelled!"
+                                })}
+                            </View>
+                        </View>
+                        }
                         {this.renderRowapp({
                             ic: require("../../../assets/images/calender.png"),
                             text1: "Wednesday, November 23,2019",
                             text2: "11:00AM - 11:45AM ",
                         })}
-                        <TouchableOpacity onPress={()=>this.props.navigation.navigate("Receipt")}>
+                        <TouchableOpacity onPress={() => this.props.navigation.navigate("Receipt")}>
                             {this.renderRowapp({
                                 ic: require("../../../assets/images/surg_price.png"),
                                 text1: "$35",
@@ -198,14 +254,9 @@ export default class Appointments extends Component {
                             })}
                         </View>
                     </View>
-
                 </ScrollView>
-            </View>
-
-        );
+            </View>);
     }
-
-
 }
 const styles = StyleSheet.create({
     container: {

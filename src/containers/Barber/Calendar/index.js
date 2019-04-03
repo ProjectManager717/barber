@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {View, Text, FlatList, TouchableOpacity, Image} from "react-native";
+import {View, Text, FlatList, TouchableOpacity, TouchableWithoutFeedback, Image} from "react-native";
 
 import {Header} from "react-native-elements";
 
@@ -20,88 +20,97 @@ export default class Calendar extends Component {
         this.state = {
             dataSource: [],
             dayData: [],
-            listData:[
-
+            listData: [
                 {
-                 id:1,
-                 service:"Haircut & Beard",
-                 clientName:"Sergio Ramos",
-                 duration:'30 mins',
-                 price:'$30.00',
-                    imagep:require("../../../assets/images/completed.png"),
-                 imgText:"COMPLETED",
-                    imgTextcolor:Colors.green
+                    id: 1,
+                    service: "Haircut & Beard",
+                    clientName: "Sergio Ramos",
+                    duration: '30 mins',
+                    price: '$30.00',
+                    imagep: require("../../../assets/images/completed.png"),
+                    imgText: "COMPLETED",
+                    imgTextcolor: Colors.green,
+                    bitSet: 0,
+                    bgc: Colors.green,
                 },
                 {
-                    id:2,
-                    service:"Haircut",
-                    clientName:"Sir Alex Ferguson",
-                    duration:'30 mins',
-                    price:'$25.00',
-                    imagep:require("../../../assets/images/progress.png"),
-                    imgText:"IN PROGRESS",
-                    imgTextcolor:Colors.purple
+                    id: 2,
+                    service: "Haircut",
+                    clientName: "Sir Alex Ferguson",
+                    duration: '30 mins',
+                    price: '$25.00',
+                    imagep: require("../../../assets/images/progress.png"),
+                    imgText: "IN PROGRESS",
+                    imgTextcolor: Colors.purple,
+                    bitSet: 0,
+                    bgc: Colors.purple,
                 },
                 {
-                    id:3,
-                    service:"Haircut, Beard & Shave",
-                    clientName:"Leo Messi",
-                    duration:'1 hr',
-                    price:'$45.00',
-                    imagep:require("../../../assets/images/confirmed.png"),
-                    imgText:"CONFIRMED",
-                    imgTextcolor:Colors.magenta
+                    id: 3,
+                    service: "Haircut, Beard & Shave",
+                    clientName: "Leo Messi",
+                    duration: '1 hr',
+                    price: '$45.00',
+                    imagep: require("../../../assets/images/confirmed.png"),
+                    imgText: "CONFIRMED",
+                    imgTextcolor: Colors.magenta,
+                    bitSet: 1,
+                    bgc: Colors.magenta,
                 },
                 {
-                    id:4,
-                    service:"Haircut, Beard & Shave",
-                    clientName:"Leo Messi",
-                    duration:'1 hr',
-                    price:'$45.00',
-                    imagep:require("../../../assets/images/confirmed.png"),
-                    imgText:"CONFIRMED",
-                    imgTextcolor:Colors.magenta
+                    id: 4,
+                    bgc: Colors.magenta,
+                },
+                {
+                    id: 5,
+                    bitSet: 2
+                },
+                {
+                    id: 6,
+                },
+                {
+                    id: 7,
+                    service: "Haircut & Beard",
+                    clientName: "Anthony Martial",
+                    duration: '30 mins',
+                    price: '$30.00',
+                    imagep: require("../../../assets/images/pending.png"),
+                    imgText: "PENDING",
+                    imgTextcolor: Colors.yellow,
+                    bitSet: 0,
+                    bgc: Colors.yellow,
+                },
+                {
+                    id: 8,
+                    service: "Haircut & Beard",
+                    clientName: "Anthony Martial",
+                    duration: '45 mins',
+                    price: '$28.00',
+                    imagep: require("../../../assets/images/cancelled.png"),
+                    imgText: "CANCELLED",
+                    imgTextcolor: Colors.red,
+                    bitSet: 3,
+                    bgc: Colors.red,
+                },
+                {
+                    id: 9,
+                    bgc: Colors.red
 
 
                 },
                 {
-                    id:5,
-                    service:"Haircut & Beard",
-                    clientName:"Anthony Martial",
-                    duration:'30 mins',
-                    price:'$30.00',
-                    imagep:require("../../../assets/images/pending.png"),
-                    imgText:"PENDING",
-                    imgTextcolor:Colors.yellow,
+                    id: 10,
+                    service: "Haircut & Beard",
+                    clientName: "Anthony Martial",
+                    duration: '30 mins',
+                    price: '$30.00',
+                    imagep: require("../../../assets/images/noShow.png"),
+                    imgText: "NO SHOW",
+                    imgTextcolor: Colors.grey,
+                    bitSet: 0,
+                    bgc: Colors.grey,
                 },
-
-                {
-                    id:6,
-                    service:"Haircut & Beard",
-                    clientName:"Anthony Martial",
-                    duration:'$45 mins',
-                    price:'$28.00',
-                    imagep:require("../../../assets/images/cancelled.png"),
-                    imgText:"CANCELLED",
-                    imgTextcolor:Colors.red
-
-                },
-                {
-                    id:7,
-                    service:"Haircut & Beard",
-                    clientName:"Anthony Martial",
-                    duration:'$30.00',
-                    price:'$30.00',
-                    imagep:require("../../../assets/images/noShow.png"),
-                    imgText:"NO SHOW",
-                    imgTextcolor:Colors.grey
-                },
-
-
-
             ]
-
-
         };
     }
 
@@ -122,7 +131,6 @@ export default class Calendar extends Component {
         if (date1 === date2) {
             currentStyle = {color: Colors.green};
         }
-
         return (
             <View
                 key={item.k}
@@ -144,7 +152,9 @@ export default class Calendar extends Component {
                     ]}
                 >
                     {mDate.format("DD")}
+
                 </Text>
+
             </View>
         );
     }
@@ -156,9 +166,10 @@ export default class Calendar extends Component {
             var newDate = weekDate.addDays(i);
             items.push(this.renderWeekDay({k: i, d: newDate}));
         }
-        let hours = Array.apply(null, Array(10)).map((v, i) => {
+        let hours = Array.apply(null, Array(46)).map((v, i) => {
             return {id: i, title: "Title " + i};
         });
+
         console.log("slotsData-->" + JSON.stringify(hours));
         this.setState({
             dayData: hours,
@@ -166,50 +177,37 @@ export default class Calendar extends Component {
         });
     }
 
-    renderItem(item) {
-        //item.id*30
-        let bgColor = Colors.themeBackground;
-        if (item.id == 1) {
-            bgColor = Colors.green;
+    itemSelect(colorItem) {
+        if (colorItem !== "#DF00FF" && colorItem !== "yellow") {
+            this.props.navigation.navigate("Appointments", {bgc: colorItem})
         }
-        if (item.id == 2) {
-            bgColor = Colors.purple;
-        }
-        if (item.id == 3) {
-            bgColor = Colors.magenta
-        }
-        if (item.id ==4) {
-            bgColor = Colors.magenta
-        }
-        if (item.id == 5) {
-            bgColor = Colors.yellow
-        }
-        if (item.id == 6) {
-            bgColor = Colors.red
-        }
-        if (item.id == 7) {
-            bgColor = Colors.grey
-        }
+    }
 
+
+    renderItem(item) {
 
         var m = moment(new Date(2011, 2, 12, 0, 0, 0));
+        var n = moment(new Date(2011, 2, 12, 0, 0, 0));
+        var o = moment(new Date(2011, 2, 12, 0, 0, 0));
         m.add(item.id * 30, "minutes");
-        return (
-            <TouchableOpacity onPress={() => this.props.navigation.navigate("Appointments")}>
+        n.add(item.id * 30 + 30, "minutes");
+        o.add(item.id * 30 + 15, "minutes");
+        if (item.bitSet === 0) {
+            return <TouchableWithoutFeedback onPress={() => this.itemSelect(item.bgc)}>
                 <View style={{height: 70, flexDirection: "row"}} cellKey={item.id}>
-                    <Text
-                        style={{
-                            marginLeft: 10,
-                            marginTop: 6,
-                            width: 50,
-                            fontFamily: "AvertaStd-Regular",
-                            color: Colors.white,
-                            fontSize: 10
-                        }}
-                    >
-                        {m.format("HH:mm")}
+                    <Text style={{
+                        textAlignVertical: "top",
+                        height: 40,
+                        marginLeft: 10,
+                        marginBottom: 30,
+                        width: 50,
+                        fontFamily: "AvertaStd-Regular",
+                        color: Colors.white,
+                        fontSize: 10
+                    }}>
+                        {m.format("hh:mm A")}
                     </Text>
-                    <View style={{width: 6, backgroundColor: bgColor}}/>
+                    <View style={{width: 6, backgroundColor: item.bgc}}/>
                     <View style={{
                         backgroundColor: "#454656",
                         width: "75%",
@@ -223,18 +221,20 @@ export default class Calendar extends Component {
                         borderLeftWidth: 0,
                     }}>
                         <View style={{flexDirection: "row", width: "100%"}}>
-                            <View style={{flexDirection: "column", alignItems: "flex-start", justifyContent: "center",
-                            width:"100%",marginStart:20}}>
+                            <View style={{
+                                flexDirection: "column", alignItems: "flex-start", justifyContent: "center",
+                                width: "100%", marginStart: 20
+                            }}>
                                 <View style={{flexDirection: "row",}}>
                                     <Text style={{
                                         fontWeight: "bold", color: "white",
                                         fontSize: 11
                                     }}>{item.service}</Text>
-                                    <Text style={{marginStart: 8,marginTop:1, color: "white", fontSize: 10}}>
+                                    <Text style={{marginStart: 8, marginTop: 1, color: "white", fontSize: 10}}>
                                         {item.clientName}
                                     </Text>
                                 </View>
-                                <View style={{flexDirection: "row",  marginTop: 7}}>
+                                <View style={{flexDirection: "row", marginTop: 7}}>
                                     <Image source={require("../../../assets/images/chair.png")} resizeMode={"contain"}
                                            style={{
                                                height: 12,
@@ -246,8 +246,8 @@ export default class Calendar extends Component {
                                     <Text style={{color: "#95A2B5", fontSize: 12}}>{item.duration}</Text>
                                     <View style={{
                                         flexDirection: "column",
-                                        width: 1,height:13,
-                                        marginTop:3,
+                                        width: 1, height: 13,
+                                        marginTop: 3,
                                         backgroundColor: "grey",
                                         marginStart: 10,
                                         marginEnd: 10
@@ -261,18 +261,273 @@ export default class Calendar extends Component {
                                style={{width: 60, height: "100%", position: "absolute", right: 0, top: 0}}
                                source={item.imagep}
                         />
-                        <Text style={{color:[item.imgTextcolor], fontSize: 7,fontWeight:"bold",position:"absolute",right:6,bottom:15}}>{item.imgText}</Text>
+                        <Text style={{
+                            color: [item.imgTextcolor],
+                            fontSize: 7,
+                            fontWeight: "bold",
+                            position: "absolute",
+                            right: 8,
+                            bottom: 15
+                        }}>{item.imgText}</Text>
+                    </View>
+                </View>
+            </TouchableWithoutFeedback>;
+        }
+        if (item.bitSet === 1) {
+            return <TouchableOpacity onPress={() => this.props.navigation.navigate("Appointments", {bgc: item.bgc})}>
+                <View style={{height: 140, flexDirection: "row"}} cellKey={item.id}>
+                    <View style={{flexDirection: "column"}}>
+                        <Text
+                            style={{
+                                marginLeft: 10,
+                                width: 50,
+                                height: 70,
+                                fontFamily: "AvertaStd-Regular",
+                                color: Colors.white,
+                                fontSize: 10
+                            }}
+                        >
+                            {m.format("HH:mm A")}
+                        </Text>
+
+                        <Text
+                            style={{
+                                marginLeft: 10,
+                                width: 50,
+                                fontFamily: "AvertaStd-Regular",
+                                color: Colors.white,
+                                fontSize: 10
+                            }}
+                        >
+                            {n.format("HH:mm A")}
+                        </Text>
+                    </View>
+
+                    <View style={{width: 6, backgroundColor: item.bgc}}/>
+                    <View style={{
+                        backgroundColor: "#454656",
+                        width: "75%",
+                        flexDirection: "row",
+                        borderTopLeftRadius: 0,
+                        borderBottomLeftRadius: 0,
+                        borderRadius: 5,
+                        borderWidth: 0.5,
+                        borderColor: "white",
+                        borderBottomWidth: 0,
+                        borderLeftWidth: 0,
+
+                    }}>
+                        <View style={{flexDirection: "row", width: "100%"}}>
+                            <View style={{
+                                flexDirection: "column", alignItems: "flex-start", justifyContent: "center",
+                                width: "100%", marginStart: 20
+                            }}>
+                                <View style={{flexDirection: "row",}}>
+                                    <Text style={{
+                                        fontWeight: "bold", color: "white",
+                                        fontSize: 11
+                                    }}>{item.service}</Text>
+                                    <Text style={{marginStart: 8, marginTop: 1, color: "white", fontSize: 10}}>
+                                        {item.clientName}
+                                    </Text>
+                                </View>
+                                <View style={{flexDirection: "row", marginTop: 7}}>
+                                    <Image source={require("../../../assets/images/chair.png")}
+                                           resizeMode={"contain"}
+                                           style={{
+                                               height: 12,
+                                               width: 12,
+                                               marginTop: 3
+
+                                           }}
+                                    />
+                                    <Text style={{color: "#95A2B5", fontSize: 12}}>{item.duration}</Text>
+                                    <View style={{
+                                        flexDirection: "column",
+                                        width: 1, height: 13,
+                                        marginTop: 3,
+                                        backgroundColor: "grey",
+                                        marginStart: 10,
+                                        marginEnd: 10
+                                    }}/>
+                                    <Text style={{color: "#95A2B5", fontSize: 12}}>{item.price}</Text>
+                                </View>
+                            </View>
+
+                        </View>
+                        <Image resizeMode={"cover"}
+                               style={{width: 60, height: "100%", position: "absolute", right: 0, top: 0}}
+                               source={item.imagep}
+                        />
+                        <Text style={{
+                            color: [item.imgTextcolor],
+                            fontSize: 7,
+                            fontWeight: "bold",
+                            position: "absolute",
+                            right: 6,
+                            bottom: 37
+                        }}>{item.imgText}</Text>
                     </View>
                 </View>
 
-            </TouchableOpacity>
-        );
+            </TouchableOpacity>;
+        }
+        if (item.bitSet === 2) {
+            return (<TouchableOpacity onPress={() => this.props.navigation.navigate("Appointments")}>
+                <View style={{height: 140, flexDirection: "row"}} cellKey={item.id}>
+                    <View style={{flexDirection: "column"}}>
+                        <Text
+                            style={{
+                                marginLeft: 10,
+                                width: 50,
+                                height: 70,
+                                fontFamily: "AvertaStd-Regular",
+                                color: Colors.white,
+                                fontSize: 10
+                            }}
+                        >
+                            {m.format("HH:mm A")}
+                        </Text>
+
+                        <Text
+                            style={{
+                                marginLeft: 10,
+                                width: 50,
+                                fontFamily: "AvertaStd-Regular",
+                                color: Colors.white,
+                                fontSize: 10
+                            }}
+                        >
+                            {n.format("HH:mm A")}
+                        </Text>
+                    </View>
+                    <View style={{
+                        backgroundColor: "grey",
+                        width: "76.5%",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        borderLeftWidth: 0.5,
+                        borderLeftColor: "grey"
+
+                    }}>
+                        <Image source={require("../../../assets/images/break.png")} resizeMode={"cover"}
+                               style={{
+                                   width: "100%",
+                                   height: "100%",
+                               }}/>
+                        <Text style={{
+                            color: "white",
+                            textAlign: "center",
+                            position: "absolute"
+                        }}>{"BREAK TIME"}</Text>
+                    </View>
+
+
+                </View>
+            </TouchableOpacity>);
+
+        }
+        if (item.bitSet === 3) {
+            return <TouchableOpacity onPress={() => this.props.navigation.navigate("Appointments", {bgc: item.bgc})}>
+                <View style={{height: 140, flexDirection: "row"}} cellKey={item.id}>
+                    <View style={{flexDirection: "column"}}>
+                        <Text
+                            style={{
+                                marginLeft: 10,
+                                width: 50,
+                                height: 70,
+                                fontFamily: "AvertaStd-Regular",
+                                color: Colors.white,
+                                fontSize: 10
+                            }}
+                        >
+                            {m.format("HH:mm A")}
+                        </Text>
+
+                        <Text
+                            style={{
+                                marginLeft: 10,
+                                width: 50,
+                                fontFamily: "AvertaStd-Regular",
+                                color: Colors.white,
+                                fontSize: 10
+                            }}
+                        >
+                            {n.format("HH:mm A")}
+                        </Text>
+                    </View>
+                    <View style={{height:105,width: 6, backgroundColor: item.bgc}}/>
+                    <View style={{
+                        backgroundColor: "#454656",
+                        width: "75%",
+                        height:105,
+                        flexDirection: "row",
+                        borderTopLeftRadius: 0,
+                        borderBottomLeftRadius: 0,
+                        borderRadius: 5,
+                        borderWidth: 0.5,
+                        borderColor: "white",
+                        borderBottomWidth: 0,
+                        borderLeftWidth: 0,
+
+                    }}>
+                        <View style={{flexDirection: "row", width: "100%"}}>
+                            <View style={{
+                                flexDirection: "column", alignItems: "flex-start", justifyContent: "center",
+                                width: "100%", marginStart: 20
+                            }}>
+                                <View style={{flexDirection: "row",}}>
+                                    <Text style={{
+                                        fontWeight: "bold", color: "white",
+                                        fontSize: 11
+                                    }}>{item.service}</Text>
+                                    <Text style={{marginStart: 8, marginTop: 1, color: "white", fontSize: 10}}>
+                                        {item.clientName}
+                                    </Text>
+                                </View>
+                                <View style={{flexDirection: "row", marginTop: 7}}>
+                                    <Image source={require("../../../assets/images/chair.png")}
+                                           resizeMode={"contain"}
+                                           style={{
+                                               height: 12,
+                                               width: 12,
+                                               marginTop: 3
+
+                                           }}
+                                    />
+                                    <Text style={{color: "#95A2B5", fontSize: 12}}>{item.duration}</Text>
+                                    <View style={{
+                                        flexDirection: "column",
+                                        width: 1, height: 13,
+                                        marginTop: 3,
+                                        backgroundColor: "grey",
+                                        marginStart: 10,
+                                        marginEnd: 10
+                                    }}/>
+                                    <Text style={{color: "#95A2B5", fontSize: 12}}>{item.price}</Text>
+                                </View>
+                            </View>
+
+                        </View>
+                        <Image resizeMode={"cover"}
+                               style={{width: 60, height: "100%", position: "absolute", right: 0, top: 0}}
+                               source={item.imagep}
+                        />
+                        <Text style={{
+                            color: [item.imgTextcolor],
+                            fontSize: 7,
+                            fontWeight: "bold",
+                            position: "absolute",
+                            right: 6,
+                            bottom: 37
+                        }}>{item.imgText}</Text>
+                    </View>
+                </View>
+
+            </TouchableOpacity>;
+        }
     }
 
-    renderRow(item) {
-
-
-    }
 
     render() {
         return (

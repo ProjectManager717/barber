@@ -31,7 +31,7 @@ class SignInScreen extends Component {
   onLogin = () => {
     if(itemId==="Client")
     {
-      alert("Please use Barber SignIn to go Further");
+        this.props.navigation.navigate('ClientTabNavigator');
     }else
     {
         this.props.navigation.navigate('TabNavigator');

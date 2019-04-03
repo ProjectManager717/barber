@@ -37,6 +37,10 @@ import PaymentMethod from "./containers/Settings/MobilePay/PaymentMethod"
 import BarberEditProfile from "./containers/Barber/Profile/BarberEditProfile"
 import Subscription from "./containers/Settings/Subscription"
 import ClientBlast from "./containers/Settings/ClientBlast"
+import ClientHome from "./containers/Home/Clients"
+import ClientBarberProfile from "./containers/Home/Clients/ClientBarberProfile"
+import ClientSettings from "./containers/Settings/ClientSettings"
+import ClientEditProfile from "./containers/Home/Clients/ClientEditProfile"
 
 
 import colors from "./themes/colors";
@@ -112,6 +116,78 @@ const TabNavigator = createBottomTabNavigator(
     }
 );
 
+const ClientTabNavigator = createBottomTabNavigator(
+    {
+        Calendar: {
+            screen: Calendar,
+            navigationOptions: {
+                tabBarLabel: "Haircuts"
+            }
+        },
+        Home: {
+            screen: ClientHome,
+            navigationOptions: {
+                tabBarLabel: "Bookings"
+            }
+        },
+        Reviews: {
+            screen: Reviews,
+            navigationOptions: {
+                tabBarLabel: "Search"
+            },
+            headerTitleStyle: {
+                fontWeight: "bold",
+                color: "#fff",
+            },
+            headerTintColor: "#fff"
+        },
+        Settings: {
+            screen: ClientSettings,
+            navigationOptions: {
+                tabBarLabel: "Settings"
+            },
+        }
+    },
+    {
+        initialRouteName: "Home",
+        defaultNavigationOptions: ({navigation}) => ({
+            tabBarIcon: ({focused, horizontal, tintColor}) => {
+                const {routeName} = navigation.state;
+
+                if (routeName === "Calendar") {
+                    if (focused) {
+                        return <Image source={require('./assets/images/haircuts.png')} style={styles.icon}/>
+                    } else {
+                        return <Image source={require('./assets/images/haircuts.png')} style={styles.icon}/>
+                    }
+                } else if (routeName === "Home") {
+                    if (focused) {
+                        return <Image source={require('./assets/images/bookings.png')} style={styles.icon}/>
+                    } else {
+                        return <Image source={require('./assets/images/bookings.png')} style={styles.icon}/>
+                    }
+                } else if (routeName === "Reviews") {
+                    if (focused) {
+                        return <Image source={require('./assets/images/search.png')} style={styles.icon}/>
+                    } else {
+                        return <Image source={require('./assets/images/search.png')} style={styles.icon}/>
+                    }
+                } else if (routeName === "Settings") {
+                    if (focused) {
+                        return <Image source={require('./assets/images/setting.png')} style={styles.icon}/>
+                    } else {
+                        return <Image source={require('./assets/images/setting.png')} style={styles.icon}/>
+                    }
+                }
+            },
+        }),
+        tabBarOptions: {
+            activeTintColor: colors.bottomTabTintColor
+        }
+    }
+);
+
+
 const AuthStack = createStackNavigator({
     SelectScreen: SelectScreen,
     ConfirmSMSScreen: ConfirmSMSScreen,
@@ -138,6 +214,11 @@ const AuthStack = createStackNavigator({
     Subscription:Subscription,
     ClientBlast:ClientBlast,
     Settings:Settings,
+    ClientHome:ClientHome,
+    ClientTabNavigator:ClientTabNavigator,
+    ClientBarberProfile:ClientBarberProfile,
+    ClientSettings:ClientSettings,
+    ClientEditProfile:ClientEditProfile,
 }, {
     initialRouteName: 'SelectScreen',
     headerMode: 'none'
