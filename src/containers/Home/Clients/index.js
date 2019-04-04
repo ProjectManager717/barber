@@ -155,8 +155,8 @@ export default class ClientHome extends Component {
                             fontSize: 14,
                             fontWeight: "bold",
                             textShadowColor:"black",
-                            textShadowOffset: {width: -1, height: 1},
-                            textShadowRadius: 20,
+                            textShadowOffset: {width: -2, height: 1},
+                            textShadowRadius: 3,
                             color: Colors.white
                         }}>{item.title2}</Text>
                         <View style={{flexDirection: "row", alignItems: "center"}}>
@@ -164,8 +164,8 @@ export default class ClientHome extends Component {
                                    style={{width: 20, height: 20}}/>
                             <Text style={{fontSize: 12, color: Colors.white,
                                 textShadowColor:"black",
-                                textShadowOffset: {width: -1, height: 1},
-                                textShadowRadius: 20,
+                                textShadowOffset: {width: -2, height: 1},
+                                textShadowRadius: 3,
 
                             }}>{item.address}</Text>
                         </View>
@@ -179,8 +179,8 @@ export default class ClientHome extends Component {
                             />
                             <Text style={{marginStart: 5, fontSize: 10, color: Colors.white,
                                 textShadowColor:"black",
-                                textShadowOffset: {width: -1, height: 1},
-                                textShadowRadius: 20,}}>{"(17 Reviews)"}</Text>
+                                textShadowOffset: {width: -2, height: 1},
+                                textShadowRadius: 3,}}>{"(17 Reviews)"}</Text>
                         </View>
                     </View>
                     <View style={{flexDirection: "column", width: "40%", height: "100%"}}>
@@ -294,7 +294,7 @@ export default class ClientHome extends Component {
                             marginStart: 20,
                             marginTop: 20,
 
-                        }}>{"Favourite Barbers"} </Text>
+                        }}>{"Favorite Barbers"} </Text>
                     </View>
 
                     <View style={{marginTop: 0, marginStart: 20, marginEnd: 20, marginBottom: 20}}>

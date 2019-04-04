@@ -55,7 +55,9 @@ export default class SurgePricingRate extends Component {
                                 <Text style={[globalStyles.buttonText, {color: "#16ABDB",marginBottom:5}]}>+$12.50</Text>
                             </TouchableOpacity>
 
-                            <TouchableOpacity style={[globalStyles.button, {
+                            <TouchableOpacity onPress={()=>{
+                                this.props.navigation.navigate('ClientLeaveReview');
+                            }} style={[globalStyles.button, {
                                 height: 35,
                                 width: 250,
                                 backgroundColor: "red",

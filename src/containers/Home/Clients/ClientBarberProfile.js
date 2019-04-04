@@ -192,7 +192,7 @@ export default class ClientBarberProfile extends Component {
                             fontSize: 11,
                             fontWeight: "bold",
                             textAlign: "center",
-                            marginTop: 3
+                            marginTop: 2
                         }}>
                             {m.format("hh:mm A")}
                         </Text>
@@ -204,19 +204,19 @@ export default class ClientBarberProfile extends Component {
                 <TouchableWithoutFeedback onPress={() => this.itemSelect(item.id)}>
                     <View style={{height: 20, flexDirection: "row", marginStart: 10}} cellKey={item.id}>
                         <Image resizeMode={"contain"} source={require("../../../assets/images/dollar_surge.png")}
-                               style={{width: 15, height: 15}}/>
+                               style={{width: 12, height: 12,marginTop:3}}/>
                         <Text style={{
                             textAlignVertical: "top",
                             height: 40,
                             marginBottom: 30,
-                            marginStart: 5,
+                            marginStart: 4,
                             marginEnd: 5,
                             width: 50,
                             fontFamily: "AvertaStd-Regular",
                             color: "#01E8F1",
                             fontSize: 11,
                             fontWeight: "bold",
-                            marginTop: 4
+                            marginTop: 2
                         }}>
                             {m.format("hh:mm A")}
                         </Text>
@@ -279,20 +279,30 @@ export default class ClientBarberProfile extends Component {
                                     <Text style={{color: colors.white, fontSize: 12}}>
                                         CLYPR Barbershop
                                     </Text>
+
                                     <Image resizeMode={"contain"}
                                            style={{height: 8, width: 8, marginStart: 10, marginTop: 5}}
                                            source={require("../../../assets/images/arrow_down.png")}/>
+
+
                                 </View>
+
                                 <View style={styles.review}>
+                                    <TouchableOpacity  onPress={()=>{
+                                        this.props.navigation.navigate('ClientSupremeReview');
+                                    }}  >
                                     <Image
                                         resizeMode="contain"
                                         source={require("../../../assets/images/start.png")}
                                         style={styles.rating}
                                     />
+                                    </TouchableOpacity>
                                     <Text style={[styles.allFontStyle, styles.reviewText]}>
                                         (17 Reviews)
                                     </Text>
+
                                 </View>
+
                             </View>
                         </View>
 
@@ -362,7 +372,7 @@ export default class ClientBarberProfile extends Component {
                             </View>
                             <View style={[{width: "25%", right: 5, flexDirection: "row"}]}>
                                 <View style={{width: 1, height: "100%", backgroundColor: "#686975"}}/>
-                                <Text style={{color: "white", fontSize: 12}}>Prizes </Text>
+                                <Text style={{color: "white", fontSize: 12}}>Prices</Text>
                             </View>
                         </View>
 
@@ -376,7 +386,7 @@ export default class ClientBarberProfile extends Component {
                                             marginStart: 10,
                                             alignItems: "center"
                                         }]}>
-                                            <CheckBoxSquare isChecked={item.check}/>
+                                            <CheckBoxSquare isChecked={item.check} uncheckedCheckBoxColor={"#84858C"}  />
                                             <Text style={{color: "white", fontSize: 12}}>   {item.title} </Text>
                                         </View>
                                         <View style={[{flexDirection: "row", width: "25%", alignItems: "center"}]}>
@@ -423,7 +433,7 @@ export default class ClientBarberProfile extends Component {
                             keyExtractor={(item, index) => index}
                             horizontal={true}/>
                     </View>
-                    <View style={{flexDirection: "column", height: 90, width: "100%", marginBottom: 30}}>
+                    <View style={{flexDirection: "column", height: 100, width: "100%", marginBottom: 30}}>
                         <View style={{
                             flexDirection: "row",
                             width: "100%",
@@ -432,27 +442,32 @@ export default class ClientBarberProfile extends Component {
                         }}>
                             <View style={{
                                 flexDirection: "row", width: "40%", justifyContent: "center", alignItems: "center",
-                                marginTop: 6
+
                             }}>
                                 <View style={{
                                     flexDirection: "column",
                                     height: "100%",
                                     width: "100%",
                                     marginStart: 25,
-                                    marginBottom: 10,
-                                    marginTop:5
+
+
+
+
+
                                 }}>
                                     <Text style={{
                                         fontSize: 16, color: "white",
-                                        fontFamily: "AvertaStd-Thin"
+                                        fontFamily: "AvertaStd-Thin",
+                                        marginTop:10
+
                                     }}>Subtotal:</Text>
                                     <Text
                                         style={{
                                             fontSize: 35,
                                             fontWeight: "bold",
                                             textAlign: "left",
-                                            color: "white"
-                                        }}
+                                            color: "white",
+                                           }}
                                     >$36.25</Text>
                                     <Text style={{color: "white", fontFamily: "AvertaStd-Thin", fontSize: 12}}>Service
                                         Fee:
@@ -483,7 +498,9 @@ export default class ClientBarberProfile extends Component {
                                     }} resizeMode={"contain"}
                                     source={require("../../../assets/images/arrow_down.png")}/>
                             </View>
-                            <TouchableOpacity style={{
+                            <TouchableOpacity onPress={()=>{
+                                this.props.navigation.navigate('SurgePricingRate');
+                            }}   style={{
                                 backgroundColor: "red",
                                 width: "20%",
                                 height: "100%",

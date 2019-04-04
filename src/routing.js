@@ -41,6 +41,8 @@ import ClientHome from "./containers/Home/Clients"
 import ClientBarberProfile from "./containers/Home/Clients/ClientBarberProfile"
 import ClientSettings from "./containers/Settings/ClientSettings"
 import ClientEditProfile from "./containers/Home/Clients/ClientEditProfile"
+import ClientLeaveReview from "./containers/Home/Clients/ClientLeaveReview"
+import ClientSupremeReview from "./containers/Home/Clients/ClientSupremeReview"
 
 
 import colors from "./themes/colors";
@@ -219,6 +221,8 @@ const AuthStack = createStackNavigator({
     ClientBarberProfile:ClientBarberProfile,
     ClientSettings:ClientSettings,
     ClientEditProfile:ClientEditProfile,
+    ClientLeaveReview:ClientLeaveReview,
+    ClientSupremeReview:ClientSupremeReview
 }, {
     initialRouteName: 'SelectScreen',
     headerMode: 'none'
