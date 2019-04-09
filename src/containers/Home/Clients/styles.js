@@ -40,6 +40,9 @@ export const styles = {
         color: "white",
         fontFamily: "AvertaStd-Semibold",
         fontSize:12
+    },
+    track:{
+       Color:"red"
     }
 
 };

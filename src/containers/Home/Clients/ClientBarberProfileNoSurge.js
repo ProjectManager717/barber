@@ -26,10 +26,10 @@ Date.prototype.addDays = function (days) {
     return date;
 };
 
-export default class ClientBarberProfile extends Component {
+export default class ClientBarberProfileNoSurge extends Component {
 
     rightAction() {
-        this.props.navigation.navigate('BarberEditProfile');
+        this.props.navigation.goBack();
     }
     leftAction() {
         this.props.navigation.goBack();
@@ -486,24 +486,19 @@ export default class ClientBarberProfile extends Component {
                                 justifyContent: "center",
                                 alignItems: "center"
                             }}>
-                                <Image resizeMode={"contain"} source={require("../../../assets/images/visa.png")}
-                                       style={{width: 25}}/>
+
                                 <Text style={{
                                     textAlign: "center",
                                     fontSize: 17,
                                     marginStart: 5,
-
+                                    fontFamily: "AvertaStd-RegularItalic",
                                     color: "white"
 
-                                }}>****4242</Text>
-                                <Image
-                                    style={{
-                                        marginStart: 5,
-                                    }} resizeMode={"contain"}
-                                    source={require("../../../assets/images/arrow_down.png")}/>
+                                }}>Pay in Store</Text>
+
                             </View>
                             <TouchableOpacity onPress={()=>{
-                                this.props.navigation.navigate('ClientBarberProfileNoSurge');
+                                this.props.navigation.navigate('SurgePricingRate');
                             }}   style={{
                                 backgroundColor: "red",
                                 width: "20%",
@@ -511,7 +506,7 @@ export default class ClientBarberProfile extends Component {
                                 alignItems: "center",
                                 justifyContent: "center"
                             }}>
-                                <Text style={{fontSize: 16, color: "white", fontWeight: "bold"}}>Pay</Text>
+                                <Text style={{fontSize: 16, color: "white", fontWeight: "bold"}}>Reserve</Text>
                             </TouchableOpacity>
 
                         </View>

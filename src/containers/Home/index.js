@@ -20,7 +20,7 @@ const {height, width} = Dimensions.get("window");
 
 export default class Home extends Component {
     leftAction() {
-        this.props.navigation.navigate('QRCheckIn');
+        this.props.navigation.goBack();
     }
 
     render() {

@@ -16,13 +16,45 @@ import colors from "../../../themes/colors";
 import CheckBoxSquare from "../../../components/CheckBox";
 import {Colors} from "../../../themes";
 import {globalStyles} from "../../../themes/globalStyles";
+import {AirbnbRating} from "react-native-elements";
+
 
 const {height, width} = Dimensions.get("window");
-
+let ratings = Math.floor(Math.random() * 5 + 1);
 export default class ClientLeaveReview extends Component {
     rightAction() {
         this.props.navigation.goBack();
     }
+
+    state = {
+        unselected: require("../../../assets/images/greentick.png"),
+        unselected2: require("../../../assets/images/greentick.png"),
+        unselected3: require("../../../assets/images/greentick.png"),
+        unselected4: require("../../../assets/images/greentick.png")
+    };
+
+    Selected() {
+        this.setState({unselected: require("../../../assets/images/greenticked.png")})
+    }
+
+    Selected2() {
+
+        this.setState({unselected2:require("../../../assets/images/greenticked.png")})
+    }
+
+    Selected3() {
+        this.setState({unselected3: require("../../../assets/images/greenticked.png")})
+    }
+
+    Selected4() {
+        this.setState({unselected4: require("../../../assets/images/greenticked.png")})
+    }
+
+    constructor(props) {
+        super(props)
+
+    }
+
 
     render() {
         return (
@@ -30,6 +62,7 @@ export default class ClientLeaveReview extends Component {
                 <View style={styles.container}>
                     <Header
                         rightAction={this.rightAction.bind(this)}
+                        leftAction={this.rightAction.bind(this)}
                         bgIcon={require("../../../assets/images/Reviewimage.png")}
                         centerComponent={{text: "RECEIPT", style: {color: "#fff"}}}
                         leftIcon={require("../../../assets/images/ic_back.png")}/>
@@ -50,21 +83,32 @@ export default class ClientLeaveReview extends Component {
                                 </Text>
                                 <View style={{flexDirection: "row",}}>
                                     <Image resizeMode={"contain"}
-                                           style={{height: 15, width: 15,position:"absolute",top:10}}
+                                           style={{height: 15, width: 15, position: "absolute", top: 10}}
                                            source={require("../../../assets/images/colonstart.png")}/>
-                                    <Text style={{color: colors.white,fontFamily:'AvertaStd-Thin' ,fontSize: 20, marginTop: 20,marginStart:16,marginEnd:17}}>
+                                    <Text style={{
+                                        color: colors.white,
+                                        fontFamily: 'AvertaStd-Thin',
+                                        fontSize: 20,
+                                        marginTop: 20,
+                                        marginStart: 16,
+                                        marginEnd: 17
+                                    }}>
                                         AWESOME CLYPR!
                                     </Text>
                                     <Image resizeMode={"contain"}
-                                           style={{height: 15, width: 15,position:"absolute",bottom:-5,right:-3}}
+                                           style={{height: 15, width: 15, position: "absolute", bottom: -5, right: -3}}
                                            source={require("../../../assets/images/colonend.png")}/>
                                 </View>
                                 <View style={styles.review}>
-                                    <Image
-                                        resizeMode={"contain"}
 
-                                        source={require("../../../assets/images/start.png")}
-                                        style={styles.rating}/></View>
+                                    <AirbnbRating
+                                        showRating={false}
+                                        count={5}
+                                        defaultRating={ratings}
+                                        size={20}
+                                        style={{marginStart: 10, height: 30}}
+                                    />
+                                </View>
                             </View>
                         </View>
                         <View style={{
@@ -73,7 +117,8 @@ export default class ClientLeaveReview extends Component {
                             alignItems: "center",
 
                         }}>
-                            <Text style={{color: "white",marginTop:20,fontFamily:"AvertaStd-Thin"}}> What did Anthony do well? </Text></View>
+                            <Text style={{color: "white", marginTop: 20, fontFamily: "AvertaStd-Thin"}}> What did
+                                Anthony do well? </Text></View>
                         <View style={{
                             flexDirection: "row",
                             marginTop: 20,
@@ -89,7 +134,7 @@ export default class ClientLeaveReview extends Component {
                                 width: "50%",
                                 marginEnd: 10
                             }}>
-                                <TouchableOpacity>
+                                <TouchableOpacity onPress={() => this.Selected()}>
                                     <View style={{
                                         flexDirection: "row",
                                         backgroundColor: "#474857",
@@ -106,13 +151,14 @@ export default class ClientLeaveReview extends Component {
                                                source={require("../../../assets/images/goodquality.png")}/>
                                         <Text style={{
                                             color: "white", marginStart: 10,
-                                            marginEnd: 10
+                                            marginEnd: 10,
+
                                         }}>Good Quality</Text>
                                         <Image style={{height: 20, width: 20}} resizeMode={"contain"}
-                                               source={require("../../../assets/images/greentick.png")}/>
+                                               source={this.state.unselected}/>
                                     </View>
                                 </TouchableOpacity>
-                                <TouchableOpacity>
+                                <TouchableOpacity onPress={() => this.Selected2()}>
                                     <View style={{
                                         flexDirection: "row",
                                         backgroundColor: "#474857",
@@ -132,7 +178,7 @@ export default class ClientLeaveReview extends Component {
                                             marginEnd: 20
                                         }}>Punctuality</Text>
                                         <Image style={{height: 20, width: 20}} resizeMode={"contain"}
-                                               source={require("../../../assets/images/greentick.png")}/>
+                                               source={this.state.unselected2}/>
                                     </View></TouchableOpacity>
                             </View>
 
@@ -141,7 +187,7 @@ export default class ClientLeaveReview extends Component {
                                 width: "50%",
                                 marginEnd: 10
                             }}>
-                                <TouchableOpacity>
+                                <TouchableOpacity onPress={() => this.Selected3()}>
                                     <View style={{
                                         flexDirection: "row",
                                         backgroundColor: "#474857",
@@ -163,11 +209,11 @@ export default class ClientLeaveReview extends Component {
 
                                         }}>Cleanliness</Text>
                                         <Image style={{height: 20, width: 20}} resizeMode={"contain"}
-                                               source={require("../../../assets/images/greentick.png")}/>
+                                               source={this.state.unselected3}/>
                                     </View>
                                 </TouchableOpacity>
 
-                                <TouchableOpacity>
+                                <TouchableOpacity onPress={() => this.Selected4()}>
                                     <View style={{
                                         flexDirection: "row",
                                         backgroundColor: "#474857",
@@ -188,7 +234,7 @@ export default class ClientLeaveReview extends Component {
                                             marginEnd: 10
                                         }}>Professional</Text>
                                         <Image style={{height: 20, width: 20}} resizeMode={"contain"}
-                                               source={require("../../../assets/images/greentick.png")}/>
+                                               source={this.state.unselected4}/>
                                     </View>
                                 </TouchableOpacity>
                             </View>
@@ -232,15 +278,25 @@ export default class ClientLeaveReview extends Component {
 
                         }}>
                             <View style={{flexDirection: "column", width: "60%",}}>
-                                <View style={{flexDirection: "row", marginTop:10 }}>
-                                    <CheckBoxSquare isChecked={true} style={{marginTop:4}}  />
+                                <View style={{flexDirection: "row", marginTop: 10}}>
+                                    <CheckBoxSquare isChecked={true} style={{marginTop: 4}}/>
                                     <Text style={{color: "white", marginStart: 10, fontSize: 15,}}>Add a Tip</Text>
                                 </View>
-                                <Text style={{fontSize: 11, fontFamily:"AvertaStd-RegularItalic", marginStart: 20, color: "grey"}}>(100% goes to your
+                                <Text style={{
+                                    fontSize: 11,
+                                    fontFamily: "AvertaStd-RegularItalic",
+                                    marginStart: 20,
+                                    color: "grey"
+                                }}>(100% goes to your
                                     barber)</Text>
                             </View>
                             <View style={{flexDirection: "row", width: "40%"}}>
-                                <Text style={{color: "white", fontSize: 20, fontWeight: "bold",marginStart:10}}>$8.00</Text>
+                                <Text style={{
+                                    color: "white",
+                                    fontSize: 20,
+                                    fontWeight: "bold",
+                                    marginStart: 10
+                                }}>$8.00</Text>
                                 <View style={{
                                     flexDirection: "row",
                                     backgroundColor: "#474857",
@@ -250,7 +306,7 @@ export default class ClientLeaveReview extends Component {
                                     width: 50,
                                     justifyContent: "center",
                                     alignItems: "center",
-                                    marginTop:3
+                                    marginTop: 3
                                 }}>
                                     <Text style={{color: "white", fontSize: 13, marginStart: 10}}>
                                         25%
@@ -269,15 +325,17 @@ export default class ClientLeaveReview extends Component {
 
 
                         </View>
-                        <TouchableOpacity
-                     style={[globalStyles.button, {
-                            height: 35,
-                            width: 250,
-                            backgroundColor: "red",
-                            marginTop:20,
-                         marginBottom:20,
-                        }]}>
-                            <Text style={{fontSize:15,fontWeight:"bold",color:"white"}}>Submit</Text>
+                        <TouchableOpacity onPress={() => {
+                            this.props.navigation.navigate('ReceiptCancelled');
+                        }}
+                                          style={[globalStyles.button, {
+                                              height: 35,
+                                              width: 250,
+                                              backgroundColor: "red",
+                                              marginTop: 20,
+                                              marginBottom: 20,
+                                          }]}>
+                            <Text style={{fontSize: 15, fontWeight: "bold", color: "white"}}>Submit</Text>
                         </TouchableOpacity>
 
                     </View>
@@ -351,7 +409,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        marginTop: 5
+        marginTop: 15
     },
     reviewText: {
         fontSize: 12,

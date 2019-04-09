@@ -150,6 +150,7 @@ export default class ClientHome extends Component {
                         height: "100%",
                         marginTop: 75,
                         marginStart: 10
+
                     }}>
                         <Text style={{
                             fontSize: 14,
@@ -157,9 +158,25 @@ export default class ClientHome extends Component {
                             textShadowColor:"black",
                             textShadowOffset: {width: -2, height: 1},
                             textShadowRadius: 3,
-                            color: Colors.white
+                            color: Colors.white,
+                            backgroundColor:"#454656",
+                            borderRadius:10,
+                            width:"100%",
+                            borderWidth:1,
+                            borderColor:"darkgrey",
+                            paddingStart:5,
+                            opacity:0.8
+
+
                         }}>{item.title2}</Text>
-                        <View style={{flexDirection: "row", alignItems: "center"}}>
+                        <View style={{flexDirection: "row", alignItems: "center",  backgroundColor:"#454656",
+                            borderRadius:10,
+                            width:"100%",
+                        borderWidth:1,
+                        borderTopWidth:0,
+                        borderColor:"darkgrey",
+                            opacity:0.8
+                        }}>
                             <Image source={require("../../../assets/images/shop.png")} resizeMode={"contain"}
                                    style={{width: 20, height: 20}}/>
                             <Text style={{fontSize: 12, color: Colors.white,
@@ -167,9 +184,17 @@ export default class ClientHome extends Component {
                                 textShadowOffset: {width: -2, height: 1},
                                 textShadowRadius: 3,
 
+
                             }}>{item.address}</Text>
                         </View>
-                        <View style={{flexDirection: "row", alignItems: "center"}}>
+                        <View style={{flexDirection: "row", alignItems: "center",  backgroundColor:"#454656",
+                            borderRadius:10,
+                            width:"100%",
+                            borderWidth:1,
+                            borderTopWidth:0,
+                            borderColor:"darkgrey",
+                            opacity:0.8
+                                    }}>
                             <AirbnbRating
                                 showRating={false}
                                 count={5}

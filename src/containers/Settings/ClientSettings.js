@@ -45,8 +45,8 @@ export default class ClientSettings extends Component {
                         {this.renderSeperator()}
 
                         {this.renderRow({title:"Change Password",ic:require("../../assets/images/ic_settings_lock.png")})}
-                        {this.renderSeperator()}
-                        {this.renderRow({title:"Share Profile",ic:require("../../assets/images/share.png")})}
+
+
                     </View>
                     <Text style={styles.txtHeader}>NOTIFICATIONS</Text>
                     <View style={[globalStyles.rowBackground, styles.row]}>
@@ -64,43 +64,15 @@ export default class ClientSettings extends Component {
                     <Text style={styles.txtHeader}>PAYMENT</Text>
                     <View style={[globalStyles.rowBackground, styles.row]}>
                         <TouchableOpacity onPress={()=>{
-                            this.props.navigation.navigate('MobilePay');
+                            this.props.navigation.navigate('PaymentMethod');
                         }}>
 
-                            {this.renderRow({title:"Mobile Pay",ic:require("../../assets/images/ic_setting_mobile_pay.png")})}
+                            {this.renderRow({title:"Payment Method",ic:require("../../assets/images/ic_setting_mobile_pay.png")})}
                         </TouchableOpacity>
                     </View>
-                    <Text style={styles.txtHeader}>APPOINTMENTS</Text>
-                    <View style={[globalStyles.rowBackground, styles.row]}>
-                        <TouchableOpacity onPress={()=>{
-                            this.props.navigation.navigate('BookingPreferences');
-                        }}>
-                            {this.renderRow({title:"Booking Preferences",ic:require("../../assets/images/ic_settings_booking_pref.png")})}
-                        </TouchableOpacity>
-                        {this.renderSeperator()}
-                        <TouchableOpacity onPress={()=>{
-                            this.props.navigation.navigate('Cancellations');
-                        }}>
-                            {this.renderRow({title:"Cancellations & No-Shows",ic:require("../../assets/images/ic_settings_cancellation.png")})}
-                        </TouchableOpacity   >
 
-                        {this.renderSeperator()}
-                        <TouchableOpacity onPress={()=>{
-                            this.props.navigation.navigate('SurgePricing');
-                        }}>
 
-                            {this.renderRow({title:"Surge Pricing",ic:require("../../assets/images/ic_settings_surge.png")})}
-                        </TouchableOpacity>
-                    </View>
-                    <Text style={styles.txtHeader}>PROMOTIONS</Text>
-                    <View style={[globalStyles.rowBackground, styles.row]}>
-                        <TouchableOpacity onPress={()=>{
-                            this.props.navigation.navigate('DiscoverMe');
-                        }}>
-                            {this.renderRow({title:"Discover Me",ic:require("../../assets/images/ic_siren.png")})}
-                        </TouchableOpacity>
 
-                    </View>
                     <Text style={styles.txtHeader}>SHARE</Text>
                     <View style={[globalStyles.rowBackground, styles.row]}>
                         {this.renderRow({title:"Invite Barbers",ic:require("../../assets/images/ic_invite_barbers.png")})}

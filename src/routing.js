@@ -43,6 +43,10 @@ import ClientSettings from "./containers/Settings/ClientSettings"
 import ClientEditProfile from "./containers/Home/Clients/ClientEditProfile"
 import ClientLeaveReview from "./containers/Home/Clients/ClientLeaveReview"
 import ClientSupremeReview from "./containers/Home/Clients/ClientSupremeReview"
+import ClientBarberProfileNoSurge from "./containers/Home/Clients/ClientBarberProfileNoSurge"
+import ReceiptCancelled from "./containers/Settings/Receipt/ReceiptCancelled"
+import ClientBarberSearch from "./containers/Home/Clients/ClientBarberSearch"
+import ClientFilter from "./containers/Home/Clients/ClientFilter"
 
 
 import colors from "./themes/colors";
@@ -133,7 +137,7 @@ const ClientTabNavigator = createBottomTabNavigator(
             }
         },
         Reviews: {
-            screen: Reviews,
+            screen: ClientBarberSearch,
             navigationOptions: {
                 tabBarLabel: "Search"
             },
@@ -208,21 +212,25 @@ const AuthStack = createStackNavigator({
     DiscoverMe: DiscoverMe,
     SurgePricing: SurgePricing,
     MobilePay: MobilePay,
-    MobilePaySettings:MobilePaySettings,
-    Appointments:Appointments,
-    SurgePricingRate:SurgePricingRate,
-    PaymentMethod:PaymentMethod,
-    BarberEditProfile:BarberEditProfile,
-    Subscription:Subscription,
-    ClientBlast:ClientBlast,
-    Settings:Settings,
-    ClientHome:ClientHome,
-    ClientTabNavigator:ClientTabNavigator,
-    ClientBarberProfile:ClientBarberProfile,
-    ClientSettings:ClientSettings,
-    ClientEditProfile:ClientEditProfile,
-    ClientLeaveReview:ClientLeaveReview,
-    ClientSupremeReview:ClientSupremeReview
+    MobilePaySettings: MobilePaySettings,
+    Appointments: Appointments,
+    SurgePricingRate: SurgePricingRate,
+    PaymentMethod: PaymentMethod,
+    BarberEditProfile: BarberEditProfile,
+    Subscription: Subscription,
+    ClientBlast: ClientBlast,
+    Settings: Settings,
+    ClientHome: ClientHome,
+    ClientTabNavigator: ClientTabNavigator,
+    ClientBarberProfile: ClientBarberProfile,
+    ClientSettings: ClientSettings,
+    ClientEditProfile: ClientEditProfile,
+    ClientLeaveReview: ClientLeaveReview,
+    ClientSupremeReview: ClientSupremeReview,
+    ClientBarberProfileNoSurge: ClientBarberProfileNoSurge,
+    ReceiptCancelled:ReceiptCancelled,
+    ClientBarberSearch:ClientBarberSearch,
+    ClientFilter:ClientFilter,
 }, {
     initialRouteName: 'SelectScreen',
     headerMode: 'none'
