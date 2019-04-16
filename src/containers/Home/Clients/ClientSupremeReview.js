@@ -78,7 +78,24 @@ export default class ClientSupremeReview extends Component {
                     barStyle="light-content" // or directly
                     style={{backgroundColor: "yellow"}}
                     outerContainerStyles={{backgroundColor: "#1999CE"}}
-                    leftComponent={{color: "#fff"}}
+                    leftComponent={
+                        <TouchableOpacity
+                        onPress={() => {
+                            this.props.navigation.goBack();
+                        }}
+                        >
+                        <Image
+                        style={{
+                            tintColor: "white",
+                            height: 25,
+                            resizeMode: "contain"
+                        }}
+                        source={require("../../../assets/images/ic_back.png")}
+                        />
+                        </TouchableOpacity>
+
+
+                    }
                     centerComponent={{text: "REVIEWS", style: {color: "#fff"}}}
                     rightComponent={{color: "#fff"}}
                     containerStyle={{

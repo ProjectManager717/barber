@@ -37,7 +37,7 @@ export default class QRCheckIn extends Component {
           outerContainerStyles={{ backgroundColor: "#1999CE" }}
           leftComponent={{ color: "#fff" }}
           centerComponent={{
-            text: "CUSTOMER CHECK IN",
+            text: "CHECK IN",
             style: { color: "#fff" }
           }}
           rightComponent={
@@ -48,20 +48,18 @@ export default class QRCheckIn extends Component {
                 />
             </TouchableOpacity>}
           containerStyle={{
-            backgroundColor: Colors.dark,
+            backgroundColor: Colors.themeBackground,
             justifyContent: "space-around"
           }}
         />
         
         <View style={styles.qr_outer_container}>
-          <Image style={[styles.corner_images,{ left:0,top:0 }]} source={require("../../../assets/images/ic_qr_top_left.png")} />
-          <Image style={[styles.corner_images,{ right:0,top:0 }]} source={require("../../../assets/images/ic_qr_top_right.png")} />
-          <Image style={[styles.corner_images,{ left:0,bottom:0 }]} source={require("../../../assets/images/ic_qr_bottom_left.png")} />
-          <Image style={[styles.corner_images,{ right:0,bottom:0 }]} source={require("../../../assets/images/ic_qr_bottom_right.png")} />
+
+
           <View style={styles.qrcontainer}>
             <QRCode
               value={this.state.text}
-              size={250}
+              size={200}
               bgColor="black"
               fgColor="white"
             />

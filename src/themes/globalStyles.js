@@ -33,8 +33,9 @@ export const globalStyles = {
     justifyContent: "center",
     alignSelf: "center",
     borderRadius: 30,
-    height: height / 19,
-    alignItems: "center"
+    height: height / 17,
+    alignItems: "center",
+
   },
   reciptButton: {
     width: width / 2.2,

@@ -9,10 +9,11 @@ import {
     ImageBackground,
     ScrollView,
     Switch, TextInput,
+
 } from "react-native";
 
 import {Header, Slider} from "react-native-elements";
-
+import hello from "../../../assets/images/arrow_down.png"
 import {Colors} from "../../../themes";
 import {styles} from "./styles";
 import {globalStyles} from "../../../themes/globalStyles";
@@ -195,6 +196,7 @@ export default class ClientBarberSearch extends Component {
 
                     }}>
                         <TouchableOpacity>
+
                      <Image  resizeMode={"contain"} source={require("../../../assets/images/tic_green.png")}
                      style={{ width:20,height:20  }}
 

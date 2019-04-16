@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View,Switch, Text, StyleSheet,Image,ScrollView,TouchableOpacity } from "react-native";
+import { View,Switch, Text, StyleSheet,Image,ScrollView,TouchableOpacity,Linking  } from "react-native";
 import { Colors } from "../../themes";
 import { globalStyles } from "../../themes/globalStyles";
 //import { styles } from "./styles";
@@ -75,35 +75,72 @@ export default class ClientSettings extends Component {
 
                     <Text style={styles.txtHeader}>SHARE</Text>
                     <View style={[globalStyles.rowBackground, styles.row]}>
+                        <TouchableOpacity onPress={ ()=>{ Linking.openURL('sms:1234567?body=Invite Barbers')}}>
                         {this.renderRow({title:"Invite Barbers",ic:require("../../assets/images/ic_invite_barbers.png")})}
+                        </TouchableOpacity>
                         {this.renderSeperator()}
+                        <TouchableOpacity onPress={ ()=>{ Linking.openURL('sms:123457?body=Invite Clients')}}>
                         {this.renderRow({title:"Invite Clients",ic:require("../../assets/images/ic_settings_clients.png")})}
-                    </View>
+                        </TouchableOpacity>
+                        </View>
+
                     <Text style={styles.txtHeader}>CONTACT US</Text>
                     <View style={[globalStyles.rowBackground, styles.row]}>
+
                         {this.renderRow({title:"Send Feedback",ic:require("../../assets/images/ic_setting_send_feedback.png")})}
+
                     </View>
                     <Text style={styles.txtHeader}>FOLLOW US</Text>
                     <View style={[globalStyles.rowBackground, styles.row]}>
+                        <TouchableOpacity onPress={ ()=>{ Linking.openURL('https://facebook.com/teamCLYPR')}}>
                         {this.renderRow({title:"Facebook",ic:require("../../assets/images/ic_settings_fb.png")})}
+                        </TouchableOpacity>
                         {this.renderSeperator()}
+                        <TouchableOpacity onPress={ ()=>{ Linking.openURL('https://instagram.com/teamclypr')}}>
                         {this.renderRow({title:"Instagram",ic:require("../../assets/images/ic_setting_instagram.png")})}
-                    </View>
+                        </TouchableOpacity>
+                        </View>
                     <Text style={styles.txtHeader}>ABOUT</Text>
                     <View style={[globalStyles.rowBackground, styles.row]}>
+                        <TouchableOpacity onPress={ ()=>{ Linking.openURL('https://clypr.co')}}>
                         {this.renderRow({title:"Website",ic:require("../../assets/images/ic_settings_website.png")})}
+                        </TouchableOpacity>
                         {this.renderSeperator()}
 
+                        <TouchableOpacity onPress={ ()=>{ Linking.openURL('https://clypr.co/terms-of-service')}}>
                         {this.renderRow({title:"Terms of Service",ic:require("../../assets/images/ic_settings_tns.png")})}
-
+                        </TouchableOpacity>
                         {this.renderSeperator()}
-                        {this.renderRow({title:"Privacy Policy",ic:require("../../assets/images/ic_settings_pp.png")})}
-                    </View>
-                    <TouchableOpacity style={[globalStyles.button,{marginTop:70, marginBottom:30}]} onPress={()=>{
+                        <TouchableOpacity onPress={ ()=>{ Linking.openURL('https://clypr.co/privacy-policy')}}>
+
+                            {this.renderRow({title:"Privacy Policy",ic:require("../../assets/images/ic_settings_pp.png")})}
+                        </TouchableOpacity>
+                            </View>
+                    <TouchableOpacity style={[globalStyles.button,{marginTop:30, marginBottom:30,textAlignVertical:"center" }]} onPress={()=>{
                         this.props.navigation.navigate('BarberProfile');
                     }}>
                         <Text style={globalStyles.buttonText}>Logout</Text>
                     </TouchableOpacity>
+
+                    <View style={{
+                        flexDirection:"column",
+                        justifyContent:"center",
+                        alignItems:"center",
+
+
+
+
+                    }}  >
+
+                        <Text style={{color:"grey",fontFamily:"AvertaStd-Thin"}} >{"CLYPR Technologies V1.0"}</Text>
+                        <View style={{flexDirection:"row",marginTop:5,marginBottom:10}} >
+                        <Text style={{color:"white",fontWeight:"bold",fontStyle:"italic"}} > Made in Miami </Text>
+                        <Image resizeMode={"contain"}  source={require("../../assets/images/beach.png")}
+                        style={{height:20,width:20,marginStart:10}}
+
+                        />
+                        </View>
+                        </View>
                 </ScrollView>
 
             </View>

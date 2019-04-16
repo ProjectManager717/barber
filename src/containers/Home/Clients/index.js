@@ -73,6 +73,7 @@ export default class ClientHome extends Component {
 
     }
 
+
     renderRowSurge(item) {
         return <View
             style={{
@@ -104,24 +105,47 @@ export default class ClientHome extends Component {
 
 
             </View>
-            <TouchableOpacity
-                style={{
-                    top: 0,
-                    right: 0,
-                    position: "absolute",
-                    height: 26,
-                    width: 75,
-                    marginTop: 10,
-                    marginEnd: 10,
-                    alignItems: 'center',
-                    justifyContent:"center",
-                    borderRadius: 12,
-                    borderWidth: 1, borderColor: item.btnClr,
-                    backgroundColor: "#626371"
-                }}>
-                <Text style={{marginTop: 3, color: "white", fontSize: 10, fontWeight: "bold"}}>{item.btnTxt}</Text>
-            </TouchableOpacity>
+            {item.btnTxt === "Completed" ?
+                <TouchableOpacity
+                    onPress={() => this.props.navigation.navigate("Receipt")}
+                    style={{
+                        top: 0,
+                        right: 0,
+                        position: "absolute",
+                        height: 26,
+                        width: 75,
+                        marginTop: 10,
+                        marginEnd: 10,
+                        alignItems: 'center',
+                        justifyContent: "center",
+                        borderRadius: 12,
+                        borderWidth: 1, borderColor: item.btnClr,
+                        backgroundColor: "#626371"
+                    }}>
 
+                    <Text style={{marginTop: 3, color: "white", fontSize: 10, fontWeight: "bold"}}>{item.btnTxt}</Text>
+                </TouchableOpacity>
+                :
+                <TouchableOpacity
+
+                    style={{
+                        top: 0,
+                        right: 0,
+                        position: "absolute",
+                        height: 26,
+                        width: 75,
+                        marginTop: 10,
+                        marginEnd: 10,
+                        alignItems: 'center',
+                        justifyContent: "center",
+                        borderRadius: 12,
+                        borderWidth: 1, borderColor: item.btnClr,
+                        backgroundColor: "#626371"
+                    }}>
+
+                    <Text style={{marginTop: 3, color: "white", fontSize: 10, fontWeight: "bold"}}>{item.btnTxt}</Text>
+                </TouchableOpacity>
+            }
 
         </View>
     }

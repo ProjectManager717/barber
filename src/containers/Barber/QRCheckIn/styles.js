@@ -80,7 +80,10 @@ export const styles = {
   qr_outer_container: { 
     marginTop : 40,
     alignSelf: "center",
-    padding:20
+    padding:20,
+      backgroundColor:Colors.themeBackground,
+      height:"100%",
+      width:"100%"
   },
   corner_images:{
     height:24,

@@ -47,6 +47,7 @@ import ClientBarberProfileNoSurge from "./containers/Home/Clients/ClientBarberPr
 import ReceiptCancelled from "./containers/Settings/Receipt/ReceiptCancelled"
 import ClientBarberSearch from "./containers/Home/Clients/ClientBarberSearch"
 import ClientFilter from "./containers/Home/Clients/ClientFilter"
+import ClientHaircuts from "./containers/Home/Clients/ClientHaircuts"
 
 
 import colors from "./themes/colors";
@@ -125,7 +126,7 @@ const TabNavigator = createBottomTabNavigator(
 const ClientTabNavigator = createBottomTabNavigator(
     {
         Calendar: {
-            screen: Calendar,
+            screen: ClientHaircuts,
             navigationOptions: {
                 tabBarLabel: "Haircuts"
             }
@@ -231,6 +232,7 @@ const AuthStack = createStackNavigator({
     ReceiptCancelled:ReceiptCancelled,
     ClientBarberSearch:ClientBarberSearch,
     ClientFilter:ClientFilter,
+    ClientHaircuts:ClientHaircuts
 }, {
     initialRouteName: 'SelectScreen',
     headerMode: 'none'
