@@ -69,8 +69,8 @@ export default class DiscoverMe extends Component {
             </View>
           </View>
 
-          <TouchableOpacity style={[globalStyles.button,{marginTop:70,width:'70%'}]} onPress={()=>{
-            this.props.navigation.navigate('BarberProfile');
+          <TouchableOpacity style={[globalStyles.button,{marginTop:70,width:'70%'}]}  onPress={()=>{
+              this.props.navigation.navigate('PaymentMethod');
           }}>
             <Text style={globalStyles.buttonText}>Submit</Text>
           </TouchableOpacity>

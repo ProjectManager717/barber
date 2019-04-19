@@ -20,7 +20,10 @@ const {height, width} = Dimensions.get("window");
 
 export default class Home extends Component {
     leftAction() {
-        this.props.navigation.goBack();
+        this.props.navigation.navigate("QRCheckIn");
+    }
+    rightAction() {
+        this.props.navigation.navigate('Share');
     }
 
     render() {
@@ -29,6 +32,7 @@ export default class Home extends Component {
                 <View style={styles.container}>
                     <Header
                         leftAction={this.leftAction.bind(this)}
+                        rightAction={this.rightAction.bind(this)}
                         bgIcon={require("../../assets/images/header.png")}
                         rightIcon={require("../../assets/images/share.png")}
                         leftIcon={require("../../assets/images/qr.png")}/>

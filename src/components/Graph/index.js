@@ -4,7 +4,7 @@ import colors from "../../themes/colors";
 
 const { height, width } = Dimensions.get("window");
 
-export default class GraphComp extends Component {
+export default class lGraphComp extends Component {
   render() {
     return (
       <View style={styles.container}>
@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     height: height / 1.5
   },
-  graphContainer: { width, height: height / 4 },
+  graphContainer: { width, height: height / 3.5 },
   graph: { height: "100%", width: "100%" },
   boxContainer: {
     justifyContent: "space-between",
@@ -94,6 +94,8 @@ const styles = StyleSheet.create({
     borderColor: colors.white,
     marginTop: 10,
     alignItems: 'center',
+
+
   },
   allBoxes: {
     height: height / 12 + height / 10 + 7,

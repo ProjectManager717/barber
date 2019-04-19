@@ -23,6 +23,11 @@ export default class BarberProfile extends Component {
     rightAction() {
         this.props.navigation.navigate('BarberEditProfile');
     }
+    leftAction(){
+
+        this.props.navigation.goBack();
+
+    }
     constructor(props) {
         super(props);
         this.state = {
@@ -88,6 +93,7 @@ export default class BarberProfile extends Component {
                 <View style={styles.container}>
                     <Header
                         rightAction={this.rightAction.bind(this)}
+                        leftAction={this.leftAction.bind(this)}
                         bgIcon={require("../../../assets/images/bannerprofile.png")}
                         rightIcon={require("../../../assets/images/ic_navbar_edit.png")}
                         leftIcon={require("../../../assets/images/ic_back.png")}/>
@@ -205,7 +211,7 @@ export default class BarberProfile extends Component {
                                             marginStart: 10,
                                             alignItems: "center"
                                         }]}>
-                                            <CheckBoxSquare isChecked={item.check}/>
+                                            <CheckBoxSquare isChecked={item.check} uncheckedCheckBoxColor={"#84858C"}  />
                                             <Text style={{color: "white",fontSize:12}}>   {item.title} </Text>
                                         </View>
                                         <View style={[{flexDirection: "row", width: "25%", alignItems: "center"}]}>

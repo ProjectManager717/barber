@@ -110,9 +110,7 @@ export default class SurgePricing extends Component {
 
                 </ScrollView>
 
-                <TouchableOpacity    onPress={()=>{
-                    this.props.navigation.navigate('SurgePricingRate');
-                }}      style={[globalStyles.button,  {
+                <TouchableOpacity         style={[globalStyles.button,  {
                     marginTop: 70,
                     height: 40,
                     width: 260,

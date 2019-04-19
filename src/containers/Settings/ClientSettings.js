@@ -75,21 +75,21 @@ export default class ClientSettings extends Component {
 
                     <Text style={styles.txtHeader}>SHARE</Text>
                     <View style={[globalStyles.rowBackground, styles.row]}>
-                        <TouchableOpacity onPress={ ()=>{ Linking.openURL('sms:1234567?body=Invite Barbers')}}>
+                        <TouchableOpacity onPress={ ()=>{ Linking.openURL('sms:?body=Invite Barbers')}}>
                         {this.renderRow({title:"Invite Barbers",ic:require("../../assets/images/ic_invite_barbers.png")})}
                         </TouchableOpacity>
                         {this.renderSeperator()}
-                        <TouchableOpacity onPress={ ()=>{ Linking.openURL('sms:123457?body=Invite Clients')}}>
+                        <TouchableOpacity onPress={ ()=>{ Linking.openURL('sms:?body=Invite Clients')}}>
                         {this.renderRow({title:"Invite Clients",ic:require("../../assets/images/ic_settings_clients.png")})}
                         </TouchableOpacity>
                         </View>
 
                     <Text style={styles.txtHeader}>CONTACT US</Text>
-                    <View style={[globalStyles.rowBackground, styles.row]}>
-
-                        {this.renderRow({title:"Send Feedback",ic:require("../../assets/images/ic_setting_send_feedback.png")})}
-
-                    </View>
+                    <TouchableOpacity onPress={() => Linking.openURL('mailto:support@clypr.co') } >
+                        <View style={[globalStyles.rowBackground, styles.row]}>
+                            {this.renderRow({title:"Send Feedback",ic:require("../../assets/images/ic_setting_send_feedback.png")})}
+                        </View>
+                    </TouchableOpacity>
                     <Text style={styles.txtHeader}>FOLLOW US</Text>
                     <View style={[globalStyles.rowBackground, styles.row]}>
                         <TouchableOpacity onPress={ ()=>{ Linking.openURL('https://facebook.com/teamCLYPR')}}>

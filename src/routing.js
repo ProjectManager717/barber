@@ -48,6 +48,7 @@ import ReceiptCancelled from "./containers/Settings/Receipt/ReceiptCancelled"
 import ClientBarberSearch from "./containers/Home/Clients/ClientBarberSearch"
 import ClientFilter from "./containers/Home/Clients/ClientFilter"
 import ClientHaircuts from "./containers/Home/Clients/ClientHaircuts"
+import Share from "./containers/Settings/Share Screen/index"
 
 
 import colors from "./themes/colors";
@@ -85,34 +86,34 @@ const TabNavigator = createBottomTabNavigator(
         }
     },
     {
-        initialRouteName: "Calendar",
+        initialRouteName: "Home",
         defaultNavigationOptions: ({navigation}) => ({
             tabBarIcon: ({focused, horizontal, tintColor}) => {
                 const {routeName} = navigation.state;
 
-                if (routeName == "Calendar") {
+                if (routeName === "Calendar") {
                     if (focused) {
-                        return <Image source={require('./assets/images/calender.png')} style={styles.icon}/>
+                        return <Image source={require('./assets/images/calendar.png')} style={styles.icon}/>
                     } else {
-                        return <Image source={require('./assets/images/calender.png')} style={styles.icon}/>
+                        return <Image source={require('./assets/images/calendagreyr.png')} style={styles.icon}/>
                     }
-                } else if (routeName == "Home") {
+                } else if (routeName === "Home") {
                     if (focused) {
                         return <Image source={require('./assets/images/home.png')} style={styles.icon}/>
                     } else {
-                        return <Image source={require('./assets/images/home.png')} style={styles.icon}/>
+                        return <Image source={require('./assets/images/homgreye.png')} style={styles.icon}/>
                     }
-                } else if (routeName == "Reviews") {
+                } else if (routeName === "Reviews") {
                     if (focused) {
-                        return <Image source={require('./assets/images/review.png')} style={styles.icon}/>
+                        return <Image source={require('./assets/images/reviews.png')} style={styles.icon}/>
                     } else {
-                        return <Image source={require('./assets/images/review.png')} style={styles.icon}/>
+                        return <Image source={require('./assets/images/reviewgreys.png')} style={styles.icon}/>
                     }
-                } else if (routeName == "Settings") {
+                } else if (routeName === "Settings") {
                     if (focused) {
-                        return <Image source={require('./assets/images/setting.png')} style={styles.icon}/>
+                        return <Image source={require('./assets/images/settings.png')} style={styles.icon}/>
                     } else {
-                        return <Image source={require('./assets/images/setting.png')} style={styles.icon}/>
+                        return <Image source={require('./assets/images/settingsgrey.png')} style={styles.icon}/>
                     }
                 }
             },
@@ -163,27 +164,27 @@ const ClientTabNavigator = createBottomTabNavigator(
 
                 if (routeName === "Calendar") {
                     if (focused) {
-                        return <Image source={require('./assets/images/haircuts.png')} style={styles.icon}/>
+                        return <Image source={require('./assets/images/haircut.png')} style={styles.icon}/>
                     } else {
-                        return <Image source={require('./assets/images/haircuts.png')} style={styles.icon}/>
+                        return <Image source={require('./assets/images/haircutgrey.png')} style={styles.icon}/>
                     }
                 } else if (routeName === "Home") {
                     if (focused) {
-                        return <Image source={require('./assets/images/bookings.png')} style={styles.icon}/>
+                        return <Image source={require('./assets/images/booking.png')} style={styles.icon}/>
                     } else {
-                        return <Image source={require('./assets/images/bookings.png')} style={styles.icon}/>
+                        return <Image source={require('./assets/images/bookingsgrey.png')} style={styles.icon}/>
                     }
                 } else if (routeName === "Reviews") {
                     if (focused) {
                         return <Image source={require('./assets/images/search.png')} style={styles.icon}/>
                     } else {
-                        return <Image source={require('./assets/images/search.png')} style={styles.icon}/>
+                        return <Image source={require('./assets/images/searchgrey.png')} style={styles.icon}/>
                     }
                 } else if (routeName === "Settings") {
                     if (focused) {
-                        return <Image source={require('./assets/images/setting.png')} style={styles.icon}/>
+                        return <Image source={require('./assets/images/settings.png')} style={styles.icon}/>
                     } else {
-                        return <Image source={require('./assets/images/setting.png')} style={styles.icon}/>
+                        return <Image source={require('./assets/images/settinggreys.png')} style={styles.icon}/>
                     }
                 }
             },
@@ -232,7 +233,8 @@ const AuthStack = createStackNavigator({
     ReceiptCancelled:ReceiptCancelled,
     ClientBarberSearch:ClientBarberSearch,
     ClientFilter:ClientFilter,
-    ClientHaircuts:ClientHaircuts
+    ClientHaircuts:ClientHaircuts,
+    Share:Share,
 }, {
     initialRouteName: 'SelectScreen',
     headerMode: 'none'

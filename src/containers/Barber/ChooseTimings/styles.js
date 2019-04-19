@@ -5,7 +5,8 @@ export const styles = {
   container: {
     flex: 1,
     paddingTop: 0,
-    backgroundColor: Colors.themeBackground
+    backgroundColor: Colors.themeBackground,
+
   },
   calendar_weekly_header: {
     height: 60,

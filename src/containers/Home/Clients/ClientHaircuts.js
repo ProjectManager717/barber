@@ -28,7 +28,7 @@ export default class ClientHaircuts extends Component {
             upcomingBack: "transparent",
             completeBack: "transparent",
             cancelledBack: "transparent",
-            allBack: "purple",
+            allBack: "#7131FD",
             upcomingtext: "grey",
             completetext: "grey",
             cancelledtext: "grey",
@@ -46,7 +46,7 @@ export default class ClientHaircuts extends Component {
             this.setState({allBack: "transparent", alltext: "grey"});
         }
         if (item === "complete") {
-            this.setState({completeBack: "green", completetext: "white"});
+            this.setState({completeBack: "#00D200", completetext: "white"});
             this.setState({upcomingBack: "transparent", upcomingtext: "grey"});
             this.setState({cancelledBack: "transparent", cancelledtext: "grey"});
             this.setState({allBack: "transparent", alltext: "grey"});
@@ -58,7 +58,7 @@ export default class ClientHaircuts extends Component {
             this.setState({allBack: "transparent", alltext: "grey"});
         }
         if (item === "all") {
-            this.setState({allBack: "purple", alltext: "white"});
+            this.setState({allBack: "#7131FD", alltext: "white"});
             this.setState({cancelledBack: "transparent", cancelledtext: "grey"});
             this.setState({completeBack: "transparent", completetext: "grey"});
             this.setState({upcomingBack: "transparent", upcomingtext: "grey"});
@@ -183,7 +183,7 @@ export default class ClientHaircuts extends Component {
                                                   width: "20%",
                                                   marginStart: 10,
                                                   alignItems: "center"
-                                              }}
+                                         }}
                             >
                                 <Text
                                     style={{

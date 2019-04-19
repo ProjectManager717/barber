@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View,Switch, Text, StyleSheet,Image,ScrollView,TouchableOpacity } from "react-native";
+import {View, Switch, Text, StyleSheet, Image, ScrollView, TouchableOpacity, Linking} from "react-native";
 import { Colors } from "../../themes";
 import { globalStyles } from "../../themes/globalStyles";
 //import { styles } from "./styles";
@@ -46,7 +46,9 @@ export default class Settings extends Component {
 
             {this.renderRow({title:"Change Password",ic:require("../../assets/images/ic_settings_lock.png")})}
             {this.renderSeperator()}
-            {this.renderRow({title:"Share Profile",ic:require("../../assets/images/share.png")})}
+            <TouchableOpacity   onPress={()=>{ this.props.navigation.navigate("Share") }}  >
+                {this.renderRow({title:"Share Profile",ic:require("../../assets/images/share.png")})}
+            </TouchableOpacity>
           </View>
           <Text style={styles.txtHeader}>NOTIFICATIONS</Text>
           <View style={[globalStyles.rowBackground, styles.row]}>
@@ -102,31 +104,47 @@ export default class Settings extends Component {
           
           </View>
           <Text style={styles.txtHeader}>SHARE</Text>
-          <View style={[globalStyles.rowBackground, styles.row]}>
-          {this.renderRow({title:"Invite Barbers",ic:require("../../assets/images/ic_invite_barbers.png")})}
-          {this.renderSeperator()}
-          {this.renderRow({title:"Invite Clients",ic:require("../../assets/images/ic_settings_clients.png")})}
-          </View>
+            <View style={[globalStyles.rowBackground, styles.row]}>
+                <TouchableOpacity onPress={ ()=>{ Linking.openURL('sms:?body=Invite Barbers')}}>
+                    {this.renderRow({title:"Invite Barbers",ic:require("../../assets/images/ic_invite_barbers.png")})}
+                </TouchableOpacity>
+                {this.renderSeperator()}
+                <TouchableOpacity onPress={ ()=>{ Linking.openURL('sms:?body=Invite Clients')}}>
+                    {this.renderRow({title:"Invite Clients",ic:require("../../assets/images/ic_settings_clients.png")})}
+                </TouchableOpacity>
+            </View>
           <Text style={styles.txtHeader}>CONTACT US</Text>
+          <TouchableOpacity onPress={() => Linking.openURL('mailto:support@clypr.co') } >
           <View style={[globalStyles.rowBackground, styles.row]}>
           {this.renderRow({title:"Send Feedback",ic:require("../../assets/images/ic_setting_send_feedback.png")})}
           </View>
+          </TouchableOpacity>
           <Text style={styles.txtHeader}>FOLLOW US</Text>
-          <View style={[globalStyles.rowBackground, styles.row]}>
-          {this.renderRow({title:"Facebook",ic:require("../../assets/images/ic_settings_fb.png")})}
-          {this.renderSeperator()}
-          {this.renderRow({title:"Instagram",ic:require("../../assets/images/ic_setting_instagram.png")})}
-          </View>
+            <View style={[globalStyles.rowBackground, styles.row]}>
+                <TouchableOpacity onPress={ ()=>{ Linking.openURL('https://facebook.com/teamCLYPR')}}>
+                    {this.renderRow({title:"Facebook",ic:require("../../assets/images/ic_settings_fb.png")})}
+                </TouchableOpacity>
+                {this.renderSeperator()}
+                <TouchableOpacity onPress={ ()=>{ Linking.openURL('https://instagram.com/teamclypr')}}>
+                    {this.renderRow({title:"Instagram",ic:require("../../assets/images/ic_setting_instagram.png")})}
+                </TouchableOpacity>
+            </View>
           <Text style={styles.txtHeader}>ABOUT</Text>
-          <View style={[globalStyles.rowBackground, styles.row]}>
-          {this.renderRow({title:"Website",ic:require("../../assets/images/ic_settings_website.png")})}
-          {this.renderSeperator()}
+            <View style={[globalStyles.rowBackground, styles.row]}>
+                <TouchableOpacity onPress={ ()=>{ Linking.openURL('https://clypr.co')}}>
+                    {this.renderRow({title:"Website",ic:require("../../assets/images/ic_settings_website.png")})}
+                </TouchableOpacity>
+                {this.renderSeperator()}
 
-          {this.renderRow({title:"Terms of Service",ic:require("../../assets/images/ic_settings_tns.png")})}
+                <TouchableOpacity onPress={ ()=>{ Linking.openURL('https://clypr.co/terms-of-service')}}>
+                    {this.renderRow({title:"Terms of Service",ic:require("../../assets/images/ic_settings_tns.png")})}
+                </TouchableOpacity>
+                {this.renderSeperator()}
+                <TouchableOpacity onPress={ ()=>{ Linking.openURL('https://clypr.co/privacy-policy')}}>
 
-          {this.renderSeperator()}
-          {this.renderRow({title:"Privacy Policy",ic:require("../../assets/images/ic_settings_pp.png")})}
-          </View>
+                    {this.renderRow({title:"Privacy Policy",ic:require("../../assets/images/ic_settings_pp.png")})}
+                </TouchableOpacity>
+            </View>
           <TouchableOpacity style={[globalStyles.button,{marginTop:70, marginBottom:30}]} onPress={()=>{
             this.props.navigation.navigate('BarberProfile');
           }}>
