@@ -3910,7 +3910,7 @@ moment@2.22.0:
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.22.0.tgz#7921ade01017dd45186e7fee5f424f0b8663a730"
   integrity sha512-1muXCh8jb1N/gHRbn9VDUBr0GYb8A/aVcHlII9QSB68a50spqEVLIGN6KVmCOnSvJrUhC0edGgKU5ofnGXdYdg==
 
-moment@^2.24.0:
+moment@^2.22.1, moment@^2.24.0:
   version "2.24.0"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.24.0.tgz#0d055d53f5052aa653c9f6eb68bb5d12bf5c2b5b"
   integrity sha512-bV7f+6l2QigeBBZSM/6yTNq4P2fNpSWj/0e7jQcy87A8e7o2nAfP/34/2ky5Vw4B9S446EtIhodAzkFCcR4dQg==
@@ -4675,6 +4675,13 @@ react-native-confirmation-code-input@^1.0.4:
   dependencies:
     lodash "^4.17.4"
     prop-types "^15.5.10"
+
+react-native-date-picker@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/react-native-date-picker/-/react-native-date-picker-2.3.0.tgz#4d5e1f3737331322821a7aa00ceb0af8caf3eb08"
+  integrity sha512-TqCQramchjtJyd/G1N+7dOYzCZMU+dhI97grDZ3Yf3igQ1is3GmxSteou8ksC7qg7gyhiEv7r6VYNQNLBQuJnw==
+  dependencies:
+    moment "^2.22.1"
 
 react-native-elements@^1.1.0:
   version "1.1.0"

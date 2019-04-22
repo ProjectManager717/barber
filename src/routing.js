@@ -250,6 +250,6 @@ const routing = createSwitchNavigator({
 export default createAppContainer(AuthStack);
 
 const styles = StyleSheet.create({
-    icon: {height: 25, width: 25}
+    icon: {height: 23, width: 23,justifyContent:"center",alignContent:"center",resizeMode:"contain"}
 });
 

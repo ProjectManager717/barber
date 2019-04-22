@@ -75,7 +75,7 @@ export default class Cancellations extends Component {
           {this.renderRow({title:"Surge Pricing"})}
 
           <TouchableOpacity style={[globalStyles.button,{marginTop:70, marginBottom:30,width:'70%'}]} onPress={()=>{
-            this.props.navigation.navigate('BarberProfile');
+            this.props.navigation.goBack();
           }}>
             <Text style={globalStyles.buttonText}>DONE</Text>
           </TouchableOpacity>

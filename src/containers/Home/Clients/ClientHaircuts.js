@@ -9,7 +9,7 @@ import {
     ScrollView,
     TouchableOpacity,
     TouchableHighlight,
-    TextInput, Dimensions
+    TextInput, Dimensions,
 } from "react-native";
 import {Calendar, CalendarList, Agenda} from 'react-native-calendars';
 import {Colors} from "../../../themes";
@@ -28,11 +28,18 @@ export default class ClientHaircuts extends Component {
             upcomingBack: "transparent",
             completeBack: "transparent",
             cancelledBack: "transparent",
-            allBack: "#7131FD",
+            allBack: "transparent",
             upcomingtext: "grey",
             completetext: "grey",
             cancelledtext: "grey",
-            alltext: "white",
+            alltext: "grey",
+            blue:"transparent",
+            red:"transparent",
+            green:"transparent",
+
+
+
+
         };
         this.calenderDayClicked=this.calenderDayClicked.bind(this);
     }
@@ -44,24 +51,37 @@ export default class ClientHaircuts extends Component {
             this.setState({completeBack: "transparent", completetext: "grey"});
             this.setState({cancelledBack: "transparent", cancelledtext: "grey"});
             this.setState({allBack: "transparent", alltext: "grey"});
+            this.setState({blue:"#1999CE",});
+            this.setState({green:"transparent"});
+            this.setState({red:"transparent"});
+
+
         }
         if (item === "complete") {
             this.setState({completeBack: "#00D200", completetext: "white"});
             this.setState({upcomingBack: "transparent", upcomingtext: "grey"});
             this.setState({cancelledBack: "transparent", cancelledtext: "grey"});
             this.setState({allBack: "transparent", alltext: "grey"});
+            this.setState({green:"#00D200"});
+            this.setState({blue:"transparent",});
+
+            this.setState({red:"transparent"});
         }
         if (item === "cancelled") {
             this.setState({cancelledBack: "red", cancelledtext: "white"});
             this.setState({completeBack: "transparent", completetext: "grey"});
             this.setState({upcomingBack: "transparent", upcomingtext: "grey"});
             this.setState({allBack: "transparent", alltext: "grey"});
+            this.setState({red:"red"});
+            this.setState({green:"transparent"});
+            this.setState({blue:"transparent",});
         }
         if (item === "all") {
             this.setState({allBack: "#7131FD", alltext: "white"});
             this.setState({cancelledBack: "transparent", cancelledtext: "grey"});
             this.setState({completeBack: "transparent", completetext: "grey"});
             this.setState({upcomingBack: "transparent", upcomingtext: "grey"});
+            this.setState({red:"red",green:"#00D200",blue:"#1999CE"})
         }
 
     }
@@ -124,12 +144,12 @@ export default class ClientHaircuts extends Component {
 
                             markedDates={{
                                 '2019-04-09': {
-                                    selected: true, selectedColor: "red",
+                                    selected: true, selectedColor:this.state.red,
                                 },
                                 '2019-04-13': {
-                                    selected: true, selectedColor: "#00D100"
+                                    selected: true, selectedColor:this.state.green,
                                 },
-                                '2019-04-22': {selected: true,},
+                                '2019-04-22': {selected: true,selectedColor:this.state.blue},
 
                                 '2019-04-20': {marked: true, dotColor: "red"},
                             }}

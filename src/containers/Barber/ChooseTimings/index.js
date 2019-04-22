@@ -1,8 +1,9 @@
 import React, {Component} from "react";
-import {View, Text, FlatList, TouchableOpacity, Image, ScrollView} from "react-native";
+import {View, Text, FlatList, TouchableOpacity, Image, ScrollView,Platform,} from "react-native";
 
 import {Header} from "react-native-elements";
-import {WheelPicker, TimePicker, DatePicker} from 'react-native-wheel-picker-android'
+
+import DatePicker from 'react-native-date-picker';
 
 
 import {Colors} from "../../../themes";
@@ -27,8 +28,16 @@ export default class ChooseTimings extends Component {
         super();
         this.state = {
             dataSource: [],
-            dayData: []
-        };
+            dayData: [],
+            chosenDate: new Date(),date: new Date()};
+
+
+
+        this.setDate = this.setDate.bind(this);
+
+    }
+    setDate(newDate) {
+        this.setState({chosenDate: newDate});
     }
 
     startOfWeek(date) {
@@ -132,14 +141,13 @@ export default class ChooseTimings extends Component {
                             marginBottom: 10,
                             marginStart: 20
                         }}>{"FROM"}</Text>
+                        <DatePicker
+                            date={this.state.date}
+                            onDateChange={date => this.setState({ date })}
+                            mode={"time"}
+                            textColor={"#ffffff"}
+                        />
 
-                        <TimePicker onTimeSelected={this.onTimeSelected}
-                                    selectedItemTextColor={"white"}
-                                    selectedItemTextSize={20}
-                                    itemTextSize={20}
-                                    hideIndicator={true}
-                                    itemTextStyle={{fontSize: 18, color: 'white'}}
-                                    textStyle={{color: "white"}}/>
 
                     </View>
                     <View style={{flexDirection: "column", width: "50%"}}>
@@ -150,21 +158,23 @@ export default class ChooseTimings extends Component {
                             marginBottom: 10,
                             marginStart: 20
                         }}>{"TO"}</Text>
-                        <TimePicker onTimeSelected={this.onTimeSelected}
 
-                                    selectedItemTextColor={"white"}
-                                    selectedItemTextSize={20}
-
-                                    itemTextSize={20}
-                                    hideIndicator={true}
-
-
+                        <DatePicker
+                            date={this.state.date}
+                            onDateChange={date => this.setState({ date })}
+                            mode={"time"}
+                            textColor={"#ffffff"}
                         />
 
                     </View>
 
 
                 </View>
+
+
+
+
+
 
                 <View style={{flexDirection: 'row', height: 40, marginLeft: 20, marginTop: 100}}>
                     <CheckBoxSquare onClick={() => {

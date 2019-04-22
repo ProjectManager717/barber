@@ -23,11 +23,13 @@ export default class BarberProfile extends Component {
     rightAction() {
         this.props.navigation.navigate('BarberEditProfile');
     }
-    leftAction(){
+
+    leftAction() {
 
         this.props.navigation.goBack();
 
     }
+
     constructor(props) {
         super(props);
         this.state = {
@@ -116,13 +118,15 @@ export default class BarberProfile extends Component {
                                 <Text style={[styles.allFontStyle, styles.name]}>
                                     Anthony Martial
                                 </Text>
-                                <View style={{flexDirection:"row",}}>
-                                <Text style={{color: colors.white, fontSize: 12}}>
-                                    CLYPR Barbershop
-                                </Text>
-                                <Image resizeMode={"contain"} style={{ height:8 , width:8 , marginStart:10,marginTop: 5 }} source={require("../../../assets/images/arrow_down.png")} />
+                                <View style={{flexDirection: "row",}}>
+                                    <Text style={{color: colors.white, fontSize: 12}}>
+                                        CLYPR Barbershop
+                                    </Text>
+                                    <Image resizeMode={"contain"}
+                                           style={{height: 8, width: 8, marginStart: 10, marginTop: 5}}
+                                           source={require("../../../assets/images/arrow_down.png")}/>
                                 </View>
-                                    <View style={styles.review}>
+                                <View style={styles.review}>
                                     <Image
                                         resizeMode="contain"
                                         source={require("../../../assets/images/start.png")}
@@ -136,7 +140,7 @@ export default class BarberProfile extends Component {
                         </View>
 
                     </View>
-                    <View style={{height:25}}/>
+                    <View style={{height: 25}}/>
                     <Text style={styles.row_title}>{"EXPERIENCE"}</Text>
                     <View style={[{
                         flex: 1,
@@ -166,7 +170,7 @@ export default class BarberProfile extends Component {
 
                     </View>
 
-                    <View style={{height:15}}/>
+                    <View style={{height: 15}}/>
 
                     <View style={[{
                         backgroundColor: "grey",
@@ -185,25 +189,29 @@ export default class BarberProfile extends Component {
                                 height: 35,
                                 backgroundColor: "#868791",
                             }]}>
-                            <View style={{width: "45%",height:"100%",justifyContent:"center"
-                                , marginStart: 10}}>
-                                <Text style={{color: "white",fontSize:12}}>Type</Text>
+                            <View style={{
+                                width: "45%", height: "100%", justifyContent: "center"
+                                , marginStart: 10
+                            }}>
+                                <Text style={{color: "white", fontSize: 12}}>Type</Text>
                             </View>
-                            <View style={{width: "30%",height:"100%",alignItems:"center"
-                                , flexDirection: "row"}}>
+                            <View style={{
+                                width: "30%", height: "100%", alignItems: "center"
+                                , flexDirection: "row"
+                            }}>
                                 <View style={{width: 3, height: "100%", backgroundColor: "#686975"}}/>
-                                <Text style={{color: "white",marginStart:15,fontSize:12}}>Duration </Text>
-                                <View style={{width: 3, height: "100%",marginStart:10, backgroundColor: "#686975"}}/>
+                                <Text style={{color: "white", marginStart: 15, fontSize: 12}}>Duration </Text>
+                                <View style={{width: 3, height: "100%", marginStart: 10, backgroundColor: "#686975"}}/>
                             </View>
                             <View style={[{width: "25%", right: 5, flexDirection: "row"}]}>
                                 <View style={{width: 1, height: "100%", backgroundColor: "#686975"}}/>
-                                <Text style={{color: "white",fontSize:12}}>Prizes </Text>
+                                <Text style={{color: "white", fontSize: 12}}>Prizes </Text>
                             </View>
                         </View>
 
                         <FlatList
                             renderItem={({item}) =>
-                                <View style={{flexDirection:"column"}}>
+                                <View style={{flexDirection: "column"}}>
                                     <View style={[{flexDirection: "row", height: 30, backgroundColor: "#686975"}]}>
                                         <View style={[{
                                             flexDirection: "row",
@@ -211,17 +219,17 @@ export default class BarberProfile extends Component {
                                             marginStart: 10,
                                             alignItems: "center"
                                         }]}>
-                                            <CheckBoxSquare isChecked={item.check} uncheckedCheckBoxColor={"#84858C"}  />
-                                            <Text style={{color: "white",fontSize:12}}>   {item.title} </Text>
+                                            <CheckBoxSquare isChecked={item.check} uncheckedCheckBoxColor={"#84858C"}/>
+                                            <Text style={{color: "white", fontSize: 12}}>   {item.title} </Text>
                                         </View>
                                         <View style={[{flexDirection: "row", width: "25%", alignItems: "center"}]}>
-                                            <Text style={{color: "white",fontSize:12}}>{item.duration}</Text>
+                                            <Text style={{color: "white", fontSize: 12}}>{item.duration}</Text>
                                         </View>
                                         <View style={[{flexDirection: "row", width: "25%", alignItems: "center"}]}>
-                                            <Text style={{color: "white",fontSize:12}}>{item.prize}</Text>
+                                            <Text style={{color: "white", fontSize: 12}}>{item.prize}</Text>
                                         </View>
                                     </View>
-                                    <View style={{height:0.5,backgroundColor:"#868791"}}/>
+                                    <View style={{height: 0.5, backgroundColor: "#868791"}}/>
                                 </View>}
                             data={this.state.ListData2}
                             keyExtractor={item => item.id}

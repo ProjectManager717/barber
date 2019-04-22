@@ -160,7 +160,7 @@ export default class BookingPreferences extends Component {
 
                     <TouchableOpacity style={[globalStyles.button, {marginTop: 70, marginBottom: 30, width: '70%'}]}
                                       onPress={() => {
-                                          this.props.navigation.navigate('ClientQR');
+                                          this.props.navigation.goBack();
                                       }}>
                         <Text style={globalStyles.buttonText}>DONE</Text>
                     </TouchableOpacity>

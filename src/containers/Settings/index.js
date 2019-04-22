@@ -145,11 +145,32 @@ export default class Settings extends Component {
                     {this.renderRow({title:"Privacy Policy",ic:require("../../assets/images/ic_settings_pp.png")})}
                 </TouchableOpacity>
             </View>
-          <TouchableOpacity style={[globalStyles.button,{marginTop:70, marginBottom:30}]} onPress={()=>{
+          <TouchableOpacity style={[globalStyles.button,{marginTop:30, marginBottom:30}]} onPress={()=>{
             this.props.navigation.navigate('BarberProfile');
           }}>
             <Text style={globalStyles.buttonText}>Logout</Text>
           </TouchableOpacity>
+
+            <View style={{
+                flexDirection:"column",
+                justifyContent:"center",
+                alignItems:"center",
+
+
+
+
+            }}  >
+
+                <Text style={{color:"grey",fontFamily:"AvertaStd-Thin"}} >{"CLYPR Technologies V1.0"}</Text>
+                <View style={{flexDirection:"row",marginTop:5,marginBottom:10}} >
+                    <Text style={{color:"white",fontWeight:"bold",fontStyle:"italic"}} > Made in Miami </Text>
+                    <Image resizeMode={"contain"}  source={require("../../assets/images/beach.png")}
+                           style={{height:20,width:20,marginStart:10}}
+
+                    />
+                </View>
+            </View>
+
         </ScrollView>
 
       </View>
