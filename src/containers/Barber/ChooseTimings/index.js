@@ -176,10 +176,10 @@ export default class ChooseTimings extends Component {
 
 
 
-                <View style={{flexDirection: 'row', height: 40, marginLeft: 20, marginTop: 100}}>
+                <View style={{flexDirection: 'row', height: 40, marginLeft: 20, marginTop: 130}}>
                     <CheckBoxSquare onClick={() => {
                     }} isChecked={true} style={{alignSelf: 'center'}}/>
-                    <Text style={{color: "white", marginTop: 7, marginStart: 7}}>{"Off"}<Text style={
+                    <Text style={{color: "white",textAlignVertical:"center", marginStart: 7}}>{"Off"}<Text style={
                         {color: "grey",}
                     }>{"  (Today Not Working)"}</Text></Text>
                 </View>
