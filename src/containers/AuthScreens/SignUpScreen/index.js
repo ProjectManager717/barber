@@ -6,7 +6,7 @@ import {styles} from './styles';
 import {CloseButton, Input, RedButton, ImageButton} from '../../../components';
 import {checkEmail} from '../../../utils';
 
-const InputDataClient=[{
+const InputDataClient = [{
     iconSource: require('../../../assets/icon_name.png'),
     placeholder: 'First & Last Name',
     key: 'fullName',
@@ -26,7 +26,7 @@ const InputDataClient=[{
     key: 'confirmPassword',
     secureTextEntry: true,
 }];
-const InputDataBarber=[{
+const InputDataBarber = [{
     iconSource: require('../../../assets/icon_name.png'),
     placeholder: 'First & Last Name',
     key: 'fullName',
@@ -68,22 +68,88 @@ class SignUpScreen extends Component {
                 password: '',
                 confirmPassword: '',
                 userName: undefined,
-                fieldUsename:false,
+                fieldUsename: false,
+                isConnected: false,
             }
         };
         this.state.userName = itemId;
-        if(itemId==="Client")
-        {
+        if (itemId === "Client") {
             //this.setState({fieldUsername:false,userName:"Client"});
-            this.state.fieldUsername=false;
-            this.state.userName="Client";
-            INPUTS_DATA=InputDataClient;
-        }else
-        {
-            this.state.fieldUsername=true;
-            this.state.userName="Barber";
+            this.state.fieldUsername = false;
+            this.state.userName = "Client";
+            INPUTS_DATA = InputDataClient;
+        } else {
+            this.state.fieldUsername = true;
+            this.state.userName = "Barber";
             //this.setState({userName:"Barber",fieldUsername:true});
-            INPUTS_DATA=InputDataBarber;
+            INPUTS_DATA = InputDataBarber;
+        }
+
+        this.onSignUp = this.onSignUp.bind(this)
+    }
+
+    _handleConnectivityChange = (isConnected) => {
+        this.setState({
+            isConnected,
+        });
+    };
+
+    componentDidMount(): void {
+        NetInfo.isConnected.addEventListener(
+            'change',
+            this._handleConnectivityChange
+        );
+        NetInfo.isConnected.fetch().done(
+            (isConnected) => {
+                this.setState({isConnected});
+            }
+        );
+    }
+
+
+    onSignUp() {
+        if (this.state.isConnected) {
+            const {fullName, instaUserName,email, password} = this.state;
+
+            if (!this.checkFields()) {
+                //alert("Please enter correct data");
+                return false;
+            } else {
+                fetch("https://mindmapping.appcrates.co/public/api/sign_up", {
+                    method: 'POST', // or 'PUT'
+                    body: JSON.stringify({
+                        name: fullName,
+                        email: email,
+                        password: password,
+                        device_token: "321"
+                    }), // data can be `string` or {object}!
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                }).then(response => response.json())
+                    .then(response => {
+                        console.log("signup=>" + JSON.stringify(response));
+                        if (response.code === 200) {
+                            Preference.set({
+                                login: true,
+                                userEmail: this.state.email
+                            });
+                        } else {
+                            if (response.code === 100) {
+                                alert("user already exist");
+                            }
+                            alert("failed");
+                        }
+                    })
+                    .catch(error => {
+                        this.setState({showloader: false});
+                        console.error('Error:', error);
+                    });
+            }
+            Keyboard.dismiss();
+        } else {
+            alert("Please connect Internet.")
         }
     }
 
@@ -99,10 +165,10 @@ class SignUpScreen extends Component {
         this.setState({userInfo: updatedUserInfo});
     };
 
-    onSignUp = () => {
+    /*onSignUp = () => {
         this.props.navigation.navigate('SMSScreen');
     };
-
+*/
     onFacebook = () => {
         alert('facebook');
     };
@@ -110,6 +176,46 @@ class SignUpScreen extends Component {
     onGoogle = () => {
         alert('google');
     };
+
+    checkFields() {
+        if (this.state.name === "") {
+            alert("Name field is required");
+            return false;
+        }else if (this.state.name === "") {
+            alert("Name field is required");
+            return false;
+        } else if (this.state.name.length < 3) {
+            alert("Minimum 3 character required in name");
+            return false;
+        } else if (this.state.email === "") {
+            alert("Email field is required");
+            return false;
+        } else if (!this.validate(this.state.email)) {
+            alert("Invalid Email Format");
+            return false;
+        } else if (this.state.password === "") {
+            alert("Password field is required");
+            return false;
+        } else if (this.state.password.length < 5) {
+            alert("Minimum 5 digit required in Password field");
+            return false;
+        }  else
+            return true;
+    }
+
+    validate = (text) => {
+        console.log(text);
+        let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+        if (reg.test(text) === false) {
+            console.log("Email is Not Correct");
+            this.setState({email: text})
+            return false;
+        } else {
+            this.setState({email: text})
+            console.log("Email is Correct");
+            return true;
+        }
+    }
 
     renderInputs = () => {
         const {userInfo} = this.state;

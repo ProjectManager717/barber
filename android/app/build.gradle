@@ -134,8 +134,8 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-preference')
     implementation project(':react-native-date-picker')
-    implementation project(':react-native-wheel-picker-android')
     implementation project(':react-native-linear-gradient')
     implementation project(':react-native-vector-icons')
     implementation project(':react-native-gesture-handler')
