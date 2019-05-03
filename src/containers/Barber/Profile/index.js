@@ -33,6 +33,11 @@ export default class BarberProfile extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            barberName: "Anthony Martial",
+            barberImage: "",
+            barberShopName: "CLYPR Barbershop",
+            barberRatting: 5,
+            barberReviews: 17,
             ListData: [
                 {
                     id: 1,
@@ -46,7 +51,6 @@ export default class BarberProfile extends Component {
                     id: 3,
                     imagePath: require('../../../assets/images/vp2.png')
                 }],
-
             ListData2: [
                 {
                     id: 1,
@@ -86,6 +90,46 @@ export default class BarberProfile extends Component {
 
             ]
         }
+        this.getBarberProfileData = this.getBarberProfileData.bind(this);
+    }
+
+    componentDidMount(): void {
+        //this.getBarberProfileData();
+    }
+
+    getBarberProfileData() {
+        fetch("https://CYLPR.app/api/get_profile", {
+            method: 'POST', // or 'PUT'
+            body: JSON.stringify({
+                user_id: Prefrence.get("userId"),
+            }), // data can be `string` or {object}!
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        }).then(response => response.json())
+            .then(response => {
+                console.log("response-->", "-" + JSON.stringify(response));
+                if (response.code === 200) {
+                    this.setState({
+                        barberName: "",
+                        barberImage: "",
+                        barberShopName: "",
+                        barberRatting: "",
+                        barberReviews: "",
+                        ListData: "",
+                        ListData2: ""
+                    });
+                } else {
+                    if (response.code === 100) {
+                        alert(response.Message);
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        //Keyboard.dismiss();
     }
 
 
@@ -116,11 +160,11 @@ export default class BarberProfile extends Component {
                         <View>
                             <View style={[styles.infoContainer]}>
                                 <Text style={[styles.allFontStyle, styles.name]}>
-                                    Anthony Martial
+                                    {this.state.barberName}
                                 </Text>
                                 <View style={{flexDirection: "row",}}>
                                     <Text style={{color: colors.white, fontSize: 12}}>
-                                        CLYPR Barbershop
+                                        {this.state.barberShopName}
                                     </Text>
                                     <Image resizeMode={"contain"}
                                            style={{height: 8, width: 8, marginStart: 10, marginTop: 5}}
@@ -133,7 +177,7 @@ export default class BarberProfile extends Component {
                                         style={styles.rating}
                                     />
                                     <Text style={[styles.allFontStyle, styles.reviewText]}>
-                                        (17 Reviews)
+                                        {"(" }{this.state.barberReviews}{" Reviews)"}
                                     </Text>
                                 </View>
                             </View>
@@ -149,7 +193,12 @@ export default class BarberProfile extends Component {
                         flexDirection: "row"
                     }]}>
 
-                        <FlatList renderItem={({item}) =>
+                        <FlatList
+                            data={this.state.ListData}
+                            horizontal={true}
+                            showsHorizontalScrollIndicator={false}
+                            keyExtractor={item => item.id}
+                            renderItem={({item}) =>
                             <View>
                                 <Image style={{
                                     borderRadius: 10,
@@ -161,10 +210,7 @@ export default class BarberProfile extends Component {
                                        resizeMode='cover'
                                        source={item.imagePath}/>
                             </View>}
-                                  data={this.state.ListData}
-                                  horizontal={true}
-                                  showsHorizontalScrollIndicator={false}
-                                  keyExtractor={item => item.id}/>
+                                  />
                         <Image resizeMode={"contain"} source={require("../../../assets/images/arrow1.png")}
                                style={{position: "absolute", width: 35, height: 35, right: 10, top: 50}}/>
 
@@ -210,6 +256,16 @@ export default class BarberProfile extends Component {
                         </View>
 
                         <FlatList
+                            data={this.state.ListData2}
+                            keyExtractor={item => item.id}
+                            showsVerticalScrollIndicator={true}
+                            removeClippedSubviews={false}
+                            initialNumToRender={5}
+                            numColumns={1}
+                            style={{
+                                borderBottomLeftRadius: 12,
+                                borderBottomRightRadius: 12, paddingBottom: 12, backgroundColor: "#686975"
+                            }}
                             renderItem={({item}) =>
                                 <View style={{flexDirection: "column"}}>
                                     <View style={[{flexDirection: "row", height: 30, backgroundColor: "#686975"}]}>
@@ -231,16 +287,7 @@ export default class BarberProfile extends Component {
                                     </View>
                                     <View style={{height: 0.5, backgroundColor: "#868791"}}/>
                                 </View>}
-                            data={this.state.ListData2}
-                            keyExtractor={item => item.id}
-                            showsVerticalScrollIndicator={true}
-                            removeClippedSubviews={false}
-                            initialNumToRender={5}
-                            numColumns={1}
-                            style={{
-                                borderBottomLeftRadius: 12,
-                                borderBottomRightRadius: 12, paddingBottom: 12, backgroundColor: "#686975"
-                            }}/>
+                           />
                     </View>
 
 

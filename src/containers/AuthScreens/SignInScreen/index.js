@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {ImageBackground, Text, View, TouchableOpacity} from 'react-native';
+import {ImageBackground, Text, View, TouchableOpacity, NetInfo} from 'react-native';
 import {SafeAreaView} from 'react-navigation';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {styles} from './styles';
@@ -44,13 +44,13 @@ class SignInScreen extends Component {
         if (itemId === "Client") {
             this.props.navigation.navigate('ClientTabNavigator');
         } else {
-            //this.props.navigation.navigate('TabNavigator');
+            this.props.navigation.navigate('TabNavigator');
             if (this.state.isConnected) {
                 if (this.state.user_email === "" || this.state.user_password === "") {
                     alert("Please fill all fields");
                 } else {
                     const {user_email, user_password} = this.state;
-                    fetch("https://Baber.app/api/login", {
+                    /*fetch("https://CYLPR.app/api/login", {
                         method: 'POST', // or 'PUT'
                         body: JSON.stringify({
                             email: user_email,
@@ -78,8 +78,8 @@ class SignInScreen extends Component {
                         })
                         .catch(error => {
                             console.error('Error:', error);
-                        });
-                    Keyboard.dismiss();
+                        });*/
+                    //Keyboard.dismiss();
                 }
             } else {
                 alert("Please connect Internet");
@@ -99,7 +99,35 @@ class SignInScreen extends Component {
     };
 
     onForgot = () => {
-        alert('forgot');
+        //alert('forgot');
+        if (this.state.email === "") {
+            alert("Please enter email?");
+        } else {
+            fetch("https://CYLPR.app/api/forget_password", {
+                method: 'POST', // or 'PUT'
+                body: JSON.stringify({
+                    email: this.state.email,
+                }), // data can be `string` or {object}!
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => response.json())
+                .then(response => {
+                    console.log("response-->", "-" + JSON.stringify(response));
+                    if (response.code === 200) {
+                        alert("Please check your mail for reset password.")
+                    } else {
+                        if (response.code === 100) {
+                            alert(response.Message);
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            Keyboard.dismiss();
+        }
     };
 
     render() {
