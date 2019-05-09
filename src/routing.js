@@ -13,7 +13,8 @@ import {
     InitialScreen,
     SignInScreen,
     SignUpScreen,
-    SMSScreen
+    SMSScreen,
+    ForgetPasswordScreen
 } from './containers';
 
 import Home from "./containers/Home";
@@ -203,6 +204,7 @@ const AuthStack = createStackNavigator({
     SignInScreen: SignInScreen,
     SignUpScreen: SignUpScreen,
     SMSScreen: SMSScreen,
+    ForgetPasswordScreen:ForgetPasswordScreen,
     Profile: Profile,
     QRCheckIn: QRCheckIn,
     ClientQR: ClientQR,

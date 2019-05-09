@@ -4,6 +4,7 @@ import InitialScreen from './AuthScreens/InitialScreen';
 import SignInScreen from './AuthScreens/SignInScreen';
 import SignUpScreen from './AuthScreens/SignUpScreen';
 import SMSScreen from './AuthScreens/SMSScreen';
+import ForgetPasswordScreen from './AuthScreens/ForgetPasswordScreen';
 
 export {
   SelectScreen,
@@ -11,5 +12,6 @@ export {
   InitialScreen,
   SignUpScreen,
   SignInScreen,
-  SMSScreen
+  SMSScreen,
+  ForgetPasswordScreen
 };

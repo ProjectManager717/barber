@@ -6,6 +6,9 @@ import {styles} from './styles';
 import {CloseButton, ImageButton, Input, RedButton} from '../../../components';
 import {checkEmail} from '../../../utils';
 import Preference from 'react-native-preference';
+import {constants} from "../../../utils/constants";
+//import * as constants from "../../../utils/constants";
+
 
 let itemId = "";
 
@@ -44,41 +47,51 @@ class SignInScreen extends Component {
         if (itemId === "Client") {
             this.props.navigation.navigate('ClientTabNavigator');
         } else {
-            this.props.navigation.navigate('TabNavigator');
+            //this.props.navigation.navigate('TabNavigator');
             if (this.state.isConnected) {
-                if (this.state.user_email === "" || this.state.user_password === "") {
+                if (this.state.email === "" || this.state.password === "") {
                     alert("Please fill all fields");
                 } else {
-                    const {user_email, user_password} = this.state;
-                    /*fetch("https://CYLPR.app/api/login", {
-                        method: 'POST', // or 'PUT'
-                        body: JSON.stringify({
-                            email: user_email,
-                            password: user_password
-                        }), // data can be `string` or {object}!
+                    const {email, password} = this.state;
+                    var details = {
+                        email: email,
+                        password: password,
+                    };
+                    var formBody = [];
+                    for (var property in details) {
+                        var encodedKey = encodeURIComponent(property);
+                        var encodedValue = encodeURIComponent(details[property]);
+                        formBody.push(encodedKey + "=" + encodedValue);
+                    }
+                    formBody = formBody.join("&");
+                    fetch(constants.BarberLogin, {
+                        method: 'POST',
                         headers: {
                             'Accept': 'application/json',
-                            'Content-Type': 'application/json'
-                        }
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: formBody
                     }).then(response => response.json())
                         .then(response => {
-                            console.log("response-->", "-" + JSON.stringify(response));
-                            if (response.code === 200) {
+                            console.log("responseBarberlogin-->", "-" + JSON.stringify(response));
+                            if (response.ResultType === 1) {
                                 Preference.set({
                                     login: true,
-                                    userEmail: response.user.email,
-                                    userId: response.user.id,
-                                    userType: response.user.sub_type
+                                    userEmail: response.Data.email,
+                                    userId: response.Data.id,
+                                    userType: "Barber",
+                                    userToken: response.Data.token
                                 });
+                                this.moveToHome();
                             } else {
-                                if (response.code === 100) {
+                                if (response.ResultType === 0) {
                                     alert(response.Message);
                                 }
                             }
                         })
                         .catch(error => {
                             console.error('Error:', error);
-                        });*/
+                        });
                     //Keyboard.dismiss();
                 }
             } else {
@@ -87,6 +100,10 @@ class SignInScreen extends Component {
         }
 
     };
+    moveToHome()
+    {
+        this.props.navigation.navigate("TabNavigator");
+    }
 
     _handleConnectivityChange = (isConnected) => {
         this.setState({
@@ -98,42 +115,20 @@ class SignInScreen extends Component {
         this.setState({[key]: value});
     };
 
+    signupClicked()
+    {
+        this.props.navigation.navigate("SignUpScreen");
+    }
+
     onForgot = () => {
         //alert('forgot');
-        if (this.state.email === "") {
-            alert("Please enter email?");
-        } else {
-            fetch("https://CYLPR.app/api/forget_password", {
-                method: 'POST', // or 'PUT'
-                body: JSON.stringify({
-                    email: this.state.email,
-                }), // data can be `string` or {object}!
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            }).then(response => response.json())
-                .then(response => {
-                    console.log("response-->", "-" + JSON.stringify(response));
-                    if (response.code === 200) {
-                        alert("Please check your mail for reset password.")
-                    } else {
-                        if (response.code === 100) {
-                            alert(response.Message);
-                        }
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
-            Keyboard.dismiss();
-        }
+        this.props.navigation.push("ForgetPasswordScreen", {User: itemId});
     };
 
     render() {
         const {email, password} = this.state;
         const isValidEmail = checkEmail(email);
-        const isValidPassword = password.length >= 8;
+        const isValidPassword = password.length >= 6;
         return (
             <ImageBackground
                 source={require('../../../assets/img_background2.png')}
@@ -199,7 +194,7 @@ class SignInScreen extends Component {
                         <Text style={styles.grayText}>
                             {`Don't have an account? `}
                         </Text>
-                        <TouchableOpacity>
+                        <TouchableOpacity onPress={()=>this.signupClicked()}>
                             <Text style={styles.redText}>
                                 Sign Up!
                             </Text>

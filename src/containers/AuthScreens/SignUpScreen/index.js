@@ -1,10 +1,12 @@
 import React, {Component} from 'react';
-import {ImageBackground, View, Text} from 'react-native';
+import {ImageBackground, View, Text, NetInfo} from 'react-native';
 import {SafeAreaView} from 'react-navigation';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {styles} from './styles';
 import {CloseButton, Input, RedButton, ImageButton} from '../../../components';
 import {checkEmail} from '../../../utils';
+import {constants} from "../../../utils/constants";
+import Preference from "react-native-preference";
 
 const InputDataClient = [{
     iconSource: require('../../../assets/icon_name.png'),
@@ -109,48 +111,60 @@ class SignUpScreen extends Component {
 
     onSignUp() {
         if (this.state.isConnected) {
-            const {fullName, instaUserName,email, password} = this.state;
-
+            const {fullName, instaUserName, email, password} = this.state;
             if (!this.checkFields()) {
                 //alert("Please enter correct data");
                 return false;
             } else {
-                fetch("https://mindmapping.appcrates.co/public/api/sign_up", {
-                    method: 'POST', // or 'PUT'
-                    body: JSON.stringify({
-                        name: fullName,
-                        email: email,
-                        password: password,
-                        device_token: "321"
-                    }), // data can be `string` or {object}!
+                var details = {
+                    fullName: fullName,
+                    instaUserName: instaUserName,
+                    email: email,
+                    password: password,
+                };
+                var formBody = [];
+                for (var property in details) {
+                    var encodedKey = encodeURIComponent(property);
+                    var encodedValue = encodeURIComponent(details[property]);
+                    formBody.push(encodedKey + "=" + encodedValue);
+                }
+                formBody = formBody.join("&");
+                fetch(constants.BarberSignUp, {
+                    method: 'POST',
                     headers: {
                         'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    }
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: formBody
                 }).then(response => response.json())
                     .then(response => {
-                        console.log("signup=>" + JSON.stringify(response));
-                        if (response.code === 200) {
+                        console.log("responseBarbersignup-->", "-" + JSON.stringify(response));
+                        if (response.ResultType === 1) {
                             Preference.set({
                                 login: true,
-                                userEmail: this.state.email
+                                userEmail: response.Data.email,
+                                userId: response.Data.id,
+                                userType: "Barber",
+                                userToken: response.Data.token
                             });
+                            this.moveToHome();
                         } else {
-                            if (response.code === 100) {
-                                alert("user already exist");
+                            if (response.ResultType === 0) {
+                                //alert(response.Message);
                             }
-                            alert("failed");
                         }
                     })
                     .catch(error => {
-                        this.setState({showloader: false});
                         console.error('Error:', error);
                     });
             }
-            Keyboard.dismiss();
         } else {
             alert("Please connect Internet.")
         }
+    }
+
+    moveToHome() {
+        this.props.navigation.navigate("TabNavigator");
     }
 
     onClose = () => {
@@ -178,32 +192,23 @@ class SignUpScreen extends Component {
     };
 
     checkFields() {
-        if (this.state.name === "") {
+        if (this.state.fullName === "") {
             alert("Name field is required");
             return false;
-        }else if (this.state.name === "") {
+        } else if (this.state.instaUserName === "") {
             alert("Name field is required");
-            return false;
-        } else if (this.state.name.length < 3) {
-            alert("Minimum 3 character required in name");
             return false;
         } else if (this.state.email === "") {
             alert("Email field is required");
             return false;
-        } else if (!this.validate(this.state.email)) {
-            alert("Invalid Email Format");
-            return false;
         } else if (this.state.password === "") {
             alert("Password field is required");
             return false;
-        } else if (this.state.password.length < 5) {
-            alert("Minimum 5 digit required in Password field");
-            return false;
-        }  else
+        } else
             return true;
     }
 
-    validate = (text) => {
+    /*validate = (text) => {
         console.log(text);
         let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
         if (reg.test(text) === false) {
@@ -215,15 +220,15 @@ class SignUpScreen extends Component {
             console.log("Email is Correct");
             return true;
         }
-    }
+    }*/
 
     renderInputs = () => {
         const {userInfo} = this.state;
         const isValidFullName = !!userInfo.fullName.length;
         const isValidInstaUsername = !!userInfo.instaUserName.length;
         const isValidEmail = checkEmail(userInfo.email);
-        const isValidPassword = userInfo.password.length >= 8;
-        const isValidPasswordConfirm = userInfo.confirmPassword.length >= 8 && (userInfo.password === userInfo.confirmPassword);
+        const isValidPassword = userInfo.password.length >= 6;
+        const isValidPasswordConfirm = userInfo.confirmPassword.length >= 6 && (userInfo.password === userInfo.confirmPassword);
         const inputsValid = [isValidFullName, isValidInstaUsername, isValidEmail, isValidPassword, isValidPasswordConfirm];
         return INPUTS_DATA.map((item, index) => (<Input
                 iconSource={INPUTS_DATA[index].iconSource}
