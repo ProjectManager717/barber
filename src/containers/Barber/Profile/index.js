@@ -112,7 +112,7 @@ export default class BarberProfile extends Component {
                 console.log("response-->", "-" + JSON.stringify(response));
                 if (response.code === 200) {
                     this.setState({
-                        barberName: "",
+                        barberName: Prefrence.get("userName"),
                         barberImage: "",
                         barberShopName: "",
                         barberRatting: "",

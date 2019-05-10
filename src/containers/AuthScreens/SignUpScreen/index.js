@@ -74,6 +74,7 @@ class SignUpScreen extends Component {
                 isConnected: false,
             }
         };
+        this.checkFields=this.checkFields.bind(this);
         this.state.userName = itemId;
         if (itemId === "Client") {
             //this.setState({fieldUsername:false,userName:"Client"});
@@ -111,16 +112,17 @@ class SignUpScreen extends Component {
 
     onSignUp() {
         if (this.state.isConnected) {
-            const {fullName, instaUserName, email, password} = this.state;
+
             if (!this.checkFields()) {
                 //alert("Please enter correct data");
                 return false;
             } else {
+                const {userInfo} = this.state;
                 var details = {
-                    fullName: fullName,
-                    instaUserName: instaUserName,
-                    email: email,
-                    password: password,
+                    firstname: userInfo.fullName,
+                    username: userInfo.instaUserName,
+                    email: userInfo.email,
+                    password: userInfo.password,
                 };
                 var formBody = [];
                 for (var property in details) {
@@ -143,6 +145,7 @@ class SignUpScreen extends Component {
                             Preference.set({
                                 login: true,
                                 userEmail: response.Data.email,
+                                userName: response.Data.username,
                                 userId: response.Data.id,
                                 userType: "Barber",
                                 userToken: response.Data.token
@@ -150,7 +153,7 @@ class SignUpScreen extends Component {
                             this.moveToHome();
                         } else {
                             if (response.ResultType === 0) {
-                                //alert(response.Message);
+                                alert(response.Message);
                             }
                         }
                     })
@@ -192,16 +195,17 @@ class SignUpScreen extends Component {
     };
 
     checkFields() {
-        if (this.state.fullName === "") {
+        console.log("validating......");
+        if (this.state.userInfo.fullName === "") {
             alert("Name field is required");
             return false;
-        } else if (this.state.instaUserName === "") {
+        } else if (this.state.userInfo.instaUserName === "") {
             alert("Name field is required");
             return false;
-        } else if (this.state.email === "") {
+        } else if (this.state.userInfo.email === "") {
             alert("Email field is required");
             return false;
-        } else if (this.state.password === "") {
+        } else if (this.state.userInfo.password === "") {
             alert("Password field is required");
             return false;
         } else

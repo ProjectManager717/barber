@@ -22,8 +22,13 @@ export default class Home extends Component {
     leftAction() {
         this.props.navigation.navigate("QRCheckIn");
     }
+
     rightAction() {
         this.props.navigation.navigate('Share');
+    }
+
+    constructor(props) {
+        super(props);
     }
 
     render() {

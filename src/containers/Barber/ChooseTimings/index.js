@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {View, Text, FlatList, TouchableOpacity, Image, ScrollView,Platform,} from "react-native";
+import {View, Text, FlatList, TouchableOpacity, Image, ScrollView, Platform, NetInfo} from "react-native";
 
 import {Header} from "react-native-elements";
 
@@ -13,6 +13,8 @@ import {styles} from "./styles";
 
 import {globalStyles} from "../../../themes/globalStyles";
 import CheckBoxSquare from "../../../components/CheckBox";
+import {constants} from "../../../utils/constants";
+import Preference from "react-native-preference";
 
 var moment = require("moment");
 const dateFormat = "hh:mm a";
@@ -29,70 +31,166 @@ export default class ChooseTimings extends Component {
         this.state = {
             dataSource: [],
             dayData: [],
-            chosenDate: new Date(),date: new Date()};
-
-
-
+            isConnected: false,
+            workingDays: [],
+            startTime: new Date(),
+            endTime: new Date(),
+            chosenDate: new Date(),
+            date: new Date().setHours(13,0,0)
+        };
         this.setDate = this.setDate.bind(this);
+        console.log("Timimng:::"+this.state.date);
 
     }
+
+    componentDidMount() {
+        this.fetchWorkingHours();
+        NetInfo.isConnected.addEventListener(
+            'change',
+            this._handleConnectivityChange
+        );
+        NetInfo.isConnected.fetch().done(
+            (isConnected) => {
+                this.setState({isConnected});
+            }
+        );
+    }
+
+    componentWillMount(): void {
+
+    }
+
     setDate(newDate) {
         this.setState({chosenDate: newDate});
     }
+
+    _handleConnectivityChange = (isConnected) => {
+        this.setState({
+            isConnected
+        });
+    };
 
     startOfWeek(date) {
         var diff = date.getDate() - date.getDay() + (date.getDay() === 0 ? -6 : 1);
         return new Date(date.setDate(diff));
     }
 
+    fetchWorkingHours = () => {
+        console.log("userID---->" + Preference.get("userId"));
+        console.log("url--->" + constants.BarberWorkingHours + "?user_id=" + Preference.get("userId"));
+        fetch(constants.BarberWorkingHours + "?user_id=" + Preference.get("userId"), {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        }).then(response => response.json())
+            .then(response => {
+                console.log("responseworkinghours-->", "-" + JSON.stringify(response));
+                if (response.ResultType === 1) {
+                    this.setState({workingDays: response.Data.working_days});
+                    let items = [];
+                    for (i = 0; i < 7; i++) {
+                        var weekDate = this.startOfWeek(new Date());
+                        var newDate = weekDate.addDays(i);
+                        items.push(this.renderWeekDay({k: i, d: newDate}));
+                    }
+                    let hours = Array.apply(null, Array(48)).map((v, i) => {
+                        return {id: i, title: "Title " + i};
+                    });
+                    let start=response.Data.working_from;
+                    let end=response.Data.working_to;
+                    let starttime=start.split("am");
+                    let endtime=end.split("pm");
+                    console.log("starttime-->"+starttime);
+                    this.setState({
+                        dayData: hours,
+                        dataSource: items,
+                        startTime:new Date().setHours(starttime[0],0,0),
+                        endTime:new Date().setHours(endtime[0],0,0),
+                    });
+                    console.log("starttime-->"+this.state.startTime);
+                    console.log("starttime-->"+this.state.endTime);
+                } else {
+                    if (response.ResultType === 0) {
+                        alert(response.Message);
+                    }
+                }
+            }).catch(error => {
+            console.error('Errorr:', error);
+        });
+    };
+
     renderWeekDay(item) {
         var week = new Array("MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN");
-        return (
-            <View
-                key={item.k}
-                style={{
-                    justifyContent: "center",
-                    flexDirection: "column",
-                    flex: 1,
-                    backgroundColor: item.bg
-                }}
-            >
-                <Image
+        console.log("workingDay--->>" + this.state.workingDays[item.k]);
+        if (this.state.workingDays[item.k] === "Mon"
+            || this.state.workingDays[item.k] === "Tue"
+            || this.state.workingDays[item.k] === "Wed"
+            || this.state.workingDays[item.k] === "Thurs"
+            || this.state.workingDays[item.k] === "Fri"
+            || this.state.workingDays[item.k] === "Sat"
+            || this.state.workingDays[item.k] === "Sun") {
+            return (
+                <View
+                    key={item.k}
                     style={{
-                        height: 16,
-                        resizeMode: "contain",
-                        alignSelf: "center",
-                        marginBottom: 10
+                        justifyContent: "center",
+                        flexDirection: "column",
+                        flex: 1,
+                        backgroundColor: item.bg
                     }}
-                    source={require("../../../assets/images/ic_notworking.png")}
-                />
-                <Text
-                    style={[styles.week_day_container, {fontFamily: "AvertaStd-Thin"}]}
                 >
-                    {week[item.k]}
-                </Text>
-            </View>
-        );
+                    <Image
+                        style={{
+                            height: 16,
+                            resizeMode: "contain",
+                            alignSelf: "center",
+                            marginBottom: 10
+                        }}
+                        source={require("../../../assets/images/ic_working.png")}
+                    />
+                    <Text
+                        style={[styles.week_day_container, {fontFamily: "AvertaStd-Thin"}]}
+                    >
+                        {week[item.k]}
+                    </Text>
+                </View>
+            );
+        } else {
+            return (
+                <View
+                    key={item.k}
+                    style={{
+                        justifyContent: "center",
+                        flexDirection: "column",
+                        flex: 1,
+                        backgroundColor: item.bg
+                    }}
+                >
+                    <Image
+                        style={{
+                            height: 16,
+                            resizeMode: "contain",
+                            alignSelf: "center",
+                            marginBottom: 10
+                        }}
+                        source={require("../../../assets/images/ic_notworking.png")}
+                    />
+                    <Text
+                        style={[styles.week_day_container, {fontFamily: "AvertaStd-Thin"}]}
+                    >
+                        {week[item.k]}
+                    </Text>
+                </View>
+            );
+        }
+
     }
 
     onTimeSelected = date => {
     };
 
-    componentDidMount() {
-        let items = [];
-        for (i = 0; i < 7; i++) {
-            var weekDate = this.startOfWeek(new Date());
-            var newDate = weekDate.addDays(i);
-            items.push(this.renderWeekDay({k: i, d: newDate}));
-        }
-        let hours = Array.apply(null, Array(48)).map((v, i) => {
-            return {id: i, title: "Title " + i};
-        });
-        this.setState({
-            dayData: hours,
-            dataSource: items
-        });
-    }
 
     render() {
         return (
@@ -127,7 +225,6 @@ export default class ChooseTimings extends Component {
                         justifyContent: "space-around"
                     }}
                 />
-
                 <View style={[globalStyles.rowBackground, {height: 60, margin: 20}]}>
                     {this.state.dataSource}
                 </View>
@@ -142,8 +239,9 @@ export default class ChooseTimings extends Component {
                             marginStart: 20
                         }}>{"FROM"}</Text>
                         <DatePicker
-                            date={this.state.date}
-                            onDateChange={date => this.setState({ date })}
+                            date={this.state.startTime}
+
+                            onDateChange={date => this.setState({date})}
                             mode={"time"}
                             textColor={"#ffffff"}
                         />
@@ -160,8 +258,8 @@ export default class ChooseTimings extends Component {
                         }}>{"TO"}</Text>
 
                         <DatePicker
-                            date={this.state.date}
-                            onDateChange={date => this.setState({ date })}
+                            date={this.state.endTime}
+                            onDateChange={date => this.setState({date})}
                             mode={"time"}
                             textColor={"#ffffff"}
                         />
@@ -172,14 +270,10 @@ export default class ChooseTimings extends Component {
                 </View>
 
 
-
-
-
-
                 <View style={{flexDirection: 'row', height: 40, marginLeft: 20, marginTop: 130}}>
                     <CheckBoxSquare onClick={() => {
                     }} isChecked={true} style={{alignSelf: 'center'}}/>
-                    <Text style={{color: "white",textAlignVertical:"center", marginStart: 7}}>{"Off"}<Text style={
+                    <Text style={{color: "white", textAlignVertical: "center", marginStart: 7}}>{"Off"}<Text style={
                         {color: "grey",}
                     }>{"  (Today Not Working)"}</Text></Text>
                 </View>

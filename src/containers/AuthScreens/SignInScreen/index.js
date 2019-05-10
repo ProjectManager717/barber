@@ -28,6 +28,9 @@ class SignInScreen extends Component {
     }
 
     componentDidMount(): void {
+        if (Preference.get("login") === true) {
+            this.props.navigation.navigate("TabNavigator");
+        }
         NetInfo.isConnected.addEventListener(
             'change',
             this._handleConnectivityChange
@@ -100,8 +103,8 @@ class SignInScreen extends Component {
         }
 
     };
-    moveToHome()
-    {
+
+    moveToHome() {
         this.props.navigation.navigate("TabNavigator");
     }
 
@@ -115,8 +118,7 @@ class SignInScreen extends Component {
         this.setState({[key]: value});
     };
 
-    signupClicked()
-    {
+    signupClicked() {
         this.props.navigation.navigate("SignUpScreen");
     }
 
@@ -194,7 +196,7 @@ class SignInScreen extends Component {
                         <Text style={styles.grayText}>
                             {`Don't have an account? `}
                         </Text>
-                        <TouchableOpacity onPress={()=>this.signupClicked()}>
+                        <TouchableOpacity onPress={() => this.signupClicked()}>
                             <Text style={styles.redText}>
                                 Sign Up!
                             </Text>
