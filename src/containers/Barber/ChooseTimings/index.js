@@ -36,10 +36,11 @@ export default class ChooseTimings extends Component {
             startTime: new Date(),
             endTime: new Date(),
             chosenDate: new Date(),
-            date: new Date().setHours(13,0,0)
+            isOffToday: false,
+            date: new Date().setHours(13, 0, 0)
         };
         this.setDate = this.setDate.bind(this);
-        console.log("Timimng:::"+this.state.date);
+        console.log("Timimng:::" + this.state.date);
 
     }
 
@@ -88,7 +89,24 @@ export default class ChooseTimings extends Component {
             .then(response => {
                 console.log("responseworkinghours-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
-                    this.setState({workingDays: response.Data.working_days});
+                    let worddays = response.Data.working_days;
+                    let setWorkDays = [];
+                    for (let i = 0; i < 7; i++) {
+                        if (worddays[i] === "Mon"
+                            || worddays[i] === "Tue"
+                            || worddays[i] === "Wed"
+                            || worddays[i] === "Thurs"
+                            || worddays[i] === "Fri"
+                            || worddays[i] === "Sat"
+                            || worddays[i] === "Sun") {
+                            setWorkDays.push(true);
+                        } else {
+                            setWorkDays.push(false);
+                        }
+                    }
+                    console.log("setWorkDays-->" + JSON.stringify(setWorkDays));
+
+                    this.setState({workingDays: setWorkDays, isOffToday: response.Data.is_off});
                     let items = [];
                     for (i = 0; i < 7; i++) {
                         var weekDate = this.startOfWeek(new Date());
@@ -98,19 +116,21 @@ export default class ChooseTimings extends Component {
                     let hours = Array.apply(null, Array(48)).map((v, i) => {
                         return {id: i, title: "Title " + i};
                     });
-                    let start=response.Data.working_from;
-                    let end=response.Data.working_to;
-                    let starttime=start.split("am");
-                    let endtime=end.split("pm");
-                    console.log("starttime-->"+starttime);
+                    let start = response.Data.working_from;
+                    let end = response.Data.working_to;
+                    let startTime1=start.split("T");
+                    let endTime1=start.split("T");
+                    let startTime2=startTime1[1].split(":");
+                    let endTime2=endTime1[1].split(":");
+                    console.log("starttime-->" + startTime2);
                     this.setState({
                         dayData: hours,
                         dataSource: items,
-                        startTime:new Date().setHours(starttime[0],0,0),
-                        endTime:new Date().setHours(endtime[0],0,0),
+                        startTime: new Date().setHours(startTime2[0],startTime2[1],0),
+                        endTime: new Date().setHours(endTime2[0],endTime2[1],0),
                     });
-                    console.log("starttime-->"+this.state.startTime);
-                    console.log("starttime-->"+this.state.endTime);
+                    console.log("starttime-->" + this.state.startTime);
+                    console.log("starttime-->" + this.state.endTime);
                 } else {
                     if (response.ResultType === 0) {
                         alert(response.Message);
@@ -121,26 +141,106 @@ export default class ChooseTimings extends Component {
         });
     };
 
+    updateWorkingHours() {
+        let offDays = "";
+        if (this.state.workingDays[0] === false)
+            offDays += "Mon";
+        if (this.state.workingDays[1] === false)
+            offDays += ",Tue";
+        if (this.state.workingDays[2] === false)
+            offDays += ",Wed";
+        if (this.state.workingDays[3] === false)
+            offDays += ",Thur";
+        if (this.state.workingDays[4] === false)
+            offDays += ",Fri";
+        if (this.state.workingDays[5] === false)
+            offDays += ",Sat";
+        if (this.state.workingDays[6] === false)
+            offDays += ",Sun";
+
+        if(offDays.charAt(0)===",")
+           offDays=offDays.substr(1);
+
+        console.log("offDays--->"+JSON.stringify(offDays));
+        var details = {
+            user_id: Preference.get("userId"),
+            working_from: this.state.startTime,
+            working_to: this.state.endTime,
+            is_off: this.state.isOffToday,
+            off_day: offDays,
+        };
+        var formBody = [];
+        for (var property in details) {
+            var encodedKey = encodeURIComponent(property);
+            var encodedValue = encodeURIComponent(details[property]);
+            formBody.push(encodedKey + "=" + encodedValue);
+        }
+        formBody = formBody.join("&");
+        fetch(constants.UpdateWorkingHours, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: formBody
+        }).then(response => response.json())
+            .then(response => {
+                console.log("responseworkinghours-->", "-" + JSON.stringify(response));
+                if (response.ResultType === 1) {
+                    alert("Your working hours updated.");
+                } else {
+                    if (response.ResultType === 0) {
+                        alert(response.Message);
+                    }
+
+                }
+            }).catch(error => {
+            console.error('Errorr:', error);
+        });
+    }
+
+    setNotWorkingDay(val) {
+        let workdays = this.state.workingDays;
+        workdays[val] = false;
+        this.setState({workdays: workdays});
+        let items = [];
+        for (i = 0; i < 7; i++) {
+            var weekDate = this.startOfWeek(new Date());
+            var newDate = weekDate.addDays(i);
+            items.push(this.renderWeekDay({k: i, d: newDate}));
+        }
+        this.setState({
+            dataSource: items
+        });
+    }
+
+    setWorkingDay(val) {
+        let workdays = this.state.workingDays;
+        workdays[val] = true;
+        this.setState({workdays: workdays});
+        let items = [];
+        for (i = 0; i < 7; i++) {
+            var weekDate = this.startOfWeek(new Date());
+            var newDate = weekDate.addDays(i);
+            items.push(this.renderWeekDay({k: i, d: newDate}));
+        }
+        this.setState({
+            dataSource: items
+        });
+    }
+
     renderWeekDay(item) {
         var week = new Array("MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN");
         console.log("workingDay--->>" + this.state.workingDays[item.k]);
-        if (this.state.workingDays[item.k] === "Mon"
-            || this.state.workingDays[item.k] === "Tue"
-            || this.state.workingDays[item.k] === "Wed"
-            || this.state.workingDays[item.k] === "Thurs"
-            || this.state.workingDays[item.k] === "Fri"
-            || this.state.workingDays[item.k] === "Sat"
-            || this.state.workingDays[item.k] === "Sun") {
+        if (this.state.workingDays[item.k] === true) {
             return (
-                <View
-                    key={item.k}
-                    style={{
-                        justifyContent: "center",
-                        flexDirection: "column",
-                        flex: 1,
-                        backgroundColor: item.bg
-                    }}
-                >
+                <TouchableOpacity key={item.k} style={{
+                    justifyContent: "center",
+                    flexDirection: "column",
+                    flex: 1,
+                    backgroundColor: item.bg
+                }} onPress={() => this.setNotWorkingDay(item.k)}>
+
                     <Image
                         style={{
                             height: 16,
@@ -155,19 +255,17 @@ export default class ChooseTimings extends Component {
                     >
                         {week[item.k]}
                     </Text>
-                </View>
+                </TouchableOpacity>
             );
         } else {
             return (
-                <View
-                    key={item.k}
-                    style={{
-                        justifyContent: "center",
-                        flexDirection: "column",
-                        flex: 1,
-                        backgroundColor: item.bg
-                    }}
-                >
+                <TouchableOpacity key={item.k}
+                                  style={{
+                                      justifyContent: "center",
+                                      flexDirection: "column",
+                                      flex: 1,
+                                      backgroundColor: item.bg
+                                  }} onPress={() => this.setWorkingDay(item.k)}>
                     <Image
                         style={{
                             height: 16,
@@ -182,10 +280,9 @@ export default class ChooseTimings extends Component {
                     >
                         {week[item.k]}
                     </Text>
-                </View>
+                </TouchableOpacity>
             );
         }
-
     }
 
     onTimeSelected = date => {
@@ -230,7 +327,7 @@ export default class ChooseTimings extends Component {
                 </View>
 
                 <View style={{flexDirection: "row", width: "100%", height: 100}}>
-                    <View style={{flexDirection: "column", width: "50%"}}>
+                    <View style={{width: "50%"}}>
                         <Text style={{
                             color: "grey",
                             fontWeight: "bold",
@@ -240,15 +337,15 @@ export default class ChooseTimings extends Component {
                         }}>{"FROM"}</Text>
                         <DatePicker
                             date={this.state.startTime}
-
-                            onDateChange={date => this.setState({date})}
+                            style={{marginLeft: -40}}
+                            onDateChange={date => this.setState({startTime})}
                             mode={"time"}
                             textColor={"#ffffff"}
                         />
 
 
                     </View>
-                    <View style={{flexDirection: "column", width: "50%"}}>
+                    <View style={{width: "50%"}}>
                         <Text style={{
                             color: "grey",
                             fontWeight: "bold",
@@ -259,11 +356,11 @@ export default class ChooseTimings extends Component {
 
                         <DatePicker
                             date={this.state.endTime}
-                            onDateChange={date => this.setState({date})}
+                            onDateChange={date => this.setState({endTime})}
                             mode={"time"}
+                            style={{marginLeft: -40}}
                             textColor={"#ffffff"}
                         />
-
                     </View>
 
 
@@ -272,7 +369,7 @@ export default class ChooseTimings extends Component {
 
                 <View style={{flexDirection: 'row', height: 40, marginLeft: 20, marginTop: 130}}>
                     <CheckBoxSquare onClick={() => {
-                    }} isChecked={true} style={{alignSelf: 'center'}}/>
+                    }} isChecked={this.state.isOffToday} style={{alignSelf: 'center'}}/>
                     <Text style={{color: "white", textAlignVertical: "center", marginStart: 7}}>{"Off"}<Text style={
                         {color: "grey",}
                     }>{"  (Today Not Working)"}</Text></Text>
@@ -284,9 +381,7 @@ export default class ChooseTimings extends Component {
                         globalStyles.button,
                         {marginTop: 10, marginBottom: 10, width: "80%"}
                     ]}
-                    onPress={() => {
-                        this.props.navigation.navigate("BarberProfile");
-                    }}
+                    onPress={() => this.updateWorkingHours()}
                 >
                     <Text style={globalStyles.buttonText}>Update Now</Text>
                 </TouchableOpacity>

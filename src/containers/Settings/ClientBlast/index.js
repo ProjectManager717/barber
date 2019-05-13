@@ -13,19 +13,57 @@ import {
 import {Colors} from "../../../themes";
 import {globalStyles} from "../../../themes/globalStyles";
 import {Header} from "react-native-elements";
-const { width,height } = Dimensions.get("window");
+import {constants} from "../../../utils/constants";
+import Preference from "react-native-preference";
+
+const {width, height} = Dimensions.get("window");
 
 export default class ClientBlast extends Component {
 
     constructor(props) {
         super(props);
         this.state = {text2: 'Your Message...'};
+        this.sendBlastMessage=this.sendBlastMessage.bind(this);
+    }
 
+    sendBlastMessage()
+    {
+        const {text2} = this.state;
+        var details = {
+            sender_id: Preference.get("userId"),
+            notification_text:text2,};
+        var formBody = [];
+        for (var property in details) {
+            var encodedKey = encodeURIComponent(property);
+            var encodedValue = encodeURIComponent(details[property]);
+            formBody.push(encodedKey + "=" + encodedValue);
+        }
+        formBody = formBody.join("&");
+        fetch(constants.ClientBlastMessage, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: formBody
+        }).then(response => response.json())
+            .then(response => {
+                console.log("responseClientBlast-->", "-" + JSON.stringify(response));
+                if (response.ResultType === 1) {
+                    alert("Your message sent successfully to all Clients.");
+                } else {
+                    if (response.ResultType === 0) {
+                        alert(response.Message);
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
     }
 
     render() {
         return (<View style={styles.container}>
-
                 <Header
                     statusBarProps={{barStyle: "light-content"}}
                     barStyle="light-content" // or directly
@@ -40,51 +78,56 @@ export default class ClientBlast extends Component {
                         <TouchableOpacity onPress={() => {
                             this.props.navigation.goBack();
                         }}>
-                            <Text style={{fontWeight: "bold", color: "white", fontSize: 14,marginLeft:10}}>Cancel</Text>
+                            <Text
+                                style={{fontWeight: "bold", color: "white", fontSize: 14, marginLeft: 10}}>Cancel</Text>
                         </TouchableOpacity>
                     }
                 />
                 <ScrollView>
                     <View style={{
                         flex: 1,
-                        marginStart:20,
-                        marginEnd:20,
-                        height:height-110,
+                        marginStart: 20,
+                        marginEnd: 20,
+                        height: height - 110,
                     }}>
                         <View style={{
                             marginTop: 30,
-                            width:"100%",
+                            width: "100%",
                         }}>
                             <View style={{
-                                width:"100%",
+                                width: "100%",
                                 height: 200,
                                 borderRadius: 10,
                                 borderWidth: 0.3,
                                 borderColor: "white",
-                                backgroundColor:"#2F3041"
+                                backgroundColor: "#2F3041"
                             }}>
                             </View>
 
-                            <TextInput style={{fontFamily:"AvertaStd-RegularItalic",width:"100%",
-                                color:"white",position: "absolute",top:10, left:10,fontSize:14}}
-                                multiline={true}
-                                numberOfLines={4}
-                                onChangeText={(text) => this.setState({text})}
+                            <TextInput style={{
+                                fontFamily: "AvertaStd-RegularItalic", width: "100%",
+                                color: "white", position: "absolute", top: 10, left: 10, fontSize: 14
+                            }}
+                                       multiline={true}
+                                       numberOfLines={4}
+                                       onChangeText={(text) => this.setState({text2:text})}
                                        placeholder={"Your Message..."}
                                        placeholderTextColor={"#9C9CA2"}
                             />
-
-
                         </View>
-
                         <View>
-                            <Text  style={{color:"white" ,fontSize:12, marginTop:10,marginLeft:5 }} >{"This message will be sent to all of your Clients."} </Text>
+                            <Text style={{
+                                color: "white",
+                                fontSize: 12,
+                                marginTop: 10,
+                                marginLeft: 5
+                            }}>{"This message will be sent to all of your Clients."} </Text>
                         </View>
-                        <TouchableOpacity    style={[globalStyles.button, {
+                        <TouchableOpacity onPress={()=>this.sendBlastMessage()} style={[globalStyles.button, {
                             height: 40,
                             width: 230,
-                            position:"absolute",
-                            bottom:30,
+                            position: "absolute",
+                            bottom: 30,
                         }]}>
                             <Text style={globalStyles.buttonText}>SEND</Text>
 
