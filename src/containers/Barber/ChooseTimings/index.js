@@ -118,10 +118,15 @@ export default class ChooseTimings extends Component {
                     });
                     let start = response.Data.working_from;
                     let end = response.Data.working_to;
-                    let startTime1=start.split("T");
-                    let endTime1=start.split("T");
-                    let startTime2=startTime1[1].split(":");
-                    let endTime2=endTime1[1].split(":");
+                    console.log("starttime-->" + start);
+                    console.log("starttime-->" + end);
+                    let startTime1=start.split(" ");
+                    let endTime1=start.split(" ");
+                    console.log("starttime-->" + startTime1);
+                    console.log("starttime-->" + endTime1);
+                    let startTime2=startTime1[0].split(":");
+                    let endTime2=endTime1[0].split(":");
+
                     console.log("starttime-->" + startTime2);
                     this.setState({
                         dayData: hours,
@@ -338,7 +343,7 @@ export default class ChooseTimings extends Component {
                         <DatePicker
                             date={this.state.startTime}
                             style={{marginLeft: -40}}
-                            onDateChange={date => this.setState({startTime})}
+                            onDateChange={date => this.setState({startTime:date})}
                             mode={"time"}
                             textColor={"#ffffff"}
                         />
@@ -356,7 +361,7 @@ export default class ChooseTimings extends Component {
 
                         <DatePicker
                             date={this.state.endTime}
-                            onDateChange={date => this.setState({endTime})}
+                            onDateChange={date => this.setState({endTime:date})}
                             mode={"time"}
                             style={{marginLeft: -40}}
                             textColor={"#ffffff"}

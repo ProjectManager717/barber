@@ -69,7 +69,7 @@ export default class Notifications extends Component {
         return (
             <View style={styles.MainContainer}>
                 <FlatList
-                    data={this.state.Notifications}
+                    data={this.state.dataSource}
                     renderItem={({item}) => (
                         <View style={{height: 160, flexDirection: "row"}}>
                             <View
@@ -114,7 +114,7 @@ export default class Notifications extends Component {
                                     }}
                                 />
                                 <Text style={styles.client_name}>
-                                    {item.sender.firstname}
+                                    he{/*{item.sender.firstname}*/}
                                 </Text>
                             </View>
 

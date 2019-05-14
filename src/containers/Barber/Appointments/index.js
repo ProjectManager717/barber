@@ -1,20 +1,31 @@
 import React, {Component} from "react";
-import {View, Switch, Text, StyleSheet, Image, ScrollView, TouchableOpacity} from "react-native";
+import {View, Switch, Text, StyleSheet, Image, ScrollView, TouchableOpacity, FlatList} from "react-native";
 import {Colors} from "../../../themes";
 import {globalStyles} from "../../../themes/globalStyles";
 //import { styles } from "./styles";
 import {Header} from "react-native-elements";
 import CheckBoxSquare from "../../../components/CheckBox";
+var moment = require("moment");
 
-let clr = "";
+let clr = "", clientName = "", createdAt = "", startTime = "", endTime = "", price = "", services = "",
+    totalServices = "";
 export default class Appointments extends Component {
 
     constructor(props) {
-
         super(props);
+
         const {navigation} = this.props;
         clr = navigation.getParam('bgc');
-        console.log("gettingUSersignIn--->" + clr);
+        clientName = navigation.getParam('clientName');
+        createdAt = navigation.getParam('createdAt');
+        startTime = navigation.getParam('startTime');
+        endTime = navigation.getParam('endtTime');
+        price = navigation.getParam('price');
+        var m = moment(new Date(createdAt));
+        services = navigation.getParam('services');
+        totalServices = services.split("&");
+        createdAt=m.format("DD-MM-YYYY HH:MM:SS");
+        console.log("gettingUSersignIn--->" +m.format("DD-MM-YYYY HH:MM:SS"));
     }
 
 
@@ -143,8 +154,12 @@ export default class Appointments extends Component {
                             }}>
                                 <Image resizeMode={"contain"} source={require("../../../assets/images/user_surge.png")}
                                        style={[styles.profileImage, {position: "absolute", width: 150, height: 150}]}/>
-                                <Text style={{marginTop: 155, fontSize: 16, color: "white", fontWeight: "bold"}}>Grarad
-                                    Pequie</Text>
+                                <Text style={{
+                                    marginTop: 155,
+                                    fontSize: 16,
+                                    color: "white",
+                                    fontWeight: "bold"
+                                }}>{clientName}</Text>
                             </View>
                         </View>
                         {/*CONFIRMED*/}
@@ -226,14 +241,14 @@ export default class Appointments extends Component {
                         }
                         {this.renderRowapp({
                             ic: require("../../../assets/images/calender.png"),
-                            text1: "Wednesday, November 23,2019",
-                            text2: "11:00AM - 11:45AM ",
+                            text1: createdAt,
+                            text2: startTime + " - " + endTime,
                         })}
                         <TouchableOpacity onPress={() => this.props.navigation.navigate("Receipt")}>
                             {this.renderRowapp({
                                 ic: require("../../../assets/images/surg_price.png"),
-                                text1: "$35",
-                                text2: "SURGE PRICE : $17.50"
+                                text1: price,
+                                text2: "SURGE PRICE : " + price
                             })}
                         </TouchableOpacity>
                         <View style={{height: 0.5, backgroundColor: "#52525D", marginStart: 90, marginTop: 10}}></View>
@@ -243,15 +258,15 @@ export default class Appointments extends Component {
                             marginStart: 25,
                             marginTop: 10,
                             fontWeight: "bold"
-                        }}>SERVICES
-                            SELECTED </Text>
+                        }}>SERVICES SELECTED </Text>
                         <View style={{flexDirection: "row", width: "100%", marginTop: 25}}>
-                            {this.renderRowButtons({
-                                text: "Haircut",
-                            })}
-                            {this.renderRowButtons({
-                                text: "Beard Trim",
-                            })}
+                            {
+                                totalServices.map((l) => (
+                                    this.renderRowButtons({
+                                        text:l,
+                                    })
+                                ))
+                            }
                         </View>
                     </View>
                 </ScrollView>

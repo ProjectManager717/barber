@@ -5,6 +5,8 @@ import {Header} from "react-native-elements";
 
 import {Colors} from "../../../themes";
 import {styles} from "./styles";
+import {constants} from "../../../utils/constants";
+import Preference from "react-native-preference";
 
 var moment = require("moment");
 
@@ -13,6 +15,9 @@ Date.prototype.addDays = function (days) {
     date.setDate(date.getDate() + days);
     return date;
 };
+const monthNames = ["January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+];
 
 export default class Calendar extends Component {
     constructor() {
@@ -95,8 +100,6 @@ export default class Calendar extends Component {
                 {
                     id: 9,
                     bgc: Colors.red
-
-
                 },
                 {
                     id: 10,
@@ -110,7 +113,8 @@ export default class Calendar extends Component {
                     bitSet: 0,
                     bgc: Colors.grey,
                 },
-            ]
+            ],
+            calenderSlots: [],
         };
     }
 
@@ -138,7 +142,6 @@ export default class Calendar extends Component {
                     justifyContent: "center",
                     flexDirection: "column",
                     flex: 1,
-                    backgroundColor: item.bg
                 }}
             >
                 <Text style={[styles.week_day_container, currentStyle]}>
@@ -175,25 +178,106 @@ export default class Calendar extends Component {
             dayData: hours,
             dataSource: items
         });
+        this.getCalenderSlots();
     }
 
-    itemSelect(colorItem) {
+    itemSelect(colorItem, item) {
         if (colorItem !== "#DF00FF" && colorItem !== "yellow") {
-            this.props.navigation.navigate("Appointments", {bgc: colorItem})
+            this.props.navigation.navigate("Appointments", {
+                bgc: colorItem,
+                clientName: item.client,
+                createdAt:item.createdAt,
+                startTime:item.time_from,
+                endtTime:item.time_to,
+                price:item.price,
+                services:item.booking_title
+            })
         }
     }
 
+    getCalenderSlots() {
+        this.state.calenderSlots = [];
+        console.log("userID" + Preference.get("userId"));
+        fetch(constants.GetCalenderSlots + "?user_id=" + Preference.get("userId"), {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        }).then(response => response.json())
+            .then(response => {
+                console.log("responseCalenderSlots-->", "-" + JSON.stringify(response));
+                if (response.ResultType === 1) {
+                    this.setState({calenderSlots: response.Data})
+                } else {
+                    if (response.ResultType === 0) {
+                        alert(response.Message);
+                    }
+                }
+            }).catch(error => {
+            console.error('Errorr:', error);
+        });
+    }
 
     renderItem(item) {
+        let time = item.time_from;
+        let AM = "";
+        if (time.indexOf("am") > -1) {
+            time = time.split("am");
+            AM = "AM";
+        } else {
+            time = time.split("pm");
+            AM = "PM";
+        }
 
-        var m = moment(new Date(2011, 2, 12, 0, 0, 0));
-        var n = moment(new Date(2011, 2, 12, 0, 0, 0));
-        var o = moment(new Date(2011, 2, 12, 0, 0, 0));
-        m.add(item.id * 30, "minutes");
-        n.add(item.id * 30 + 30, "minutes");
+        let vtime = time[0].split(":");
+        var m = moment(new Date(2011, 2, 12, vtime[0], vtime[1], 0));
+        var n = moment(new Date(2011, 2, 12, vtime[0], vtime[1], 0));
+        var o = moment(new Date(2011, 2, 12, vtime[0], vtime[1], 0));
+        //m.add(item.id * 30, "minutes");
+        n.add(30, "minutes");
         o.add(item.id * 30 + 15, "minutes");
-        if (item.bitSet === 0) {
-            return <TouchableWithoutFeedback onPress={() => this.itemSelect(item.bgc)}>
+        /*bit set for */
+        /*0=30mins*/
+        /*1=1hour*/
+        /*2=30minbreak*/
+        /*3=45min*/
+        let imagep = "", imgText = "", imgTextcolor = "", bgc = "";
+        if (item.booking_type === "Completed") {
+            imagep = require("../../../assets/images/completed.png");
+            imgText = "COMPLETED";
+            imgTextcolor = Colors.green;
+            bgc = Colors.green;
+        } else if (item.booking_type === "In Progress") {
+            imagep = require("../../../assets/images/progress.png");
+            imgText = "IN PROGRESS";
+            imgTextcolor = Colors.purple;
+            bgc = Colors.purple;
+        } else if (item.booking_type === "Confirmed") {
+            imagep = require("../../../assets/images/confirmed.png");
+            imgText = "CONFIRMED";
+            imgTextcolor = Colors.magenta;
+            bgc = Colors.magenta;
+        } else if (item.booking_type === "Pending") {
+            imagep = require("../../../assets/images/pending.png");
+            imgText = "PENDING";
+            imgTextcolor = Colors.yellow;
+            bgc = Colors.yellow;
+        } else if (item.booking_type === "Cancelled") {
+            imagep = require("../../../assets/images/cancelled.png");
+            imgText = "CANCELLED";
+            imgTextcolor = Colors.red;
+            bgc = Colors.red;
+        } else if (item.booking_type === "No Show") {
+            imagep = require("../../../assets/images/noShow.png");
+            imgText = "NO SHOW";
+            imgTextcolor = Colors.grey;
+            bgc = Colors.grey;
+        } else {
+
+        }
+        if (item.total_time === "30") {
+            return <TouchableWithoutFeedback onPress={() => this.itemSelect(bgc, item)}>
                 <View style={{height: 70, flexDirection: "row"}} cellKey={item.id}>
                     <Text style={{
                         textAlignVertical: "top",
@@ -205,9 +289,9 @@ export default class Calendar extends Component {
                         color: Colors.white,
                         fontSize: 10
                     }}>
-                        {m.format("hh:mm A")}
+                        {m.format("hh:mm") + " " + AM}
                     </Text>
-                    <View style={{width: 6, backgroundColor: item.bgc}}/>
+                    <View style={{width: 6, backgroundColor: bgc}}/>
                     <View style={{
                         backgroundColor: "#454656",
                         width: "75%",
@@ -229,9 +313,9 @@ export default class Calendar extends Component {
                                     <Text style={{
                                         fontWeight: "bold", color: "white",
                                         fontSize: 11
-                                    }}>{item.service}</Text>
+                                    }}>{item.booking_title}</Text>
                                     <Text style={{marginStart: 8, marginTop: 1, color: "white", fontSize: 10}}>
-                                        {item.clientName}
+                                        {item.client}
                                     </Text>
                                 </View>
                                 <View style={{flexDirection: "row", marginTop: 7}}>
@@ -243,7 +327,7 @@ export default class Calendar extends Component {
 
                                            }}
                                     />
-                                    <Text style={{color: "#95A2B5", fontSize: 12}}>{item.duration}</Text>
+                                    <Text style={{color: "#95A2B5", fontSize: 12}}>{item.total_time + " mins"}</Text>
                                     <View style={{
                                         flexDirection: "column",
                                         width: 1, height: 13,
@@ -259,22 +343,22 @@ export default class Calendar extends Component {
                         </View>
                         <Image resizeMode={"cover"}
                                style={{width: 60, height: "100%", position: "absolute", right: 0, top: 0}}
-                               source={item.imagep}
+                               source={imagep}
                         />
                         <Text style={{
-                            color: [item.imgTextcolor],
+                            color: [imgTextcolor],
                             fontSize: 7,
                             fontWeight: "bold",
                             position: "absolute",
                             right: 8,
                             bottom: 15
-                        }}>{item.imgText}</Text>
+                        }}>{imgText}</Text>
                     </View>
                 </View>
             </TouchableWithoutFeedback>;
         }
-        if (item.bitSet === 1) {
-            return <TouchableOpacity onPress={() => this.props.navigation.navigate("Appointments", {bgc: item.bgc})}>
+        if (item.total_time === "60") {
+            return <TouchableOpacity onPress={() => this.itemSelect(bgc, item)}>
                 <View style={{height: 140, flexDirection: "row"}} cellKey={item.id}>
                     <View style={{flexDirection: "column"}}>
                         <Text
@@ -287,7 +371,7 @@ export default class Calendar extends Component {
                                 fontSize: 10
                             }}
                         >
-                            {m.format("HH:mm A")}
+                            {m.format("HH:mm") + " " + AM}
                         </Text>
 
                         <Text
@@ -299,11 +383,11 @@ export default class Calendar extends Component {
                                 fontSize: 10
                             }}
                         >
-                            {n.format("HH:mm A")}
+                            {n.format("HH:mm") + " " + AM}
                         </Text>
                     </View>
 
-                    <View style={{width: 6, backgroundColor: item.bgc}}/>
+                    <View style={{width: 6, backgroundColor: bgc}}/>
                     <View style={{
                         backgroundColor: "#454656",
                         width: "75%",
@@ -326,9 +410,9 @@ export default class Calendar extends Component {
                                     <Text style={{
                                         fontWeight: "bold", color: "white",
                                         fontSize: 11
-                                    }}>{item.service}</Text>
+                                    }}>{item.booking_title}</Text>
                                     <Text style={{marginStart: 8, marginTop: 1, color: "white", fontSize: 10}}>
-                                        {item.clientName}
+                                        {item.client}
                                     </Text>
                                 </View>
                                 <View style={{flexDirection: "row", marginTop: 7}}>
@@ -341,7 +425,7 @@ export default class Calendar extends Component {
 
                                            }}
                                     />
-                                    <Text style={{color: "#95A2B5", fontSize: 12}}>{item.duration}</Text>
+                                    <Text style={{color: "#95A2B5", fontSize: 12}}>{" 1hr"}</Text>
                                     <View style={{
                                         flexDirection: "column",
                                         width: 1, height: 13,
@@ -357,22 +441,22 @@ export default class Calendar extends Component {
                         </View>
                         <Image resizeMode={"cover"}
                                style={{width: 60, height: "100%", position: "absolute", right: 0, top: 0}}
-                               source={item.imagep}
+                               source={imagep}
                         />
                         <Text style={{
-                            color: [item.imgTextcolor],
+                            color: [imgTextcolor],
                             fontSize: 7,
                             fontWeight: "bold",
                             position: "absolute",
                             right: 6,
                             bottom: 37
-                        }}>{item.imgText}</Text>
+                        }}>{imgText}</Text>
                     </View>
                 </View>
 
             </TouchableOpacity>;
         }
-        if (item.bitSet === 2) {
+        if (item.total_time === "break") {
             return (<TouchableOpacity onPress={() => this.props.navigation.navigate("Appointments")}>
                 <View style={{height: 140, flexDirection: "row"}} cellKey={item.id}>
                     <View style={{flexDirection: "column"}}>
@@ -427,8 +511,8 @@ export default class Calendar extends Component {
             </TouchableOpacity>);
 
         }
-        if (item.bitSet === 3) {
-            return <TouchableOpacity onPress={() => this.props.navigation.navigate("Appointments", {bgc: item.bgc})}>
+        if (item.total_time === "45") {
+            return <TouchableOpacity onPress={() => this.itemSelect(bgc, item)}>
                 <View style={{height: 140, flexDirection: "row"}} cellKey={item.id}>
                     <View style={{flexDirection: "column"}}>
                         <Text
@@ -441,7 +525,7 @@ export default class Calendar extends Component {
                                 fontSize: 10
                             }}
                         >
-                            {m.format("HH:mm A")}
+                            {m.format("hh:mm") + " " + AM}
                         </Text>
 
                         <Text
@@ -453,14 +537,14 @@ export default class Calendar extends Component {
                                 fontSize: 10
                             }}
                         >
-                            {n.format("HH:mm A")}
+                            {n.format("HH:mm") + " " + AM}
                         </Text>
                     </View>
-                    <View style={{height:105,width: 6, backgroundColor: item.bgc}}/>
+                    <View style={{height: 105, width: 6, backgroundColor: bgc}}/>
                     <View style={{
                         backgroundColor: "#454656",
                         width: "75%",
-                        height:105,
+                        height: 105,
                         flexDirection: "row",
                         borderTopLeftRadius: 0,
                         borderBottomLeftRadius: 0,
@@ -480,9 +564,9 @@ export default class Calendar extends Component {
                                     <Text style={{
                                         fontWeight: "bold", color: "white",
                                         fontSize: 11
-                                    }}>{item.service}</Text>
+                                    }}>{item.booking_title}</Text>
                                     <Text style={{marginStart: 8, marginTop: 1, color: "white", fontSize: 10}}>
-                                        {item.clientName}
+                                        {item.client}
                                     </Text>
                                 </View>
                                 <View style={{flexDirection: "row", marginTop: 7}}>
@@ -495,7 +579,7 @@ export default class Calendar extends Component {
 
                                            }}
                                     />
-                                    <Text style={{color: "#95A2B5", fontSize: 12}}>{item.duration}</Text>
+                                    <Text style={{color: "#95A2B5", fontSize: 12}}>{" 45 mins"}</Text>
                                     <View style={{
                                         flexDirection: "column",
                                         width: 1, height: 13,
@@ -511,16 +595,16 @@ export default class Calendar extends Component {
                         </View>
                         <Image resizeMode={"cover"}
                                style={{width: 60, height: "100%", position: "absolute", right: 0, top: 0}}
-                               source={item.imagep}
+                               source={imagep}
                         />
                         <Text style={{
-                            color: [item.imgTextcolor],
+                            color: [imgTextcolor],
                             fontSize: 7,
                             fontWeight: "bold",
                             position: "absolute",
                             right: 6,
                             bottom: 37
-                        }}>{item.imgText}</Text>
+                        }}>{imgText}</Text>
                     </View>
                 </View>
 
@@ -583,7 +667,7 @@ export default class Calendar extends Component {
                         color: Colors.red1
                     }}
                 >
-                    March 2019
+                    {monthNames[new Date().getMonth() + 1]} {new Date().getFullYear()}
                 </Text>
                 <View style={styles.calendar_weekly_header}>
                     {this.state.dataSource}
@@ -598,7 +682,7 @@ export default class Calendar extends Component {
                 <FlatList
                     keyExtractor={(item, index) => index.toString()}
                     //data={this.state.dayData}
-                    data={this.state.listData}
+                    data={this.state.calenderSlots}
                     renderItem={({item}) => this.renderItem(item)}
                     numColumns={1}
                     keyExtractor={(item, index) => index}

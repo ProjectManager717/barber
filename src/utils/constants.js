@@ -11,6 +11,7 @@ export const constants = {
     BarberWorkingHours : Base_url + path2 + "workingHour",
     UpdateWorkingHours : Base_url + path2 + "updateWorkingHours",
     ClientBlastMessage : Base_url + path2 + "sendClientBlast",
-    GetNotifications : Base_url + path3 + "notifications"
+    GetNotifications : Base_url + path3 + "notifications",
+    GetCalenderSlots : Base_url + path2 + "calenderSlots"
 
 };
