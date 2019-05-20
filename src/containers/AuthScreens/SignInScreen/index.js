@@ -28,9 +28,14 @@ class SignInScreen extends Component {
     }
 
     componentDidMount(): void {
-        if (Preference.get("login") === true) {
-            this.props.navigation.navigate("TabNavigator");
+        if (itemId === "Client") {
+
+        } else {
+            if (Preference.get("login") === true) {
+                this.props.navigation.navigate("TabNavigator");
+            }
         }
+
         NetInfo.isConnected.addEventListener(
             'change',
             this._handleConnectivityChange

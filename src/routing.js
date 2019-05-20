@@ -49,7 +49,8 @@ import ReceiptCancelled from "./containers/Settings/Receipt/ReceiptCancelled"
 import ClientBarberSearch from "./containers/Home/Clients/ClientBarberSearch"
 import ClientFilter from "./containers/Home/Clients/ClientFilter"
 import ClientHaircuts from "./containers/Home/Clients/ClientHaircuts"
-import Share from "./containers/Settings/Share Screen/index"
+import Share from "./containers/Settings/Share Screen/index";
+import SplashScreen from "./containers/AuthScreens/SplashScreen";
 
 
 import colors from "./themes/colors";
@@ -198,6 +199,7 @@ const ClientTabNavigator = createBottomTabNavigator(
 
 
 const AuthStack = createStackNavigator({
+    SplashScreen: SplashScreen,
     SelectScreen: SelectScreen,
     ConfirmSMSScreen: ConfirmSMSScreen,
     InitialScreen: InitialScreen,
@@ -238,7 +240,7 @@ const AuthStack = createStackNavigator({
     ClientHaircuts:ClientHaircuts,
     Share:Share,
 }, {
-    initialRouteName: 'SelectScreen',
+    initialRouteName: 'SplashScreen',
     headerMode: 'none'
 });
 

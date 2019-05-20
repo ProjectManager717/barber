@@ -19,6 +19,7 @@ import CalendarHeader from "react-native-calendars/src/calendar/header";
 
 const {width, height} = Dimensions.get("window");
 const today = moment().format("YYYY-MM-DD");
+console.log("todaydate:"+today);
 export default class ClientHaircuts extends Component {
 
     constructor(props) {
@@ -143,15 +144,14 @@ export default class ClientHaircuts extends Component {
                             }}
 
                             markedDates={{
-                                '2019-04-09': {
+                                '2019-05-09': {
                                     selected: true, selectedColor:this.state.red,
                                 },
-                                '2019-04-13': {
+                                '2019-05-13': {
                                     selected: true, selectedColor:this.state.green,
                                 },
-                                '2019-04-22': {selected: true,selectedColor:this.state.blue},
-
-                                '2019-04-20': {marked: true, dotColor: "red"},
+                                '2019-05-22': {selected: true,selectedColor:this.state.blue},
+                                today: {marked: true, dotColor: "red"},
                             }}
 
                             hideDayNames={true}

@@ -5,8 +5,10 @@ import SignInScreen from './AuthScreens/SignInScreen';
 import SignUpScreen from './AuthScreens/SignUpScreen';
 import SMSScreen from './AuthScreens/SMSScreen';
 import ForgetPasswordScreen from './AuthScreens/ForgetPasswordScreen';
+import SplashScreen from "./AuthScreens/SplashScreen";
 
 export {
+  SplashScreen,
   SelectScreen,
   ConfirmSMSScreen,
   InitialScreen,

@@ -28,7 +28,7 @@ export default class Receipt extends Component {
     }
 
     renderRowButtons(item) {
-        return <TouchableOpacity
+        return <View
             style={{
                 width: "90%",
                 height: 26,
@@ -40,7 +40,7 @@ export default class Receipt extends Component {
             }}>
             <Text style={[globalStyles.receiptButtonText,{marginTop:3}]}>{item.text}</Text>
 
-        </TouchableOpacity>;
+        </View>;
     }
 
     renderSeperator() {

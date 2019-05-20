@@ -37,16 +37,20 @@ export default class PaymentMethod extends Component {
                     rightComponent={{color: "#fff"}}
                     containerStyle={{
                         backgroundColor: Colors.dark,
-                        justifyContent: "space-around"}}
+                        justifyContent: "space-around"
+                    }}
                     leftComponent={<TouchableOpacity onPress={() => {
-                            this.props.navigation.goBack();}}>
-                            <Image
-                                style={{tintColor: 'white',
-                                    height: 20,
-                                    resizeMode: 'contain'}}
-                                source={require("../../../assets/images/ic_back.png")}
-                            />
-                        </TouchableOpacity>
+                        this.props.navigation.goBack();
+                    }}>
+                        <Image
+                            style={{
+                                tintColor: 'white',
+                                height: 20,
+                                resizeMode: 'contain'
+                            }}
+                            source={require("../../../assets/images/ic_back.png")}
+                        />
+                    </TouchableOpacity>
 
                     }
                 />
@@ -76,79 +80,84 @@ export default class PaymentMethod extends Component {
                                     <Image resizeMode={"contain"} source={require("../../../assets/images/Forma1.png")}
                                            style={[{
                                                position: "absolute",
-                                               height: 23, top: 130, right: 150,
+                                               height: 23, top: 130, right: "41%",
                                                justifyItems: "center"
-
                                            }]}/>
 
-                                    <Text style={[{textAlign: "center", color: "white", top: 160,fontSize:12}]}>
+                                    <Text style={[{textAlign: "center", color: "white", top: 160, fontSize: 12}]}>
                                         Scan Credit Card</Text>
 
                                 </ImageBackground>
                             </View>
                         </View>
-                        <Text style={styles.txtHeader}>CARD NUMBER</Text>
+                        <View style={{marginStart:10,marginEnd:10}}>
+                            <Text style={styles.txtHeader}>CARD NUMBER</Text>
 
-                        <View style={[globalStyles.rowBackground, {flex: 1, flexDirection: 'row', height: 40}]}>
+                            <View style={[globalStyles.rowBackground, {flex: 1, flexDirection: 'row', height: 40}]}>
 
-                            <Image style={[styles.right_arrow]} source={require("../../../assets/images/vcircle.png")}/>
-                <TextInput style={{fontSize: 15, color: 'white',marginStarts:5}} placeholder={" 4242 - 4242 - 4242 - 4242"}
-                                       placeholderTextColor={"white"}/>
-
-
-                        </View>
-                        <View style={{flexDirection: "row", width: "100%"}}>
-                            <View style={{width:"65%"}}>
-                                <Text style={styles.txtHeader}>EXPIRATION DATE</Text>
-                            </View>
-                            <View style={{width:"35%"}}>
-                                <Text style={styles.txtHeader}>CVV/CVC</Text>
-                            </View>
-
-                        </View>
-
-                        <View style={{width: "100%", flexDirection: "row"}}>
-                            <View style={[styles.row_back, {width: "25%", marginStart: 10}]}>
-                                <TextInput style={{fontSize: 15, color: 'white',marginStart:5}} placeholder={"04"}
-                                           placeholderTextColor={"white"}/>
-                                <Image resizeMode={"contain"} style={[styles.dropDown]}
-                                       source={require("../../../assets/images/dropdown.png")}/>
-                            </View>
-                            <View style={[styles.row_back, {width: "25%", marginStart: 5}]}>
-                                <TextInput style={{fontSize: 15, color: 'white',marginStart:5}} placeholder={"24"}
-                                           placeholderTextColor={"white"}/>
-                                <Image resizeMode={"contain"} style={[styles.dropDown]}
-                                       source={require("../../../assets/images/dropdown.png")}/>
-                            </View>
-                            <View style={{width: "17%",}}>
-
-                            </View>
-
-                            <View style={[styles.row_back, {width: "25%"}]}>
-                <TextInput style={{fontSize: 15, color: 'white',marginStart:5}} placeholder={"424"}
+                                <Image style={[styles.right_arrow]}
+                                       source={require("../../../assets/images/vcircle.png")}/>
+                                <TextInput style={{fontSize: 15, color: 'white', marginStarts: 5}}
+                                           placeholder={" 4242 - 4242 - 4242 - 4242"}
                                            placeholderTextColor={"white"}/>
 
+
+                            </View>
+                            <View style={{flexDirection: "row", width: "100%"}}>
+                                <View style={{width: "65%"}}>
+                                    <Text style={styles.txtHeader}>EXPIRATION DATE</Text>
+                                </View>
+                                <View style={{width: "35%"}}>
+                                    <Text style={styles.txtHeader}>CVV/CVC</Text>
+                                </View>
+
+                            </View>
+
+                            <View style={{width: "100%", flexDirection: "row"}}>
+                                <View style={[styles.row_back, {width: "25%", marginStart: 10}]}>
+                                    <TextInput style={{fontSize: 15, color: 'white', marginStart: 5}} placeholder={"04"}
+                                               placeholderTextColor={"white"}/>
+                                    <Image resizeMode={"contain"} style={[styles.dropDown]}
+                                           source={require("../../../assets/images/dropdown.png")}/>
+                                </View>
+                                <View style={[styles.row_back, {width: "25%", marginStart: 5}]}>
+                                    <TextInput style={{fontSize: 15, color: 'white', marginStart: 5}} placeholder={"24"}
+                                               placeholderTextColor={"white"}/>
+                                    <Image resizeMode={"contain"} style={[styles.dropDown]}
+                                           source={require("../../../assets/images/dropdown.png")}/>
+                                </View>
+                                <View style={{width: "17%",}}>
+
+                                </View>
+
+                                <View style={[styles.row_back, {width: "25%"}]}>
+                                    <TextInput style={{fontSize: 15, color: 'white', marginStart: 5}}
+                                               placeholder={"424"}
+                                               placeholderTextColor={"white"}/>
+
+                                </View>
+                            </View>
+                            <Text style={styles.txtHeader}>CARD HOLDER NAME</Text>
+                            <View style={{flex: 1, flexDirection: 'column', width: "100%"}}>
+                                <View style={{flexDirection: "row", alignItems: "center"}}>
+                                    <TextInput
+                                        style={{height: 40, color: "#52525D", marginStart: 28}}
+                                        placeholder={"Massimiliano Allegri"}
+                                        placeholderTextColor={"white"}
+                                    />
+                                </View>
+                                <View style={{height: 0.5, backgroundColor: "#52525D", marginStart: 10}}></View>
                             </View>
                         </View>
-                        <Text style={styles.txtHeader}>CARD HOLDER NAME</Text>
-                        <View style={{flex: 1, flexDirection: 'column', width: "100%"}}>
-                            <View style={{flexDirection: "row", alignItems: "center"}}>
-                                <TextInput
-                                    style={{height: 40, color: "#52525D", marginStart: 28}}
-                                    placeholder={"Massimiliano Allegri"}
-                                    placeholderTextColor={"white"}
-                                />
-                            </View>
-                            <View style={{height: 0.5, backgroundColor: "#52525D", marginStart: 10}}></View>
-                        </View>
-                        <TouchableOpacity  onPress={() => {
-                            this.props.navigation.navigate("Settings");}}  style={[globalStyles.button, {
+                        <TouchableOpacity onPress={() => {
+                            this.props.navigation.navigate("Settings");
+                        }} style={[globalStyles.button, {
                             marginTop: 40,
                             height: 35,
                             width: 260,
                             marginBottom: 30
                         }]}>
-                            <Text style={{fontSize:14,fontWeight:"bold",color:"white"}}>Add My Card</Text>
+                            <Text style={{fontSize: 14, fontWeight: "bold", color: "white"}}>Add My Card</Text>
                         </TouchableOpacity>
 
                     </View>

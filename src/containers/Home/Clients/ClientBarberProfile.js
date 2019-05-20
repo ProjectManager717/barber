@@ -29,8 +29,9 @@ Date.prototype.addDays = function (days) {
 export default class ClientBarberProfile extends Component {
 
     rightAction() {
-        this.props.navigation.navigate('BarberEditProfile');
+        //this.props.navigation.navigate('BarberEditProfile');
     }
+
     leftAction() {
         this.props.navigation.goBack();
     }
@@ -207,7 +208,7 @@ export default class ClientBarberProfile extends Component {
                 <TouchableWithoutFeedback onPress={() => this.itemSelect(item.id)}>
                     <View style={{height: 20, flexDirection: "row", marginStart: 10}} cellKey={item.id}>
                         <Image resizeMode={"contain"} source={require("../../../assets/images/dollar_surge.png")}
-                               style={{width: 12, height: 12,marginTop:3}}/>
+                               style={{width: 12, height: 12, marginTop: 3}}/>
                         <Text style={{
                             textAlignVertical: "top",
                             height: 40,
@@ -254,12 +255,17 @@ export default class ClientBarberProfile extends Component {
         return (
             <ScrollView>
                 <View style={styles.container}>
+
                     <Header
                         leftAction={this.leftAction.bind(this)}
                         rightAction={this.rightAction.bind(this)}
                         bgIcon={require("../../../assets/images/bannerprofile.png")}
                         rightIcon={require("../../../assets/images/share.png")}
                         leftIcon={require("../../../assets/images/ic_back.png")}/>
+                    <TouchableOpacity style={{position: "absolute", top: 40, right: 60}}>
+                        <Image source={require("../../../assets/images/star-unselected.png")}
+                               style={{width: 20, height: 20, }}/>
+                    </TouchableOpacity>
                     <View style={styles.detailsContainer}>
                         <View style={styles.profileImageContainer}>
                             <ImageBackground
@@ -292,14 +298,14 @@ export default class ClientBarberProfile extends Component {
                                 </View>
 
                                 <View style={styles.review}>
-                                    <TouchableOpacity  onPress={()=>{
+                                    <TouchableOpacity onPress={() => {
                                         this.props.navigation.navigate('ClientSupremeReview');
-                                    }}  >
-                                    <Image
-                                        resizeMode="contain"
-                                        source={require("../../../assets/images/start.png")}
-                                        style={styles.rating}
-                                    />
+                                    }}>
+                                        <Image
+                                            resizeMode="contain"
+                                            source={require("../../../assets/images/start.png")}
+                                            style={styles.rating}
+                                        />
                                     </TouchableOpacity>
                                     <Text style={[styles.allFontStyle, styles.reviewText]}>
                                         (17 Reviews)
@@ -390,7 +396,7 @@ export default class ClientBarberProfile extends Component {
                                             marginStart: 10,
                                             alignItems: "center"
                                         }]}>
-                                            <CheckBoxSquare isChecked={item.check} uncheckedCheckBoxColor={"#84858C"}  />
+                                            <CheckBoxSquare isChecked={item.check} uncheckedCheckBoxColor={"#84858C"}/>
                                             <Text style={{color: "white", fontSize: 12}}>   {item.title} </Text>
                                         </View>
                                         <View style={[{flexDirection: "row", width: "25%", alignItems: "center"}]}>
@@ -455,14 +461,11 @@ export default class ClientBarberProfile extends Component {
                                     marginStart: 25,
 
 
-
-
-
                                 }}>
                                     <Text style={{
                                         fontSize: 16, color: "white",
                                         fontFamily: "AvertaStd-Thin",
-                                        marginTop:10
+                                        marginTop: 10
 
                                     }}>Subtotal:</Text>
                                     <Text
@@ -471,7 +474,7 @@ export default class ClientBarberProfile extends Component {
                                             fontWeight: "bold",
                                             textAlign: "left",
                                             color: "white",
-                                           }}
+                                        }}
                                     >$36.25</Text>
                                     <Text style={{color: "white", fontFamily: "AvertaStd-Thin", fontSize: 12}}>Service
                                         Fee:
@@ -502,9 +505,9 @@ export default class ClientBarberProfile extends Component {
                                     }} resizeMode={"contain"}
                                     source={require("../../../assets/images/arrow_down.png")}/>
                             </View>
-                            <TouchableOpacity onPress={()=>{
+                            <TouchableOpacity onPress={() => {
                                 this.props.navigation.navigate('ClientBarberProfileNoSurge');
-                            }}   style={{
+                            }} style={{
                                 backgroundColor: "red",
                                 width: "20%",
                                 height: "100%",

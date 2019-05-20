@@ -34,7 +34,9 @@ export const styles = StyleSheet.create({
   },
   termsContainer: {
     marginTop: 10,
-    flexDirection: 'row'
+    flexDirection: 'row',
+    marginEnd:20,
+    marginStart:20,
   },
   whiteText: {
     color: Colors.white,

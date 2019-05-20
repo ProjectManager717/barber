@@ -115,10 +115,7 @@ export default class ClientBarberSearch extends Component {
                 width: "100%",
                 alignItems: "center",
                 height: 150,
-
-
                 borderRadius: 30,
-
             }}>
             <ImageBackground source={item.imgPathh2}
                              style={{width: "100%", height: "100%", borderRadius: 7, overflow: 'hidden'}}>
@@ -255,17 +252,14 @@ export default class ClientBarberSearch extends Component {
         return (
             <View style={styles.container}>
                 <Header
-
                     statusBarProps={{barStyle: "light-content"}}
                     barStyle="light-content" // or directly
                     style={{backgroundColor: "yellow"}}
                     outerContainerStyles={{backgroundColor: "#1999CE"}}
                     leftComponent={
-                        <TouchableOpacity
-                            onPress={() => {
-                                this.props.navigation.navigate("QRCheckIn");
-                            }}
-                        >
+                        <TouchableOpacity onPress={() => {
+                                //this.props.navigation.navigate("QRCheckIn");
+                            }}>
                             <Image
                                 style={{
                                     tintColor: "white",

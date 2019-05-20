@@ -146,7 +146,7 @@ export default class Settings extends Component {
                 </TouchableOpacity>
             </View>
           <TouchableOpacity style={[globalStyles.button,{marginTop:30, marginBottom:30}]} onPress={()=>{
-            this.props.navigation.navigate('BarberProfile');
+            this.props.navigation.navigate('SelectScreen');
           }}>
             <Text style={globalStyles.buttonText}>Logout</Text>
           </TouchableOpacity>

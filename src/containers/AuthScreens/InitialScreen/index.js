@@ -55,7 +55,7 @@ class InitialScreen extends Component {
                 <SafeAreaView style={styles.container}>
                     <View style={styles.mainContainer}>
                         <View style={styles.buttonsContainer}>
-                            <WhiteButton label="Sign Up with Email" onPress={this.onSignUp}/>
+                            <WhiteButton label="Sign Up" onPress={this.onSignUp}/>
                             <RedButton label="Sign In" onPress={this.onSignIn}/>
                         </View>
                     </View>
