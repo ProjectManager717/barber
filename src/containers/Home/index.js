@@ -13,7 +13,7 @@ import {ScrollView} from "react-native-gesture-handler";
 import TopTabs from "../../components/ScreenTabs";
 import colors from "../../themes/colors";
 import GraphComp from "../../components/Graph/";
-import Clients from "./Clients";
+import Clients from "./Clients/Clients";
 import Notifications from "./Notifications";
 
 const {height, width} = Dimensions.get("window");

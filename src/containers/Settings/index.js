@@ -154,13 +154,8 @@ export default class Settings extends Component {
             <View style={{
                 flexDirection:"column",
                 justifyContent:"center",
-                alignItems:"center",
-
-
-
-
-            }}  >
-
+                alignItems:"center",}}
+            >
                 <Text style={{color:"grey",fontFamily:"AvertaStd-Thin"}} >{"CLYPR Technologies V1.0"}</Text>
                 <View style={{flexDirection:"row",marginTop:5,marginBottom:10}} >
                     <Text style={{color:"white",fontWeight:"bold",fontStyle:"italic"}} > Made in Miami </Text>

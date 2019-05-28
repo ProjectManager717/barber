@@ -29,9 +29,11 @@ class SignInScreen extends Component {
 
     componentDidMount(): void {
         if (itemId === "Client") {
-
+            if (Preference.get("clientlogin") === true) {
+                this.props.navigation.navigate("ClientTabNavigator");
+            }
         } else {
-            if (Preference.get("login") === true) {
+            if (Preference.get("barberlogin") === true) {
                 this.props.navigation.navigate("TabNavigator");
             }
         }
@@ -53,7 +55,56 @@ class SignInScreen extends Component {
 
     onLogin = () => {
         if (itemId === "Client") {
-            this.props.navigation.navigate('ClientTabNavigator');
+            if (this.state.isConnected) {
+                if (this.state.email === "" || this.state.password === "") {
+                    alert("Please fill all fields");
+                } else {
+                    const {email, password} = this.state;
+                    var details = {
+                        email: email,
+                        password: password,
+                    };
+                    var formBody = [];
+                    for (var property in details) {
+                        var encodedKey = encodeURIComponent(property);
+                        var encodedValue = encodeURIComponent(details[property]);
+                        formBody.push(encodedKey + "=" + encodedValue);
+                    }
+                    formBody = formBody.join("&");
+                    fetch(constants.ClientLogin, {
+                        method: 'POST',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: formBody
+                    }).then(response => response.json())
+                        .then(response => {
+                            console.log("responseClientlogin-->", "-" + JSON.stringify(response));
+                            if (response.ResultType === 1) {
+                                Preference.set({
+                                    clientlogin: true,
+                                    userEmail: response.Data.email,
+                                    userId: response.Data.id,
+                                    userType: "Barber",
+                                    userToken: response.Data.token
+                                });
+                                this.moveToHome();
+                            } else {
+                                if (response.ResultType === 0) {
+                                    alert(response.Message);
+                                }
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
+                    //Keyboard.dismiss();
+                }
+            } else {
+                alert("Please connect Internet");
+            }
+            //this.props.navigation.navigate('ClientTabNavigator');
         } else {
             //this.props.navigation.navigate('TabNavigator');
             if (this.state.isConnected) {
@@ -84,7 +135,7 @@ class SignInScreen extends Component {
                             console.log("responseBarberlogin-->", "-" + JSON.stringify(response));
                             if (response.ResultType === 1) {
                                 Preference.set({
-                                    login: true,
+                                    barberlogin: true,
                                     userEmail: response.Data.email,
                                     userId: response.Data.id,
                                     userType: "Barber",
@@ -110,7 +161,11 @@ class SignInScreen extends Component {
     };
 
     moveToHome() {
-        this.props.navigation.navigate("TabNavigator");
+        if (itemId === "Client")
+            this.props.navigation.navigate("ClientTabNavigator");
+        else {
+            this.props.navigation.navigate("TabNavigator");
+        }
     }
 
     _handleConnectivityChange = (isConnected) => {
@@ -124,7 +179,8 @@ class SignInScreen extends Component {
     };
 
     signupClicked() {
-        this.props.navigation.navigate("SignUpScreen");
+        this.props.navigation.navigate('SignUpScreen', {User:this.state.userName});
+        //this.props.navigation.navigate("SignUpScreen");
     }
 
     onForgot = () => {

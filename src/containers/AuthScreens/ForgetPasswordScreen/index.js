@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {ImageBackground, Text, View, TouchableOpacity, NetInfo, Dimensions,Keyboard} from 'react-native';
+import {ImageBackground, Text, View, TouchableOpacity, NetInfo, Dimensions, Keyboard} from 'react-native';
 import {SafeAreaView} from 'react-navigation';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {styles} from './styles';
@@ -21,17 +21,17 @@ class ForgetPasswordScreen extends Component {
         this.state = {
             isVisible: false,
             email: '',
-            pin:"",
+            pin: "",
             isConnected: false,
             sendMail: true,
             resetPassword: false,
-            forgetpassword_pin:"1234",password:"",repassword:"",
+            forgetpassword_pin: "1234", password: "", repassword: "",
         };
         this.state.userName = itemId;
         this.showResetPassword = this.showResetPassword.bind(this);
         this.onCloseReset = this.onCloseReset.bind(this);
         this.onForgot = this.onForgot.bind(this);
-        this.onResetPassword=this.onResetPassword.bind(this);
+        this.onResetPassword = this.onResetPassword.bind(this);
     }
 
     componentDidMount(): void {
@@ -67,87 +67,171 @@ class ForgetPasswordScreen extends Component {
 
     onForgot = () => {
         //alert('forgot');
-        if (this.state.email === "") {
-            alert("Please enter email?");
-        } else {
-            var details = {
-                email: this.state.email,
-                forgetpassword_pin:this.state.forgetpassword_pin
-            };
-            var formBody = [];
-            for (var property in details) {
-                var encodedKey = encodeURIComponent(property);
-                var encodedValue = encodeURIComponent(details[property]);
-                formBody.push(encodedKey + "=" + encodedValue);
-            }
-            formBody = formBody.join("&");
-            fetch(constants.BarberForgetPassword, {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: formBody
-            }).then(response => response.json())
-                .then(response => {
-                    console.log("response-->", "-" + JSON.stringify(response));
-                    if (response.ResultType === 1) {
-                        //alert("Please check your mail for reset password.")
-                        this.setState({isVisible: true});
-                    } else {
-                        if (response.ResultType === 0) {
-                            alert(response.Message);
+        if (this.state.userName === "Client") {
+            if (this.state.email === "") {
+                alert("Please enter email?");
+            } else {
+                var details = {
+                    email: this.state.email,
+                    forgetpassword_pin: this.state.forgetpassword_pin
+                };
+                var formBody = [];
+                for (var property in details) {
+                    var encodedKey = encodeURIComponent(property);
+                    var encodedValue = encodeURIComponent(details[property]);
+                    formBody.push(encodedKey + "=" + encodedValue);
+                }
+                formBody = formBody.join("&");
+                fetch(constants.ClientForgetPassword, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: formBody
+                }).then(response => response.json())
+                    .then(response => {
+                        console.log("responseforgetPasswordClient-->", "-" + JSON.stringify(response));
+                        if (response.ResultType === 1) {
+                            //alert("Please check your mail for reset password.")
+                            this.setState({isVisible: true});
+                        } else {
+                            if (response.ResultType === 0) {
+                                alert(response.Message);
+                            }
                         }
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
-            //Keyboard.dismiss();
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+                //Keyboard.dismiss();
+            }
+        } else {
+            if (this.state.email === "") {
+                alert("Please enter email?");
+            } else {
+                var details = {
+                    email: this.state.email,
+                    forgetpassword_pin: this.state.forgetpassword_pin
+                };
+                var formBody = [];
+                for (var property in details) {
+                    var encodedKey = encodeURIComponent(property);
+                    var encodedValue = encodeURIComponent(details[property]);
+                    formBody.push(encodedKey + "=" + encodedValue);
+                }
+                formBody = formBody.join("&");
+                fetch(constants.BarberForgetPassword, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: formBody
+                }).then(response => response.json())
+                    .then(response => {
+                        console.log("responseforgetPasswordBarber-->", "-" + JSON.stringify(response));
+                        if (response.ResultType === 1) {
+                            //alert("Please check your mail for reset password.")
+                            this.setState({isVisible: true});
+                        } else {
+                            if (response.ResultType === 0) {
+                                alert(response.Message);
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+                //Keyboard.dismiss();
+            }
         }
     };
 
     onResetPassword = () => {
         //alert('forgot');
-        if (this.state.password === "") {
-            alert("Please enter password?");
-        } else {
-            var details = {
-                password: this.state.password,
-                email:this.state.email,
-                forgetpassword_pin:this.state.forgetpassword_pin
-            };
-            var formBody = [];
-            for (var property in details) {
-                var encodedKey = encodeURIComponent(property);
-                var encodedValue = encodeURIComponent(details[property]);
-                formBody.push(encodedKey + "=" + encodedValue);
-            }
-            formBody = formBody.join("&");
+        if (this.state.userName === "Client") {
+            if (this.state.password === "") {
+                alert("Please enter password?");
+            } else {
+                var details = {
+                    password: this.state.password,
+                    email: this.state.email,
+                    forgetpassword_pin: this.state.forgetpassword_pin
+                };
+                var formBody = [];
+                for (var property in details) {
+                    var encodedKey = encodeURIComponent(property);
+                    var encodedValue = encodeURIComponent(details[property]);
+                    formBody.push(encodedKey + "=" + encodedValue);
+                }
+                formBody = formBody.join("&");
 
-            fetch(constants.BarberResetPassword, {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: formBody
-            }).then(response => response.json())
-                .then(response => {
-                    console.log("response-->", "-" + JSON.stringify(response));
-                    if (response.ResultType === 1) {
-                        alert("Your password has been reset");
-                        this.props.navigation.goBack();
-                    } else {
-                        if (response.ResultType === 0) {
-                            alert(response.Message);
+                fetch(constants.ClientResetPassword, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: formBody
+                }).then(response => response.json())
+                    .then(response => {
+                        console.log("response-->", "-" + JSON.stringify(response));
+                        if (response.ResultType === 1) {
+                            alert("Your password has been reset");
+                            this.props.navigation.goBack();
+                        } else {
+                            if (response.ResultType === 0) {
+                                alert(response.Message);
+                            }
                         }
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
-            //Keyboard.dismiss();
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+                //Keyboard.dismiss();
+            }
+        } else {
+            if (this.state.password === "") {
+                alert("Please enter password?");
+            } else {
+                var details = {
+                    password: this.state.password,
+                    email: this.state.email,
+                    forgetpassword_pin: this.state.forgetpassword_pin
+                };
+                var formBody = [];
+                for (var property in details) {
+                    var encodedKey = encodeURIComponent(property);
+                    var encodedValue = encodeURIComponent(details[property]);
+                    formBody.push(encodedKey + "=" + encodedValue);
+                }
+                formBody = formBody.join("&");
+
+                fetch(constants.BarberResetPassword, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: formBody
+                }).then(response => response.json())
+                    .then(response => {
+                        console.log("response-->", "-" + JSON.stringify(response));
+                        if (response.ResultType === 1) {
+                            alert("Your password has been reset");
+                            this.props.navigation.goBack();
+                        } else {
+                            if (response.ResultType === 0) {
+                                alert(response.Message);
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+                //Keyboard.dismiss();
+            }
         }
     };
 
@@ -163,19 +247,17 @@ class ForgetPasswordScreen extends Component {
 
     }
 
-    checkCode(val)
-    {
+    checkCode(val) {
         //alert(val);
-        if(this.state.forgetpassword_pin===val)
-        {
-            this.setState({resetPassword: true, sendMail: false,isVisible:false});
-        }else {
+        if (this.state.forgetpassword_pin === val) {
+            this.setState({resetPassword: true, sendMail: false, isVisible: false});
+        } else {
             alert("Pin does not match");
         }
     }
 
     render() {
-        const {email,password,repassword} = this.state;
+        const {email, password, repassword} = this.state;
         const isValidEmail = checkEmail(email);
         const isValidPassword = password.length >= 6;
         const isValidPasswordConfirm = repassword.length >= 6 && (password === repassword);
@@ -275,7 +357,7 @@ class ForgetPasswordScreen extends Component {
                                 ref={"keycodeinput"}
                                 value={this.state.pin}
                                 autoFocus={true}
-                                onChange={(pin)=>this.setState({pin:pin})}
+                                onChange={(pin) => this.setState({pin: pin})}
                                 onComplete={(value) => {
                                     //alert(value);
                                     this.checkCode(value);
@@ -285,7 +367,7 @@ class ForgetPasswordScreen extends Component {
                         <View style={{height: 1, backgroundColor: "grey"}}/>
                         <View style={{height: "25%", flexDirection: "row", width: "100%"}}>
                             <View style={{width: "50%"}}>
-                                <TouchableOpacity onPress={()=>this.setState({pin:""})} style={{
+                                <TouchableOpacity onPress={() => this.setState({pin: ""})} style={{
                                     width: "100%",
                                     height: "100%",
                                     justifyContent: "center",

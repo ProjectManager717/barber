@@ -16,6 +16,8 @@ import {globalStyles} from "../../../themes/globalStyles";
 //import { styles } from "./styles";
 import {Header} from "react-native-elements";
 import CheckBoxSquare from "../../../components/CheckBox";
+import {RedButton} from "../../../components/Buttons";
+import {Metric} from "../../../themes";
 
 const {height, width} = Dimensions.get("window");
 
@@ -33,7 +35,9 @@ export default class ClientEditProfile extends Component {
 
         </View>;
     }
-
+    saveData = () => {
+        this.props.navigation.push("PaymentMethod");
+    }
 
     render() {
         return (
@@ -90,7 +94,7 @@ export default class ClientEditProfile extends Component {
                             <View style={{marginStart: 30, height: 15,}}>
                             </View>
                         </View>
-
+                        <RedButton label="SAVE" onPress={this.saveData} style={styles.btnContainer}/>
                     </View>
                 </ScrollView>
 
@@ -216,7 +220,10 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: colors.white,
 
-    }
+    },
+    btnContainer: {
+        marginTop: Metric.height / 10
+    },
 
 
 });

@@ -20,6 +20,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center'
   },
   titleText: {
+    marginTop:3,
     ...Metric.font.big,
     color: Colors.white,
     textAlign: 'center',
@@ -49,8 +50,7 @@ export const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
     flexDirection: 'row',
-    paddingVertical: 5,
-    marginBottom: Metric.height / 30
+    marginBottom: Metric.height / 40
   },
   countryCodeContainer: {
     marginLeft: 5,
@@ -61,10 +61,11 @@ export const styles = StyleSheet.create({
   },
   input: {
     marginLeft: 10,
+    height:45,
     width: Metric.width / 5 * 2.5,
     ...Metric.font.big,
     color: Colors.white,
-    marginBottom: 5
+    marginBottom: 0,
   }
 });
 

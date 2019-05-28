@@ -28,7 +28,8 @@ class ConfirmSMSScreen extends Component {
   };
 
   onSubmit = () => {
-    alert('submit');
+    //alert('submit');
+    this.props.navigation.navigate('ClientEditProfile');
   };
 
   render() {

@@ -12,9 +12,8 @@ import {
 } from "react-native";
 import {Colors} from "../../../themes";
 import {globalStyles} from "../../../themes/globalStyles";
-//import { styles } from "./styles";
 import {Header} from "react-native-elements";
-import CheckBoxSquare from "../../../components/CheckBox";
+import {NavigationActions, StackActions} from "react-navigation";
 
 export default class PaymentMethod extends Component {
 
@@ -24,10 +23,17 @@ export default class PaymentMethod extends Component {
         //this.state = {text: ' 4242 - 4242 - 4242- 4242'};
     }
 
+    saveCard = () => {
+        const resetAction = StackActions.reset({
+            index: 0,
+            actions: [NavigationActions.navigate({routeName: 'ClientTabNavigator'})],
+        });
+        this.props.navigation.dispatch(resetAction);
+        //this.props.navigation.navigate("ClientTabNavigator");
+    }
+
     render() {
         return (<View style={styles.container}>
-
-
                 <Header
                     statusBarProps={{barStyle: "light-content"}}
                     barStyle="light-content" // or directly
@@ -50,9 +56,7 @@ export default class PaymentMethod extends Component {
                             }}
                             source={require("../../../assets/images/ic_back.png")}
                         />
-                    </TouchableOpacity>
-
-                    }
+                    </TouchableOpacity>}
                 />
                 <ScrollView>
                     <View style={{flexDirection: "column"}}>
@@ -67,30 +71,26 @@ export default class PaymentMethod extends Component {
                                            style={[{
                                                position: "absolute",
                                                height: 27, top: 60, left: 35
-
                                            }]}/>
-
                                     <Image resizeMode={"contain"} source={require("../../../assets/images/viss.png")}
                                            style={[{
                                                position: "absolute",
                                                height: 15, top: 65, right: 30
 
                                            }]}/>
-
                                     <Image resizeMode={"contain"} source={require("../../../assets/images/Forma1.png")}
                                            style={[{
                                                position: "absolute",
                                                height: 23, top: 130, right: "41%",
                                                justifyItems: "center"
                                            }]}/>
-
                                     <Text style={[{textAlign: "center", color: "white", top: 160, fontSize: 12}]}>
                                         Scan Credit Card</Text>
 
                                 </ImageBackground>
                             </View>
                         </View>
-                        <View style={{marginStart:10,marginEnd:10}}>
+                        <View style={{marginStart: 10, marginEnd: 10}}>
                             <Text style={styles.txtHeader}>CARD NUMBER</Text>
 
                             <View style={[globalStyles.rowBackground, {flex: 1, flexDirection: 'row', height: 40}]}>
@@ -100,8 +100,6 @@ export default class PaymentMethod extends Component {
                                 <TextInput style={{fontSize: 15, color: 'white', marginStarts: 5}}
                                            placeholder={" 4242 - 4242 - 4242 - 4242"}
                                            placeholderTextColor={"white"}/>
-
-
                             </View>
                             <View style={{flexDirection: "row", width: "100%"}}>
                                 <View style={{width: "65%"}}>
@@ -134,7 +132,6 @@ export default class PaymentMethod extends Component {
                                     <TextInput style={{fontSize: 15, color: 'white', marginStart: 5}}
                                                placeholder={"424"}
                                                placeholderTextColor={"white"}/>
-
                                 </View>
                             </View>
                             <Text style={styles.txtHeader}>CARD HOLDER NAME</Text>
@@ -149,9 +146,7 @@ export default class PaymentMethod extends Component {
                                 <View style={{height: 0.5, backgroundColor: "#52525D", marginStart: 10}}></View>
                             </View>
                         </View>
-                        <TouchableOpacity onPress={() => {
-                            this.props.navigation.navigate("Settings");
-                        }} style={[globalStyles.button, {
+                        <TouchableOpacity onPress={this.saveCard} style={[globalStyles.button, {
                             marginTop: 40,
                             height: 35,
                             width: 260,
@@ -159,10 +154,7 @@ export default class PaymentMethod extends Component {
                         }]}>
                             <Text style={{fontSize: 14, fontWeight: "bold", color: "white"}}>Add My Card</Text>
                         </TouchableOpacity>
-
                     </View>
-
-
                 </ScrollView>
             </View>
         )

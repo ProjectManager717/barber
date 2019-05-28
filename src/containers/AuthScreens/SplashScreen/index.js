@@ -25,7 +25,7 @@ class SelectScreen extends Component {
   render() {
     return (
       <ImageBackground
-        source={require('../../../assets/img_background1.png')}
+        source={require('../../../assets/images/splash_bg.png')}
         style={{ flex: 1,
           paddingTop: 0,
           backgroundColor: Colors.themeBackground}}

@@ -24,7 +24,7 @@ export default class BarberEditProfile extends Component {
         super(props);
         console.disableYellowBox = true;
         this.state = {
-
+            houseCall: false,
             ListData: [
                 {
                     id: 1,
@@ -84,6 +84,14 @@ export default class BarberEditProfile extends Component {
         }
     }
 
+    changeHouseCall() {
+        console.log("housecall clicked");
+        if (this.state.houseCall === true)
+            this.setState({houseCall: false})
+        else
+            this.setState({houseCall: true})
+    }
+
     renderRowSurge(item) {
         return <View style={{flex: 1, flexDirection: 'column'}}>
             <View style={{flex: 1, flexDirection: 'row', height: 36}}>
@@ -92,13 +100,15 @@ export default class BarberEditProfile extends Component {
                 <Switch
                     onTintColor="#00D200"
                     thumbTintColor="#fff"
-                    value={true} style={{
-                    position: 'absolute',
-                    top: 5,
-                    right: 14,
-                    alignSelf: 'center',
-                    tintColor: 'white',
-                }}/>
+                    value={this.state.houseCall}
+                    onValueChange={() => this.changeHouseCall()}
+                    style={{
+                        position: 'absolute',
+                        top: 5,
+                        right: 14,
+                        alignSelf: 'center',
+                        tintColor: 'white',
+                    }}/>
             </View>
             <Text style={{marginStart: 10, color: "grey", fontStyle: "italic", height: 25,}}>{item.hint}</Text>
         </View>
@@ -150,18 +160,22 @@ export default class BarberEditProfile extends Component {
                             <Image
                                 style={{tintColor: 'white', height: 20, resizeMode: 'contain'}}
                                 source={require("../../../assets/images/ic_back.png")}/></TouchableOpacity>}/>
-
-
                 <ScrollView>
                     <View style={styles.detailsContainer}>
                         <View style={styles.profileImageContainer}>
                             <Image
                                 source={require("../../../assets/images/personface.png")}
                                 style={styles.profileImage}/>
-                            <Image
-                                source={require("../../../assets/images/dpchange.png")}
-                                style={{width:40,height:40,position:"absolute",
-                                    right:10,bottom:0,borderWidth: 4,borderRadius:20,borderColor:"black"}}/>
+                            <TouchableOpacity style={{
+                                position: "absolute",
+                                right: 10, bottom: 0
+                            }}>
+                                <Image
+                                    source={require("../../../assets/images/dpchange.png")}
+                                    style={{
+                                        width: 40, height: 40, borderWidth: 4, borderRadius: 20, borderColor: "black"
+                                    }}/>
+                            </TouchableOpacity>
                         </View>
                         <View>
                             <View style={[styles.infoContainer]}>
@@ -170,16 +184,21 @@ export default class BarberEditProfile extends Component {
                                 <View style={{flexDirection: "row",}}>
                                     <Text style={{color: colors.white, fontSize: 12}}>
                                         CLYPR Barbershop</Text>
-                                    <Image style={{height: 15, width: 15, marginStart: 10}}
-                                           source={require("../../../assets/images/edit.png")}/></View>
+                                    <TouchableOpacity>
+                                        <Image style={{height: 15, width: 15, marginStart: 10}}
+                                               source={require("../../../assets/images/edit.png")}/>
+                                    </TouchableOpacity>
+                                </View>
                                 <View style={styles.review}>
                                     <Text style={[styles.allFontStyle, styles.reviewText, {
                                         color: "white",
                                         fontFamily: "AvertaStd-Extrathin"
                                     }]}>
                                         9 Years of Experience</Text>
-                                    <Image style={{marginStart: 10, top: 1}}
-                                           source={require("../../../assets/images/arrow_down.png")}/>
+                                    <TouchableOpacity>
+                                        <Image style={{marginStart: 10, top: 1}}
+                                               source={require("../../../assets/images/arrow_down.png")}/>
+                                    </TouchableOpacity>
                                 </View>
                             </View>
                         </View>
@@ -268,7 +287,7 @@ export default class BarberEditProfile extends Component {
                                     tintColor: "white",
                                 }} source={require("../../../assets/images/plus.png")}/>
                             </TouchableOpacity>
-                            <Text style={{color: "grey", right: 32,marginBottom: 10}}>
+                            <Text style={{color: "grey", right: 32, marginBottom: 10}}>
                                 Add New Service
                             </Text>
                         </View>

@@ -74,7 +74,8 @@ class SignUpScreen extends Component {
                 isConnected: false,
             }
         };
-        this.checkFields=this.checkFields.bind(this);
+        this.checkFieldsBarber = this.checkFieldsBarber.bind(this);
+        this.checkFieldsClient = this.checkFieldsClient.bind(this);
         this.state.userName = itemId;
         if (itemId === "Client") {
             //this.setState({fieldUsername:false,userName:"Client"});
@@ -111,63 +112,118 @@ class SignUpScreen extends Component {
 
 
     onSignUp() {
-        if (this.state.isConnected) {
-
-            if (!this.checkFields()) {
-                //alert("Please enter correct data");
-                return false;
-            } else {
-                const {userInfo} = this.state;
-                var details = {
-                    firstname: userInfo.fullName,
-                    username: userInfo.instaUserName,
-                    email: userInfo.email,
-                    password: userInfo.password,
-                };
-                var formBody = [];
-                for (var property in details) {
-                    var encodedKey = encodeURIComponent(property);
-                    var encodedValue = encodeURIComponent(details[property]);
-                    formBody.push(encodedKey + "=" + encodedValue);
-                }
-                formBody = formBody.join("&");
-                fetch(constants.BarberSignUp, {
-                    method: 'POST',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: formBody
-                }).then(response => response.json())
-                    .then(response => {
-                        console.log("responseBarbersignup-->", "-" + JSON.stringify(response));
-                        if (response.ResultType === 1) {
-                            Preference.set({
-                                login: true,
-                                userEmail: response.Data.email,
-                                userName: response.Data.username,
-                                userId: response.Data.id,
-                                userType: "Barber",
-                                userToken: response.Data.token
-                            });
-                            this.moveToHome();
-                        } else {
-                            if (response.ResultType === 0) {
-                                alert(response.Message);
+        if (this.state.userName === "Client") {
+            if (this.state.isConnected) {
+                if (!this.checkFieldsClient()) {
+                    //alert("Please enter correct data");
+                    return false;
+                } else {
+                    const {userInfo} = this.state;
+                    var details = {
+                        firstname: userInfo.fullName,
+                        username: userInfo.instaUserName,
+                        email: userInfo.email,
+                        password: userInfo.password,
+                    };
+                    var formBody = [];
+                    for (var property in details) {
+                        var encodedKey = encodeURIComponent(property);
+                        var encodedValue = encodeURIComponent(details[property]);
+                        formBody.push(encodedKey + "=" + encodedValue);
+                    }
+                    formBody = formBody.join("&");
+                    fetch(constants.ClientSignUp, {
+                        method: 'POST',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: formBody
+                    }).then(response => response.json())
+                        .then(response => {
+                            console.log("responseClientsignup-->", "-" + JSON.stringify(response));
+                            if (response.ResultType === 1) {
+                                Preference.set({
+                                    clientlogin: true,
+                                    userEmail: response.Data.email,
+                                    userName: response.Data.username,
+                                    userId: response.Data.id,
+                                    userType: "Barber",
+                                    userToken: response.Data.token
+                                });
+                                this.moveToSMSScreen();
+                            } else {
+                                if (response.ResultType === 0) {
+                                    alert(response.Message);
+                                }
                             }
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                    });
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
+                }
+            } else {
+                alert("Please connect Internet.")
             }
         } else {
-            alert("Please connect Internet.")
+            if (this.state.isConnected) {
+                if (!this.checkFieldsBarber()) {
+                    //alert("Please enter correct data");
+                    return false;
+                } else {
+                    const {userInfo} = this.state;
+                    var details = {
+                        firstname: userInfo.fullName,
+                        username: userInfo.instaUserName,
+                        email: userInfo.email,
+                        password: userInfo.password,
+                    };
+                    var formBody = [];
+                    for (var property in details) {
+                        var encodedKey = encodeURIComponent(property);
+                        var encodedValue = encodeURIComponent(details[property]);
+                        formBody.push(encodedKey + "=" + encodedValue);
+                    }
+                    formBody = formBody.join("&");
+                    fetch(constants.BarberSignUp, {
+                        method: 'POST',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: formBody
+                    }).then(response => response.json())
+                        .then(response => {
+                            console.log("responseBarbersignup-->", "-" + JSON.stringify(response));
+                            if (response.ResultType === 1) {
+                                Preference.set({
+                                    barberlogin: true,
+                                    userEmail: response.Data.email,
+                                    userName: response.Data.username,
+                                    userId: response.Data.id,
+                                    userType: "Barber",
+                                    userToken: response.Data.token
+                                });
+                                this.moveToSMSScreen();
+                            } else {
+                                if (response.ResultType === 0) {
+                                    alert(response.Message);
+                                }
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
+                }
+            } else {
+                alert("Please connect Internet.")
+            }
         }
+
     }
 
-    moveToHome() {
-        this.props.navigation.navigate("TabNavigator");
+    moveToSMSScreen() {
+        this.props.navigation.navigate("SMSScreen");
     }
 
     onClose = () => {
@@ -194,7 +250,22 @@ class SignUpScreen extends Component {
         alert('google');
     };
 
-    checkFields() {
+    checkFieldsClient() {
+        console.log("validating......");
+        if (this.state.userInfo.fullName === "") {
+            alert("Name field is required");
+            return false;
+        } else if (this.state.userInfo.email === "") {
+            alert("Email field is required");
+            return false;
+        } else if (this.state.userInfo.password === "") {
+            alert("Password field is required");
+            return false;
+        } else
+            return true;
+    }
+
+    checkFieldsBarber() {
         console.log("validating......");
         if (this.state.userInfo.fullName === "") {
             alert("Name field is required");
@@ -226,14 +297,36 @@ class SignUpScreen extends Component {
         }
     }*/
 
-    renderInputs = () => {
+    renderInputsClient = () => {
         const {userInfo} = this.state;
         const isValidFullName = !!userInfo.fullName.length;
         const isValidInstaUsername = !!userInfo.instaUserName.length;
         const isValidEmail = checkEmail(userInfo.email);
         const isValidPassword = userInfo.password.length >= 6;
         const isValidPasswordConfirm = userInfo.confirmPassword.length >= 6 && (userInfo.password === userInfo.confirmPassword);
-        const inputsValid = [isValidFullName, isValidInstaUsername, isValidEmail, isValidPassword, isValidPasswordConfirm];
+        const inputsValid = [isValidFullName, isValidEmail, isValidPassword, isValidPasswordConfirm];
+        return INPUTS_DATA.map((item, index) => (<Input
+                iconSource={INPUTS_DATA[index].iconSource}
+                style={styles.inputContainer}
+                placeholder={INPUTS_DATA[index].placeholder}
+                value={userInfo[INPUTS_DATA[index].key]}
+                onChangeText={(text) => this.onChangeText(INPUTS_DATA[index].key, text)}
+                isValid={inputsValid[index]}
+                keyboardType={INPUTS_DATA[index].keyboardType}
+                secureTextEntry={INPUTS_DATA[index].secureTextEntry}
+                key={`key-${index}`}
+            />
+        ));
+    };
+
+    renderInputsBarber = () => {
+        const {userInfo} = this.state;
+        const isValidFullName = !!userInfo.fullName.length;
+        const isValidInstaUsername = !!userInfo.instaUserName.length;
+        const isValidEmail = checkEmail(userInfo.email);
+        const isValidPassword = userInfo.password.length >= 6;
+        const isValidPasswordConfirm = userInfo.confirmPassword.length >= 6 && (userInfo.password === userInfo.confirmPassword);
+        const inputsValid = [isValidFullName,isValidInstaUsername, isValidEmail, isValidPassword, isValidPasswordConfirm];
         return INPUTS_DATA.map((item, index) => (<Input
                 iconSource={INPUTS_DATA[index].iconSource}
                 style={styles.inputContainer}
@@ -263,11 +356,16 @@ class SignUpScreen extends Component {
                         style={styles.mainContainer}
                         showsVerticalScrollIndicator={false}
                     >
-                        <View style={styles.subContainer}>
+                        {this.state.userName==="Client" && <View style={styles.subContainer}>
                             <Text style={styles.whiteBoldBigText}>Register • {this.state.userName}</Text>
-                            {this.renderInputs()}
+                            {this.renderInputsClient()}
                             <RedButton label="Sign Up" onPress={this.onSignUp} style={styles.buttonContainer}/>
-                        </View>
+                        </View>}
+                        {this.state.userName==="Barber" && <View style={styles.subContainer}>
+                            <Text style={styles.whiteBoldBigText}>Register • {this.state.userName}</Text>
+                            {this.renderInputsBarber()}
+                            <RedButton label="Sign Up" onPress={this.onSignUp} style={styles.buttonContainer}/>
+                        </View>}
                         <View style={styles.termsContainer}>
                             <Text style={styles.whiteText}>
                                 {'By Signing Up, you agree to our '}

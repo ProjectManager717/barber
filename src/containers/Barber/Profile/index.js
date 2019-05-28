@@ -25,9 +25,7 @@ export default class BarberProfile extends Component {
     }
 
     leftAction() {
-
         this.props.navigation.goBack();
-
     }
 
     constructor(props) {
@@ -177,7 +175,7 @@ export default class BarberProfile extends Component {
                                         style={styles.rating}
                                     />
                                     <Text style={[styles.allFontStyle, styles.reviewText]}>
-                                        {"(" }{this.state.barberReviews}{" Reviews)"}
+                                        {"("}{this.state.barberReviews}{" Reviews)"}
                                     </Text>
                                 </View>
                             </View>
@@ -199,18 +197,18 @@ export default class BarberProfile extends Component {
                             showsHorizontalScrollIndicator={false}
                             keyExtractor={item => item.id}
                             renderItem={({item}) =>
-                            <View>
-                                <Image style={{
-                                    borderRadius: 10,
-                                    marginStart: 8,
-                                    height: 140,
-                                    width: 160,
-                                    backgroundColor: "grey"
-                                }}
-                                       resizeMode='cover'
-                                       source={item.imagePath}/>
-                            </View>}
-                                  />
+                                <View>
+                                    <Image style={{
+                                        borderRadius: 10,
+                                        marginStart: 8,
+                                        height: 140,
+                                        width: 160,
+                                        backgroundColor: "grey"
+                                    }}
+                                           resizeMode='cover'
+                                           source={item.imagePath}/>
+                                </View>}
+                        />
                         <Image resizeMode={"contain"} source={require("../../../assets/images/arrow1.png")}
                                style={{position: "absolute", width: 35, height: 35, right: 10, top: 50}}/>
 
@@ -275,7 +273,7 @@ export default class BarberProfile extends Component {
                                             marginStart: 10,
                                             alignItems: "center"
                                         }]}>
-                                            <CheckBoxSquare isChecked={item.check} uncheckedCheckBoxColor={"#84858C"}/>
+                                            {false&&<CheckBoxSquare isChecked={item.check} uncheckedCheckBoxColor={"#84858C"}/> }
                                             <Text style={{color: "white", fontSize: 12}}>   {item.title} </Text>
                                         </View>
                                         <View style={[{flexDirection: "row", width: "25%", alignItems: "center"}]}>
@@ -287,7 +285,7 @@ export default class BarberProfile extends Component {
                                     </View>
                                     <View style={{height: 0.5, backgroundColor: "#868791"}}/>
                                 </View>}
-                           />
+                        />
                     </View>
 
 
