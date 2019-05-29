@@ -8,6 +8,18 @@ import {checkEmail} from '../../../utils';
 import Preference from 'react-native-preference';
 import {constants} from "../../../utils/constants";
 //import * as constants from "../../../utils/constants";
+import { LoginButton, AccessToken, GraphRequest, GraphRequestManager } from 'react-native-fbsdk';
+const FBSDK = require('react-native-fbsdk');
+const {
+    LoginManager,
+} = FBSDK;
+
+import {
+    GoogleSignin,
+    GoogleSigninButton,
+    statusCodes,
+} from 'react-native-google-signin';
+
 
 
 let itemId = "";
@@ -22,9 +34,11 @@ class SignInScreen extends Component {
             email: '',
             password: '',
             userName: undefined,
-            isConnected: false,
+            isConnected: true,
+            accessToken:null,
         };
         this.state.userName = itemId;
+        this.responseInfoCallback=this.responseInfoCallback.bind(this);
     }
 
     componentDidMount(): void {
@@ -38,16 +52,82 @@ class SignInScreen extends Component {
             }
         }
 
-        NetInfo.isConnected.addEventListener(
-            'change',
-            this._handleConnectivityChange
-        );
-        NetInfo.isConnected.fetch().done(
-            (isConnected) => {
-                this.setState({isConnected});
-            }
-        );
+        GoogleSignin.configure({
+            //It is mandatory to call this method before attempting to call signIn()
+            scopes: ['https://www.googleapis.com/auth/drive.readonly'],
+            // Repleace with your webClientId generated from Firebase console
+            webClientId:
+                '400730111299-f3mtlhhkil19m0i8p81nj20u4fu1pngh.apps.googleusercontent.com',
+        });
     }
+
+    _signIn = async () => {
+        //Prompts a modal to let the user sign in into your application.
+        try {
+
+            await GoogleSignin.hasPlayServices({
+                //Check if device has Google Play Services installed.
+                //Always resolves to true on iOS.
+                showPlayServicesUpdateDialog: true,
+            });
+            console.log('User Info --> ', "yessss");
+            const userInfo = await GoogleSignin.signIn();
+            console.log('User Info --> ', userInfo);
+            this.setState({ userInfo: userInfo });
+
+            let dataStr = '';
+            dataStr += `Email: ${userInfo.user.email} \n`;
+            dataStr += `Name: ${userInfo.user.name} \n`;
+            dataStr += `Id: ${userInfo.user.id}`;
+
+            this.setState({ data: dataStr });
+
+        } catch (error) {
+            console.log('Message', error.message);
+            if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+                console.log('User Cancelled the Login Flow');
+            } else if (error.code === statusCodes.IN_PROGRESS) {
+                console.log('Signing In');
+            } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+                console.log('Play Services Not Available or Outdated');
+            } else {
+                console.log('Some Other Error Happened');
+            }
+        }
+    };
+    _getCurrentUser = async () => {
+        //May be called eg. in the componentDidMount of your main component.
+        //This method returns the current user
+        //if they already signed in and null otherwise.
+        try {
+            const userInfo = await GoogleSignin.signInSilently();
+            this.setState({ userInfo });
+        } catch (error) {
+            console.error(error);
+        }
+    };
+    _signOut = async () => {
+        //Remove user session from the device.
+        try {
+            await GoogleSignin.revokeAccess();
+            await GoogleSignin.signOut();
+            this.setState({
+                userInfo: null,
+                data: ''
+            }); // Remove the user from your app's state as well
+        } catch (error) {
+            console.error(error);
+        }
+    };
+    _revokeAccess = async () => {
+        //Remove your application from the user authorized applications.
+        try {
+            await GoogleSignin.revokeAccess();
+            console.log('deleted');
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     onClose = () => {
         this.props.navigation.goBack();
@@ -160,6 +240,56 @@ class SignInScreen extends Component {
 
     };
 
+    async facebokLogin() {
+        try {
+            let result = await LoginManager.logInWithReadPermissions(['email','public_profile']);
+            if (result.isCancelled) {
+                alert("Login was cancelled");
+            }else {
+                alert("Login is succesfull with permission "+result.grantedPermissions.toString())
+            }
+
+            AccessToken.getCurrentAccessToken().then(
+                (data) => {
+                    console.log("facebook_token: " + data.accessToken.toString());
+                    this.setState({
+                        accessToken: data.accessToken.toString()
+                    })
+                });
+
+            this.fetchFacebookData(this.state.accessToken);
+        } catch (e) {
+            alert("Login error: "+ e);
+        }
+    }
+
+    fetchFacebookData = (token) => {
+        let infoRequest = new GraphRequest(
+            '/me',
+            {
+                accessToken: token,
+                parameters: {
+                    fields: {
+                        string: 'id,email,name,first_name,last_name,picture'
+                    }
+                }
+            },
+            this.responseInfoCallback
+        );
+
+        new GraphRequestManager().addRequest(infoRequest).start();
+    }
+
+    responseInfoCallback = (error, result) => {
+        if (error) {
+            console.log(error)
+            alert('Error fetching data: ' + error.toString());
+        } else {
+            console.log(result)
+            alert('Success fetching data: ' + JSON.stringify(result));
+        }
+    }
+
     moveToHome() {
         if (itemId === "Client")
             this.props.navigation.navigate("ClientTabNavigator");
@@ -168,18 +298,12 @@ class SignInScreen extends Component {
         }
     }
 
-    _handleConnectivityChange = (isConnected) => {
-        this.setState({
-            isConnected,
-        });
-    };
-
     onChangeText = (key, value) => {
         this.setState({[key]: value});
     };
 
     signupClicked() {
-        this.props.navigation.navigate('SignUpScreen', {User:this.state.userName});
+        this.props.navigation.navigate('SignUpScreen', {User: this.state.userName});
         //this.props.navigation.navigate("SignUpScreen");
     }
 
@@ -240,11 +364,13 @@ class SignInScreen extends Component {
                         <View style={styles.buttonsContainer}>
                             <RedButton style={styles.loginButton} label="Login" onPress={this.onLogin}/>
                             <ImageButton
+                                onPress={this.facebokLogin}
                                 iconSource={require('../../../assets/icon_facebook.png')}
                                 iconStyle={styles.iconStyle}
                                 style={styles.imgBtnContainer}
                             />
                             <ImageButton
+                                onPress={this._signIn}
                                 iconSource={require('../../../assets/icon_gmail.png')}
                                 iconStyle={styles.iconStyle}
                                 style={styles.imgBtnContainer}
