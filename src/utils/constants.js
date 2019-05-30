@@ -6,6 +6,7 @@ const path3 = "/api/";
 
 export const constants = {
     BarberLogin : Base_url + barberPath + "login",
+    BarberSocialLogin : Base_url + barberPath + "socialLogin",
     BarberSignUp : Base_url + barberPath + "signup",
     BarberForgetPassword : Base_url + barberPath + "forgot",
     BarberResetPassword : Base_url + barberPath + "reset",
@@ -16,6 +17,7 @@ export const constants = {
     GetCalenderSlots : Base_url + path2 + "calenderSlots",
 
     ClientLogin : Base_url + clientPath + "login",
+    ClientSocialLogin : Base_url + clientPath + "socialLogin",
     ClientSignUp : Base_url + clientPath + "signup",
     ClientForgetPassword : Base_url + clientPath + "forgot",
     ClientResetPassword : Base_url + clientPath + "reset",

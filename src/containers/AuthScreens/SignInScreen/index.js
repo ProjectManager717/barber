@@ -8,7 +8,8 @@ import {checkEmail} from '../../../utils';
 import Preference from 'react-native-preference';
 import {constants} from "../../../utils/constants";
 //import * as constants from "../../../utils/constants";
-import { LoginButton, AccessToken, GraphRequest, GraphRequestManager } from 'react-native-fbsdk';
+import {LoginButton, AccessToken, GraphRequest, GraphRequestManager} from 'react-native-fbsdk';
+
 const FBSDK = require('react-native-fbsdk');
 const {
     LoginManager,
@@ -19,7 +20,6 @@ import {
     GoogleSigninButton,
     statusCodes,
 } from 'react-native-google-signin';
-
 
 
 let itemId = "";
@@ -35,10 +35,10 @@ class SignInScreen extends Component {
             password: '',
             userName: undefined,
             isConnected: true,
-            accessToken:null,
+            accessToken: null,
         };
         this.state.userName = itemId;
-        this.responseInfoCallback=this.responseInfoCallback.bind(this);
+        this.responseInfoCallback = this.responseInfoCallback.bind(this);
     }
 
     componentDidMount(): void {
@@ -54,10 +54,10 @@ class SignInScreen extends Component {
 
         GoogleSignin.configure({
             //It is mandatory to call this method before attempting to call signIn()
-            scopes: ['https://www.googleapis.com/auth/drive.readonly'],
+            scopes: ['https://www.googleapis.com/auth/userinfo.profile'],
             // Repleace with your webClientId generated from Firebase console
             webClientId:
-                '400730111299-f3mtlhhkil19m0i8p81nj20u4fu1pngh.apps.googleusercontent.com',
+                '1006799815583-9p41g2vs13dn03lp4j7bkvuiku3gcrtk.apps.googleusercontent.com',
         });
     }
 
@@ -70,17 +70,11 @@ class SignInScreen extends Component {
                 //Always resolves to true on iOS.
                 showPlayServicesUpdateDialog: true,
             });
-            console.log('User Info --> ', "yessss");
+            console.log('Google --> ', "yessss");
             const userInfo = await GoogleSignin.signIn();
-            console.log('User Info --> ', userInfo);
-            this.setState({ userInfo: userInfo });
-
-            let dataStr = '';
-            dataStr += `Email: ${userInfo.user.email} \n`;
-            dataStr += `Name: ${userInfo.user.name} \n`;
-            dataStr += `Id: ${userInfo.user.id}`;
-
-            this.setState({ data: dataStr });
+            console.log('Google User Info --> ', userInfo);
+            this.setState({userInfo: userInfo});
+            this.socialLoginGoogle(this.state.userInfo);
 
         } catch (error) {
             console.log('Message', error.message);
@@ -91,17 +85,120 @@ class SignInScreen extends Component {
             } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
                 console.log('Play Services Not Available or Outdated');
             } else {
-                console.log('Some Other Error Happened');
+                console.log('Some Other Error Happened' + error.code);
             }
         }
     };
+
+    socialLoginGoogle(userInfo) {
+        if (itemId === "Client") {
+            if (this.state.isConnected) {
+                var details = {
+                    email: userInfo.user.email,
+                    authType:"google",
+                    authId:userInfo.idToken,
+                    firstName:userInfo.user.givenName,
+                    lastName:userInfo.user.familyName,
+                };
+                var formBody = [];
+                for (var property in details) {
+                    var encodedKey = encodeURIComponent(property);
+                    var encodedValue = encodeURIComponent(details[property]);
+                    formBody.push(encodedKey + "=" + encodedValue);
+                }
+                formBody = formBody.join("&");
+                fetch(constants.ClientSocialLogin, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: formBody
+                }).then(response => response.json())
+                    .then(response => {
+                        console.log("responseClientlogin-->", "-" + JSON.stringify(response));
+                        if (response.ResultType === 1) {
+                            Preference.set({
+                                clientlogin: true,
+                                userEmail: response.Data.email,
+                                userId: response.Data.id,
+                                userType: "Client",
+                                userToken: response.Data.token
+                            });
+                            this.moveToHome();
+                        } else {
+                            if (response.ResultType === 0) {
+                                alert(response.Message);
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+                //Keyboard.dismiss();
+            } else {
+                alert("Please connect Internet");
+            }
+            //this.props.navigation.navigate('ClientTabNavigator');
+        } else {
+            if (this.state.isConnected) {
+                    var details = {
+                        email: userInfo.user.email,
+                        authType: "google",
+                        authId:userInfo.idToken,
+                        firstName:userInfo.user.givenName,
+                        lastName:userInfo.user.familyName,
+                    };
+                    var formBody = [];
+                    for (var property in details) {
+                        var encodedKey = encodeURIComponent(property);
+                        var encodedValue = encodeURIComponent(details[property]);
+                        formBody.push(encodedKey + "=" + encodedValue);
+                    }
+                    formBody = formBody.join("&");
+                    fetch(constants.BarberSocialLogin, {
+                        method: 'POST',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: formBody
+                    }).then(response => response.json())
+                        .then(response => {
+                            console.log("responseBarberlogin-->", "-" + JSON.stringify(response));
+                            if (response.ResultType === 1) {
+                                Preference.set({
+                                    barberlogin: true,
+                                    userEmail: response.Data.email,
+                                    userId: response.Data.id,
+                                    userType: "Barber",
+                                    userToken: response.Data.token
+                                });
+                                this.moveToHome();
+                            } else {
+                                if (response.ResultType === 0) {
+                                    alert(response.Message);
+                                }
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
+                    //Keyboard.dismiss();
+            } else {
+                alert("Please connect Internet");
+            }
+        }
+
+    }
+
     _getCurrentUser = async () => {
         //May be called eg. in the componentDidMount of your main component.
         //This method returns the current user
         //if they already signed in and null otherwise.
         try {
             const userInfo = await GoogleSignin.signInSilently();
-            this.setState({ userInfo });
+            this.setState({userInfo});
         } catch (error) {
             console.error(error);
         }
@@ -242,11 +339,11 @@ class SignInScreen extends Component {
 
     async facebokLogin() {
         try {
-            let result = await LoginManager.logInWithReadPermissions(['email','public_profile']);
+            let result = await LoginManager.logInWithReadPermissions(['email', 'public_profile']);
             if (result.isCancelled) {
                 alert("Login was cancelled");
-            }else {
-                alert("Login is succesfull with permission "+result.grantedPermissions.toString())
+            } else {
+                alert("Login is succesfull with permission " + result.grantedPermissions.toString())
             }
 
             AccessToken.getCurrentAccessToken().then(
@@ -259,7 +356,7 @@ class SignInScreen extends Component {
 
             this.fetchFacebookData(this.state.accessToken);
         } catch (e) {
-            alert("Login error: "+ e);
+            alert("Login error: " + e);
         }
     }
 
