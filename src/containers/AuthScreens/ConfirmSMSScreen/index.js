@@ -5,6 +5,7 @@ import CodeInput from 'react-native-confirmation-code-input';
 import { styles } from './styles';
 import { CloseButton, RedButton } from '../../../components';
 import { Colors } from '../../../themes';
+import Preference from "react-native-preference";
 
 class ConfirmSMSScreen extends Component {
   constructor(props) {
@@ -28,8 +29,12 @@ class ConfirmSMSScreen extends Component {
   };
 
   onSubmit = () => {
-    //alert('submit');
-    this.props.navigation.navigate('ClientEditProfile');
+      if (Preference.get("userType") === "Barber"){
+    this.props.navigation.navigate('BarberEditProfile');}
+      else if (Preference.get("userType") === "Client"){
+        this.props.navigation.navigate("ClientEditProfile")
+
+      }
   };
 
   render() {

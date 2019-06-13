@@ -4,6 +4,17 @@ import {Colors} from "../../themes";
 import {globalStyles} from "../../themes/globalStyles";
 //import { styles } from "./styles";
 import {Header} from "react-native-elements";
+import Preference from 'react-native-preference';
+/*import {
+    GoogleSignin,
+    GoogleSigninButton,
+    statusCodes,
+} from 'react-native-google-signin';*/
+const FBSDK = require('react-native-fbsdk');
+const {
+    LoginManager,
+} = FBSDK;
+
 
 export default class ClientSettings extends Component {
     constructor(props) {
@@ -31,6 +42,20 @@ export default class ClientSettings extends Component {
         else
             this.setState({alertcheck: true})
     }
+
+    _signOut = async () => {
+        //Remove user session from the device.
+       /* try {
+            await GoogleSignin.revokeAccess();
+            await GoogleSignin.signOut();
+            this.setState({
+                userInfo: null,
+                data: ''
+            }); // Remove the user from your app's state as well
+        } catch (error) {
+            console.error(error);
+        }*/
+    };
 
     render() {
         return (
@@ -178,6 +203,9 @@ export default class ClientSettings extends Component {
                     <TouchableOpacity
                         style={[globalStyles.button, {marginTop: 30, marginBottom: 30, textAlignVertical: "center"}]}
                         onPress={() => {
+                            Preference.clear();
+                            this._signOut();
+                            LoginManager.logOut();
                             this.props.navigation.navigate('SelectScreen');
                         }}>
                         <Text style={globalStyles.buttonText}>Logout</Text>

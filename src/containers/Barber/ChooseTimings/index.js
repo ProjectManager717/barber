@@ -202,6 +202,7 @@ export default class ChooseTimings extends Component {
             }).catch(error => {
             console.error('Errorr:', error);
         });
+        this.props.navigation.navigate("Subscription")
     }
 
     setNotWorkingDay(val) {

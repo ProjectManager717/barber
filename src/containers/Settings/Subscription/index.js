@@ -25,6 +25,9 @@ export default class Subscription extends Component {
             supremeImage: require("../../../assets/images/supreme_red.png"),
             supremeCheck: require("../../../assets/images/radio_unselected.png"),
         },
+        SelectedBasic:false,
+        SelectedSupreme:false,
+
     }
 
     _selectedBasic() {
@@ -45,7 +48,9 @@ export default class Subscription extends Component {
                 supremeMainBorderColor: "grey",
                 supremeImage: require("../../../assets/images/supreme_red.png"),
                 supremeCheck: require("../../../assets/images/radio_unselected.png"),
-            }
+            },
+            SelectedBasic:true,
+
         });
     }
 
@@ -67,8 +72,22 @@ export default class Subscription extends Component {
                 supremeMainBorderColor: "#48E100",
                 supremeImage: require("../../../assets/images/supreme_green.png"),
                 supremeCheck: require("../../../assets/images/radio_selected.png"),
-            }
+            },
+            SelectedSupreme:true,
         });
+    }
+    Onsubmit(){
+        if(this.state.SelectedBasic===true){
+            this.props.navigation.navigate("BookingPreferences");
+        }
+              else if(this.state.SelectedSupreme===true){
+
+                  this.props.navigation.navigate("SurgePricing")
+
+        }
+
+
+
     }
 
     render() {
@@ -258,9 +277,8 @@ export default class Subscription extends Component {
                                 </View>
                             </TouchableHighlight>
 
-                            <TouchableOpacity onPress={()=>{
-                                this.props.navigation.navigate('PaymentMethod');
-                            }}   style={[globalStyles.button, {
+                            <TouchableOpacity onPress={()=>this.Onsubmit()}
+                              style={[globalStyles.button, {
                                 marginTop: 100,
                                 height: 40,
                                 width: 260,

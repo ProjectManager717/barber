@@ -111,7 +111,7 @@ export default class SurgePricing extends Component {
                 </ScrollView>
 
                 <TouchableOpacity    onPress={()=>{
-                    this.props.navigation.goBack();
+                    this.props.navigation.navigate("BookingPreferences");
                 }}      style={[globalStyles.button,  {
                     marginTop: 70,
                     height: 40,

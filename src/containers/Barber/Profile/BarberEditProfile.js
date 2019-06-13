@@ -326,7 +326,9 @@ export default class BarberEditProfile extends Component {
                         marginBottom: 20,
                         marginTop: 5
                     }}>
-                        <TouchableOpacity>
+                        <TouchableOpacity
+                        onPress={()=>this.props.navigation.navigate("ChooseTimings")}
+                        >
                             <Image source={require("../../../assets/images/plus.png")}
                                    style={{
                                        resizeMode: "contain",

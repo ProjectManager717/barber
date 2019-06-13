@@ -27,8 +27,6 @@ export default class Share extends Component {
 
     render() {
         return (<View style={styles.container}>
-
-
                 <Header
                     statusBarProps={{barStyle: "light-content"}}
                     barStyle="light-content" // or directly
@@ -86,7 +84,6 @@ export default class Share extends Component {
                                 style={{
                                     width: "100%",
                                     height: "100%",
-                                    backgroundColor: "red"
                                 }}
                                 resizeMode={"cover"}
                             />
@@ -133,7 +130,6 @@ export default class Share extends Component {
                             }}>
                                 <TouchableOpacity>
                                     <Text style={{
-                                        color: "red",
                                         fontSize: 11,
                                         margin: 5,
                                         marginStart: 7,
@@ -172,7 +168,7 @@ export default class Share extends Component {
                                     borderWidth: 0.5,
                                     borderRadius: 30,
                                     marginTop: 5,
-                                    padding:3
+                                    padding: 3
 
                                 }}>
 
@@ -206,17 +202,12 @@ export default class Share extends Component {
                                     borderWidth: 0.5,
                                     borderColor: "grey",
                                     marginTop: 5,
-                                    padding:3
+                                    padding: 3
                                 }}>
-
                                     <Text style={{
-
                                         fontWeight: "bold",
                                         color: "white",
-
                                         fontSize: 9,
-
-
                                     }}>{' Get It on Google Play    '}</Text>
                                 </View>
 
@@ -228,7 +219,6 @@ export default class Share extends Component {
                                 style={{
                                     width: "100%",
                                     height: "100%",
-                                    backgroundColor: "red"
                                 }}
                                 resizeMode={"cover"}
                             />
@@ -237,11 +227,9 @@ export default class Share extends Component {
                                 <Image source={require("../../../assets/images/pic.png")} style={{
                                     width: 70,
                                     height: 70,
-
                                 }}/>
                                 <Text
                                     style={{
-
                                         fontWeight: "bold",
                                         color: "black",
                                         fontSize: 10,
@@ -280,18 +268,13 @@ export default class Share extends Component {
                                     borderWidth: 0.5,
                                     borderColor: "grey",
                                     marginTop: 7,
-                                    padding:3
+                                    padding: 3
                                 }}>
 
                                     <Text style={{
                                         fontWeight: "bold",
-
-
                                         color: "black",
-
                                         fontSize: 9,
-
-
                                     }}>{" Available on App Store "}</Text>
                                 </View>
                             </View>
@@ -313,7 +296,7 @@ export default class Share extends Component {
                                     borderRadius: 30,
                                     borderWidth: 0.5,
                                     borderColor: "grey",
-                                    padding:3
+                                    padding: 3
                                 }}>
 
                                     <Text style={{

@@ -44,7 +44,6 @@ import ClientSettings from "./containers/Settings/ClientSettings"
 import ClientEditProfile from "./containers/Home/Clients/ClientEditProfile"
 import ClientLeaveReview from "./containers/Home/Clients/ClientLeaveReview"
 import ClientSupremeReview from "./containers/Home/Clients/ClientSupremeReview"
-import ClientBarberProfileNoSurge from "./containers/Home/Clients/ClientBarberProfileNoSurge"
 import ReceiptCancelled from "./containers/Settings/Receipt/ReceiptCancelled"
 import ClientBarberSearch from "./containers/Home/Clients/ClientBarberSearch"
 import ClientFilter from "./containers/Home/Clients/ClientFilter"
@@ -233,7 +232,6 @@ const AuthStack = createStackNavigator({
     ClientEditProfile: ClientEditProfile,
     ClientLeaveReview: ClientLeaveReview,
     ClientSupremeReview: ClientSupremeReview,
-    ClientBarberProfileNoSurge: ClientBarberProfileNoSurge,
     ReceiptCancelled:ReceiptCancelled,
     ClientBarberSearch:ClientBarberSearch,
     ClientFilter:ClientFilter,

@@ -14,6 +14,13 @@ export default class BookingPreferences extends Component {
         this.state = {
             mobilePayCheck: false,
             inShopCheck: false,
+            MP:{ MPradiocheck:require("../../../assets/images/radio_unselected.png"),
+                StateMP:false
+            }
+                ,
+           IN:{INradiocheck:require("../../../assets/images/radio_unselected.png"),
+               StateIN:false
+           }
         };
         console.disableYellowBox = true;
     }
@@ -30,13 +37,12 @@ export default class BookingPreferences extends Component {
         return <View style={{flex: 1, flexDirection: 'column', height: 46}}>
             <View style={{flex: 1, flexDirection: 'row', height: 36}}>
                 <Image style={styles.leftIcon} source={item.ic}/>
-                <Image style={styles.leftIcon} source={require("../../../assets/images/radio_selected.png")}/>
-               {/* <CheckBoxSquare
-                    checkedIcon='dot-circle-o'
-                    uncheckedIcon='circle-o'
-                    checked={false}
-                    style={{alignSelf: 'center',marginStart:5}}
-                />*/}
+
+
+                <Image style={styles.leftIcon} source={item.ic2}/>
+
+
+
                 <Text style={styles.row_title}>{item.title}</Text>
             </View>
             <Text style={{marginStart:30,color: "grey",fontSize:12,fontStyle:"italic"}}>{item.hint}</Text>
@@ -69,6 +75,27 @@ export default class BookingPreferences extends Component {
         return <View style={{marginLeft: 40, height: 0.5, backgroundColor: Colors.lightGrey}}></View>
     }
 
+    onSelectMP(){
+        this.setState({MP:{MPradiocheck:require("../../../assets/images/radio_selected.png"),StateMP:true }});
+        this.setState({IN:{INradiocheck:require("../../../assets/images/radio_unselected.png"),StateIN:false }})
+
+    }
+    onSelectIN(){ this.setState({IN:{INradiocheck:require("../../../assets/images/radio_selected.png"),StateIN:true}});
+        this.setState({MP:{MPradiocheck:require("../../../assets/images/radio_unselected.png"),StateMP:false}});
+    }
+    oNDone(){
+        if(this.state.MP.StateMP===true){
+           this.props.navigation.navigate("MobilePay")
+        }
+        else if(this.state.IN.StateIN===true){
+            this.props.navigation.navigate("MobilePaySettings")
+        }
+
+
+    }
+
+
+
     render() {
         return (
             <View style={styles.container}>
@@ -98,17 +125,23 @@ export default class BookingPreferences extends Component {
 
                     <Text style={styles.txtHeader}>ACCEPT PAYMENT OPTIONS</Text>
                     <View style={[globalStyles.rowBackground, styles.row]}>
+                        <TouchableOpacity onPress={()=>this.onSelectMP()} >
                         {this.renderRow({
                             title: "Mobile Pay",
                             ic: require("../../../assets/images/mobile_pay.png"),
-                            hint: "Payment through the App"
+                            hint: "Payment through the App",
+                            ic2:this.state.MP.MPradiocheck
                         })}
+                        </TouchableOpacity>
                         {this.renderSeperator()}
+                        <TouchableOpacity onPress={()=>this.onSelectIN()}>
                         {this.renderRow({
                             title: "In Shop",
                             ic: require("../../../assets/images/inshop.png"),
-                            hint: "Cash,Card and Other"
+                            hint: "Cash,Card and Other",
+                            ic2:this.state.IN.INradiocheck
                         })}
+                        </TouchableOpacity>
                     </View>
 
                     <Text style={styles.txtHeader}>APPOINTMENTS</Text>
@@ -159,9 +192,7 @@ export default class BookingPreferences extends Component {
                     {this.renderRowWithCheck({title: "Every 30 Minutes"})}
 
                     <TouchableOpacity style={[globalStyles.button, {marginTop: 70, marginBottom: 30, width: '70%'}]}
-                                      onPress={() => {
-                                          this.props.navigation.goBack();
-                                      }}>
+                                      onPress={() =>this.oNDone()}>
                         <Text style={globalStyles.buttonText}>DONE</Text>
                     </TouchableOpacity>
                 </ScrollView>

@@ -4,6 +4,7 @@ import {SafeAreaView} from 'react-navigation';
 import {styles} from './styles';
 import {CloseButton, RedButton} from '../../../components/Buttons';
 import {formatPhoneNumber, checkPhoneNumberValidation} from '../../../utils';
+import Preference from "react-native-preference";
 
 class SMSScreen extends Component {
     constructor(props) {
@@ -21,10 +22,16 @@ class SMSScreen extends Component {
     onContinue = () => {
         const {number} = this.state;
         if (checkPhoneNumberValidation(number)) {
-            this.props.navigation.navigate('ConfirmSMSScreen');
+            if (Preference.get("userType") === "Barber") {
+                this.props.navigation.navigate('ConfirmSMSScreen');
+            }else
+            {
+                this.props.navigation.navigate('ConfirmSMSScreen');
+            }
         } else {
             alert('invalid format');
         }
+
     };
 
     onChangeText = (str) => {
@@ -56,7 +63,7 @@ class SMSScreen extends Component {
                                         +1
                                     </Text>
                                 </View>
-                                <View >
+                                <View>
                                     <TextInput
                                         style={styles.input}
                                         onChangeText={this.onChangeText}

@@ -74,7 +74,7 @@ export default class ClientHome extends Component {
     }
 
 
-    renderRowSurge(item) {
+    renderRecentBookings(item) {
         return <View
             style={{
                 flexDirection: 'row',
@@ -102,8 +102,6 @@ export default class ClientHome extends Component {
                            style={{height: 12, width: 12, marginStart: 12}}/>
                     <Text style={{fontSize: 10, color: "#939FB1", marginStart: 4}}>{item.date}</Text>
                 </View>
-
-
             </View>
             {item.btnTxt === "Completed" ?
                 <TouchableOpacity
@@ -126,31 +124,61 @@ export default class ClientHome extends Component {
                     <Text style={{marginTop: 3, color: "white", fontSize: 10, fontWeight: "bold"}}>{item.btnTxt}</Text>
                 </TouchableOpacity>
                 :
-                <TouchableOpacity
+                item.btnTxt === "Cancelled" ?
+                    <TouchableOpacity
+                        onPress={() => this.props.navigation.navigate("ReceiptCancelled")}
+                        style={{
+                            top: 0,
+                            right: 0,
+                            position: "absolute",
+                            height: 26,
+                            width: 75,
+                            marginTop: 10,
+                            marginEnd: 10,
+                            alignItems: 'center',
+                            justifyContent: "center",
+                            borderRadius: 12,
+                            borderWidth: 1, borderColor: item.btnClr,
+                            backgroundColor: "#626371"
+                        }}>
 
-                    style={{
-                        top: 0,
-                        right: 0,
-                        position: "absolute",
-                        height: 26,
-                        width: 75,
-                        marginTop: 10,
-                        marginEnd: 10,
-                        alignItems: 'center',
-                        justifyContent: "center",
-                        borderRadius: 12,
-                        borderWidth: 1, borderColor: item.btnClr,
-                        backgroundColor: "#626371"
-                    }}>
+                        <Text style={{
+                            marginTop: 3,
+                            color: "white",
+                            fontSize: 10,
+                            fontWeight: "bold"
+                        }}>{item.btnTxt}</Text>
+                    </TouchableOpacity> :
+                    <TouchableOpacity
 
-                    <Text style={{marginTop: 3, color: "white", fontSize: 10, fontWeight: "bold"}}>{item.btnTxt}</Text>
-                </TouchableOpacity>
+                        style={{
+                            top: 0,
+                            right: 0,
+                            position: "absolute",
+                            height: 26,
+                            width: 75,
+                            marginTop: 10,
+                            marginEnd: 10,
+                            alignItems: 'center',
+                            justifyContent: "center",
+                            borderRadius: 12,
+                            borderWidth: 1, borderColor: item.btnClr,
+                            backgroundColor: "#626371"
+                        }}>
+
+                        <Text style={{
+                            marginTop: 3,
+                            color: "white",
+                            fontSize: 10,
+                            fontWeight: "bold"
+                        }}>{item.btnTxt}</Text>
+                    </TouchableOpacity>
             }
 
         </View>
     }
 
-    renderRowSurge2(item) {
+    renderFavBarbers(item) {
         let ratings = Math.floor(Math.random() * 5 + 1);
         return <View
             style={{
@@ -179,46 +207,47 @@ export default class ClientHome extends Component {
                         <Text style={{
                             fontSize: 14,
                             fontWeight: "bold",
-                            textShadowColor:"black",
+                            textShadowColor: "black",
                             textShadowOffset: {width: -2, height: 1},
                             textShadowRadius: 3,
                             color: Colors.white,
-                            backgroundColor:"#454656",
-                            borderRadius:10,
-                            width:"100%",
-                            borderWidth:1,
-                            borderColor:"darkgrey",
-                            paddingStart:5,
-                            opacity:0.8
-
-
+                            backgroundColor: "#454656",
+                            borderRadius: 10,
+                            width: "100%",
+                            borderWidth: 1,
+                            borderColor: "darkgrey",
+                            paddingStart: 5,
+                            opacity: 0.8
                         }}>{item.title2}</Text>
-                        <View style={{flexDirection: "row", alignItems: "center",  backgroundColor:"#454656",
-                            borderRadius:10,
-                            width:"100%",
-                        borderWidth:1,
-                        borderTopWidth:0,
-                        borderColor:"darkgrey",
-                            opacity:0.8
+                        <View style={{
+                            flexDirection: "row", alignItems: "center", backgroundColor: "#454656",
+                            borderRadius: 10,
+                            width: "100%",
+                            borderWidth: 1,
+                            borderTopWidth: 0,
+                            borderColor: "darkgrey",
+                            opacity: 0.8
                         }}>
                             <Image source={require("../../../assets/images/shop.png")} resizeMode={"contain"}
                                    style={{width: 20, height: 20}}/>
-                            <Text style={{fontSize: 12, color: Colors.white,
-                                textShadowColor:"black",
+                            <Text style={{
+                                fontSize: 12, color: Colors.white,
+                                textShadowColor: "black",
                                 textShadowOffset: {width: -2, height: 1},
                                 textShadowRadius: 3,
 
 
                             }}>{item.address}</Text>
                         </View>
-                        <View style={{flexDirection: "row", alignItems: "center",  backgroundColor:"#454656",
-                            borderRadius:10,
-                            width:"100%",
-                            borderWidth:1,
-                            borderTopWidth:0,
-                            borderColor:"darkgrey",
-                            opacity:0.8
-                                    }}>
+                        <View style={{
+                            flexDirection: "row", alignItems: "center", backgroundColor: "#454656",
+                            borderRadius: 10,
+                            width: "100%",
+                            borderWidth: 1,
+                            borderTopWidth: 0,
+                            borderColor: "darkgrey",
+                            opacity: 0.8
+                        }}>
                             <AirbnbRating
                                 showRating={false}
                                 count={5}
@@ -226,21 +255,23 @@ export default class ClientHome extends Component {
                                 size={10}
                                 style={{marginStart: 10, height: 30}}
                             />
-                            <Text style={{marginStart: 5, fontSize: 10, color: Colors.white,
-                                textShadowColor:"black",
+                            <Text style={{
+                                marginStart: 5, fontSize: 10, color: Colors.white,
+                                textShadowColor: "black",
                                 textShadowOffset: {width: -2, height: 1},
-                                textShadowRadius: 3,}}>{"(17 Reviews)"}</Text>
+                                textShadowRadius: 3,
+                            }}>{"(17 Reviews)"}</Text>
                         </View>
                     </View>
                     <View style={{flexDirection: "column", width: "40%", height: "100%"}}>
                         <View style={{alignItems: "flex-end", marginEnd: 20}}>
                             <TouchableOpacity>
                                 <Image resizeMode={"contain"} source={require("../../../assets/images/star.png")}
-                                       style={{width: 20, height: 20,marginTop:10}}/>
+                                       style={{width: 20, height: 20, marginTop: 10}}/>
                             </TouchableOpacity>
                             <TouchableOpacity>
                                 <Image resizeMode={"contain"} source={require("../../../assets/images/price.png")}
-                                       style={{width: 20, height: 20,marginTop:10}}/>
+                                       style={{width: 20, height: 20, marginTop: 10}}/>
                             </TouchableOpacity>
                             <TouchableOpacity
                                 onPress={() => this.props.navigation.navigate("ClientBarberProfile")}
@@ -276,14 +307,8 @@ export default class ClientHome extends Component {
                             </View>
                         </View>
                     </View>
-
-
                 </View>
-
-
             </ImageBackground>
-
-
         </View>
 
 
@@ -330,7 +355,7 @@ export default class ClientHome extends Component {
                         }}>{"Recent Bookings"} </Text>
                     </View>
                     <View style={{marginTop: 0, marginStart: 20, marginEnd: 20}}>
-                        <FlatList renderItem={({item}) => this.renderRowSurge(item)}
+                        <FlatList renderItem={({item}) => this.renderRecentBookings(item)}
                                   data={this.state.dataSource}
                                   keyExtractor={(item, index) => index}
                                   numColumns={1}
@@ -347,14 +372,12 @@ export default class ClientHome extends Component {
                     </View>
 
                     <View style={{marginTop: 0, marginStart: 20, marginEnd: 20, marginBottom: 20}}>
-                        <FlatList renderItem={({item}) => this.renderRowSurge2(item)}
+                        <FlatList renderItem={({item}) => this.renderFavBarbers(item)}
                                   data={this.state.dataSource2}
                                   keyExtractor={(item, index) => index}
                                   numColumns={1}
                         />
                     </View>
-
-
                 </ScrollView>
 
             </View>

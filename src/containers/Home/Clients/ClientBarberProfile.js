@@ -15,6 +15,7 @@ import {ScrollView} from "react-native-gesture-handler";
 import colors from "../../../themes/colors";
 import CheckBoxSquare from "../../../components/CheckBox";
 import {Colors} from "../../../themes";
+import Dialog, {DialogContent} from 'react-native-popup-dialog';
 
 
 const {height, width} = Dimensions.get("window");
@@ -30,18 +31,53 @@ export default class ClientBarberProfile extends Component {
 
     rightAction() {
         //this.props.navigation.navigate('BarberEditProfile');
+        this.props.navigation.push('Share');
     }
 
     leftAction() {
         this.props.navigation.goBack();
     }
 
+
     constructor(props) {
         super(props);
 
         this.state = {
             dataSource: [],
-            dayData: [],
+            dayData: [{
+                id: 1,
+                time: "10:00AM",
+                selected: "transparent",
+                surgePrice: true,
+            }, {
+                id: 2,
+                time: "10:30AM",
+                selected: "transparent",
+                surgePrice: false,
+            }, {
+                id: 3,
+                time: "11:00AM",
+                selected: "transparent",
+                surgePrice: false,
+            }, {
+                id: 4,
+                time: "11:30AM",
+                selected: "transparent",
+                surgePrice: false,
+            }, {
+                id: 5,
+                time: "12:00PM",
+                selected: "transparent",
+                surgePrice: false,
+            }, {
+                id: 6,
+                time: "12:30AM",
+                selected: "transparent",
+                surgePrice: false,
+            }],
+            savedCard: ["42424242424242424242", "42424242424242424242", "42424242424242424242"],
+            DialogVisible: false,
+            barberFav: false,
             ListData: [
                 {
                     id: 1,
@@ -59,14 +95,14 @@ export default class ClientBarberProfile extends Component {
             ListData2: [
                 {
                     id: 1,
-                    check: true,
+                    check: false,
                     title: "Haircut",
                     duration: "30 mins",
                     prize: "$20"
                 },
                 {
                     id: 2,
-                    check: true,
+                    check: false,
                     title: "Beard Trim",
                     duration: "15 mins",
                     prize: "$15"
@@ -102,8 +138,19 @@ export default class ClientBarberProfile extends Component {
         return new Date(date.setDate(diff));
     }
 
-    itemSelect() {
-
+    itemSelect(id) {
+        //alert("hello"+id);
+        id=id-1;
+        let dataDay = this.state.dayData;
+        if(dataDay[id].selected==="transparent")
+        {
+            dataDay[id].selected="green";
+            //alert("green"+id);
+        }else {
+            dataDay[id].selected="transparent";
+            //alert("transp "+id);
+        }
+        this.setState({dayData:dataDay});
     }
 
     renderWeekDay(item) {
@@ -153,6 +200,8 @@ export default class ClientBarberProfile extends Component {
 
     componentDidMount() {
         let items = [];
+
+        this.setState({barberFav: true});
         for (i = 0; i < 7; i++) {
             var weekDate = this.startOfWeek(new Date());
             var newDate = weekDate.addDays(i);
@@ -161,94 +210,101 @@ export default class ClientBarberProfile extends Component {
         let hours = Array.apply(null, Array(46)).map((v, i) => {
             return {id: i, title: "Title " + i};
         });
-
         console.log("slotsData-->" + JSON.stringify(hours));
-        this.setState({
+        /*this.setState({
             dayData: hours,
+            dataSource: items
+        });*/
+        this.setState({
             dataSource: items
         });
     }
 
-    renderItem(item) {
+    setFavorite() {
+        if (this.state.barberFav === true)
+            this.setState({barberFav: false})
+        else
+            this.setState({barberFav: true})
+    }
 
+    renderItem(item) {
         var m = moment(new Date(2011, 2, 12, 0, 0, 0));
         m.add(item.id * 30, "minutes");
-        if (item.id == 2) {
+        if (item.surgePrice === true) {
             return (<View>
-                <TouchableWithoutFeedback onPress={() => this.itemSelect(item.id)}>
+                <TouchableOpacity onPress={() => this.itemSelect(item.id)}>
                     <View style={{
                         height: 20,
                         flexDirection: "row",
                         borderRadius: 10,
                         borderWidth: 1,
-                        borderColor: Colors.green,
+                        borderColor: item.selected,
+                        marginStart: 20,
+                    }} cellKey={item.id}>
+                        <Image resizeMode={"contain"} source={require("../../../assets/images/dollar_surge.png")}
+                               style={{width: 12, height: 12, marginStart: 5, marginTop: 2}}/>
+                        <Text style={{
+                            textAlignVertical: "top",
+                            height: 40,
+                            marginStart: 4,
+                            marginEnd: 7,
+                            fontFamily: "AvertaStd-Regular",
+                            color: "#01E8F1",
+                            fontSize: 12,
+                            fontWeight: "bold",
+                        }}>
+                            {item.time}
+                        </Text>
+                    </View>
+                </TouchableOpacity>
+            </View>)
+        } else {
+            return (<View>
+                <TouchableOpacity onPress={() => this.itemSelect(item.id)}>
+                    <View style={{
+                        height: 20,
+                        flexDirection: "row",
+                        borderRadius: 10,
+                        borderWidth: 1,
+                        borderColor: item.selected,
                         marginStart: 10,
                     }} cellKey={item.id}>
                         <Text style={{
                             textAlignVertical: "top",
-                            height: 40,
-                            marginBottom: 30,
-                            marginStart: 10,
-                            marginEnd: 10,
-                            width: 50,
-                            fontFamily: "AvertaStd-Regular",
-                            color: Colors.white,
-                            fontSize: 11,
-                            fontWeight: "bold",
-                            textAlign: "center",
-                            marginTop: 2
-                        }}>
-                            {m.format("hh:mm A")}
-                        </Text>
-                    </View>
-                </TouchableWithoutFeedback>
-            </View>)
-        } else if (item.id === 3 || item.id === 4 || item.id === 5) {
-            return (<View>
-                <TouchableWithoutFeedback onPress={() => this.itemSelect(item.id)}>
-                    <View style={{height: 20, flexDirection: "row", marginStart: 10}} cellKey={item.id}>
-                        <Image resizeMode={"contain"} source={require("../../../assets/images/dollar_surge.png")}
-                               style={{width: 12, height: 12, marginTop: 3}}/>
-                        <Text style={{
-                            textAlignVertical: "top",
-                            height: 40,
-                            marginBottom: 30,
-                            marginStart: 4,
-                            marginEnd: 5,
-                            width: 50,
-                            fontFamily: "AvertaStd-Regular",
-                            color: "#01E8F1",
-                            fontSize: 11,
-                            fontWeight: "bold",
-                            marginTop: 2
-                        }}>
-                            {m.format("hh:mm A")}
-                        </Text>
-                    </View>
-                </TouchableWithoutFeedback>
-            </View>)
-        } else {
-            return (<View>
-                <TouchableWithoutFeedback onPress={() => this.itemSelect(item.id)}>
-                    <View style={{height: 70, flexDirection: "row"}} cellKey={item.id}>
-                        <Text style={{
-                            textAlignVertical: "top",
-                            height: 40,
                             marginLeft: 10,
-                            marginBottom: 30,
+                            marginRight: 10,
                             width: 50,
                             fontFamily: "AvertaStd-Regular",
                             color: Colors.white,
-                            fontSize: 11,
+                            fontSize: 12,
                             fontWeight: "bold",
-                            marginTop: 4
                         }}>
-                            {m.format("hh:mm A")}
+                            {item.time}
                         </Text>
                     </View>
-                </TouchableWithoutFeedback>
+                </TouchableOpacity>
             </View>)
         }
+    }
+
+    showDialog() {
+        this.setState({DialogVisible: true})
+    }
+
+    cardSelected(card) {
+        this.setState({DialogVisible: false})
+
+    }
+
+    checkBoxClicked(id) {
+        id = id - 1;
+        let mainData = this.state.ListData2;
+        if (mainData[id].check === true) {
+            mainData[id].check = false;
+        } else {
+            mainData[id].check = true;
+        }
+        this.setState({ListData2: mainData});
     }
 
     render() {
@@ -262,16 +318,21 @@ export default class ClientBarberProfile extends Component {
                         bgIcon={require("../../../assets/images/bannerprofile.png")}
                         rightIcon={require("../../../assets/images/share.png")}
                         leftIcon={require("../../../assets/images/ic_back.png")}/>
-                    <TouchableOpacity style={{position: "absolute", top: 40, right: 60}}>
+                    {this.state.barberFav && <TouchableOpacity onPress={() => this.setFavorite()}
+                                                               style={{position: "absolute", top: 40, right: 60}}>
+                        <Image source={require("../../../assets/images/star.png")}
+                               style={{width: 20, height: 20,}}/>
+                    </TouchableOpacity>}
+                    {!this.state.barberFav && <TouchableOpacity onPress={() => this.setFavorite()}
+                                                                style={{position: "absolute", top: 40, right: 60}}>
                         <Image source={require("../../../assets/images/star-unselected.png")}
-                               style={{width: 20, height: 20, }}/>
-                    </TouchableOpacity>
+                               style={{width: 20, height: 20,}}/>
+                    </TouchableOpacity>}
                     <View style={styles.detailsContainer}>
                         <View style={styles.profileImageContainer}>
                             <ImageBackground
                                 source={require("../../../assets/images/personface.png")}
-                                style={styles.profileImage}
-                            >
+                                style={styles.profileImage}>
                             </ImageBackground>
                         </View>
 
@@ -289,12 +350,9 @@ export default class ClientBarberProfile extends Component {
                                     <Text style={{color: colors.white, fontSize: 12}}>
                                         CLYPR Barbershop
                                     </Text>
-
                                     <Image resizeMode={"contain"}
                                            style={{height: 8, width: 8, marginStart: 10, marginTop: 5}}
                                            source={require("../../../assets/images/arrow_down.png")}/>
-
-
                                 </View>
 
                                 <View style={styles.review}>
@@ -344,11 +402,8 @@ export default class ClientBarberProfile extends Component {
                                   keyExtractor={item => item.id}/>
                         <Image resizeMode={"contain"} source={require("../../../assets/images/arrow1.png")}
                                style={{position: "absolute", width: 35, height: 35, right: 10, top: 50}}/>
-
                     </View>
-
                     <View style={{height: 15}}/>
-
                     <View style={[{
                         backgroundColor: "grey",
                         color: "white",
@@ -396,7 +451,8 @@ export default class ClientBarberProfile extends Component {
                                             marginStart: 10,
                                             alignItems: "center"
                                         }]}>
-                                            <CheckBoxSquare isChecked={item.check} uncheckedCheckBoxColor={"#84858C"}/>
+                                            <CheckBoxSquare onClick={() => this.checkBoxClicked(item.id)}
+                                                            isChecked={item.check} uncheckedCheckBoxColor={"#84858C"}/>
                                             <Text style={{color: "white", fontSize: 12}}>   {item.title} </Text>
                                         </View>
                                         <View style={[{flexDirection: "row", width: "25%", alignItems: "center"}]}>
@@ -439,11 +495,13 @@ export default class ClientBarberProfile extends Component {
                             /* data={this.state.listData}*/
                             renderItem={({item}) => this.renderItem(item)}
                             numColumns={1}
-                            showsVerticalScrollIndicator={true}
+                            extraData={this.state.dayData}
+                            showsVerticalScrollIndicator={false}
                             keyExtractor={(item, index) => index}
                             horizontal={true}/>
                     </View>
-                    <View style={{flexDirection: "column", height: 100, width: "100%", marginBottom: 30}}>
+                    <View
+                        style={{flexDirection: "column", height: 100, width: "100%", marginBottom: 30, marginTop: 30}}>
                         <View style={{
                             flexDirection: "row",
                             width: "100%",
@@ -452,15 +510,12 @@ export default class ClientBarberProfile extends Component {
                         }}>
                             <View style={{
                                 flexDirection: "row", width: "40%", justifyContent: "center", alignItems: "center",
-
                             }}>
                                 <View style={{
                                     flexDirection: "column",
                                     height: "100%",
                                     width: "100%",
                                     marginStart: 25,
-
-
                                 }}>
                                     <Text style={{
                                         fontSize: 16, color: "white",
@@ -482,7 +537,7 @@ export default class ClientBarberProfile extends Component {
                                     </Text>
                                 </View>
                             </View>
-                            <View style={{
+                            <TouchableOpacity onPress={() => this.showDialog()} style={{
                                 flexDirection: "row",
                                 width: "40%",
                                 height: "100%",
@@ -504,9 +559,9 @@ export default class ClientBarberProfile extends Component {
                                         marginStart: 5,
                                     }} resizeMode={"contain"}
                                     source={require("../../../assets/images/arrow_down.png")}/>
-                            </View>
+                            </TouchableOpacity>
                             <TouchableOpacity onPress={() => {
-                                this.props.navigation.navigate('ClientBarberProfileNoSurge');
+                                this.props.navigation.navigate('SurgePricingRate');
                             }} style={{
                                 backgroundColor: "red",
                                 width: "20%",
@@ -520,6 +575,29 @@ export default class ClientBarberProfile extends Component {
                         </View>
 
                     </View>
+                    <Dialog
+                        visible={this.state.DialogVisible}
+                        onTouchOutside={() => {
+                            this.setState({DialogVisible: false});
+                        }}
+                        width={0.6}
+                        height={0.3}>
+                        <DialogContent>
+                            <FlatList
+                                keyExtractor={(item, index) => index.toString()}
+                                style={{marginTop: 10}}
+                                data={this.state.savedCard}
+                                renderItem={({item}) =>
+                                    <TouchableOpacity onPress={() => this.cardSelected(item)}>
+                                        <Text style={{fontSize: 16, color: "black"}}>{"Card # " + item}</Text>
+                                        <View style={{width: "100%", height: 0.5, backgroundColor: "black"}}/>
+                                    </TouchableOpacity>
+                                }
+                                numColumns={1}
+                                keyExtractor={(item, index) => index}
+                                horizontal={false}/>
+                        </DialogContent>
+                    </Dialog>
                 </View>
             </ScrollView>
         );

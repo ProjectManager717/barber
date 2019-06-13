@@ -36,9 +36,11 @@ class SignInScreen extends Component {
             userName: undefined,
             isConnected: true,
             accessToken: null,
+            dataFacebook: undefined,
         };
         this.state.userName = itemId;
         this.responseInfoCallback = this.responseInfoCallback.bind(this);
+        this.signinFacebook = this.signinFacebook.bind(this);
     }
 
     componentDidMount(): void {
@@ -95,10 +97,10 @@ class SignInScreen extends Component {
             if (this.state.isConnected) {
                 var details = {
                     email: userInfo.user.email,
-                    authType:"google",
-                    authId:userInfo.idToken,
-                    firstName:userInfo.user.givenName,
-                    lastName:userInfo.user.familyName,
+                    authType: "google",
+                    authId: userInfo.idToken,
+                    firstName: userInfo.user.givenName,
+                    lastName: userInfo.user.familyName,
                 };
                 var formBody = [];
                 for (var property in details) {
@@ -142,49 +144,49 @@ class SignInScreen extends Component {
             //this.props.navigation.navigate('ClientTabNavigator');
         } else {
             if (this.state.isConnected) {
-                    var details = {
-                        email: userInfo.user.email,
-                        authType: "google",
-                        authId:userInfo.idToken,
-                        firstName:userInfo.user.givenName,
-                        lastName:userInfo.user.familyName,
-                    };
-                    var formBody = [];
-                    for (var property in details) {
-                        var encodedKey = encodeURIComponent(property);
-                        var encodedValue = encodeURIComponent(details[property]);
-                        formBody.push(encodedKey + "=" + encodedValue);
-                    }
-                    formBody = formBody.join("&");
-                    fetch(constants.BarberSocialLogin, {
-                        method: 'POST',
-                        headers: {
-                            'Accept': 'application/json',
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        },
-                        body: formBody
-                    }).then(response => response.json())
-                        .then(response => {
-                            console.log("responseBarberlogin-->", "-" + JSON.stringify(response));
-                            if (response.ResultType === 1) {
-                                Preference.set({
-                                    barberlogin: true,
-                                    userEmail: response.Data.email,
-                                    userId: response.Data.id,
-                                    userType: "Barber",
-                                    userToken: response.Data.token
-                                });
-                                this.moveToHome();
-                            } else {
-                                if (response.ResultType === 0) {
-                                    alert(response.Message);
-                                }
+                var details = {
+                    email: userInfo.user.email,
+                    authType: "google",
+                    authId: userInfo.idToken,
+                    firstName: userInfo.user.givenName,
+                    lastName: userInfo.user.familyName,
+                };
+                var formBody = [];
+                for (var property in details) {
+                    var encodedKey = encodeURIComponent(property);
+                    var encodedValue = encodeURIComponent(details[property]);
+                    formBody.push(encodedKey + "=" + encodedValue);
+                }
+                formBody = formBody.join("&");
+                fetch(constants.BarberSocialLogin, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: formBody
+                }).then(response => response.json())
+                    .then(response => {
+                        console.log("responseBarberlogin-->", "-" + JSON.stringify(response));
+                        if (response.ResultType === 1) {
+                            Preference.set({
+                                barberlogin: true,
+                                userEmail: response.Data.email,
+                                userId: response.Data.id,
+                                userType: "Barber",
+                                userToken: response.Data.token
+                            });
+                            this.moveToHome();
+                        } else {
+                            if (response.ResultType === 0) {
+                                alert(response.Message);
                             }
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                        });
-                    //Keyboard.dismiss();
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+                //Keyboard.dismiss();
             } else {
                 alert("Please connect Internet");
             }
@@ -203,19 +205,7 @@ class SignInScreen extends Component {
             console.error(error);
         }
     };
-    _signOut = async () => {
-        //Remove user session from the device.
-        try {
-            await GoogleSignin.revokeAccess();
-            await GoogleSignin.signOut();
-            this.setState({
-                userInfo: null,
-                data: ''
-            }); // Remove the user from your app's state as well
-        } catch (error) {
-            console.error(error);
-        }
-    };
+
     _revokeAccess = async () => {
         //Remove your application from the user authorized applications.
         try {
@@ -263,10 +253,15 @@ class SignInScreen extends Component {
                                     clientlogin: true,
                                     userEmail: response.Data.email,
                                     userId: response.Data.id,
-                                    userType: "Barber",
+                                    userName: response.Data.firstname + " " + response.Data.lastname,
+                                    userType: "Client",
                                     userToken: response.Data.token
                                 });
-                                this.moveToHome();
+                                if (response.Data.firstTimeSignUp === true) {
+                                    this.props.navigation.navigate("SMSScreen");
+                                } else {
+                                    this.moveToHome();
+                                }
                             } else {
                                 if (response.ResultType === 0) {
                                     alert(response.Message);
@@ -315,10 +310,15 @@ class SignInScreen extends Component {
                                     barberlogin: true,
                                     userEmail: response.Data.email,
                                     userId: response.Data.id,
+                                    userName: response.Data.firstname + " " + response.Data.lastname,
                                     userType: "Barber",
                                     userToken: response.Data.token
                                 });
-                                this.moveToHome();
+                                if (response.Data.firstTimeSignUp === true) {
+                                    this.props.navigation.navigate("SMSScreen");
+                                } else {
+                                    this.moveToHome();
+                                }
                             } else {
                                 if (response.ResultType === 0) {
                                     alert(response.Message);
@@ -337,44 +337,163 @@ class SignInScreen extends Component {
 
     };
 
-    async facebokLogin() {
+    facebokLogin = async () => {
         try {
             let result = await LoginManager.logInWithReadPermissions(['email', 'public_profile']);
             if (result.isCancelled) {
                 alert("Login was cancelled");
             } else {
-                alert("Login is succesfull with permission " + result.grantedPermissions.toString())
+                //alert("Login is succesfull with permission " + result.grantedPermissions.toString())
             }
 
-            AccessToken.getCurrentAccessToken().then(
-                (data) => {
-                    console.log("facebook_token: " + data.accessToken.toString());
-                    this.setState({
-                        accessToken: data.accessToken.toString()
-                    })
-                });
+            const accessToken = await AccessToken.getCurrentAccessToken();
+            console.log("Facebook access token: " + JSON.stringify(accessToken))
+            if (accessToken) {
+                //this.fetchFacebookData(accessToken.accessToken.toString());
+                console.log("Facebook access token: " + accessToken.accessToken)
+                let infoRequest = new GraphRequest(
+                    '/me',
+                    {
+                        accessToken: accessToken.accessToken,
+                        parameters: {
+                            fields: {
+                                string: 'id,email,name,first_name,last_name,picture'
+                            }
+                        }
+                    },
+                    (error, result) => {
+                        if (error) {
+                            console.log(error)
+                            alert('Error fetching data: ' + error.toString());
+                        } else {
+                            console.log('Success fetching data: ' + JSON.stringify(result))
 
-            this.fetchFacebookData(this.state.accessToken);
+                            this.setState({dataFacebook: result, accessToken: accessToken});
+                            this.signinFacebook(this.state.dataFacebook, this.state.accessToken);
+                            //alert('Success fetching data: ' + JSON.stringify(result));
+                        }
+                    }
+                );
+
+                new GraphRequestManager().addRequest(infoRequest).start();
+            }
+
+            // this.setState({
+            //     accessToken: accessToken
+            // }).bind(this)
         } catch (e) {
             alert("Login error: " + e);
         }
     }
 
-    fetchFacebookData = (token) => {
-        let infoRequest = new GraphRequest(
-            '/me',
-            {
-                accessToken: token,
-                parameters: {
-                    fields: {
-                        string: 'id,email,name,first_name,last_name,picture'
-                    }
+    signinFacebook(data, accessToken) {
+        if (itemId === "Client") {
+            if (this.state.isConnected) {
+                var details = {
+                    email: data.email,
+                    authType: "google",
+                    authId: accessToken,
+                    firstName: data.first_name,
+                    lastName: data.last_name,
+                };
+                var formBody = [];
+                for (var property in details) {
+                    var encodedKey = encodeURIComponent(property);
+                    var encodedValue = encodeURIComponent(details[property]);
+                    formBody.push(encodedKey + "=" + encodedValue);
                 }
-            },
-            this.responseInfoCallback
-        );
+                formBody = formBody.join("&");
+                fetch(constants.ClientSocialLogin, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: formBody
+                }).then(response => response.json())
+                    .then(response => {
+                        console.log("responseClientlogin-->", "-" + JSON.stringify(response));
+                        if (response.ResultType === 1) {
+                            Preference.set({
+                                clientlogin: true,
+                                userEmail: response.Data.email,
+                                userId: response.Data.id,
+                                userType: "Client",
+                                userToken: response.Data.token
+                            });
+                            if (response.Data.firstTimeSignUp === true) {
+                                this.props.navigation.navigate("SMSScreen");
+                            } else {
+                                this.moveToHome();
+                            }
 
-        new GraphRequestManager().addRequest(infoRequest).start();
+                        } else {
+                            if (response.ResultType === 0) {
+                                alert(response.Message);
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+                //Keyboard.dismiss();
+            } else {
+                alert("Please connect Internet");
+            }
+            //this.props.navigation.navigate('ClientTabNavigator');
+        } else {
+            if (this.state.isConnected) {
+                var details = {
+                    email: data.email,
+                    authType: "google",
+                    authId: accessToken,
+                    firstName: data.first_name,
+                    lastName: data.last_name,
+                };
+                var formBody = [];
+                for (var property in details) {
+                    var encodedKey = encodeURIComponent(property);
+                    var encodedValue = encodeURIComponent(details[property]);
+                    formBody.push(encodedKey + "=" + encodedValue);
+                }
+                formBody = formBody.join("&");
+                fetch(constants.BarberSocialLogin, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: formBody
+                }).then(response => response.json())
+                    .then(response => {
+                        console.log("responseBarberlogin-->", "-" + JSON.stringify(response));
+                        if (response.ResultType === 1) {
+                            Preference.set({
+                                barberlogin: true,
+                                userEmail: response.Data.email,
+                                userId: response.Data.id,
+                                userType: "Barber",
+                                userToken: response.Data.token
+                            });
+                            if (response.Data.firstTimeSignUp === true) {
+                                this.props.navigation.navigate("SMSScreen");
+                            } else {
+                                this.moveToHome();
+                            }
+                        } else {
+                            if (response.ResultType === 0) {
+                                alert(response.Message);
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+                //Keyboard.dismiss();
+            } else {
+                alert("Please connect Internet");
+            }
+        }
     }
 
     responseInfoCallback = (error, result) => {
@@ -382,7 +501,7 @@ class SignInScreen extends Component {
             console.log(error)
             alert('Error fetching data: ' + error.toString());
         } else {
-            console.log(result)
+            console.log('Success fetching data: ' + JSON.stringify(result))
             alert('Success fetching data: ' + JSON.stringify(result));
         }
     }

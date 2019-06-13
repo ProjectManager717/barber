@@ -148,7 +148,7 @@ class SignUpScreen extends Component {
                                     userEmail: response.Data.email,
                                     userName: response.Data.username,
                                     userId: response.Data.id,
-                                    userType: "Barber",
+                                    userType: "Client",
                                     userToken: response.Data.token
                                 });
                                 this.moveToSMSScreen();
@@ -386,7 +386,6 @@ class SignUpScreen extends Component {
                                 <View style={styles.space}/>
                                 <ImageButton
                                     iconSource={require('../../../assets/icon_gmail.png')}
-                                    onPress={this.onGoogle}
                                 />
                             </View>
                         </View>

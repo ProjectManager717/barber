@@ -68,7 +68,7 @@ export default class MobilePay extends Component {
                                style={{width: 12}}/>
                         <TouchableOpacity style={[globalStyles.button, {marginTop: 60, width: 300}]}
                                           onPress={()=>
-                                              this.props.navigation.navigate('MobilePaySettings')}
+                                              this.props.navigation.navigate('TabNavigator')}
                         >
                             <Text style={globalStyles.buttonText}>Enable Mobile Pay</Text>
                         </TouchableOpacity>
