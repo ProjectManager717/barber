@@ -22,6 +22,7 @@ export default class ClientBarberSearch extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            LocationToggle:require("../../../assets/images/LocationOff.png"),
             dataSource2: [{
                 id: 0,
                 imgPathh2: require("../../../assets/images/imgbck1.png"),
@@ -87,9 +88,10 @@ export default class ClientBarberSearch extends Component {
                 <TextInput
                     style={{
                         height: 40,
+
                         color: "white",
                         marginStart: 50,
-                        fontSize: 13,
+                        fontSize: 16,
                         fontFamily: "AvertaStd-RegularItalic",
                     }}
                     onChangeText={(text) => this.setState({text})}
@@ -192,14 +194,14 @@ export default class ClientBarberSearch extends Component {
                     </View>
                     <View style={{flexDirection: "column", width: "40%", height: "100%"}}>
                         <View style={{alignItems: "flex-end", marginEnd: 20}}>
-                            <TouchableOpacity>
+                            <View>
                                 <Image resizeMode={"contain"} source={item.starimg}
                                        style={{width: 20, height: 20, marginTop: 10}}/>
-                            </TouchableOpacity>
-                            <TouchableOpacity>
+                            </View>
+                            <View>
                                 <Image resizeMode={"contain"} source={require("../../../assets/images/price.png")}
                                        style={{width: 20, height: 20, marginTop: 10}}/>
-                            </TouchableOpacity>
+                            </View>
                             <TouchableOpacity
                                 onPress={() => this.props.navigation.navigate("ClientBarberProfile")}
                                 style={{width: "100%", alignItems: "flex-end"}}>
@@ -257,16 +259,15 @@ export default class ClientBarberSearch extends Component {
                     style={{backgroundColor: "yellow"}}
                     outerContainerStyles={{backgroundColor: "#1999CE"}}
                     leftComponent={
-                        <TouchableOpacity onPress={() => {
-                                //this.props.navigation.navigate("QRCheckIn");
-                            }}>
+                        <TouchableOpacity onPress={() =>this.setState({LocationToggle:require("../../../assets/images/location1.png")})}
+
+                        >
                             <Image
                                 style={{
-                                    tintColor: "white",
                                     height: 25,
                                     resizeMode: "contain"
                                 }}
-                                source={require("../../../assets/images/location1.png")}
+                                source={this.state.LocationToggle}
                             />
                         </TouchableOpacity>
                     }
@@ -341,12 +342,18 @@ export default class ClientBarberSearch extends Component {
                             flexDirection:"row",
                             alignItems: "center",
                         }}>
+                            <TouchableWithoutFeedback onPress={()=>this.props.navigation.navigate("ClientBarberProfile")}  >
+
                             <Image resizeMode={"contain"} source={require("../../../assets/images/img-1.png")}
                                    style={{
                                        borderRadius:25,
                                        height: 50,
                                        width: "16%",
-                                   }}/>
+                                   }}
+
+                            />
+                            </TouchableWithoutFeedback>
+                            <TouchableWithoutFeedback onPress={()=>this.props.navigation.navigate("ClientBarberProfile")}  >
                             <Image resizeMode={"contain"} source={require("../../../assets/images/img-2.png")}
                                    style={{
                                        borderRadius:25,
@@ -354,6 +361,8 @@ export default class ClientBarberSearch extends Component {
                                        height: 50,
                                        width: "16%"
                                    }}/>
+                            </TouchableWithoutFeedback>
+                            <TouchableWithoutFeedback onPress={()=>this.props.navigation.navigate("ClientBarberProfile")}>
                             <Image resizeMode={"contain"} source={require("../../../assets/images/img-3.png")}
                                    style={{
                                        borderRadius:25,
@@ -361,6 +370,8 @@ export default class ClientBarberSearch extends Component {
                                        height: 50,
                                        width: "16%"
                                    }}/>
+                            </TouchableWithoutFeedback>
+                            <TouchableWithoutFeedback onPress={()=>this.props.navigation.navigate("ClientBarberProfile")}>
                             <Image resizeMode={"contain"} source={require("../../../assets/images/img-4.png")}
                                    style={{
                                        borderRadius:25,
@@ -368,6 +379,8 @@ export default class ClientBarberSearch extends Component {
                                        height: 50,
                                        width: "16%"
                                    }}/>
+                            </TouchableWithoutFeedback>
+                            <TouchableWithoutFeedback onPress={()=>this.props.navigation.navigate("ClientBarberProfile")} >
                             <Image resizeMode={"contain"} source={require("../../../assets/images/img-5.png")}
                                    style={{
                                        borderRadius:25,
@@ -375,6 +388,7 @@ export default class ClientBarberSearch extends Component {
                                        height: 50,
                                        width: "16%"
                                    }}/>
+                            </TouchableWithoutFeedback>
                         </View>
 
                     </View>

@@ -125,7 +125,7 @@ export default class ClientSettings extends Component {
                     <Text style={styles.txtHeader}>SHARE</Text>
                     <View style={[globalStyles.rowBackground, styles.row]}>
                         <TouchableOpacity onPress={() => {
-                            Linking.openURL('sms:?body=Invite Barbers')
+                            Linking.openURL('sms:?&body=Invite Barbers')
                         }}>
                             {this.renderRow({
                                 title: "Invite Barbers",
@@ -134,7 +134,7 @@ export default class ClientSettings extends Component {
                         </TouchableOpacity>
                         {this.renderSeperator()}
                         <TouchableOpacity onPress={() => {
-                            Linking.openURL('sms:?body=Invite Clients')
+                            Linking.openURL('sms:?&body=Invite Clients')
                         }}>
                             {this.renderRow({
                                 title: "Invite Clients",
@@ -161,7 +161,7 @@ export default class ClientSettings extends Component {
                         </TouchableOpacity>
                         {this.renderSeperator()}
                         <TouchableOpacity onPress={() => {
-                            Linking.openURL('https://instagram.com/teamclypr')
+                            Linking.openURL('https://www.instagram.com/clypr')
                         }}>
                             {this.renderRow({
                                 title: "Instagram",

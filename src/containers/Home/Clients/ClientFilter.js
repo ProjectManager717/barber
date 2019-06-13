@@ -24,6 +24,9 @@ export default class ClientBarberSearch extends Component {
     constructor(props){
         super(props);
         this.state={
+            CheckBox1:require("../../../assets/images/tic_grey.png"),
+            CheckBox2:require("../../../assets/images/tic_grey.png"),
+            CheckBox3:require("../../../assets/images/tic_grey.png"),
             value:0,
             unselected:require("../../../assets/images/greentick.png"),
             unselected2:require("../../../assets/images/greentick.png"),
@@ -33,21 +36,76 @@ export default class ClientBarberSearch extends Component {
 
     }
     Selected() {
-        this.setState({unselected: require("../../../assets/images/greenticked.png")})
+        if(this.state.unselected===require("../../../assets/images/greenticked.png")){
+            this.setState({unselected: require("../../../assets/images/greentick.png")})
+        }
+        else{
+        this.setState({unselected: require("../../../assets/images/greenticked.png")})}
     }
 
     Selected2() {
+        if(this.state.unselected2===require("../../../assets/images/greenticked.png")){
+            this.setState({unselected2: require("../../../assets/images/greentick.png")})
+        }
+        else {
 
-        this.setState({unselected2:require("../../../assets/images/greenticked.png")})
+            this.setState({unselected2: require("../../../assets/images/greenticked.png")})
+        }
     }
 
     Selected3() {
-        this.setState({unselected3: require("../../../assets/images/greenticked.png")})
+        if(this.state.unselected3===require("../../../assets/images/greenticked.png")){
+            this.setState({unselected3: require("../../../assets/images/greentick.png")})
+        }
+        else {
+
+            this.setState({unselected3: require("../../../assets/images/greenticked.png")})
+        }
     }
 
     Selected4() {
-        this.setState({unselected4: require("../../../assets/images/greenticked.png")})
+        if(this.state.unselected4===require("../../../assets/images/greenticked.png")){
+            this.setState({unselected4: require("../../../assets/images/greentick.png")})
+        }
+        else {
+
+            this.setState({unselected4: require("../../../assets/images/greenticked.png")})
+        }
     }
+
+
+    checkbox1() {
+        if (this.state.CheckBox1 === require("../../../assets/images/tic_green.png")) {
+            this.setState({CheckBox1: require("../../../assets/images/tic_grey.png")})
+        } else {
+            this.setState({CheckBox1: require("../../../assets/images/tic_green.png")});
+            this.setState({CheckBox2: require("../../../assets/images/tic_grey.png")});
+            this.setState({CheckBox3: require("../../../assets/images/tic_grey.png")});
+
+        }
+    }
+        checkbox2()
+        {
+            if (this.state.CheckBox2 === require("../../../assets/images/tic_green.png")) {
+                this.setState({CheckBox2: require("../../../assets/images/tic_grey.png")})
+            }
+            else {
+                this.setState({CheckBox2: require("../../../assets/images/tic_green.png")});
+                this.setState({CheckBox1: require("../../../assets/images/tic_grey.png")});
+                this.setState({CheckBox3: require("../../../assets/images/tic_grey.png")});
+            }
+        }
+        checkbox3()
+        {
+            if (this.state.CheckBox23=== require("../../../assets/images/tic_green.png")) {
+                this.setState({CheckBox3: require("../../../assets/images/tic_grey.png")})
+            }
+            else {
+                this.setState({CheckBox3: require("../../../assets/images/tic_green.png")});
+                this.setState({CheckBox1: require("../../../assets/images/tic_grey.png")});
+                this.setState({CheckBox2: require("../../../assets/images/tic_grey.png")});
+            }
+        }
 
 
 
@@ -68,7 +126,7 @@ export default class ClientBarberSearch extends Component {
                     style={{
                         height: 40,
                         color: "white",
-                        fontSize: 13,
+                        fontSize: 16,
                         position: "absolute",
                         left: 83,
                         fontFamily: "AvertaStd-RegularItalic",
@@ -195,27 +253,38 @@ export default class ClientBarberSearch extends Component {
 
 
                     }}>
-                        <TouchableOpacity>
+                        <TouchableOpacity  onPress={()=>this.checkbox1()} >
 
-                     <Image  resizeMode={"contain"} source={require("../../../assets/images/tic_green.png")}
+                     <Image  resizeMode={"contain"} source={this.state.CheckBox1}
                      style={{ width:20,height:20  }}
 
-                     /></TouchableOpacity>
+                     /></TouchableOpacity   >
                         <Text style={{color:"#5BD800" ,marginStart:10,fontSize:15,fontWeight:'bold' }}   >$</Text>
 
-                        <TouchableOpacity>
+                        <TouchableOpacity onPress={()=>this.checkbox2()}  >
                         <Image style={{ width:20,height:20,marginStart:100  }}
-                            resizeMode={"contain"} source={require("../../../assets/images/tic_grey.png")} />
+                            resizeMode={"contain"} source={this.state.CheckBox2} />
                         </TouchableOpacity>
                         <Text  style={{color:"white",marginStart:10,fontSize:15 ,fontWeight:'bold' }} >$$</Text>
 
-                        <TouchableOpacity>
-                        <Image resizeMode={"contain"} source={require("../../../assets/images/tic_grey.png")}
+                        <TouchableOpacity onPress={()=>this.checkbox3()} >
+                        <Image resizeMode={"contain"}source={this.state.CheckBox3}
                                style={{ width:20,height:20,marginStart:85  }} />
                         </TouchableOpacity>
                             <Text   style={{color:"white",marginStart:10,fontSize:15,fontWeight:'bold' }} >$$$</Text>
 
 
+                    </View>
+                    <View>
+                        <Text style={{
+                            color: "white",
+                            fontWeight: 'bold',
+                            marginStart: 20,
+                            marginTop: 20,
+                            marginBottom:10,
+                            fontSize: 17
+
+                        }}>{"Skill"} </Text>
                     </View>
                     <View style={{
                         flexDirection: "row",

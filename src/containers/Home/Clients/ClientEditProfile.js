@@ -104,7 +104,7 @@ export default class ClientEditProfile extends Component {
                     return;
                 }*/
 
-                this.props.navigation.push("PaymentMethod");
+                this.props.navigation.goBack();
 
                 // fetch(constants.ClientProfileUpdate, {
                 //     method: 'POST',
@@ -206,23 +206,23 @@ export default class ClientEditProfile extends Component {
                         </View>
                         <View>
                             <View style={[styles.infoContainer]}>
-                                <View style={{flexDirection: "row"}}>
+                                <View style={{flexDirection: "row",width:"80%",justifyContent:"center",alignItems:"center"}}>
                                     {!this.state.editName &&
-                                    <Text style={[styles.allFontStyle, styles.name]}>{this.state.userName}</Text>}
+                                    <Text style={{
+                                        fontWeight: "bold",
+                                        marginTop:15,
+                                        marginBottom:15,
+                                        fontSize: 16,
+                                        color: "white"}}>{this.state.userName}</Text>}
                                     {this.state.editName &&
-                                    <TextInput Color={"white"} value={this.state.userName}
+                                    <TextInput Color={"white"}  placeholder={"Enter your Name"} placeholderTextColor={"white"}
                                                onChangeText={(text) => this.setState({userName: text})}
                                                style={{
-                                                   backgroundColor: Colors.gray,
-                                                   borderColor: Colors.border,
-                                                   borderRadius: 5,
-                                                   height: 40,
-                                                   marginRight: 10,
                                                    fontWeight: "bold",
                                                    fontSize: 16,
                                                    color: "white"
                                                }}/>}
-                                    <TouchableOpacity onPress={() => this.setState({editName: true})}>
+                                    <TouchableOpacity style={{width:"20%"}}  onPress={() => this.setState({editName: true})}>
                                         <Image style={{
                                             height: 15,
                                             width: 15,
@@ -344,21 +344,21 @@ const
             borderRadius: width / 6
         },
         infoContainer: {
-            height: 40,
-            justifyContent: "space-around",
-            width,
+
+            justifyContent: "center",
+            width:"100%",
             alignItems: "center",
-            marginBottom: 0
+
         },
         allFontStyle: {
             color: "#535361",
 
         },
         name: {
-            height: 40,
+            height: 50,
             fontSize: 16,
             fontWeight: "bold",
-            color: "white", marginRight: 10
+            color: "white", marginRight: 30
         },
         review: {
             flexDirection: "row",
