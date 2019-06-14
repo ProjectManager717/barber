@@ -9,15 +9,24 @@ import {
     TouchableOpacity,
     ImageBackground,
     Dimensions,
-    FlatList,
+    FlatList, Picker,
 } from "react-native";
 import colors from "../../../themes/colors";
 import {globalStyles} from "../../../themes/globalStyles";
 //import { styles } from "./styles";
 import {Header} from "react-native-elements";
 import CheckBoxSquare from "../../../components/CheckBox";
+import ImagePicker from 'react-native-image-picker';
+import {RedButton} from "../../../components/Buttons";
 
 const {height, width} = Dimensions.get("window");
+const options = {
+    title: 'Select Image',
+    storageOptions: {
+        skipBackup: true,
+        path: 'images',
+    },
+};
 
 export default class BarberEditProfile extends Component {
     constructor(props) {
@@ -25,6 +34,9 @@ export default class BarberEditProfile extends Component {
         console.disableYellowBox = true;
         this.state = {
             houseCall: false,
+            Experience:"1",
+            pickMonth:false,
+
             ListData: [
                 {
                     id: 1,
@@ -137,7 +149,28 @@ export default class BarberEditProfile extends Component {
 
         </View>;
     }
+    selectImage = () => {
+        ImagePicker.showImagePicker(options, (response) => {
+            console.log('Response = ', response);
 
+            if (response.didCancel) {
+                console.log('User cancelled image picker');
+            } else if (response.error) {
+                console.log('ImagePicker Error: ', response.error);
+            } else if (response.customButton) {
+                console.log('User tapped custom button: ', response.customButton);
+            } else {
+                const source = {uri: response.uri};
+
+                // You can also display the image using data:
+                // const source = { uri: 'data:image/jpeg;base64,' + response.data };
+
+                this.setState({
+                    avatarSource: source,
+                });
+            }
+        });
+    }
 
     render() {
         return (
@@ -194,10 +227,37 @@ export default class BarberEditProfile extends Component {
                                         color: "white",
                                         fontFamily: "AvertaStd-Extrathin"
                                     }]}>
-                                        9 Years of Experience</Text>
-                                    <TouchableOpacity>
-                                        <Image style={{marginStart: 10, top: 1}}
-                                               source={require("../../../assets/images/arrow_down.png")}/>
+                                        {this.state.month}Years of Experience</Text>
+                                    <TouchableOpacity onPress={() => this.setState({pickMonth: true})}
+                                                                                                               >
+                                        <Picker
+                                                style={{width: 100,height:100, color: "white", marginBottom: 5}}
+                                                onValueChange={(txt) => this.setState({month: txt})}>
+                                            <Picker.Item label="1" value="1"/>
+                                            <Picker.Item label="2" value="2"/>
+                                            <Picker.Item label="3" value="3"/>
+                                            <Picker.Item label="4" value="4"/>
+                                            <Picker.Item label="5" value="5"/>
+                                            <Picker.Item label="6" value="6"/>
+                                            <Picker.Item label="7" value="7"/>
+                                            <Picker.Item label="8" value="8"/>
+                                            <Picker.Item label="9" value="9"/>
+                                            <Picker.Item label="10" value="10"/>
+                                            <Picker.Item label="11" value="11"/>
+                                            <Picker.Item label="12" value="12"/>
+                                            <Picker.Item label="13" value="13"/>
+                                            <Picker.Item label="14" value="14"/>
+                                            <Picker.Item label="15" value="15"/>
+                                            <Picker.Item label="16" value="16"/>
+                                            <Picker.Item label="17" value="17"/>
+                                            <Picker.Item label="18" value="18"/>
+                                            <Picker.Item label="19" value="19"/>
+                                            <Picker.Item label="20" value="20"/>
+                                            <Picker.Item label="21" value="21"/>
+                                            <Picker.Item label="22" value="22"/>
+                                            <Picker.Item label="23" value="23"/>
+                                            <Picker.Item label="24" value="24"/>
+                                        </Picker>
                                     </TouchableOpacity>
                                 </View>
                             </View>
@@ -327,7 +387,7 @@ export default class BarberEditProfile extends Component {
                         marginTop: 5
                     }}>
                         <TouchableOpacity
-                        onPress={()=>this.props.navigation.navigate("ChooseTimings")}
+                            onPress={() => this.selectImage()}
                         >
                             <Image source={require("../../../assets/images/plus.png")}
                                    style={{
@@ -342,8 +402,18 @@ export default class BarberEditProfile extends Component {
 
 
                     </View>
+                    <View style={{justifyContent:'center',alignItems:"center",width:"100%"}} >
+                    <TouchableOpacity   style={[globalStyles.button, {
+                        height: 35,
+                        width: 250,
+                        backgroundColor: "red",
+                        marginTop: 20,
+                        marginBottom: 20,
+                    }]}>
+                        <Text style={{fontSize: 15, fontWeight: "bold", color: "white"}}>{"Save"}</Text>
 
-
+                    </TouchableOpacity>
+                    </View>
                 </ScrollView>
             </View>)
     }

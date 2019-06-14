@@ -6,12 +6,18 @@ import { styles } from './styles';
 import { CloseButton, RedButton } from '../../../components';
 import { Colors } from '../../../themes';
 import Preference from "react-native-preference";
-
+let number = "";
 class ConfirmSMSScreen extends Component {
   constructor(props) {
     super(props);
+    const {navigation} = this.props;
+    number = navigation.getParam('Number');
+    console.log("gettingUSersignIn--->" + number);
+
     this.state = {
-    }
+      No:undefined
+    };
+    this.state.No=number;
   }
 
   onClose = () => {
@@ -49,7 +55,7 @@ class ConfirmSMSScreen extends Component {
           </Text>
           <View style={styles.descriptionContainer}>
             <Text style={styles.whiteText}>
-              {`We just sent on SMS to\n (+1 210 254 1896)\n with your verification code.\nEnter the 2-step verification code below.`}
+              {`We just sent on SMS to\n ${this.state.No}\n with your verification code.\nEnter the 2-step verification code below.`}
             </Text>
           </View>
           <View style={styles.inputContainer}>

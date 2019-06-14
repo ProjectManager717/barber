@@ -23,10 +23,10 @@ class SMSScreen extends Component {
         const {number} = this.state;
         if (checkPhoneNumberValidation(number)) {
             if (Preference.get("userType") === "Barber") {
-                this.props.navigation.navigate('ConfirmSMSScreen');
+                this.props.navigation.navigate('ConfirmSMSScreen',{Number:this.state.formattedNumber});
             }else
             {
-                this.props.navigation.navigate('ConfirmSMSScreen');
+                this.props.navigation.navigate('ConfirmSMSScreen',{Number:this.state.formattedNumber});
             }
         } else {
             alert('invalid format');
