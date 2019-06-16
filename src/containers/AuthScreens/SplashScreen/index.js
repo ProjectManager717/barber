@@ -4,7 +4,7 @@ import {Colors} from "../../../themes";
 
 import Preference from 'react-native-preference';
 
-class SelectScreen extends Component {
+class SplashScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {}
@@ -21,7 +21,7 @@ class SelectScreen extends Component {
     closeScreen() {
         if (Preference.get("clientlogin") === true) {
             this.props.navigation.navigate("ClientTabNavigator");
-        } else if (Preference.get("clientlogin") === true) {
+        } else if (Preference.get("barberlogin") === true) {
             this.props.navigation.navigate("TabNavigator");
         } else
             this.props.navigation.navigate("SelectScreen");
@@ -37,8 +37,7 @@ class SelectScreen extends Component {
                     paddingTop: 0,
                     backgroundColor: Colors.themeBackground
                 }}
-                imageStyle={{resizeMode: 'stretch', backgroundColor: "grey"}}
-            >
+                imageStyle={{resizeMode: 'stretch', backgroundColor: "grey"}}>
                 <View style={{width: "100%", height: "100%", justifyContent: "center", alignItems: "center"}}>
                     <Image resizeMode={"contain"} source={require("../../../assets/images/logo.png")}
                            style={{height: 100, width: 140}}/>
@@ -48,4 +47,4 @@ class SelectScreen extends Component {
     }
 }
 
-export default SelectScreen;
+export default SplashScreen;

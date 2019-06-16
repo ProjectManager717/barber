@@ -78,8 +78,9 @@ export default class ClientBlast extends Component {
                         <TouchableOpacity onPress={() => {
                             this.props.navigation.goBack();
                         }}>
-                            <Text
-                                style={{fontWeight: "bold", color: "white", fontSize: 14, marginLeft: 10}}>Cancel</Text>
+                            <Image
+                                style={{tintColor: 'white', height: 20, resizeMode: 'contain'}}
+                                source={require("../../../assets/images/ic_back.png")}/>
                         </TouchableOpacity>
                     }
                 />

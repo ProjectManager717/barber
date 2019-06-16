@@ -101,7 +101,7 @@ export default class ScreenTabs extends Component {
                 style={styles.icon}
               />
               <Text style={{ color: getViewIndex == 2 ? "green" : "#535361" }}>
-                Notification
+                Notifications
               </Text>
             </View>
           </TouchableOpacity>

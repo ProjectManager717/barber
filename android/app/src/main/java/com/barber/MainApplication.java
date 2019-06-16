@@ -3,6 +3,7 @@ package com.barber;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.wix.RNCameraKit.RNCameraKitPackage;
 import co.apptailor.googlesignin.RNGoogleSigninPackage;
 import com.imagepicker.ImagePickerPackage;
 
@@ -25,6 +26,8 @@ import com.facebook.soloader.SoLoader;
 
 import java.util.Arrays;
 import java.util.List;
+import android.support.multidex.MultiDex;
+import android.content.Context;
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -45,6 +48,7 @@ public class MainApplication extends Application implements ReactApplication {
         protected List<ReactPackage> getPackages() {
             return Arrays.<ReactPackage>asList(
                     new MainReactPackage(),
+                    new RNCameraKitPackage(),
                     new RNGoogleSigninPackage(),
                     new ImagePickerPackage(),
                     new FBSDKPackage(mCallbackManager),
@@ -73,5 +77,11 @@ public class MainApplication extends Application implements ReactApplication {
         super.onCreate();
         SoLoader.init(this, /* native exopackage */ false);
         AppEventsLogger.activateApp(this);
+    }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
     }
 }

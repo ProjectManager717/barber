@@ -5,8 +5,7 @@ import { Header } from "react-native-elements";
 import { globalStyles } from "../../../themes/globalStyles";
 import { Colors } from "../../../themes";
 
-import QRCode from "react-native-qrcode";
-
+import  {CameraKitCamera} from 'react-native-camera-kit';
 import { styles } from "./styles";
 
 export default class QRCheckIn extends Component {
@@ -53,17 +52,23 @@ export default class QRCheckIn extends Component {
           }}
         />
         
-        <View style={styles.qr_outer_container}>
+        <View style={{width:"100%",height:"100%"}}>
+            <CameraKitCamera
+                ref={cam => this.camera = cam}
+                style={{
+                    flex: 1,
+                    backgroundColor: 'white'
+                }}
+                cameraOptions={{
+                    flashMode: 'auto',             // on/off/auto(default)
+                    focusMode: 'on',               // off/on(default)
+                    zoomMode: 'on',                // off/on(default)
+                    ratioOverlay:'1:1',            // optional, ratio overlay on the camera and crop the image seamlessly
+                    ratioOverlayColor: '#00000077' // optional
+                }}
+                onReadQRCode={(event) => console.log("QRScan =="+event.nativeEvent.qrcodeStringValue)} // optional
 
-
-          <View style={styles.qrcontainer}>
-            <QRCode
-              value={this.state.text}
-              size={200}
-              bgColor="black"
-              fgColor="white"
             />
-          </View>
         </View>
         <TouchableOpacity style={[globalStyles.button,{marginTop:70, marginBottom:30}]} onPress={()=>{
           //this.props.navigation.navigate('BarberProfile');

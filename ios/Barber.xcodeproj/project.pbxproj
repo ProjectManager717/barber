@@ -96,6 +96,7 @@
 		1D496B91C63F4EFFBB83AB93 /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EA618D39966A4627AAE431F6 /* Octicons.ttf */; };
 		8EC8345F81334BB683DAF3FB /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BE1547F32BE54816B1A0FFBB /* SimpleLineIcons.ttf */; };
 		EC200469DD4047DF9B6117E2 /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0359AC720D45402B9D0FEBF5 /* Zocial.ttf */; };
+		DB213267F6994C63BCD8AE9B /* libReactNativeCameraKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C61F6FF7C66E49B3A8902F6E /* libReactNativeCameraKit.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -539,6 +540,8 @@
 		EA618D39966A4627AAE431F6 /* Octicons.ttf */ = {isa = PBXFileReference; name = "Octicons.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		BE1547F32BE54816B1A0FFBB /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; name = "SimpleLineIcons.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		0359AC720D45402B9D0FEBF5 /* Zocial.ttf */ = {isa = PBXFileReference; name = "Zocial.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		B39DC05DD1684EE6926F693F /* ReactNativeCameraKit.xcodeproj */ = {isa = PBXFileReference; name = "ReactNativeCameraKit.xcodeproj"; path = "../node_modules/react-native-camera-kit/ios/lib/ReactNativeCameraKit.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		C61F6FF7C66E49B3A8902F6E /* libReactNativeCameraKit.a */ = {isa = PBXFileReference; name = "libReactNativeCameraKit.a"; path = "libReactNativeCameraKit.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -587,6 +590,7 @@
 				184BF49322AF938500357CB1 /* Bolts.framework in Frameworks */,
 				B9A7A40C349C4DB38DA1759D /* libRNGestureHandler.a in Frameworks */,
 				626B23EFF8414106B7D1C31B /* libRNVectorIcons.a in Frameworks */,
+				DB213267F6994C63BCD8AE9B /* libReactNativeCameraKit.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -922,6 +926,7 @@
 				CADF87034008499A9749BBB6 /* RCTFBSDK.xcodeproj */,
 				DDB52C27000E4CC99ED5C4F9 /* RNGestureHandler.xcodeproj */,
 				0979F200267B40B2B1EF1D1F /* RNVectorIcons.xcodeproj */,
+				B39DC05DD1684EE6926F693F /* ReactNativeCameraKit.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1733,16 +1738,13 @@
 					"$(SRCROOT)..\node_modules\neact-native-image-pickerios",
 					"$(SRCROOT)..\node_modules\neact-native-google-signiniosRNGoogleSignin",
 					"$(SRCROOT)\..\node_modules\react-native-vector-icons\RNVectorIconsManager",
+					"$(SRCROOT)\..\node_modules\react-native-camera-kit\ios\lib\ReactNativeCameraKit",
 				);
 				INFOPLIST_FILE = BarberTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
@@ -1772,16 +1774,13 @@
 					"$(SRCROOT)..\node_modules\neact-native-image-pickerios",
 					"$(SRCROOT)..\node_modules\neact-native-google-signiniosRNGoogleSignin",
 					"$(SRCROOT)\..\node_modules\react-native-vector-icons\RNVectorIconsManager",
+					"$(SRCROOT)\..\node_modules\react-native-camera-kit\ios\lib\ReactNativeCameraKit",
 				);
 				INFOPLIST_FILE = BarberTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
@@ -1819,6 +1818,7 @@
 					"$(SRCROOT)..\node_modules\neact-native-image-pickerios",
 					"$(SRCROOT)..\node_modules\neact-native-google-signiniosRNGoogleSignin",
 					"$(SRCROOT)\..\node_modules\react-native-vector-icons\RNVectorIconsManager",
+					"$(SRCROOT)\..\node_modules\react-native-camera-kit\ios\lib\ReactNativeCameraKit",
 				);
 				INFOPLIST_FILE = Barber/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1857,6 +1857,7 @@
 					"$(SRCROOT)..\node_modules\neact-native-image-pickerios",
 					"$(SRCROOT)..\node_modules\neact-native-google-signiniosRNGoogleSignin",
 					"$(SRCROOT)\..\node_modules\react-native-vector-icons\RNVectorIconsManager",
+					"$(SRCROOT)\..\node_modules\react-native-camera-kit\ios\lib\ReactNativeCameraKit",
 				);
 				INFOPLIST_FILE = Barber/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1895,15 +1896,12 @@
 					"$(SRCROOT)..\node_modules\neact-native-image-pickerios",
 					"$(SRCROOT)..\node_modules\neact-native-google-signiniosRNGoogleSignin",
 					"$(SRCROOT)\..\node_modules\react-native-vector-icons\RNVectorIconsManager",
+					"$(SRCROOT)\..\node_modules\react-native-camera-kit\ios\lib\ReactNativeCameraKit",
 				);
 				INFOPLIST_FILE = "Barber-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
@@ -1942,15 +1940,12 @@
 					"$(SRCROOT)..\node_modules\neact-native-image-pickerios",
 					"$(SRCROOT)..\node_modules\neact-native-google-signiniosRNGoogleSignin",
 					"$(SRCROOT)\..\node_modules\react-native-vector-icons\RNVectorIconsManager",
+					"$(SRCROOT)\..\node_modules\react-native-camera-kit\ios\lib\ReactNativeCameraKit",
 				);
 				INFOPLIST_FILE = "Barber-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
@@ -1988,15 +1983,12 @@
 					"$(SRCROOT)..\node_modules\neact-native-image-pickerios",
 					"$(SRCROOT)..\node_modules\neact-native-google-signiniosRNGoogleSignin",
 					"$(SRCROOT)\..\node_modules\react-native-vector-icons\RNVectorIconsManager",
+					"$(SRCROOT)\..\node_modules\react-native-camera-kit\ios\lib\ReactNativeCameraKit",
 				);
 				INFOPLIST_FILE = "Barber-tvOSTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
@@ -2034,15 +2026,12 @@
 					"$(SRCROOT)..\node_modules\neact-native-image-pickerios",
 					"$(SRCROOT)..\node_modules\neact-native-google-signiniosRNGoogleSignin",
 					"$(SRCROOT)\..\node_modules\react-native-vector-icons\RNVectorIconsManager",
+					"$(SRCROOT)\..\node_modules\react-native-camera-kit\ios\lib\ReactNativeCameraKit",
 				);
 				INFOPLIST_FILE = "Barber-tvOSTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
