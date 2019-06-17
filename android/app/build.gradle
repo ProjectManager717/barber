@@ -139,6 +139,9 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-fs')
+    implementation project(':react-native-view-shot')
+    implementation project(':react-native-svg')
     implementation project(':react-native-camera-kit')
     implementation project(':react-native-google-signin')
     implementation project(':react-native-image-picker')

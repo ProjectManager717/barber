@@ -4,6 +4,8 @@ import { SafeAreaView } from 'react-navigation';
 import { SmallWhiteButton } from '../../../components';
 import { styles } from './styles';
 
+import Preference from 'react-native-preference';
+
 class SelectScreen extends Component {
   constructor(props) {
     super(props);
@@ -18,7 +20,19 @@ class SelectScreen extends Component {
   onClient = () => {
     this.props.navigation.navigate('InitialScreen',{User:"Client"});
   };
-
+    
+    componentDidMount(): void {
+        this.closeScreen();
+    }
+    
+    closeScreen() {
+        if (Preference.get("clientlogin") === true) {
+            this.props.navigation.navigate("ClientTabNavigator");
+        } else if (Preference.get("barberlogin") === true) {
+            this.props.navigation.navigate("TabNavigator");
+        }
+    }
+    
   render() {
     return (
       <ImageBackground

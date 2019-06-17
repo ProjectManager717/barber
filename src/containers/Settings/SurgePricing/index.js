@@ -9,23 +9,69 @@ import CheckBoxSquare from "../../../components/CheckBox";
 
 export default class SurgePricing extends Component {
 
+    constructor(props) {
+        super(props);
+        this.state = {
+            surgePrice: false,
+            holidays: false,
+            birthday: false,
+            anyDayAfter10: false,
+            houseCall: false,
+
+        }
+    }
+
+    setSurgePrice() {
+        if (this.state.surgePrice === true)
+            this.setState({surgePrice: false})
+        else
+            this.setState({surgePrice: true})
+    }
+
+    checkBox(val) {
+        if (val === "Holidays") {
+            if (this.state.holidays === false)
+                this.setState({holidays: true})
+            else
+                this.setState({holidays: false})
+        } else if (val === "Birthday") {
+            if (this.state.birthday === false)
+                this.setState({birthday: true})
+            else
+                this.setState({birthday: false})
+        } else if (val === "Any Day After 10 PM") {
+            if (this.state.anyDayAfter10 === false)
+                this.setState({anyDayAfter10: true})
+            else
+                this.setState({anyDayAfter10: false})
+        } else if (val === "HouseCall") {
+            if (this.state.houseCall === false)
+                this.setState({houseCall: true})
+            else
+                this.setState({houseCall: false})
+        }
+
+    }
+
+
     renderRowWithCheck(item) {
         return <View style={{flex: 1, flexDirection: 'row', height: 22, marginLeft: 40}}>
-            <CheckBoxSquare onClick={() => {
-            }} isChecked={true} style={{alignSelf: 'center'}}/>
+            <CheckBoxSquare onClick={() =>this.checkBox(item.title)} isChecked={item.value}
+                            style={{alignSelf: 'center'}}/>
             <Text style={styles.row_title}>{item.title}</Text>
         </View>;
     }
 
     renderRowSurge(item) {
         return <View style={{flex: 1, flexDirection: 'column'}}>
-            <View style={{flex: 1, flexDirection: 'row',height:36}}>
+            <View style={{flex: 1, flexDirection: 'row', height: 36}}>
                 <Image style={styles.leftIcon} source={item.ic}/>
                 <Text style={styles.row_title}>{item.title}</Text>
                 <Switch
                     onTintColor="#00D200"
                     thumbTintColor="#fff"
-                    value={true} style={{
+                    onChange={()=> this.setSurgePrice()}
+                    value={this.state.surgePrice} style={{
                     position: 'absolute',
                     top: 5,
                     right: 14,
@@ -81,10 +127,10 @@ export default class SurgePricing extends Component {
 
                         </View>
                     </View>
-                    {this.renderRowWithCheck({title: "Holidays"})}
-                    {this.renderRowWithCheck({title: "Birthday"})}
-                    {this.renderRowWithCheck({title: "Any Day After 10 PM"})}
-                    {this.renderRowWithCheck({title: "HouseCall"})}
+                    {this.renderRowWithCheck({title: "Holidays",value:this.state.holidays})}
+                    {this.renderRowWithCheck({title: "Birthday",value:this.state.birthday})}
+                    {this.renderRowWithCheck({title: "Any Day After 10 PM",value:this.state.anyDayAfter10})}
+                    {this.renderRowWithCheck({title: "HouseCall",value:this.state.houseCall})}
 
                     <View
                         style={[globalStyles.rowBackground, styles.row, {marginTop: 20, marginLeft: 40, height: 30,}]}>
@@ -110,9 +156,9 @@ export default class SurgePricing extends Component {
 
                 </ScrollView>
 
-                <TouchableOpacity    onPress={()=>{
-                    this.props.navigation.navigate("BookingPreferences");
-                }}      style={[globalStyles.button,  {
+                <TouchableOpacity onPress={() => {
+                    this.props.navigation.navigate("Settings");
+                }} style={[globalStyles.button, {
                     marginTop: 70,
                     height: 40,
                     width: 260,
@@ -121,8 +167,6 @@ export default class SurgePricing extends Component {
                 }]}>
                     <Text style={globalStyles.buttonText}>DONE</Text>
                 </TouchableOpacity>
-
-
             </View>
 
         );

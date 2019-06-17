@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {View, Switch, Text, StyleSheet, Image, ScrollView, TouchableOpacity,TouchableHighlight} from "react-native";
+import {View, Switch, Text, StyleSheet, Image, ScrollView, TouchableOpacity, TouchableHighlight} from "react-native";
 import {Colors} from "../../../themes";
 import {globalStyles} from "../../../themes/globalStyles";
 //import { styles } from "./styles";
@@ -25,8 +25,8 @@ export default class Subscription extends Component {
             supremeImage: require("../../../assets/images/supreme_red.png"),
             supremeCheck: require("../../../assets/images/radio_unselected.png"),
         },
-        SelectedBasic:false,
-        SelectedSupreme:false,
+        SelectedBasic: false,
+        SelectedSupreme: false,
 
     }
 
@@ -49,7 +49,7 @@ export default class Subscription extends Component {
                 supremeImage: require("../../../assets/images/supreme_red.png"),
                 supremeCheck: require("../../../assets/images/radio_unselected.png"),
             },
-            SelectedBasic:true,
+            SelectedBasic: true,
 
         });
     }
@@ -73,19 +73,16 @@ export default class Subscription extends Component {
                 supremeImage: require("../../../assets/images/supreme_green.png"),
                 supremeCheck: require("../../../assets/images/radio_selected.png"),
             },
-            SelectedSupreme:true,
+            SelectedSupreme: true,
         });
     }
-    Onsubmit(){
-        if(this.state.SelectedBasic===true){
-            this.props.navigation.navigate("BookingPreferences");
+
+    Onsubmit() {
+        if (this.state.SelectedBasic === true) {
+            this.props.navigation.navigate("PaymentMethod");
+        } else if (this.state.SelectedSupreme === true) {
+            this.props.navigation.navigate("PaymentMethod")
         }
-              else if(this.state.SelectedSupreme===true){
-
-                  this.props.navigation.navigate("SurgePricing")
-
-        }
-
 
 
     }
@@ -141,7 +138,7 @@ export default class Subscription extends Component {
                                 height: 25,
                                 marginTop: 20,
                                 borderColor: this.state.basic.basicBorderColor,
-                                borderBottomWidth:0,
+                                borderBottomWidth: 0,
                                 borderWidth: 0.5,
                                 borderTopRightRadius: 15,
                                 borderTopLeftRadius: 15
@@ -171,24 +168,24 @@ export default class Subscription extends Component {
                                             fontSize: 14,
                                             textAlignVertical: "top",
                                             marginBottom: 15,
-                                            marginEnd: 30,
-                                            fontFamily:"AvertaStd-Thin"
+                                            marginEnd: 40,
+                                            fontFamily: "AvertaStd-Thin"
                                         }}
                                     >Join the CLYPR team and bulid up your clientele! Have your own profile and let your
                                         clients book using your schedule</Text>
-                                    <View style={{marginLeft:10,flexDirection:"row",marginBottom:10}}>
+                                    <View style={{marginLeft: 10, flexDirection: "row", marginBottom: 10}}>
                                         <Image source={this.state.basic.basicCheck}
                                                style={{
                                                    width: 10,
                                                    height: 10,
-                                                   marginTop:5,
+                                                   marginTop: 5,
                                                    resizeMode: "contain",
                                                }}
                                         />
                                         <Text style={{
                                             color: "white",
                                             fontWeight: "bold",
-                                            marginLeft:10
+                                            marginLeft: 10
                                         }}>Pay by appointment ($0.15 each) </Text>
                                     </View>
 
@@ -213,14 +210,14 @@ export default class Subscription extends Component {
                                 marginTop: 20,
                                 borderColor: this.state.supreme.supremeBorderColor,
                                 borderWidth: 0.5,
-                                borderBottomWidth:0,
+                                borderBottomWidth: 0,
                                 borderTopRightRadius: 15,
                                 borderTopLeftRadius: 15
                             }}>
                                 <Text style={{
                                     fontWeight: "bold",
                                     fontSize: 17,
-                                    color:this.state.supreme.supremeTextColor
+                                    color: this.state.supreme.supremeTextColor
                                 }}>SUPREME</Text>
 
                             </View>
@@ -234,7 +231,7 @@ export default class Subscription extends Component {
                                     borderRadius: 5,
                                     marginBottom: 20,
                                     borderWidth: 0.5,
-                                    borderColor:this.state.supreme.supremeMainBorderColor,
+                                    borderColor: this.state.supreme.supremeMainBorderColor,
                                 }}>
                                     <Text style={{
                                         color: "white",
@@ -243,24 +240,24 @@ export default class Subscription extends Component {
                                         fontSize: 14,
                                         textAlignVertical: "top",
                                         marginBottom: 15,
-                                        marginEnd: 30,
-                                        fontFamily:"AvertaStd-Thin"
+                                        marginEnd: 40,
+                                        fontFamily: "AvertaStd-Thin"
                                     }}>Unlock all the awesome features CLYPR has to offer! Such as Surge Pricing,
                                         HouseCalls, and much more! 1 flat rate and you can cut as many heads as you
                                         want.</Text>
-                                    <View style={{marginLeft:10,flexDirection:"row",marginBottom:10}}>
+                                    <View style={{marginLeft: 10, flexDirection: "row", marginBottom: 10}}>
                                         <Image source={this.state.supreme.supremeCheck}
                                                style={{
                                                    width: 10,
                                                    height: 10,
-                                                   marginTop:5,
+                                                   marginTop: 5,
                                                    resizeMode: "contain",
                                                }}
                                         />
                                         <Text style={{
                                             color: "white",
                                             fontWeight: "bold",
-                                            marginLeft:10
+                                            marginLeft: 10
                                         }}>{"Pay per month($30 subscription) "} </Text>
                                     </View>
 
@@ -269,7 +266,7 @@ export default class Subscription extends Component {
                                                width: 52,
                                                height: 52,
                                                position: "absolute",
-                                               right:0,
+                                               right: 0,
                                                top: 0
                                            }}
                                     />
@@ -277,18 +274,19 @@ export default class Subscription extends Component {
                                 </View>
                             </TouchableHighlight>
 
-                            <TouchableOpacity onPress={()=>this.Onsubmit()}
-                              style={[globalStyles.button, {
-                                marginTop: 100,
-                                height: 40,
-                                width: 260,
+                            <TouchableOpacity onPress={() => this.Onsubmit()}
+                                              style={[globalStyles.button, {
+                                                  marginTop: 100,
+                                                  height: 40,
+                                                  width: 260,
 
-                                bottom: 40
-                            }]}>
+                                                  bottom: 40
+                                              }]}>
                                 <Text style={globalStyles.buttonText}>SUBMIT</Text>
 
                             </TouchableOpacity>
-                            <TouchableOpacity style={{bottom: 20, marginBottom: 40}}  >
+                            <TouchableOpacity onPress={() => alert("Your subscription has been cancelled")}
+                                              style={{bottom: 20, marginBottom: 40}}>
                                 <Text style={{color: "grey", fontSize: 12}}>I'd Like to Cancel My Membership</Text>
                             </TouchableOpacity>
 

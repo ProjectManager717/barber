@@ -7,23 +7,71 @@ import {
     Image,
     ScrollView,
     TouchableOpacity,
-    TouchableHighlight,
+    TouchableHighlight, Clipboard,
     TextInput, Dimensions, ImageBackground
 } from "react-native";
 import LinearGradient from 'react-native-linear-gradient';
 import {Colors} from "../../../themes";
 import {globalStyles} from "../../../themes/globalStyles";
 import {Header} from "react-native-elements";
+import Preference from 'react-native-preference';
+import ViewShot from "react-native-view-shot";
+
+var RNFS = require('react-native-fs');
 
 const {width, height} = Dimensions.get("window");
+
+const link = "www.clypr.co/pro/" + Preference.get("userName");
+const userName = Preference.get("userName");
+const userAddress = Preference.get("userAddress");
 
 export default class Share extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {text2: 'Your Message...'};
+        this.state = {
+            text2: 'Your Message...',
+            clipboardContent: null
+        };
 
     }
+
+    saveToClipboard = async (val) => {
+        //To copy the text to clipboard
+        await Clipboard.setString(val);
+        alert('Copied to Clipboard!');
+    };
+
+    downloadImage() {
+        this.refs.viewShot1.capture().then(uri => {
+            let destPath = RNFS.PicturesDirectoryPath + "/clypr1.jpg";
+            RNFS.copyFile(uri, destPath)
+                .then((success) => {
+                    console.log('file copied!');
+                })
+                .catch((err) => {
+                    console.log('Error copying file: ' + err.message);
+                });
+
+            console.log("do something with ", uri);
+        });
+    }
+
+    downloadImage1() {
+        this.refs.viewShot2.capture().then(uri => {
+            let destPath = RNFS.PicturesDirectoryPath + "/clypr2.jpg";
+            RNFS.copyFile(uri, destPath)
+                .then((success) => {
+                    console.log('file copied!');
+                })
+                .catch((err) => {
+                    console.log('Error copying file: ' + err.message);
+                });
+
+            console.log("do something with ", uri);
+        });
+    }
+
 
     render() {
         return (<View style={styles.container}>
@@ -59,7 +107,6 @@ export default class Share extends Component {
                         <View style={{
                             flexDirection: "column",
                             alignItems: "center",
-
                             width: "80%",
                         }}>
                             <View style={{
@@ -71,14 +118,19 @@ export default class Share extends Component {
                                 <Text
                                     style={{marginStart: 5, color: "grey", fontFamily: "AvertaStd-Thin"}}
                                 >{"Copy & Paste the below link"}</Text></View>
-                            <Text style={{
-                                color: "white",
-                                fontSize: 15,
-                                fontFamily: "AvertaStd-Bold"
-                            }}>{"www.clypr.co/pro/anthonymartial"}</Text>
+                            <TouchableOpacity
+                                onPress={() => this.saveToClipboard("www.clypr.co/pro/" + Preference.get("userName"))}>
+                                <Text style={{
+                                    color: "white",
+                                    fontSize: 15,
+                                    fontFamily: "AvertaStd-Bold"
+                                }}>{link}</Text>
+                            </TouchableOpacity>
 
                         </View>
-                        <View style={{width: "100%", height: height / 2.1}}>
+                        <ViewShot style={{width: "100%", height: height / 2.1}} ref="viewShot1"
+                                  options={{format: "jpg", quality: 0.9}}>
+
                             <Image
                                 source={require("../../../assets/images/shareimgbg1.png")}
                                 style={{
@@ -99,14 +151,14 @@ export default class Share extends Component {
                                     color: "black",
                                     fontSize: 10,
                                 }}
-                                >{"Anthony Martial"}</Text>
+                                >{userName}</Text>
                                 <Text
                                     style={{
                                         color: "black",
                                         fontSize: 8,
                                     }}
 
-                                >{"CLYPR Barbershop(Miami,FL)"}</Text>
+                                >{userAddress}</Text>
                             </View>
                             <View style={{
                                 flexDirection: "row",
@@ -115,9 +167,12 @@ export default class Share extends Component {
                                 right: 10,
                                 top: 10
                             }}>
-                                <Text style={{color: "black", fontSize: 12}}>{"www.clypr.co/pro/anthonymartial"}</Text>
-                                <Image style={{width: 40, height: 40, marginStart: 20}}
-                                       source={require("../../../assets/images/download.png")}/>
+                                <Text style={{color: "black", fontSize: 12}}>{link}</Text>
+                                <TouchableOpacity onPress={() => this.downloadImage()}>
+                                    <Image
+                                           style={{width: 40, height: 40, marginStart: 20}}
+                                           source={require("../../../assets/images/download.png")}/>
+                                </TouchableOpacity>
                             </View>
                             <View style={{
                                 flexDirection: "row",
@@ -212,8 +267,10 @@ export default class Share extends Component {
                                 </View>
 
                             </View>
-                        </View>
-                        <View style={{width: "100%", height: height / 2.1,}}>
+                        </ViewShot>
+                        <ViewShot style={{width: "100%", height: height / 2.1,}} ref="viewShot2"
+                                  options={{format: "jpg", quality: 0.9}}>
+
                             <Image
                                 source={require("../../../assets/images/shareimgbg2.png")}
                                 style={{
@@ -233,12 +290,12 @@ export default class Share extends Component {
                                         fontWeight: "bold",
                                         color: "black",
                                         fontSize: 10,
-                                    }}>{"Anthony Martial"}</Text>
+                                    }}>{userName}</Text>
                                 <Text style={{
                                     color: "black",
                                     fontSize: 8,
 
-                                }}>{"CLYPR Barbershop(Miami,FL)"}</Text>
+                                }}>{userAddress}</Text>
                             </View>
                             <View style={{
                                 flexDirection: "row",
@@ -247,8 +304,11 @@ export default class Share extends Component {
                                 right: 10,
                                 top: 10
                             }}>
-                                <Image style={{width: 40, height: 40, marginStart: 20}}
-                                       source={require("../../../assets/images/download.png")}/>
+                                <TouchableOpacity onPress={() => this.downloadImage1()}>
+                                    <Image
+                                        style={{width: 40, height: 40, marginStart: 20}}
+                                        source={require("../../../assets/images/download.png")}/>
+                                </TouchableOpacity>
                             </View>
                             <View style={{
                                 flexDirection: "row",
@@ -301,49 +361,40 @@ export default class Share extends Component {
 
                                     <Text style={{
                                         fontWeight: "bold",
-
                                         color: "black",
-
                                         fontSize: 9,
-
-
                                     }}>{' Get It on Google Play    '}</Text>
                                 </View>
                             </View>
-
-
                             <View style={{
                                 flexDirection: "column",
                                 position: "absolute",
                                 left: 25, bottom: 50, height: 80
                             }}>
-                                <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 0}} colors={['#5E2047', '#F4002E']}
+                                <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 0}}
+                                                colors={['#5E2047', '#F4002E']}
                                                 style={{borderRadius: 25, alignItems: "center"}}>
                                     <Text
                                         style={{
                                             color: "white",
-                                            fontSize: 11, margin: 5, marginStart: 7, marginEnd: 7, fontWeight: "bold"
+                                            fontSize: 11,
+                                            margin: 5,
+                                            marginStart: 7,
+                                            marginEnd: 7,
+                                            fontWeight: "bold"
                                         }}
                                     >{"Book your appointment"}</Text>
                                 </LinearGradient>
-
-
                                 <Text
                                     style={{
                                         color: "black",
                                         fontSize: 11, marginTop: 10
                                     }}
-                                >{"www.clypr.co/pro/anthonymartial"}</Text>
-
+                                >{link}</Text>
                             </View>
-
-
-                        </View>
-
-
+                        </ViewShot>
                     </View>
                 </ScrollView>
-
             </View>
 
 

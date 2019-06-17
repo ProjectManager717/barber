@@ -7,6 +7,7 @@ import {CloseButton, ImageButton, Input, RedButton} from '../../../components';
 import {checkEmail} from '../../../utils';
 import Preference from 'react-native-preference';
 import {constants} from "../../../utils/constants";
+
 //import * as constants from "../../../utils/constants";
 import {LoginButton, AccessToken, GraphRequest, GraphRequestManager} from 'react-native-fbsdk';
 
@@ -124,6 +125,7 @@ class SignInScreen extends Component {
                                 clientlogin: true,
                                 userEmail: response.Data.email,
                                 userId: response.Data.id,
+                                userName: userInfo.user.givenName,
                                 userType: "Client",
                                 userToken: response.Data.token
                             });
@@ -172,6 +174,7 @@ class SignInScreen extends Component {
                             Preference.set({
                                 barberlogin: true,
                                 userEmail: response.Data.email,
+                                userName: userInfo.user.givenName,
                                 userId: response.Data.id,
                                 userType: "Barber",
                                 userToken: response.Data.token
@@ -417,6 +420,7 @@ class SignInScreen extends Component {
                             Preference.set({
                                 clientlogin: true,
                                 userEmail: response.Data.email,
+                                userName: data.first_name,
                                 userId: response.Data.id,
                                 userType: "Client",
                                 userToken: response.Data.token
@@ -471,6 +475,7 @@ class SignInScreen extends Component {
                             Preference.set({
                                 barberlogin: true,
                                 userEmail: response.Data.email,
+                                userName: data.first_name,
                                 userId: response.Data.id,
                                 userType: "Barber",
                                 userToken: response.Data.token

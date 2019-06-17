@@ -60,8 +60,12 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>Barber uses camera to take profile picture</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string/>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Barber uses photos to choose profile picture</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>AvenirNext-Bold.ttf</string>
