@@ -18,6 +18,8 @@ import {Header} from "react-native-elements";
 import CheckBoxSquare from "../../../components/CheckBox";
 import ImagePicker from 'react-native-image-picker';
 import {RedButton} from "../../../components/Buttons";
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import {Colors} from "../../../themes";
 
 const {height, width} = Dimensions.get("window");
 const options = {
@@ -25,6 +27,7 @@ const options = {
     storageOptions: {
         skipBackup: true,
         path: 'images',
+        //places: [],
     },
 };
 
@@ -34,9 +37,10 @@ export default class BarberEditProfile extends Component {
         console.disableYellowBox = true;
         this.state = {
             houseCall: false,
-            Experience:"1",
-            pickMonth:false,
-
+            Experience: "1",
+            pickMonth: false,
+            places: [],
+            avatarSource: require("../../../assets/images/personface.png"),
             ListData: [
                 {
                     id: 1,
@@ -90,9 +94,8 @@ export default class BarberEditProfile extends Component {
                     imagePath2: require("../../../assets/images/delete.png"),
                     showLine: false
                 }
-
-
-            ]
+            ],
+            imagesData: []
         }
     }
 
@@ -103,6 +106,97 @@ export default class BarberEditProfile extends Component {
         else
             this.setState({houseCall: true})
     }
+
+    renderGooglePlacesInput = () => {
+        return (
+            <GooglePlacesAutocomplete
+                placeholder='Location'
+                minLength={2} // minimum length of text to search
+                autoFocus={false}
+                returnKeyType={'search'} // Can be left out for default return key https://facebook.github.io/react-native/docs/textinput.html#returnkeytype
+                listViewDisplayed='false'    // true/false/undefined
+                fetchDetails={true}
+                renderDescription={row => row.description} // custom description render
+                onPress={(data, details = null,) => { // 'details' is provided when fetchDetails = true
+                    console.log("hello"+data, details);
+
+                    this.setState({places:[]});
+
+                    this.state.places.push(details);
+                    this.setState({places:this.state.places});
+                    console.log("hello2"+JSON.stringify(this.state.places));
+                }}
+                getDefaultValue={() => ''}
+                query={{
+                    // available options: https://developers.google.com/places/web-service/autocomplete
+                    key: 'AIzaSyD5YuagFFL0m0IcjCIvbThN25l0m2jMm2w',
+                    language: 'en', // language of the results
+                    types: '(cities)' // default: 'geocode'
+                }}
+
+                styles={{
+                    textInput:{
+                        backgroundColor:colors.gray,
+                        color:'white'
+                    },
+
+                    textInputContainer: {
+
+                        backgroundColor: Colors.gray,
+                        borderWidth: 0.5,
+                        borderColor: Colors.border,
+                        borderRadius: 5,
+
+                        flexDirection: "row",
+                        margin: 1
+
+                    },
+                    description: {
+
+                        color:"white",
+                        backgroundColor:"transparent"
+                    },
+                    predefinedPlacesDescription: {
+                        color: 'red'
+                    },
+                    poweredContainer:{color:"red"},
+
+                }}
+                currentLocation={true} // Will add a 'Current location' button at the top of the predefined places list
+                currentLocationLabel="Current location"
+                nearbyPlacesAPI='GooglePlacesSearch' // Which API to use: GoogleReverseGeocoding or GooglePlacesSearch
+                GoogleReverseGeocodingQuery={{
+                    // available options for GoogleReverseGeocoding API : https://developers.google.com/maps/documentation/geocoding/intro
+                }}
+                GooglePlacesSearchQuery={{
+                    // available options for GooglePlacesSearch API : https://developers.google.com/places/web-service/search
+                    rankby: 'distance',
+                    types: 'food'
+                }}
+                GooglePlacesDetailsQuery={{
+                    // available options for GooglePlacesDetails API : https://developers.google.com/places/web-service/details
+                    fields: ["name",'formatted_address']
+                }}
+
+
+                filterReverseGeocodingByTypes={['locality', 'administrative_area_level_3']} // filter the reverse geocoding results by types - ['locality', 'administrative_area_level_3'] if you want to display only cities
+
+
+                debounce={200} // debounce the requests in ms. Set to 0 to remove debounce. By default 0ms.
+
+                renderRightButton={()  =>
+                    <View style={{justifyContent:"center",alignItems:"center"}} >
+                        <Image source={require('../../../assets/images/edit.png')}
+                               style={{resizeMode:"contain",width:20,height:20,marginEnd:15}} />
+
+                    </View>
+
+                }
+                enablePoweredByContainer={false}
+
+            />
+        );
+    };
 
     renderRowSurge(item) {
         return <View style={{flex: 1, flexDirection: 'column'}}>
@@ -149,7 +243,9 @@ export default class BarberEditProfile extends Component {
 
         </View>;
     }
+
     selectImage = () => {
+        //alert("hello");
         ImagePicker.showImagePicker(options, (response) => {
             console.log('Response = ', response);
 
@@ -170,6 +266,35 @@ export default class BarberEditProfile extends Component {
                 });
             }
         });
+    }
+
+    selectImage2 = () => {
+        //alert("hello");
+        ImagePicker.showImagePicker(options, (response) => {
+            console.log('Response = ', response);
+
+            if (response.didCancel) {
+                console.log('User cancelled image picker');
+            } else if (response.error) {
+                console.log('ImagePicker Error: ', response.error);
+            } else if (response.customButton) {
+                console.log('User tapped custom button: ', response.customButton);
+            } else {
+                const source = {uri: response.uri};
+                let imageDta = this.state.imagesData;
+
+                imageDta.push({id: imageDta.length + 1, imagePath: source})
+                this.setState({imagesData: imageDta});
+            }
+        });
+    }
+    deleteImage(indx)
+    {
+        //alert("deleting "+indx);
+        let imageDta = this.state.imagesData;
+        imageDta.splice(indx,1);
+        this.setState({imagesData: imageDta});
+        console.log("imagesData+ "+JSON.stringify(this.state.imagesData))
     }
 
     render() {
@@ -197,9 +322,9 @@ export default class BarberEditProfile extends Component {
                     <View style={styles.detailsContainer}>
                         <View style={styles.profileImageContainer}>
                             <Image
-                                source={require("../../../assets/images/personface.png")}
+                                source={this.state.avatarSource}
                                 style={styles.profileImage}/>
-                            <TouchableOpacity style={{
+                            <TouchableOpacity onPress={() => this.selectImage()} style={{
                                 position: "absolute",
                                 right: 10, bottom: 0
                             }}>
@@ -222,14 +347,14 @@ export default class BarberEditProfile extends Component {
                                                source={require("../../../assets/images/edit.png")}/>
                                     </TouchableOpacity>
                                 </View>
-                                <View style={[styles.review,{flexDirection:"row"}]}>
+                                <View style={[styles.review, {flexDirection: "row"}]}>
                                     <Text style={[styles.allFontStyle, styles.reviewText, {
                                         color: "white",
                                         fontFamily: "AvertaStd-Extrathin"
                                     }]}>
                                         {this.state.month}Years of Experience</Text>
                                     <TouchableOpacity onPress={() => this.setState({pickMonth: true})}>
-                                        <Picker style={{width:90,height:20, color: "white", marginBottom: 5}}
+                                        <Picker style={{width: 90, height: 20, color: "white", marginBottom: 5}}
                                                 onValueChange={(txt) => this.setState({month: txt})}>
                                             <Picker.Item label="1" value="1"/>
                                             <Picker.Item label="2" value="2"/>
@@ -388,19 +513,13 @@ export default class BarberEditProfile extends Component {
 
                     </View>
 
-                    <View style={[globalStyles.rowBackground, styles.row]}>
-                        {this.renderRowED2({
-                            hintText: "Location",
-                            title: "3828 Delmas Terrace, Culver City, CA 90232 ",
-                            ic: require("../../../assets/images/edit.png")
-                        })}
-                        <View style={{marginStart: 30, height: 15,}}>
-                        </View>
+                    <View style={[styles.row,]}>
+                        {this.renderGooglePlacesInput()}
                     </View>
                     <View style={{
                         backgroundColor: "white",
                         height: 150,
-                        flexDirection: "column",
+                        flexDirection: "row",
                         width: "90%",
                         marginStart: 19,
                         marginEnd: 19,
@@ -410,33 +529,47 @@ export default class BarberEditProfile extends Component {
                         marginBottom: 20,
                         marginTop: 5
                     }}>
-                        <TouchableOpacity
-                            onPress={() => this.selectImage()}
-                        >
-                            <Image source={require("../../../assets/images/plus.png")}
-                                   style={{
-                                       resizeMode: "contain",
-                                       height: 50
-                                   }}/>
-                        </TouchableOpacity>
-                        <Text
-                            style={{color: "grey", marginTop: 10}}
 
-                        >Add New Pictures</Text>
-
-
+                        {this.state.imagesData.length > 0 && <FlatList
+                            data={this.state.imagesData}
+                            keyExtractor={(item,index) =>index }
+                            extraData={this.state}
+                            showsHorizontalScrollIndicator={false}
+                            horizontal={true}
+                            renderItem={({item,index}) =>
+                                <View style={{width: 100, height: 140, marginStart: 10}}>
+                                    <Image source={item.imagePath} style={{borderRadius: 10, width: 100, height: 140}}
+                                           resizeMode={"contain"}/>
+                                    <TouchableOpacity style={{position: "absolute", top: 5, right: 5}} onPress={()=>this.deleteImage(index)}>
+                                        <Image resizeMode={"contain"}
+                                               source={require("../../../assets/images/delete.png")}
+                                               style={{width: 20, height: 20, }}/>
+                                    </TouchableOpacity>
+                                </View>}/>}
+                        <View style={{flexDirection: "column", alignItems: "center", justifyContent: "center"}}>
+                            <TouchableOpacity onPress={() => this.selectImage2()}>
+                                <Image source={require("../../../assets/images/plus.png")}
+                                       style={{
+                                           resizeMode: "contain",
+                                           height: 50
+                                       }}/>
+                            </TouchableOpacity>
+                            {this.state.imagesData.length < 1 && <Text
+                                style={{color: "grey", marginTop: 10}}
+                            >Add New Pictures</Text>}
+                        </View>
                     </View>
-                    <View style={{justifyContent:'center',alignItems:"center",width:"100%"}} >
-                    <TouchableOpacity   style={[globalStyles.button, {
-                        height: 35,
-                        width: 250,
-                        backgroundColor: "red",
-                        marginTop: 20,
-                        marginBottom: 20,
-                    }]}>
-                        <Text style={{fontSize: 15, fontWeight: "bold", color: "white"}}>{"Save"}</Text>
+                    <View style={{justifyContent: 'center', alignItems: "center", width: "100%"}}>
+                        <TouchableOpacity style={[globalStyles.button, {
+                            height: 35,
+                            width: 250,
+                            backgroundColor: "red",
+                            marginTop: 20,
+                            marginBottom: 20,
+                        }]}>
+                            <Text style={{fontSize: 15, fontWeight: "bold", color: "white"}}>{"Save"}</Text>
 
-                    </TouchableOpacity>
+                        </TouchableOpacity>
                     </View>
                 </ScrollView>
             </View>)
@@ -525,11 +658,12 @@ const styles = StyleSheet.create({
     profileImage: {
         height: width / 3,
         width: width / 3,
+        borderRadius: width / 6,
         justifyContent: "flex-end",
         alignItems: "flex-end"
     },
     infoContainer: {
-        flexDirection:"column",
+        flexDirection: "column",
         justifyContent: "space-around",
         width,
         alignItems: "center"

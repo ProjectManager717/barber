@@ -8,11 +8,111 @@ import CheckBox from "../../../components/CheckBox";
 
 
 export default class DiscoverMe extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      zipCode: false,
+      city: false,
+      stat: false,
+      oneWeek: false,
+      twoWeek: false,
+      threeWeek:false,
+      price:0,
+    }
+  }
+  checkBox(val)
+  {
+    if(val===1)
+    {
+      if(this.state.zipCode===true)
+      {
+        let pr=this.state.price;
+        pr=pr-5;
+        this.setState({zipCode:false,price:pr})
+      }
+      else{
+        let pr=this.state.price;
+        pr=pr+5;
+        this.setState({zipCode:true,price:pr})
+      }
+
+    }
+    if(val===2)
+    {
+      if(this.state.city===true)
+      {
+        let pr=this.state.price;
+        pr=pr-15;
+        this.setState({city:false,price:pr})
+      }
+      else{
+        let pr=this.state.price;
+        pr=pr+15;
+        this.setState({city:true,price:pr})
+      }
+    }
+    if(val===3)
+    {
+      if(this.state.stat===true)
+      {
+        let pr=this.state.price;
+        pr=pr-50;
+        this.setState({stat:false,price:pr})
+      }
+      else{
+        let pr=this.state.price;
+        pr=pr+50;
+        this.setState({stat:true,price:pr})
+      }
+    }
+    if(val===4)
+    {
+      if(this.state.oneWeek===true)
+      {
+        let pr=this.state.price;
+        pr=pr-5;
+        this.setState({oneWeek:false,price:pr})
+      }
+      else{
+        let pr=this.state.price;
+        pr=pr+5;
+        this.setState({oneWeek:true,price:pr})
+      }
+    }
+    if(val===5)
+    {
+      if(this.state.twoWeek===true)
+      {
+        let pr=this.state.price;
+        pr=pr-10;
+        this.setState({twoWeek:false,price:pr})
+      }
+      else{
+        let pr=this.state.price;
+        pr=pr+10;
+        this.setState({twoWeek:true,price:pr})
+      }
+    }
+    if(val===6)
+    {
+      if(this.state.threeWeek===true){
+        let pr=this.state.price;
+        pr=pr-15;
+        this.setState({threeWeek:false,price:pr})
+      } else{
+        let pr=this.state.price;
+        pr=pr+15;
+        this.setState({threeWeek:true,price:pr})
+      }
+    }
+  }
+
   renderRow(item){
     return <View style={{flex:1, flexDirection:'row',height:22,marginLeft:40}}>    
       <CheckBox
       checkedImage={<Image style={{width:16,height:16}} source={require('../../../assets/images/ic_check_green.png')} />}
-      onClick={()=>{}} isChecked={false} style={{alignSelf:'center'}} />
+      onClick={()=>this.checkBox(item.itemNu)} isChecked={item.value} style={{alignSelf:'center'}} />
       <Text style={styles.row_title} >{item.title}</Text>
     </View>;
   }
@@ -49,23 +149,23 @@ export default class DiscoverMe extends Component {
               <Text style={styles.row_title} >RANGE</Text>
             </View>
           </View>
-          {this.renderRow({title:"Zipcode ($5)"})}
-          {this.renderRow({title:"City ($15)"})}
-          {this.renderRow({title:"State ($50)"})}
+          {this.renderRow({title:"Zipcode ($5)",value:this.state.zipCode,itemNu:1})}
+          {this.renderRow({title:"City ($15)",value:this.state.city,itemNu:2})}
+          {this.renderRow({title:"State ($50)",value:this.state.stat,itemNu:3})}
           <View style={[globalStyles.rowBackground, styles.row,{marginTop:30}]}>
             <View style={{flex:1, flexDirection:'row',height:36}}>
               <Image style={styles.leftIcon} source={require("../../../assets/images/ic_siren.png")} />
               <Text style={styles.row_title} >PROMOTION DURATION</Text>
             </View>
           </View>
-          {this.renderRow({title:"1 Week ($5)"})}
-          {this.renderRow({title:"2 Weeks ($10)"})}
-          {this.renderRow({title:"3 Weeks ($15)"})}
+          {this.renderRow({title:"1 Week ($5)",value:this.state.oneWeek,itemNu:4})}
+          {this.renderRow({title:"2 Weeks ($10)",value:this.state.twoWeek,itemNu:5})}
+          {this.renderRow({title:"3 Weeks ($15)",value:this.state.threeWeek,itemNu:6})}
 
           <View style={[globalStyles.rowBackground, {marginTop:30,height:60,width:200,alignSelf:'center', borderRadius:25}]}>
             <View style={{flex:1, flexDirection:'column',height:36,alignSelf:'center'}}>
               <Text style={styles.promo_title} >TOTAL</Text>
-              <Text style={styles.promo_title} >$10.00</Text>
+              <Text style={styles.promo_title} >${this.state.price}</Text>
             </View>
           </View>
 

@@ -1,7 +1,8 @@
 import React, {Component} from "react";
-import {View, Switch, Text, StyleSheet, Image, ScrollView, TouchableOpacity} from "react-native";
+import {View, Switch, Text, StyleSheet, Image, ScrollView, TouchableOpacity,TextInput} from "react-native";
 import {Colors} from "../../../themes";
 import {globalStyles} from "../../../themes/globalStyles";
+import PopupDialog from 'react-native-popup-dialog';
 //import { styles } from "./styles";
 import {Header} from "react-native-elements";
 import CheckBoxSquare from "../../../components/CheckBox";
@@ -17,7 +18,10 @@ export default class SurgePricing extends Component {
             birthday: false,
             anyDayAfter10: false,
             houseCall: false,
-
+            radiousLimit:0,
+            duration:0,
+            price:0,
+            DialogVisible: false,
         }
     }
 
@@ -68,8 +72,8 @@ export default class SurgePricing extends Component {
                 <Image style={styles.leftIcon} source={item.ic}/>
                 <Text style={styles.row_title}>{item.title}</Text>
                 <Switch
-                    onTintColor="#00D200"
-                    thumbTintColor="#fff"
+                    trackColor="#00D200"
+                    thumbColor="#fff"
                     onChange={()=> this.setSurgePrice()}
                     value={this.state.surgePrice} style={{
                     position: 'absolute',
@@ -137,25 +141,98 @@ export default class SurgePricing extends Component {
                         <View style={{flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
                             {this.renderRowSurge2({
                                 hint: "Radius Limit",
-                                value: "50"
+                                value: this.state.radiousLimit
                             })}
                             {this.renderRowSurge2({
                                 hint: "Duration",
-                                value: "1 hr"
+                                value: this.state.duration
                             })}
                             {this.renderRowSurge2({
                                 hint: "Price",
-                                value: "$100"
+                                value: this.state.price
                             })}
-                            <TouchableOpacity>
+                            <TouchableOpacity onPress={()=>this.setState({DialogVisible:true})}>
                                 <Image style={styles.leftIcon2} source={require("../../../assets/images/edit.png")}/>
                             </TouchableOpacity>
+                            <PopupDialog
+                                visible={this.state.DialogVisible}
+                                width={0.6}
+                                onTouchOutside={() => {
+                                    this.setState({DialogVisible: false});
+                                }}
+                                ref={(popupDialog) => {
+                                    this.popupDialog = popupDialog;
+                                }}>
+                                <View style={{flexDirection: "column", alignItems: "center"}}>
+                                    <View style={{
+                                        width: "100%",
+                                        height: 0,
+                                        marginTop: 3,
+                                        marginBottom: 3,
+                                        backgroundColor: "black"
+                                    }}/>
+                                   {/* <Text>Radious Limit</Text>*/}
+                                    <TextInput
+                                        style={styles.input}
+                                        onChangeText={(text)=>this.setState({radiousLimit:text})}
+                                        value={this.state.radiousLimit}
+                                        keyboardType="numeric"
+                                        maxLength={5}
+                                        placeholder={"Radoius Limit"}
+                                        autoFocus={true}
+                                    />
+                                    <View style={{
+                                        width: "100%",
+                                        height: 0.2,
+                                        marginTop: 3,
+                                        marginBottom: 3,
+                                        backgroundColor: "black"
+                                    }}/>
+                                    <TextInput
+                                        style={styles.input}
+                                        onChangeText={(text)=>this.setState({duration:text})}
+                                        value={this.state.duration}
+                                        keyboardType="numeric"
+                                        placeholder={"Duration"}
+                                        maxLength={5}
+                                    />
+                                    <View style={{
+                                        width: "100%",
+                                        height: 0.2,
+                                        marginTop: 3,
+                                        marginBottom: 3,
+                                        backgroundColor: "black"
+                                    }}/>
+                                    <TextInput
+                                        style={styles.input}
+                                        onChangeText={(text)=>this.setState({price:text})}
+                                        value={this.state.price}
+                                        keyboardType="numeric"
+                                        placeholder={"Price"}
+                                        maxLength={5}
+                                    />
+                                    <View style={{
+                                        width: "100%",
+                                        height: 0.2,
+                                        marginTop: 3,
+                                        marginBottom: 3,
+                                        backgroundColor: "black"
+                                    }}/>
+                                    <TouchableOpacity onPress={() => {
+                                        this.setState({DialogVisible:false});
+                                    }} style={[globalStyles.button, {
+                                        marginTop:10,
+                                        marginBottom:10,
+                                        height: 40,
+                                        width: "80%",
+                                    }]}>
+                                        <Text style={globalStyles.buttonText}>Save</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </PopupDialog>
                         </View>
                     </View>
-
-
                 </ScrollView>
-
                 <TouchableOpacity onPress={() => {
                     this.props.navigation.navigate("Settings");
                 }} style={[globalStyles.button, {
@@ -168,7 +245,6 @@ export default class SurgePricing extends Component {
                     <Text style={globalStyles.buttonText}>DONE</Text>
                 </TouchableOpacity>
             </View>
-
         );
     }
 

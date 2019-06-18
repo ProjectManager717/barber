@@ -16,6 +16,7 @@ import {Header} from "react-native-elements";
 import {NavigationActions, StackActions} from "react-navigation";
 import Preference from "react-native-preference";
 import {constants} from "../../../utils/constants";
+import PopupDialog from 'react-native-popup-dialog';
 
 export default class PaymentMethod extends Component {
 
@@ -29,7 +30,9 @@ export default class PaymentMethod extends Component {
             cvc: "",
             cardHolderName: "",
             pickMonth: false,
-            isConnected: true
+            isConnected: true,
+            DialogVisible: false,
+            DialogVisible1: false
         }
         console.disableYellowBox = true;
         //this.state = {text: ' 4242 - 4242 - 4242- 4242'};
@@ -97,8 +100,6 @@ export default class PaymentMethod extends Component {
         } else {
             alert("Please connect Internet");
         }
-
-
         //this.props.navigation.navigate("ClientTabNavigator");
     }
 
@@ -156,13 +157,11 @@ export default class PaymentMethod extends Component {
                                            }]}/>
                                     <Text style={[{textAlign: "center", color: "white", top: 160, fontSize: 12}]}>
                                         Scan Credit Card</Text>
-
                                 </ImageBackground>
                             </View>
                         </View>
                         <View style={{marginStart: 10, marginEnd: 10}}>
                             <Text style={styles.txtHeader}>CARD NUMBER</Text>
-
                             <TouchableOpacity>
                                 <View style={[globalStyles.rowBackground, {flex: 1, flexDirection: 'row', height: 40}]}>
                                     <Image style={[styles.right_arrow]}
@@ -186,58 +185,114 @@ export default class PaymentMethod extends Component {
 
 
                             <View style={{width: "100%", flexDirection: "row"}}>
-                                <TouchableOpacity onPress={() => this.setState({pickMonth: true})}
+                                <TouchableOpacity onPress={() => this.setState({DialogVisible: true})}
                                                   style={[styles.row_back, {width: "25%", marginStart: 10}]}>
-                                    <Picker selectedValue={this.state.month}
-                                            style={{width: 100, color: "white", marginBottom: 5}}
-                                            onValueChange={(txt) => this.setState({month: txt})}>
-                                        <Picker.Item label="01" value="01"/>
-                                        <Picker.Item label="02" value="02"/>
-                                        <Picker.Item label="03" value="03"/>
-                                        <Picker.Item label="04" value="04"/>
-                                        <Picker.Item label="05" value="05"/>
-                                        <Picker.Item label="06" value="06"/>
-                                        <Picker.Item label="07" value="07"/>
-                                        <Picker.Item label="08" value="08"/>
-                                        <Picker.Item label="09" value="09"/>
-                                        <Picker.Item label="10" value="10"/>
-                                        <Picker.Item label="11" value="11"/>
-                                        <Picker.Item label="12" value="12"/>
-                                    </Picker>
-
-                                    {/*  <Text style={{fontSize: 15, color: 'white', marginStart: 10, marginTop: 10}}
+                                    <Text style={{fontSize: 15, color: 'white', marginStart: 10, marginTop: 10}}
                                           placeholder={this.state.month}
                                           placeholderTextColor={"white"}>{this.state.month}</Text>
                                     <Image resizeMode={"contain"} style={[styles.dropDown]}
-                                           source={require("../../../assets/images/dropdown.png")}/>*/}
+                                           source={require("../../../assets/images/dropdown.png")}/>
+
+                                    <PopupDialog
+                                        visible={this.state.DialogVisible}
+                                        width={0.6}
+                                        onTouchOutside={() => {
+                                            this.setState({DialogVisible: false});
+                                        }}
+                                        ref={(popupDialog) => {
+                                            this.popupDialog = popupDialog;
+                                        }}>
+                                        <View style={{flexDirection: "column", alignItems: "center"}}>
+                                            <View style={{
+                                                width: "100%",
+                                                height: 0,
+                                                marginTop: 3,
+                                                marginBottom: 3,
+                                                backgroundColor: "black",
+                                                flexDirection: "column",
+                                            }}/>
+                                            <Text style={{fontSize: 16, marginTop: 5, color: "black"}}>Select
+                                                Month</Text>
+                                            <Text onPress={() => this.setState({month: "01", DialogVisible: false})}
+                                                  style={{fontSize: 15, marginTop: 5, color: "black"}}>01</Text>
+                                            <Text onPress={() => this.setState({month: "02", DialogVisible: false})}
+                                                  style={{fontSize: 15, marginTop: 5, color: "black"}}>02</Text>
+                                            <Text onPress={() => this.setState({month: "03", DialogVisible: false})}
+                                                  style={{fontSize: 15, marginTop: 5, color: "black"}}>03</Text>
+                                            <Text onPress={() => this.setState({month: "04", DialogVisible: false})}
+                                                  style={{fontSize: 15, marginTop: 5, color: "black"}}>04</Text>
+                                            <Text onPress={() => this.setState({month: "05", DialogVisible: false})}
+                                                  style={{fontSize: 15, marginTop: 5, color: "black"}}>05</Text>
+                                            <Text onPress={() => this.setState({month: "06", DialogVisible: false})}
+                                                  style={{fontSize: 15, marginTop: 5, color: "black"}}>06</Text>
+                                            <Text onPress={() => this.setState({month: "07", DialogVisible: false})}
+                                                  style={{fontSize: 15, marginTop: 5, color: "black"}}>07</Text>
+                                            <Text onPress={() => this.setState({month: "08", DialogVisible: false})}
+                                                  style={{fontSize: 15, marginTop: 5, color: "black"}}>08</Text>
+                                            <Text onPress={() => this.setState({month: "09", DialogVisible: false})}
+                                                  style={{fontSize: 15, marginTop: 5, color: "black"}}>09</Text>
+                                            <Text onPress={() => this.setState({month: "10", DialogVisible: false})}
+                                                  style={{fontSize: 15, marginTop: 5, color: "black"}}>10</Text>
+                                            <Text onPress={() => this.setState({month: "11", DialogVisible: false})}
+                                                  style={{fontSize: 15, marginTop: 5, color: "black"}}>11</Text>
+                                            <Text onPress={() => this.setState({month: "12", DialogVisible: false})}
+                                                  style={{fontSize: 15, marginTop: 5, color: "black"}}>12</Text>
+                                        </View>
+                                    </PopupDialog>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={[styles.row_back, {width: "25%", marginStart: 5}]}>
-                                    <Picker selectedValue={this.state.month}
-                                            style={{width: 100, color: "white", marginBottom: 5}}
-                                            onValueChange={(txt) => this.setState({month: txt})}>
-                                        <Picker.Item label="19" value="19"/>
-                                        <Picker.Item label="20" value="20"/>
-                                        <Picker.Item label="21" value="21"/>
-                                        <Picker.Item label="22" value="22"/>
-                                        <Picker.Item label="23" value="23"/>
-                                        <Picker.Item label="24" value="24"/>
-                                        <Picker.Item label="25" value="25"/>
-                                        <Picker.Item label="26" value="26"/>
-                                        <Picker.Item label="27" value="27"/>
-                                        <Picker.Item label="28" value="28"/>
-                                        <Picker.Item label="29" value="29"/>
-                                        <Picker.Item label="30" value="30"/>
-                                        <Picker.Item label="31" value="31"/>
-                                        <Picker.Item label="32" value="32"/>
-                                        <Picker.Item label="33" value="33"/>
-                                        <Picker.Item label="34" value="34"/>
-                                        <Picker.Item label="35" value="35"/>
-                                    </Picker>
-                                    {/*<Text style={{fontSize: 15, color: 'white', marginStart: 10, marginTop: 10}}
+                                <TouchableOpacity onPress={() => this.setState({DialogVisible1: true})}
+                                                  style={[styles.row_back, {width: "25%", marginStart: 5}]}>
+                                    <Text style={{fontSize: 15, color: 'white', marginStart: 10, marginTop: 10}}
                                           placeholder={this.state.year}
                                           placeholderTextColor={"white"}>{this.state.year}</Text>
                                     <Image resizeMode={"contain"} style={[styles.dropDown]}
-                                           source={require("../../../assets/images/dropdown.png")}/>*/}
+                                           source={require("../../../assets/images/dropdown.png")}/>
+
+                                    <PopupDialog
+                                        visible={this.state.DialogVisible1}
+                                        width={0.6}
+                                        onTouchOutside={() => {
+                                            this.setState({DialogVisible1: false});
+                                        }}
+                                        ref={(popupDialog) => {
+                                            this.popupDialog = popupDialog;
+                                        }}>
+                                        <View style={{flexDirection: "column", alignItems: "center"}}>
+                                            <View style={{
+                                                width: "100%",
+                                                height: 0,
+                                                marginTop: 3,
+                                                marginBottom: 3,
+                                                backgroundColor: "black",
+                                                flexDirection: "column",
+                                            }}/>
+                                            <Text style={{fontSize: 16, marginTop: 5, color: "black"}}>Select Year</Text>
+                                            <Text onPress={() => this.setState({year: "19", DialogVisible1: false})}
+                                                  style={{fontSize: 15, marginTop: 5, color: "black"}}>2019</Text>
+                                            <Text onPress={() => this.setState({year: "20", DialogVisible1: false})}
+                                                  style={{fontSize: 15, marginTop: 5, color: "black"}}>2020</Text>
+                                            <Text onPress={() => this.setState({year: "21", DialogVisible1: false})}
+                                                  style={{fontSize: 15, marginTop: 5, color: "black"}}>2021</Text>
+                                            <Text onPress={() => this.setState({year: "22", DialogVisible1: false})}
+                                                  style={{fontSize: 15, marginTop: 5, color: "black"}}>2022</Text>
+                                            <Text onPress={() => this.setState({year: "23", DialogVisible1: false})}
+                                                  style={{fontSize: 15, marginTop: 5, color: "black"}}>2023</Text>
+                                            <Text onPress={() => this.setState({year: "24", DialogVisible1: false})}
+                                                  style={{fontSize: 15, marginTop: 5, color: "black"}}>2024</Text>
+                                            <Text onPress={() => this.setState({year: "25", DialogVisible1: false})}
+                                                  style={{fontSize: 15, marginTop: 5, color: "black"}}>2025</Text>
+                                            <Text onPress={() => this.setState({year: "26", DialogVisible1: false})}
+                                                  style={{fontSize: 15, marginTop: 5, color: "black"}}>2026</Text>
+                                            <Text onPress={() => this.setState({year: "27", DialogVisible1: false})}
+                                                  style={{fontSize: 15, marginTop: 5, color: "black"}}>2027</Text>
+                                            <Text onPress={() => this.setState({year: "28", DialogVisible1: false})}
+                                                  style={{fontSize: 15, marginTop: 5, color: "black"}}>2028</Text>
+                                            <Text onPress={() => this.setState({year: "29", DialogVisible1: false})}
+                                                  style={{fontSize: 15, marginTop: 5, color: "black"}}>2029</Text>
+                                            <Text onPress={() => this.setState({year: "30", DialogVisible1: false})}
+                                                  style={{fontSize: 15, marginTop: 5, color: "black"}}>2030</Text>
+                                        </View>
+                                    </PopupDialog>
                                 </TouchableOpacity>
                                 <View style={{width: "17%",}}>
 

@@ -103,6 +103,7 @@ export default class Reviews extends Component {
             <View style={{height: 90, justifyContent: "center"}}>
                 <View style={{flexDirection: "row", alignSelf: "center"}}>
                     <AirbnbRating
+                        isDisabled={true}
                         showRating={false}
                         count={5}
                         defaultRating={0}

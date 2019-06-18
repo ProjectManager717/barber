@@ -21,6 +21,7 @@ import {Colors, Metric} from "../../../themes";
 import ImagePicker from 'react-native-image-picker';
 import {constants} from "../../../utils/constants";
 import Preference from "react-native-preference";
+import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 
 const options = {
     title: 'Select Image',
@@ -32,7 +33,7 @@ const options = {
 
 const {height, width} = Dimensions.get("window");
 
-export default class ClientEditProfile extends Component { 
+export default class ClientEditProfile extends Component {
 
     constructor(props) {
         super(props);
@@ -43,6 +44,7 @@ export default class ClientEditProfile extends Component {
             editLocation: false,
             editName: false,
             isConnected: true,
+            places: [],
         }
 
     }
@@ -55,6 +57,97 @@ export default class ClientEditProfile extends Component {
             this.setState({userAddress: Preference.get("userAddress")})
         }
     }
+
+    renderGooglePlacesInput = () => {
+        return (
+            <GooglePlacesAutocomplete
+                placeholder='Enter Address'
+                minLength={2} // minimum length of text to search
+                autoFocus={false}
+                returnKeyType={'search'} // Can be left out for default return key https://facebook.github.io/react-native/docs/textinput.html#returnkeytype
+                listViewDisplayed='false'    // true/false/undefined
+                fetchDetails={true}
+                renderDescription={row => row.description} // custom description render
+                onPress={(data, details = null,) => { // 'details' is provided when fetchDetails = true
+                    console.log("hello" + data, details);
+
+                    this.setState({places: []});
+
+                    this.state.places.push(details);
+                    this.setState({places: this.state.places});
+                    console.log("hello2" + JSON.stringify(this.state.places));
+                }}
+                getDefaultValue={() => ''}
+                query={{
+                    // available options: https://developers.google.com/places/web-service/autocomplete
+                    key: 'AIzaSyD5YuagFFL0m0IcjCIvbThN25l0m2jMm2w',
+                    language: 'en', // language of the results
+                    types: '(cities)' // default: 'geocode'
+                }}
+
+                styles={{
+                    textInput: {
+                        backgroundColor: colors.gray,
+                        color: 'white',
+                        fontSize:13,
+                    },
+
+                    textInputContainer: {
+                        backgroundColor: Colors.gray,
+                        borderWidth: 0.5,
+                        borderColor: Colors.border,
+                        borderRadius: 5,
+                        flexDirection: "row",
+                        margin: 1
+                    },
+                    description: {
+                        color: "white",
+                        backgroundColor: "transparent"
+                    },
+                    predefinedPlacesDescription: {
+                        color: 'red'
+                    },
+                    poweredContainer: {color: "red"},
+
+                }}
+                currentLocation={true} // Will add a 'Current location' button at the top of the predefined places list
+                currentLocationLabel="Current location"
+                nearbyPlacesAPI='GooglePlacesSearch' // Which API to use: GoogleReverseGeocoding or GooglePlacesSearch
+                GoogleReverseGeocodingQuery={{
+                    // available options for GoogleReverseGeocoding API : https://developers.google.com/maps/documentation/geocoding/intro
+                }}
+                GooglePlacesSearchQuery={{
+                    // available options for GooglePlacesSearch API : https://developers.google.com/places/web-service/search
+                    rankby: 'distance',
+                    types: 'food'
+                }}
+                GooglePlacesDetailsQuery={{
+                    // available options for GooglePlacesDetails API : https://developers.google.com/places/web-service/details
+                    fields: ["name", 'formatted_address']
+                }}
+
+
+                filterReverseGeocodingByTypes={['locality', 'administrative_area_level_3']} // filter the reverse geocoding results by types - ['locality', 'administrative_area_level_3'] if you want to display only cities
+
+
+                debounce={200} // debounce the requests in ms. Set to 0 to remove debounce. By default 0ms.
+
+                renderRightButton={() =>
+                    <View style={{justifyContent: "center", alignItems: "center"}}>
+                        <Image source={require('../../../assets/images/edit.png')}
+                               style={{resizeMode: "contain", width: 20, height: 20, marginEnd: 15}}/>
+                    </View>
+
+                }
+                renderLeftButton={() => <View style={{justifyContent: "center", alignItems: "center"}}>
+                    <Text style={{marginStart:10,fontSize:12,color:Colors.grey}}>{"Location :"}</Text>
+                </View>
+                }
+                enablePoweredByContainer={false}
+
+            />
+        );
+    };
 
     renderRowED2(item) {
         return <View style={{flex: 1, flexDirection: 'row', alignItems: "center"}}>
@@ -82,22 +175,22 @@ export default class ClientEditProfile extends Component {
             } else {
                 const {email, password} = this.state;
                 var details = {
-                    client_id:Preference.get("userId"),
+                    client_id: Preference.get("userId"),
                     address: this.state.userAddress,
                     username: this.state.userName,
                 };
 
                 // client_image:"",
-                
-                
+
+
                 let formdata = new FormData();
 
                 for (var property in details) {
                     formdata.append(property, details[property])
                 }
 
-                if(this.state.avatarSource){
-                    let photo = { uri: this.state.avatarSource.uri}
+                if (this.state.avatarSource) {
+                    let photo = {uri: this.state.avatarSource.uri}
                     formdata.append("client_image", {uri: photo.uri, name: 'image.jpg', type: 'image/jpeg'})
                 }/*else{
                     alert("Please select profile image.");
@@ -194,7 +287,13 @@ export default class ClientEditProfile extends Component {
                                 style={styles.profileImage}/>}
                             <TouchableOpacity onPress={() => this.selectImage()} style={{
                                 position: "absolute",
-                                right: 5, bottom: 5, borderWidth: 4, borderRadius: 20, borderColor: "black",  width: 40, height: 40,
+                                right: 5,
+                                bottom: 5,
+                                borderWidth: 4,
+                                borderRadius: 20,
+                                borderColor: "black",
+                                width: 40,
+                                height: 40,
                             }}>
                                 <Image
                                     source={require("../../../assets/images/dpchange.png")}
@@ -206,23 +305,31 @@ export default class ClientEditProfile extends Component {
                         </View>
                         <View>
                             <View style={[styles.infoContainer]}>
-                                <View style={{flexDirection: "row",width:"80%",justifyContent:"center",alignItems:"center"}}>
+                                <View style={{
+                                    flexDirection: "row",
+                                    width: "80%",
+                                    justifyContent: "center",
+                                    alignItems: "center"
+                                }}>
                                     {!this.state.editName &&
                                     <Text style={{
                                         fontWeight: "bold",
-                                        marginTop:15,
-                                        marginBottom:15,
+                                        marginTop: 15,
+                                        marginBottom: 15,
                                         fontSize: 16,
-                                        color: "white"}}>{this.state.userName}</Text>}
+                                        color: "white"
+                                    }}>{this.state.userName}</Text>}
                                     {this.state.editName &&
-                                    <TextInput Color={"white"}  placeholder={"Enter your Name"} placeholderTextColor={"white"}
+                                    <TextInput Color={"white"} placeholder={"Enter your Name"}
+                                               placeholderTextColor={"white"}
                                                onChangeText={(text) => this.setState({userName: text})}
                                                style={{
                                                    fontWeight: "bold",
                                                    fontSize: 16,
                                                    color: "white"
                                                }}/>}
-                                    <TouchableOpacity style={{width:"20%"}}  onPress={() => this.setState({editName: true})}>
+                                    <TouchableOpacity style={{width: "20%"}}
+                                                      onPress={() => this.setState({editName: true})}>
                                         <Image style={{
                                             height: 15,
                                             width: 15,
@@ -235,16 +342,10 @@ export default class ClientEditProfile extends Component {
                             </View>
                         </View>
 
-                        <View style={[globalStyles.rowBackground, styles.row,]}>
-                            {this.renderRowED2({
-                                hintText: "Location",
-                                title: "208 Carlos Street,Los angeles America",
-                                ic: require("../../../assets/images/edit.png")
-                            })}
-                            <View style={{marginStart: 30, height: 15,}}>
-                            </View>
+                        <View style={[styles.row, {height: 200}]}>
+                            {this.renderGooglePlacesInput()}
                         </View>
-                        <RedButton label="SAVE" onPress={()=>{
+                        <RedButton label="SAVE" onPress={() => {
                             console.log("onSavePress()")
                             this.saveData()
                         }} style={styles.btnContainer}/>
@@ -265,7 +366,7 @@ const
         },
         row: {
             flexDirection: 'column',
-            height: 40,
+            height: 100,
             width: "90%",
             marginTop: 4,
             marginLeft: 18,
@@ -308,11 +409,8 @@ const
         detailsContainer: {
             flex: 1,
             marginTop: 100,
-            marginBottom: 20,
             justifyContent: "center",
             alignItems: "center",
-
-
         },
 
 
@@ -346,7 +444,7 @@ const
         infoContainer: {
 
             justifyContent: "center",
-            width:"100%",
+            width: "100%",
             alignItems: "center",
 
         },
@@ -372,7 +470,7 @@ const
 
         },
         btnContainer: {
-            marginTop: Metric.height / 10
+            marginTop: 10
         },
 
 
