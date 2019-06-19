@@ -103,18 +103,19 @@ export default class ClientBlast extends Component {
                                 borderColor: "white",
                                 backgroundColor: "#2F3041"
                             }}>
+                                <TextInput style={{
+                                    fontFamily: "AvertaStd-RegularItalic", width: "100%",
+                                    color: "white", fontSize: 14,marginStart:10
+                                }}
+                                           multiline={true}
+                                           numberOfLines={10}
+                                           onChangeText={(text) => this.setState({text2:text})}
+                                           placeholder={"Your Message..."}
+                                           placeholderTextColor={"#9C9CA2"}
+                                />
                             </View>
 
-                            <TextInput style={{
-                                fontFamily: "AvertaStd-RegularItalic", width: "100%",
-                                color: "white", position: "absolute", top: 10, left: 10, fontSize: 14
-                            }}
-                                       multiline={true}
-                                       numberOfLines={4}
-                                       onChangeText={(text) => this.setState({text2:text})}
-                                       placeholder={"Your Message..."}
-                                       placeholderTextColor={"#9C9CA2"}
-                            />
+
                         </View>
                         <View>
                             <Text style={{

@@ -27,6 +27,7 @@ export default class ClientLeaveReview extends Component {
     }
 
     state = {
+        addTip: false,
         unselected: require("../../../assets/images/greentick.png"),
         unselected2: require("../../../assets/images/greentick.png"),
         unselected3: require("../../../assets/images/greentick.png"),
@@ -39,7 +40,7 @@ export default class ClientLeaveReview extends Component {
 
     Selected2() {
 
-        this.setState({unselected2:require("../../../assets/images/greenticked.png")})
+        this.setState({unselected2: require("../../../assets/images/greenticked.png")})
     }
 
     Selected3() {
@@ -55,6 +56,12 @@ export default class ClientLeaveReview extends Component {
 
     }
 
+    setAddTip() {
+        if (this.state.addTip === false)
+            this.setState({addTip: true})
+        else
+            this.setState({addTip: false})
+    }
 
     render() {
         return (
@@ -279,7 +286,8 @@ export default class ClientLeaveReview extends Component {
                         }}>
                             <View style={{flexDirection: "column", width: "60%",}}>
                                 <View style={{flexDirection: "row", marginTop: 10}}>
-                                    <CheckBoxSquare isChecked={true} style={{marginTop: 4}}/>
+                                    <CheckBoxSquare isChecked={this.state.addTip} onClick={() => this.setAddTip()}
+                                                    style={{marginTop: 4}}/>
                                     <Text style={{color: "white", marginStart: 10, fontSize: 15,}}>Add a Tip</Text>
                                 </View>
                                 <Text style={{

@@ -6,7 +6,7 @@ import {
     StyleSheet,
     ImageBackground,
     Image,
-    TouchableOpacity
+    TouchableOpacity, Linking
 } from "react-native";
 import Header from "../../components/Header/";
 import {ScrollView} from "react-native-gesture-handler";
@@ -15,6 +15,7 @@ import colors from "../../themes/colors";
 import GraphComp from "../../components/Graph/";
 import Clients from "./Clients/Clients";
 import Notifications from "./Notifications";
+import Preference from "react-native-preference";
 
 const {height, width} = Dimensions.get("window");
 
@@ -29,9 +30,7 @@ export default class Home extends Component {
 
     constructor(props) {
         super(props);
-        this.state={
-
-        }
+        this.state = {}
     }
 
     render() {
@@ -52,12 +51,13 @@ export default class Home extends Component {
                             >
                             </ImageBackground>
                         </View>
-
-                        <Image
-                            source={require("../../assets/images/insta.png")}
-                            style={styles.icon}
-                        />
-
+                        <TouchableOpacity style={{position: 'absolute', top: 10, right: width / 2 - width / 2.7 / 2}}
+                            onPress={() => Linking.openURL('https://www.instagram.com/' + Preference.get("userInsta"))}>
+                            <Image
+                                source={require("../../assets/images/insta.png")}
+                                style={styles.icon}
+                            />
+                        </TouchableOpacity>
                         <View>
                             <View style={styles.infoContainer}>
                                 <Text style={[styles.allFontStyle, styles.name]}>
@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         marginTop: -width / 5
     },
-    icon: {height: 50, width: 50, position: 'absolute', top: 10, right: width / 2 - width / 2.7 / 2},
+    icon: {height: 50, width: 50, },
     iconContainer: {},
     profileImage: {
         height: width / 3,

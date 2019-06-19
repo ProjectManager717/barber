@@ -22,6 +22,7 @@ export default class ClientBarberSearch extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            setLocationToggle:false,
             LocationToggle:require("../../../assets/images/LocationOff.png"),
             dataSource2: [{
                 id: 0,
@@ -62,18 +63,13 @@ export default class ClientBarberSearch extends Component {
 
             },
             ]
-
         }
-
-
     }
 
 
     renderRowInput() {
         return <View style={{flex: 1, flexDirection: 'column', width: "100%"}}>
             <View style={{flexDirection: "row", alignItems: "center"}}>
-
-
                 <Image resizeMode={"contain"} source={require("../../../assets/images/searchicon.png")}
                        style={{
                            width: 16,
@@ -250,6 +246,17 @@ export default class ClientBarberSearch extends Component {
 
     }
 
+    setLocationImage()
+    {
+        if(this.state.setLocationToggle===false)
+        {
+            this.setState({LocationToggle:require("../../../assets/images/location1.png"),setLocationToggle:true});
+        }else
+        {
+            this.setState({LocationToggle:require("../../../assets/images/LocationOff.png"),setLocationToggle:false});
+        }
+    }
+
     render() {
         return (
             <View style={styles.container}>
@@ -259,9 +266,7 @@ export default class ClientBarberSearch extends Component {
                     style={{backgroundColor: "yellow"}}
                     outerContainerStyles={{backgroundColor: "#1999CE"}}
                     leftComponent={
-                        <TouchableOpacity onPress={() =>this.setState({LocationToggle:require("../../../assets/images/location1.png")})}
-
-                        >
+                        <TouchableOpacity onPress={() => this.setLocationImage()}>
                             <Image
                                 style={{
                                     height: 25,

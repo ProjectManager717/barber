@@ -16,6 +16,12 @@ export default class BookingPreferences extends Component {
             multipleServices: false,
             mobilePayCheck: false,
             inShopCheck: false,
+            fifteenMin:false,
+            twentyMin:false,
+            thirtyMin:false,
+            fifteenMin1:false,
+            twentyMin1:false,
+            thirtyMin1:false,
             MP: {
                 MPradiocheck: require("../../../assets/images/radio_unselected.png"),
                 StateMP: false
@@ -36,6 +42,53 @@ export default class BookingPreferences extends Component {
             this.setState({autoConfirm: true})
     }
 
+    setCheckBox(idx)
+    {
+        if(idx===1)
+        {
+            if(this.state.fifteenMin===false)
+                this.setState({fifteenMin:true})
+            else
+                this.setState({fifteenMin:false})
+        }
+        if(idx===2)
+        {
+            if(this.state.twentyMin===false)
+                this.setState({twentyMin:true})
+            else
+                this.setState({twentyMin:false})
+        }
+        if(idx===3)
+        {
+            if(this.state.thirtyMin===false)
+                this.setState({thirtyMin:true})
+            else
+                this.setState({thirtyMin:false})
+        }
+        if(idx===4)
+        {
+            if(this.state.fifteenMin1===false)
+                this.setState({fifteenMin1:true})
+            else
+                this.setState({fifteenMin1:false})
+        }
+        if(idx===5)
+        {
+            if(this.state.twentyMin1===false)
+                this.setState({twentyMin1:true})
+            else
+                this.setState({twentyMin1:false})
+        }
+        if(idx===6)
+        {
+            if(this.state.thirtyMin1===false)
+                this.setState({thirtyMin1:true})
+            else
+                this.setState({thirtyMin1:false})
+        }
+
+    }
+
     setMultipleServices() {
         if (this.state.multipleServices === true)
             this.setState({multipleServices: false})
@@ -45,29 +98,25 @@ export default class BookingPreferences extends Component {
 
     renderRowWithCheck(item) {
         return <View style={{flex: 1, flexDirection: 'row', height: 22, marginLeft: 40}}>
-            <CheckBoxSquare onClick={() => {
-            }} isChecked={true} style={{alignSelf: 'center'}}/>
+            <CheckBoxSquare onClick={() => {this.setCheckBox(item.indx)
+            }} isChecked={item.value} style={{alignSelf: 'center'}}/>
             <Text style={styles.row_title}>{item.title}</Text>
         </View>;
     }
 
     renderRow(item) {
-        return <View style={{flex: 1, flexDirection: 'column', height: 46}}>
-            <View style={{flex: 1, flexDirection: 'row', height: 36}}>
+        return <View style={{flex: 1, flexDirection: 'column'}}>
+            <View style={{flex: 1, flexDirection: 'row',height:20}}>
                 <Image style={styles.leftIcon} source={item.ic}/>
-
-
                 <Image style={styles.leftIcon} source={item.ic2}/>
-
-
                 <Text style={styles.row_title}>{item.title}</Text>
             </View>
-            <Text style={{marginStart: 30, color: "grey", fontSize: 12, fontStyle: "italic"}}>{item.hint}</Text>
+            <Text style={{marginStart:"16%",color: "grey", fontSize: 12, fontStyle: "italic"}}>{item.hint}</Text>
         </View>;
     }
 
     renderRowAppointment(item) {
-        return <View style={{flex: 1, flexDirection: 'row', height: 36}}>
+        return <View style={{flex: 1, flexDirection: 'row',height:28}}>
             <Image style={styles.leftIcon} source={item.ic}/>
             <Text style={styles.row_title}>{item.title}</Text>
             {item.title === "Auto Confirm" && <Switch
@@ -96,14 +145,14 @@ export default class BookingPreferences extends Component {
     }
 
     renderRowTimer(item) {
-        return <View style={{flex: 1, flexDirection: 'row', height: 36}}>
+        return <View style={{flex: 1, flexDirection: 'row', height: 25}}>
             <Image style={styles.leftIcon} source={item.ic}/>
             <Text style={styles.row_title}>{item.title}</Text>
         </View>;
     }
 
     renderSeperator() {
-        return <View style={{marginLeft: 40, height: 0.5, backgroundColor: Colors.lightGrey}}></View>
+        return <View style={{marginLeft: 40, height: 0.5, backgroundColor: Colors.grey1}}></View>
     }
 
     onSelectMP() {
@@ -118,11 +167,12 @@ export default class BookingPreferences extends Component {
     }
 
     oNDone() {
-        if (this.state.MP.StateMP === true) {
+        this.props.navigation.goBack();
+        /*if (this.state.MP.StateMP === true) {
             this.props.navigation.navigate("MobilePay")
         } else if (this.state.IN.StateIN === true) {
             this.props.navigation.navigate("MobilePaySettings")
-        }
+        }*/
 
 
     }
@@ -198,14 +248,14 @@ export default class BookingPreferences extends Component {
                             ic: require("../../../assets/images/mins_30.png")
                         })}
                         <Text style={{
-                            marginStart: 30,
+                            marginStart: "10%",
                             color: "grey",
                             fontSize: 12,
                             fontStyle: "italic"
                         }}>{"Limited"}</Text>
                         <View style={{
-                            marginStart: 30, marginEnd: 10, height: 15, marginBottom: 3, backgroundColor: "#5A5B68",
-                            borderRadius: 10
+                            marginStart: 30, marginEnd: 10, height: 18, marginBottom: 8, backgroundColor: "#5A5B68",
+                            borderRadius: 10,justifyContent:"center"
                         }}>
                             <Text style={{
                                 marginStart: 5,
@@ -216,9 +266,9 @@ export default class BookingPreferences extends Component {
                             }}>{"Client can Book Appointment with you up until last minutes "}</Text>
                         </View>
                     </View>
-                    {this.renderRowWithCheck({title: "Every 15 Minutes"})}
-                    {this.renderRowWithCheck({title: "Every 20 Minutes"})}
-                    {this.renderRowWithCheck({title: "Every 30 Minutes"})}
+                    {this.renderRowWithCheck({title: "Every 15 Minutes",value:this.state.fifteenMin,indx:1})}
+                    {this.renderRowWithCheck({title: "Every 20 Minutes",value:this.state.twentyMin,indx:2})}
+                    {this.renderRowWithCheck({title: "Every 30 Minutes",value:this.state.thirtyMin,indx:3})}
 
                     <Text style={styles.txtHeader}>AVAILABILITY</Text>
                     <View style={[globalStyles.rowBackground, styles.row]}>
@@ -233,9 +283,9 @@ export default class BookingPreferences extends Component {
                             fontStyle: "italic"
                         }}>{"Calender Interval"}</Text>
                     </View>
-                    {this.renderRowWithCheck({title: "Every 15 Minutes"})}
-                    {this.renderRowWithCheck({title: "Every 20 Minutes"})}
-                    {this.renderRowWithCheck({title: "Every 30 Minutes"})}
+                    {this.renderRowWithCheck({title: "Every 15 Minutes",value:this.state.fifteenMin1,indx:4})}
+                    {this.renderRowWithCheck({title: "Every 20 Minutes",value:this.state.twentyMin1,indx:5})}
+                    {this.renderRowWithCheck({title: "Every 30 Minutes",value:this.state.thirtyMin1,indx:6})}
 
                     <TouchableOpacity style={[globalStyles.button, {marginTop: 70, marginBottom: 30, width: '70%'}]}
                                       onPress={() => this.oNDone()}>
@@ -271,15 +321,14 @@ const styles = StyleSheet.create({
         fontFamily: "AvertaStd-Regular"
     },
     leftIcon: {
-        height: 16,
-        width: 16,
+        height: 14,
+        width: 14,
         marginLeft: 8,
         alignSelf: 'center',
         resizeMode: "contain"
     },
     row_title: {
         color: Colors.white,
-        marginTop: 5,
         marginLeft: 10,
         alignSelf: 'center',
         fontFamily: "AvertaStd-Regular"

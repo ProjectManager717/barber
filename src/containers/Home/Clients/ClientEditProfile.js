@@ -74,6 +74,7 @@ export default class ClientEditProfile extends Component {
                     this.setState({places: []});
 
                     this.state.places.push(details);
+                    this.setState({userAddress:details});
                     this.setState({places: this.state.places});
                     console.log("hello2" + JSON.stringify(this.state.places));
                 }}

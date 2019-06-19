@@ -7,13 +7,13 @@ import {
     ImageBackground,
     Image,
     FlatList,
-    TouchableOpacity,
-
+    TouchableOpacity, Linking,
 } from "react-native";
 import Header from "../../../components/Header";
 import {ScrollView} from "react-native-gesture-handler";
 import colors from "../../../themes/colors";
 import CheckBoxSquare from "../../../components/CheckBox";
+import Preference from "react-native-preference";
 
 
 const {height, width} = Dimensions.get("window");
@@ -92,6 +92,7 @@ export default class BarberProfile extends Component {
     }
 
     componentDidMount(): void {
+
         //this.getBarberProfileData();
     }
 
@@ -150,10 +151,12 @@ export default class BarberProfile extends Component {
                             </ImageBackground>
                         </View>
 
-                        <Image
-                            source={require("../../../assets/images/insta.png")}
-                            style={styles.icon}
-                        />
+                        <TouchableOpacity onPress={() =>{
+                            Linking.openURL('https://www.instagram.com/' + Preference.get("userInsta"))
+                        }} style={{position: 'absolute', top: 10, right: width / 2 - width / 2.7 / 2}}>
+                            <Image source={require("../../../assets/images/insta.png")}
+                                style={styles.icon}/>
+                        </TouchableOpacity>
 
                         <View>
                             <View style={[styles.infoContainer]}>
@@ -164,9 +167,9 @@ export default class BarberProfile extends Component {
                                     <Text style={{color: colors.white, fontSize: 12}}>
                                         {this.state.barberShopName}
                                     </Text>
-                                    <Image resizeMode={"contain"}
+                                    {/*<Image resizeMode={"contain"}
                                            style={{height: 8, width: 8, marginStart: 10, marginTop: 5}}
-                                           source={require("../../../assets/images/arrow_down.png")}/>
+                                           source={require("../../../assets/images/arrow_down.png")}/>*/}
                                 </View>
                                 <View style={styles.review}>
                                     <Image
@@ -273,7 +276,8 @@ export default class BarberProfile extends Component {
                                             marginStart: 10,
                                             alignItems: "center"
                                         }]}>
-                                            {false&&<CheckBoxSquare isChecked={item.check} uncheckedCheckBoxColor={"#84858C"}/> }
+                                            {false &&
+                                            <CheckBoxSquare isChecked={item.check} uncheckedCheckBoxColor={"#84858C"}/>}
                                             <Text style={{color: "white", fontSize: 12}}>   {item.title} </Text>
                                         </View>
                                         <View style={[{flexDirection: "row", width: "25%", alignItems: "center"}]}>
@@ -315,7 +319,7 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         marginTop: -width / 5
     },
-    icon: {height: 50, width: 50, position: 'absolute', top: 10, right: width / 2 - width / 2.7 / 2},
+    icon: {height: 50, width: 50,},
     iconContainer: {},
     profileImage: {
         height: width / 3,

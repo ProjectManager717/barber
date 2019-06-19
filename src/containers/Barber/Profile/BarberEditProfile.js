@@ -9,7 +9,7 @@ import {
     TouchableOpacity,
     ImageBackground,
     Dimensions,
-    FlatList, Picker,
+    FlatList, Picker, TextInput,
 } from "react-native";
 import colors from "../../../themes/colors";
 import {globalStyles} from "../../../themes/globalStyles";
@@ -18,8 +18,10 @@ import {Header} from "react-native-elements";
 import CheckBoxSquare from "../../../components/CheckBox";
 import ImagePicker from 'react-native-image-picker';
 import {RedButton} from "../../../components/Buttons";
-import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 import {Colors} from "../../../themes";
+import PopupDialog from 'react-native-popup-dialog';
+import Preference from "react-native-preference";
 
 const {height, width} = Dimensions.get("window");
 const options = {
@@ -36,62 +38,54 @@ export default class BarberEditProfile extends Component {
         super(props);
         console.disableYellowBox = true;
         this.state = {
+            barberPackage:"basic",
             houseCall: false,
             Experience: "1",
             pickMonth: false,
+            experiance: "0",
+            userShopName: "CLYPR Barbershop",
+            DialogVisible: false,
+            DialogBarberShop: false,
+            DialogInstaUsername: false,
+            DialogEditService: false,
+            DialogAddService: false,
+            serviceName: "",
+            serviceDuration: "",
+            servicePrice: "",
+            serviceIndex: undefined,
+            InstaUsername: Preference.get("userInsta"),
             places: [],
             avatarSource: require("../../../assets/images/personface.png"),
             ListData: [
                 {
                     id: 1,
-                    service: "Service",
                     service_type: "Haircut",
-                    duration: "Duration",
                     duration_type: "30 mins",
-                    prize: "Price",
-                    prize_type: "$20",
-                    imagePath: require('../../../assets/images/edit.png'),
-                    imagePath2: require("../../../assets/images/delete.png"),
+                    prize_type: "20",
                     showLine: true
 
                 },
                 {
                     id: 2,
-                    service: "Service",
                     service_type: "Beard Trim",
-                    duration: "Duration",
                     duration_type: "15 mins",
-                    prize: "Price",
-                    prize_type: "$15",
-                    imagePath: require('../../../assets/images/edit.png'),
-                    imagePath2: require("../../../assets/images/delete.png"),
+                    prize_type: "15",
                     showLine: true
 
                 },
-
                 {
                     id: 3,
-                    service: "Service",
                     service_type: "Design",
-                    duration: "Duration",
                     duration_type: "20 mins",
-                    prize: "Price",
-                    prize_type: "$30",
-                    imagePath: require('../../../assets/images/edit.png'),
-                    imagePath2: require("../../../assets/images/delete.png"),
+                    prize_type: "30",
                     showLine: true
 
                 },
                 {
                     id: 4,
-                    service: "Service",
                     service_type: "Hot Towel Shave",
-                    duration: "Duration",
                     duration_type: "45 mins",
-                    prize: "Price",
-                    prize_type: "$40",
-                    imagePath: require('../../../assets/images/edit.png'),
-                    imagePath2: require("../../../assets/images/delete.png"),
+                    prize_type: "40",
                     showLine: false
                 }
             ],
@@ -101,10 +95,17 @@ export default class BarberEditProfile extends Component {
 
     changeHouseCall() {
         console.log("housecall clicked");
-        if (this.state.houseCall === true)
-            this.setState({houseCall: false})
-        else
-            this.setState({houseCall: true})
+        if(this.state.barberPackage==="basic")
+        {
+            alert("To activate this feature please get Supreme Membership.");
+        }else
+        {
+            if (this.state.houseCall === true)
+                this.setState({houseCall: false})
+            else
+                this.setState({houseCall: true})
+        }
+
     }
 
     renderGooglePlacesInput = () => {
@@ -118,13 +119,13 @@ export default class BarberEditProfile extends Component {
                 fetchDetails={true}
                 renderDescription={row => row.description} // custom description render
                 onPress={(data, details = null,) => { // 'details' is provided when fetchDetails = true
-                    console.log("hello"+data, details);
+                    console.log("hello" + data, details);
 
-                    this.setState({places:[]});
+                    this.setState({places: []});
 
                     this.state.places.push(details);
-                    this.setState({places:this.state.places});
-                    console.log("hello2"+JSON.stringify(this.state.places));
+                    this.setState({places: this.state.places});
+                    console.log("hello2" + JSON.stringify(this.state.places));
                 }}
                 getDefaultValue={() => ''}
                 query={{
@@ -135,9 +136,9 @@ export default class BarberEditProfile extends Component {
                 }}
 
                 styles={{
-                    textInput:{
-                        backgroundColor:colors.gray,
-                        color:'white'
+                    textInput: {
+                        backgroundColor: colors.gray,
+                        color: 'white'
                     },
 
                     textInputContainer: {
@@ -153,13 +154,13 @@ export default class BarberEditProfile extends Component {
                     },
                     description: {
 
-                        color:"white",
-                        backgroundColor:"transparent"
+                        color: "white",
+                        backgroundColor: "transparent"
                     },
                     predefinedPlacesDescription: {
                         color: 'red'
                     },
-                    poweredContainer:{color:"red"},
+                    poweredContainer: {color: "red"},
 
                 }}
                 currentLocation={true} // Will add a 'Current location' button at the top of the predefined places list
@@ -175,7 +176,7 @@ export default class BarberEditProfile extends Component {
                 }}
                 GooglePlacesDetailsQuery={{
                     // available options for GooglePlacesDetails API : https://developers.google.com/places/web-service/details
-                    fields: ["name",'formatted_address']
+                    fields: ["name", 'formatted_address']
                 }}
 
 
@@ -184,10 +185,10 @@ export default class BarberEditProfile extends Component {
 
                 debounce={200} // debounce the requests in ms. Set to 0 to remove debounce. By default 0ms.
 
-                renderRightButton={()  =>
-                    <View style={{justifyContent:"center",alignItems:"center"}} >
+                renderRightButton={() =>
+                    <View style={{justifyContent: "center", alignItems: "center"}}>
                         <Image source={require('../../../assets/images/edit.png')}
-                               style={{resizeMode:"contain",width:20,height:20,marginEnd:15}} />
+                               style={{resizeMode: "contain", width: 20, height: 20, marginEnd: 15}}/>
 
                     </View>
 
@@ -226,7 +227,8 @@ export default class BarberEditProfile extends Component {
             <Text style={{color: "grey", fontSize: 9, marginStart: 10, marginTop: 10, top: 5}}>{item.hintText}</Text>
             <Text style={[styles.row_title, {marginTop: 10, alignItems: "center", top: 5}
             ]}>{item.title}</Text>
-            <TouchableOpacity style={[styles.right_arrow, {resizeMode: "contain", height: 10}]}>
+            <TouchableOpacity onPress={() => this.setState({DialogInstaUsername: true})}
+                              style={[styles.right_arrow, {resizeMode: "contain"}]}>
                 <Image style={{resizeMode: "contain", height: 15, marginTop: 5}} source={item.ic}/>
             </TouchableOpacity>
         </View>;
@@ -288,13 +290,46 @@ export default class BarberEditProfile extends Component {
             }
         });
     }
-    deleteImage(indx)
-    {
+
+    deleteImage(indx) {
         //alert("deleting "+indx);
         let imageDta = this.state.imagesData;
-        imageDta.splice(indx,1);
+        imageDta.splice(indx, 1);
         this.setState({imagesData: imageDta});
-        console.log("imagesData+ "+JSON.stringify(this.state.imagesData))
+        console.log("imagesData+ " + JSON.stringify(this.state.imagesData))
+    }
+
+    setServiceData() {
+        let indx = this.state.serviceIndex;
+        this.setState({DialogEditService: false});
+        let services = this.state.ListData;
+        services[indx].service_type = this.state.serviceName;
+        services[indx].duration_type = this.state.serviceDuration;
+        services[indx].prize_type = this.state.servicePrice;
+        this.setState({ListData: services});
+    }
+
+    deleteService(idx) {
+        let services = this.state.ListData;
+        services.splice(idx, 1);
+        this.setState({ListData: services});
+    }
+
+    addServiceData() {
+        let services = this.state.ListData;
+        services.push({
+            id: this.state.ListData.length + 1, service_type: this.state.serviceName,
+            duration_type: this.state.serviceDuration,
+            prize_type: this.state.servicePrice,
+            showLine: true
+        })
+        this.setState({ListData: services, DialogAddService: false});
+    }
+
+    setInstagramID()
+    {
+        this.setState({DialogInstaUsername: false});
+        Preference.set("userInsta",this.state.InstaUsername);
     }
 
     render() {
@@ -340,73 +375,193 @@ export default class BarberEditProfile extends Component {
                                 <Text style={[styles.allFontStyle, styles.name]}>
                                     Anthony Martial</Text>
                                 <View style={{flexDirection: "row"}}>
-                                    <Text style={{color: colors.white, fontSize: 12}}>
-                                        CLYPR Barbershop</Text>
-                                    <TouchableOpacity>
+                                    <Text style={{color: colors.white, fontSize: 12,}}>
+                                        {this.state.userShopName}</Text>
+                                    <TouchableOpacity onPress={() => this.setState({DialogBarberShop: true})}>
                                         <Image style={{height: 15, width: 15, marginStart: 10}}
                                                source={require("../../../assets/images/edit.png")}/>
                                     </TouchableOpacity>
+                                    <PopupDialog
+                                        visible={this.state.DialogBarberShop}
+                                        width={0.6}
+                                        onTouchOutside={() => {
+                                            this.setState({DialogBarberShop: false});
+                                        }}
+                                        ref={(popupDialog) => {
+                                            this.popupDialog = popupDialog;
+                                        }}>
+                                        <ScrollView>
+                                            <View style={{flexDirection: "column", alignItems: "center"}}>
+                                                <View style={{
+                                                    width: "100%",
+                                                    height: 0,
+                                                    marginTop: 3,
+                                                    marginBottom: 3,
+                                                    backgroundColor: "black",
+                                                    flexDirection: "column",
+                                                }}/>
+                                                <Text style={{fontSize: 16, marginTop: 5, color: "black"}}>Barber Shop
+                                                    Name</Text>
+                                                <TextInput Color={"white"} placeholder={"Enter Shop Name"}
+                                                           placeholderTextColor={"grey"}
+                                                           onChangeText={(text) => this.setState({userShopName: text})}
+                                                           style={{
+                                                               fontWeight: "bold",
+                                                               fontSize: 16,
+                                                               color: "black"
+                                                           }}/>
+
+                                                <TouchableOpacity
+                                                    onPress={() => this.setState({DialogBarberShop: false})}
+                                                    style={[globalStyles.button, {
+                                                        height: 35,
+                                                        width: "80%",
+                                                        backgroundColor: "red",
+                                                        marginTop: 20,
+                                                        marginBottom: 20,
+                                                    }]}>
+                                                    <Text style={{
+                                                        fontSize: 15,
+                                                        fontWeight: "bold",
+                                                        color: "white"
+                                                    }}>{"Save"}</Text>
+
+                                                </TouchableOpacity>
+
+                                            </View>
+                                        </ScrollView>
+                                    </PopupDialog>
                                 </View>
                                 <View style={[styles.review, {flexDirection: "row"}]}>
-                                    <Text style={[styles.allFontStyle, styles.reviewText, {
-                                        color: "white",
-                                        fontFamily: "AvertaStd-Extrathin"
-                                    }]}>
-                                        {this.state.month}Years of Experience</Text>
-                                    <TouchableOpacity onPress={() => this.setState({pickMonth: true})}>
-                                        <Picker style={{width: 90, height: 20, color: "white", marginBottom: 5}}
-                                                onValueChange={(txt) => this.setState({month: txt})}>
-                                            <Picker.Item label="1" value="1"/>
-                                            <Picker.Item label="2" value="2"/>
-                                            <Picker.Item label="3" value="3"/>
-                                            <Picker.Item label="4" value="4"/>
-                                            <Picker.Item label="5" value="5"/>
-                                            <Picker.Item label="6" value="6"/>
-                                            <Picker.Item label="7" value="7"/>
-                                            <Picker.Item label="8" value="8"/>
-                                            <Picker.Item label="9" value="9"/>
-                                            <Picker.Item label="10" value="10"/>
-                                            <Picker.Item label="11" value="11"/>
-                                            <Picker.Item label="12" value="12"/>
-                                            <Picker.Item label="13" value="13"/>
-                                            <Picker.Item label="14" value="14"/>
-                                            <Picker.Item label="15" value="15"/>
-                                            <Picker.Item label="16" value="16"/>
-                                            <Picker.Item label="17" value="17"/>
-                                            <Picker.Item label="18" value="18"/>
-                                            <Picker.Item label="19" value="19"/>
-                                            <Picker.Item label="20" value="20"/>
-                                            <Picker.Item label="21" value="21"/>
-                                            <Picker.Item label="22" value="22"/>
-                                            <Picker.Item label="23" value="23"/>
-                                            <Picker.Item label="24" value="24"/>
-                                            <Picker.Item label="25" value="25"/>
-                                            <Picker.Item label="26" value="26"/>
-                                            <Picker.Item label="27" value="27"/>
-                                            <Picker.Item label="28" value="28"/>
-                                            <Picker.Item label="29" value="29"/>
-                                            <Picker.Item label="30" value="30"/>
-                                            <Picker.Item label="31" value="31"/>
-                                            <Picker.Item label="32" value="32"/>
-                                            <Picker.Item label="33" value="33"/>
-                                            <Picker.Item label="34" value="34"/>
-                                            <Picker.Item label="35" value="35"/>
-                                            <Picker.Item label="36" value="36"/>
-                                            <Picker.Item label="37" value="37"/>
-                                            <Picker.Item label="38" value="38"/>
-                                            <Picker.Item label="39" value="39"/>
-                                            <Picker.Item label="40" value="40"/>
-                                            <Picker.Item label="41" value="41"/>
-                                            <Picker.Item label="42" value="42"/>
-                                            <Picker.Item label="43" value="43"/>
-                                            <Picker.Item label="44" value="44"/>
-                                            <Picker.Item label="45" value="45"/>
-                                            <Picker.Item label="46" value="46"/>
-                                            <Picker.Item label="47" value="47"/>
-                                            <Picker.Item label="48" value="48"/>
-                                            <Picker.Item label="49" value="49"/>
-                                            <Picker.Item label="50" value="50"/>
-                                        </Picker>
+                                    <TouchableOpacity onPress={() => this.setState({DialogVisible: true})}>
+                                        <Text style={[styles.allFontStyle, styles.reviewText, {
+                                            color: "white",
+                                            fontFamily: "AvertaStd-Extrathin",
+                                        }]}>{"Years of Experience " + this.state.experiance}</Text>
+                                        <PopupDialog
+                                            visible={this.state.DialogVisible}
+                                            width={0.6}
+                                            onTouchOutside={() => {
+                                                this.setState({DialogVisible: false});
+                                            }}
+                                            ref={(popupDialog) => {
+                                                this.popupDialog = popupDialog;
+                                            }}>
+                                            <ScrollView>
+                                                <View style={{flexDirection: "column", alignItems: "center"}}>
+                                                    <View style={{
+                                                        width: "100%",
+                                                        height: 0,
+                                                        marginTop: 3,
+                                                        marginBottom: 3,
+                                                        backgroundColor: "black",
+                                                        flexDirection: "column",
+                                                    }}/>
+                                                    <Text style={{fontSize: 16, marginTop: 5, color: "black"}}>Select
+                                                        Years of Experience</Text>
+                                                    <Text onPress={() => this.setState({
+                                                        experiance: "01",
+                                                        DialogVisible: false
+                                                    })}
+                                                          style={{fontSize: 15, marginTop: 5, color: "black"}}>01</Text>
+                                                    <Text onPress={() => this.setState({
+                                                        experiance: "02",
+                                                        DialogVisible: false
+                                                    })}
+                                                          style={{fontSize: 15, marginTop: 5, color: "black"}}>02</Text>
+                                                    <Text onPress={() => this.setState({
+                                                        experiance: "03",
+                                                        DialogVisible: false
+                                                    })}
+                                                          style={{fontSize: 15, marginTop: 5, color: "black"}}>03</Text>
+                                                    <Text onPress={() => this.setState({
+                                                        experiance: "04",
+                                                        DialogVisible: false
+                                                    })}
+                                                          style={{fontSize: 15, marginTop: 5, color: "black"}}>04</Text>
+                                                    <Text onPress={() => this.setState({
+                                                        experiance: "05",
+                                                        DialogVisible: false
+                                                    })}
+                                                          style={{fontSize: 15, marginTop: 5, color: "black"}}>05</Text>
+                                                    <Text onPress={() => this.setState({
+                                                        experiance: "06",
+                                                        DialogVisible: false
+                                                    })}
+                                                          style={{fontSize: 15, marginTop: 5, color: "black"}}>06</Text>
+                                                    <Text onPress={() => this.setState({
+                                                        experiance: "07",
+                                                        DialogVisible: false
+                                                    })}
+                                                          style={{fontSize: 15, marginTop: 5, color: "black"}}>07</Text>
+                                                    <Text onPress={() => this.setState({
+                                                        experiance: "08",
+                                                        DialogVisible: false
+                                                    })}
+                                                          style={{fontSize: 15, marginTop: 5, color: "black"}}>08</Text>
+                                                    <Text onPress={() => this.setState({
+                                                        experiance: "09",
+                                                        DialogVisible: false
+                                                    })}
+                                                          style={{fontSize: 15, marginTop: 5, color: "black"}}>09</Text>
+                                                    <Text onPress={() => this.setState({
+                                                        experiance: "10",
+                                                        DialogVisible: false
+                                                    })}
+                                                          style={{fontSize: 15, marginTop: 5, color: "black"}}>10</Text>
+                                                    <Text onPress={() => this.setState({
+                                                        experiance: "11",
+                                                        DialogVisible: false
+                                                    })}
+                                                          style={{fontSize: 15, marginTop: 5, color: "black"}}>11</Text>
+                                                    <Text onPress={() => this.setState({
+                                                        experiance: "12",
+                                                        DialogVisible: false
+                                                    })}
+                                                          style={{fontSize: 15, marginTop: 5, color: "black"}}>12</Text>
+                                                    <Text onPress={() => this.setState({
+                                                        experiance: "13",
+                                                        DialogVisible: false
+                                                    })}
+                                                          style={{fontSize: 15, marginTop: 5, color: "black"}}>13</Text>
+                                                    <Text onPress={() => this.setState({
+                                                        experiance: "14",
+                                                        DialogVisible: false
+                                                    })}
+                                                          style={{fontSize: 15, marginTop: 5, color: "black"}}>14</Text>
+                                                    <Text onPress={() => this.setState({
+                                                        experiance: "15",
+                                                        DialogVisible: false
+                                                    })}
+                                                          style={{fontSize: 15, marginTop: 5, color: "black"}}>15</Text>
+                                                    <Text onPress={() => this.setState({
+                                                        experiance: "16",
+                                                        DialogVisible: false
+                                                    })}
+                                                          style={{fontSize: 15, marginTop: 5, color: "black"}}>16</Text>
+                                                    <Text onPress={() => this.setState({
+                                                        experiance: "17",
+                                                        DialogVisible: false
+                                                    })}
+                                                          style={{fontSize: 15, marginTop: 5, color: "black"}}>17</Text>
+                                                    <Text onPress={() => this.setState({
+                                                        experiance: "18",
+                                                        DialogVisible: falseadb
+                                                    })}
+                                                          style={{fontSize: 15, marginTop: 5, color: "black"}}>18</Text>
+                                                    <Text onPress={() => this.setState({
+                                                        experiance: "19",
+                                                        DialogVisible: false
+                                                    })}
+                                                          style={{fontSize: 15, marginTop: 5, color: "black"}}>19</Text>
+                                                    <Text onPress={() => this.setState({
+                                                        experiance: "20",
+                                                        DialogVisible: false
+                                                    })}
+                                                          style={{fontSize: 15, marginTop: 5, color: "black"}}>20</Text>
+                                                </View>
+                                            </ScrollView>
+                                        </PopupDialog>
                                     </TouchableOpacity>
                                 </View>
                             </View>
@@ -415,14 +570,55 @@ export default class BarberEditProfile extends Component {
                     <View style={[globalStyles.rowBackground, styles.row]}>
                         {this.renderRowED({
                             hintText: "Instagram Username",
-                            title: "CLYPR_OFFICIAL",
+                            title: this.state.InstaUsername,
                             ic: require("../../../assets/images/edit.png")
                         })}
+                        <PopupDialog
+                            visible={this.state.DialogInstaUsername}
+                            width={0.6}
+                            onTouchOutside={() => {
+                                this.setState({DialogInstaUsername: false});
+                            }}>
+                            <ScrollView>
+                                <View style={{flexDirection: "column", alignItems: "center"}}>
+                                    <View style={{
+                                        width: "100%",
+                                        height: 0,
+                                        marginTop: 3,
+                                        marginBottom: 3,
+                                        backgroundColor: "black",
+                                        flexDirection: "column",
+                                    }}/>
+                                    <Text style={{fontSize: 16, marginTop: 5, color: "black"}}>Instagram User
+                                        Name</Text>
+                                    <TextInput Color={"white"} placeholder={"Enter Instagram username"}
+                                               placeholderTextColor={"grey"}
+                                               onChangeText={(text) => this.setState({InstaUsername: text})}
+                                               style={{
+                                                   fontWeight: "bold",
+                                                   fontSize: 16,
+                                                   color: "black"
+                                               }}/>
+
+                                    <TouchableOpacity onPress={()=>this.setInstagramID()}
+                                                      style={[globalStyles.button, {
+                                                          height: 35,
+                                                          width: "80%",
+                                                          backgroundColor: "red",
+                                                          marginTop: 20,
+                                                          marginBottom: 20,
+                                                      }]}>
+                                        <Text style={{fontSize: 15, fontWeight: "bold", color: "white"}}>{"Save"}</Text>
+                                    </TouchableOpacity>
+
+                                </View>
+                            </ScrollView>
+                        </PopupDialog>
                         <View style={{marginStart: 30, height: 15, marginBottom: 3}}>
                         </View>
                     </View>
                     <View style={[globalStyles.rowBackground, styles.row, {marginTop: 5}]}>
-                        <FlatList renderItem={({item}) =>
+                        <FlatList renderItem={({item, index}) =>
                             <View style={{flexDirection: "column"}}>
                                 <View style={{
                                     flexDirection: "row",
@@ -439,7 +635,7 @@ export default class BarberEditProfile extends Component {
                                             marginStart: 10,
                                             alignItems: "center",
                                             color: "grey"
-                                        }}>{item.service}</Text>
+                                        }}>{"Service"}</Text>
                                         <Text style={{
                                             fontSize: 11,
                                             marginStart: 3, color: "white"
@@ -453,7 +649,7 @@ export default class BarberEditProfile extends Component {
                                         <Text style={{
                                             fontSize: 10,
                                             marginStart: 10, color: "grey"
-                                        }}>{item.duration}</Text>
+                                        }}>{"Duration "}</Text>
                                         <Text style={{
                                             fontSize: 11,
                                             marginStart: 3, color: "white"
@@ -463,44 +659,189 @@ export default class BarberEditProfile extends Component {
                                         <Text style={{
                                             fontSize: 10,
                                             marginStart: 10, color: "grey"
-                                        }}>{item.prize}</Text>
+                                        }}>{"Price"}</Text>
                                         <Text style={{
                                             fontSize: 11,
                                             marginStart: 3, color: "white"
-                                        }}>{item.prize_type}</Text>
-                                        <Image style={{
-                                            width: 11,
-                                            height: 14, left: 11, resizeMode: 'contain'
-                                        }} source={item.imagePath}/>
-                                        <Image style={{
-                                            width: 11, resizeMode: 'contain',
-                                            height: 14, left: 16
-                                        }} source={item.imagePath2}/>
+                                        }}>{"$" + item.prize_type}</Text>
+                                        <TouchableOpacity onPress={() => this.setState({
+                                            DialogEditService: true,
+                                            serviceName: item.service_type,
+                                            serviceDuration: item.duration_type,
+                                            servicePrice: item.prize_type,
+                                            serviceIndex: index,
+                                        })}>
+                                            <Image style={{
+                                                width: 14,
+                                                height: 14, marginStart: 8, resizeMode: 'contain'
+                                            }} source={require('../../../assets/images/edit.png')}/>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity onPress={() => this.deleteService(index)}>
+                                            <Image style={{
+                                                width: 14, resizeMode: 'contain',
+                                                height: 14, marginStart: 5
+                                            }} source={require('../../../assets/images/delete.png')}/>
+                                        </TouchableOpacity>
+
                                     </View>
                                 </View>
                                 {item.showLine && <View style={{height: 0.5, backgroundColor: "#868791"}}/>}
                             </View>}
                                   data={this.state.ListData}
+                                  extraData={this.state}
                                   keyExtractor={item => item.id}
                                   showsVerticalScrollIndicator={true}
                                   removeClippedSubviews={false}
                                   numColumns={1}/>
+                        <PopupDialog
+                            visible={this.state.DialogEditService}
+                            width={0.6}
+                            onTouchOutside={() => {
+                                this.setState({DialogEditService: false});
+                            }}>
+                            <View style={{flexDirection: "column"}}>
+                                <View style={{
+                                    width: "100%",
+                                    height: 0,
+                                    marginTop: 3,
+                                    marginBottom: 3,
+                                    backgroundColor: "black",
+                                    flexDirection: "column",
+                                }}/>
+                                <Text style={{
+                                    fontSize: 16,
+                                    marginTop: 5,
+                                    color: "black",
+                                    fontWeight: "bold",
+                                    textAlign: "center"
+                                }}>Edit Service</Text>
+                                <TextInput Color={"white"} placeholder={"Enter Service name"}
+                                           placeholderTextColor={"grey"}
+                                           value={this.state.serviceName}
+                                           onChangeText={(text) => this.setState({serviceName: text})}
+                                           style={{
+                                               fontSize: 14,
+                                               color: "black",
+                                               marginStart: 10
+                                           }}/>
+                                <TextInput Color={"white"} placeholder={"Enter Duration"}
+                                           placeholderTextColor={"grey"}
+                                           value={this.state.serviceDuration}
+                                           onChangeText={(text) => this.setState({serviceDuration: text})}
+                                           style={{
+                                               fontSize: 14,
+                                               color: "black",
+                                               marginStart: 10
+                                           }}/>
+                                <TextInput Color={"white"} placeholder={"Enter Price"}
+                                           placeholderTextColor={"grey"}
+                                           value={this.state.servicePrice}
+                                           onChangeText={(text) => this.setState({servicePrice: text})}
+                                           style={{
+                                               fontSize: 14,
+                                               color: "black",
+                                               marginStart: 10
+                                           }}/>
 
-                        <View style={{flexDirection: "row", alignItems: "center"}}>
-                            <TouchableOpacity>
-                                <Image style={{
-                                    resizeMode: "contain",
-                                    height: 20,
-                                    right: 15,
-                                    marginBottom: 10,
-                                    tintColor: "white",
-                                }} source={require("../../../assets/images/plus.png")}/>
-                            </TouchableOpacity>
+                                <TouchableOpacity
+                                    onPress={() => this.setServiceData()}
+                                    style={[globalStyles.button, {
+                                        height: 35,
+                                        width: "80%",
+                                        backgroundColor: "red",
+                                        marginTop: 20,
+                                        marginBottom: 20,
+                                    }]}>
+                                    <Text style={{
+                                        fontSize: 15,
+                                        fontWeight: "bold",
+                                        color: "white"
+                                    }}>{"Save"}</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </PopupDialog>
+
+                        <TouchableOpacity style={{flexDirection: "row", alignItems: "center", marginTop: 5}}
+                                          onPress={() => this.setState({DialogAddService: true})}>
+                            <Image style={{
+                                resizeMode: "contain",
+                                height: 20,
+                                right: 15,
+                                marginBottom: 10,
+                                tintColor: "white",
+                            }} source={require("../../../assets/images/plus.png")}/>
                             <Text style={{color: "grey", right: 32, marginBottom: 10}}>
                                 Add New Service
                             </Text>
-                        </View>
+                        </TouchableOpacity>
 
+                        <PopupDialog
+                            visible={this.state.DialogAddService}
+                            width={0.6}
+                            onTouchOutside={() => {
+                                this.setState({DialogAddService: false});
+                            }}>
+                            <View style={{flexDirection: "column"}}>
+                                <View style={{
+                                    width: "100%",
+                                    height: 0,
+                                    marginTop: 3,
+                                    marginBottom: 3,
+                                    backgroundColor: "black",
+                                    flexDirection: "column",
+                                }}/>
+                                <Text style={{
+                                    fontSize: 16,
+                                    marginTop: 5,
+                                    color: "black",
+                                    fontWeight: "bold",
+                                    textAlign: "center"
+                                }}>Edit Service</Text>
+                                <TextInput Color={"white"} placeholder={"Enter Service name"}
+                                           placeholderTextColor={"grey"}
+                                           value={this.state.serviceName}
+                                           onChangeText={(text) => this.setState({serviceName: text})}
+                                           style={{
+                                               fontSize: 14,
+                                               color: "black",
+                                               marginStart: 10
+                                           }}/>
+                                <TextInput Color={"white"} placeholder={"Enter Duration"}
+                                           placeholderTextColor={"grey"}
+                                           value={this.state.serviceDuration}
+                                           onChangeText={(text) => this.setState({serviceDuration: text})}
+                                           style={{
+                                               fontSize: 14,
+                                               color: "black",
+                                               marginStart: 10
+                                           }}/>
+                                <TextInput Color={"white"} placeholder={"Enter Price"}
+                                           placeholderTextColor={"grey"}
+                                           value={this.state.servicePrice}
+                                           onChangeText={(text) => this.setState({servicePrice: text})}
+                                           style={{
+                                               fontSize: 14,
+                                               color: "black",
+                                               marginStart: 10
+                                           }}/>
+
+                                <TouchableOpacity
+                                    onPress={() => this.addServiceData()}
+                                    style={[globalStyles.button, {
+                                        height: 35,
+                                        width: "80%",
+                                        backgroundColor: "red",
+                                        marginTop: 20,
+                                        marginBottom: 20,
+                                    }]}>
+                                    <Text style={{
+                                        fontSize: 15,
+                                        fontWeight: "bold",
+                                        color: "white"
+                                    }}>{"Save"}</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </PopupDialog>
 
                     </View>
 
@@ -532,18 +873,19 @@ export default class BarberEditProfile extends Component {
 
                         {this.state.imagesData.length > 0 && <FlatList
                             data={this.state.imagesData}
-                            keyExtractor={(item,index) =>index }
+                            keyExtractor={(item, index) => index}
                             extraData={this.state}
                             showsHorizontalScrollIndicator={false}
                             horizontal={true}
-                            renderItem={({item,index}) =>
+                            renderItem={({item, index}) =>
                                 <View style={{width: 100, height: 140, marginStart: 10}}>
                                     <Image source={item.imagePath} style={{borderRadius: 10, width: 100, height: 140}}
                                            resizeMode={"contain"}/>
-                                    <TouchableOpacity style={{position: "absolute", top: 5, right: 5}} onPress={()=>this.deleteImage(index)}>
+                                    <TouchableOpacity style={{position: "absolute", top: 5, right: 5}}
+                                                      onPress={() => this.deleteImage(index)}>
                                         <Image resizeMode={"contain"}
                                                source={require("../../../assets/images/delete.png")}
-                                               style={{width: 20, height: 20, }}/>
+                                               style={{width: 20, height: 20,}}/>
                                     </TouchableOpacity>
                                 </View>}/>}
                         <View style={{flexDirection: "column", alignItems: "center", justifyContent: "center"}}>

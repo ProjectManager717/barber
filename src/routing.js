@@ -205,7 +205,7 @@ const AuthStack = createStackNavigator({
     SignInScreen: SignInScreen,
     SignUpScreen: SignUpScreen,
     SMSScreen: SMSScreen,
-    ForgetPasswordScreen:ForgetPasswordScreen,
+    ForgetPasswordScreen: ForgetPasswordScreen,
     Profile: Profile,
     QRCheckIn: QRCheckIn,
     ClientQR: ClientQR,
@@ -232,13 +232,14 @@ const AuthStack = createStackNavigator({
     ClientEditProfile: ClientEditProfile,
     ClientLeaveReview: ClientLeaveReview,
     ClientSupremeReview: ClientSupremeReview,
-    ReceiptCancelled:ReceiptCancelled,
-    ClientBarberSearch:ClientBarberSearch,
-    ClientFilter:ClientFilter,
-    ClientHaircuts:ClientHaircuts,
-    Share:Share,
+    ReceiptCancelled: ReceiptCancelled,
+    ClientBarberSearch: ClientBarberSearch,
+    ClientFilter: ClientFilter,
+    ClientHaircuts: ClientHaircuts,
+    Share: Share,
 }, {
-    initialRouteName: 'ClientEditProfile',
+    //initialRouteName: 'TabNavigator',
+    initialRouteName: 'ClientTabNavigator',
     headerMode: 'none'
 });
 
@@ -252,6 +253,6 @@ const routing = createSwitchNavigator({
 export default createAppContainer(AuthStack);
 
 const styles = StyleSheet.create({
-    icon: {height: 23, width: 23,justifyContent:"center",alignContent:"center",resizeMode:"contain"}
+    icon: {height: 23, width: 23, justifyContent: "center", alignContent: "center", resizeMode: "contain"}
 });
 
