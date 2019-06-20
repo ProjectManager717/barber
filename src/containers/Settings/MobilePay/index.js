@@ -5,11 +5,41 @@ import {globalStyles} from "../../../themes/globalStyles";
 //import { styles } from "./styles";
 import {Header} from "react-native-elements";
 import CheckBoxSquare from "../../../components/CheckBox";
+import Preference from "react-native-preference"
 
 export default class MobilePay extends Component {
+    constructor(props) {
+        super(props);
+        this.state={
+            mobilePayText:"Enable Mobile Pay"
+        }
+    }
+
+    componentDidMount(): void {
+        if(Preference.get("userMobilePay")===true)
+        {
+            this.setState({mobilePayText:"Disable Mobile Pay"})
+        }else {
+            this.setState({mobilePayText:"Enable Mobile Pay"})
+        }
+    }
+
+    setMobilePay()
+    {
+        alert("Mobile APy");
+        if(Preference.get("userMobilePay")===true)
+        {
+            Preference.set("userMobilePay",false);
+            this.setState({mobilePayText:"Disable Mobile Pay"})
+        }else {
+            Preference.set("userMobilePay",true);
+            this.setState({mobilePayText:"Enable Mobile Pay"})
+        }
+        this.props.navigation.goBack();
+    }
+
     render() {
         return (<View style={styles.container}>
-
                 <Header
                     statusBarProps={{barStyle: "light-content"}}
                     barStyle="light-content" // or directly
@@ -33,7 +63,6 @@ export default class MobilePay extends Component {
                     }
                 />
                 <ScrollView>
-
                     <View style={{
                         flex: 1, justifyContent: 'center',
                         alignItems: 'center',
@@ -67,10 +96,8 @@ export default class MobilePay extends Component {
                         <Image resizeMode={"contain"} source={require("../../../assets/images/down_arrow.png")}
                                style={{width: 12}}/>
                         <TouchableOpacity style={[globalStyles.button, {marginTop: 60, width: 300}]}
-                                          onPress={()=>
-                                              this.props.navigation.navigate('TabNavigator')}
-                        >
-                            <Text style={globalStyles.buttonText}>Enable Mobile Pay</Text>
+                                          onPress={()=>this.setMobilePay()}>
+                            <Text style={globalStyles.buttonText}>{this.state.mobilePayText}</Text>
                         </TouchableOpacity>
                     </View>
                 </ScrollView>

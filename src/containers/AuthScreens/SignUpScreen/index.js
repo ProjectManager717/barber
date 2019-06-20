@@ -201,6 +201,7 @@ class SignUpScreen extends Component {
                                     userEmail: response.Data.email,
                                     userName: response.Data.username,
                                     userId: response.Data.id,
+                                    userMobilePay:false,
                                     userType: "Barber",
                                     userToken: response.Data.token
                                 });

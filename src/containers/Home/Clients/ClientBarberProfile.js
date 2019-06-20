@@ -26,6 +26,11 @@ Date.prototype.addDays = function (days) {
     date.setDate(date.getDate() + days);
     return date;
 };
+let getmonth = new Date().getMonth();
+let getDate = new Date().getDate();
+let getDay = new Date().getDay();
+let getYear = new Date().getFullYear();
+
 
 export default class ClientBarberProfile extends Component {
 
@@ -44,6 +49,14 @@ export default class ClientBarberProfile extends Component {
 
         this.state = {
             dataSource: [],
+            monthSet: undefined,
+            monthDays: [],
+            surgePriceSelected: false,
+            serviceTypeSelected: false,
+            serviceDaySelected: true,
+            serviceTimeSelected: false,
+            totalPriceService: 0,
+            buttonPayText: "Pay",
             dayData: [{
                 id: 1,
                 time: "10:00AM",
@@ -78,6 +91,7 @@ export default class ClientBarberProfile extends Component {
             savedCard: ["42424242424242424242", "42424242424242424242", "42424242424242424242"],
             DialogVisible: false,
             barberFav: false,
+            month: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
             ListData: [
                 {
                     id: 1,
@@ -98,35 +112,40 @@ export default class ClientBarberProfile extends Component {
                     check: false,
                     title: "Haircut",
                     duration: "30 mins",
-                    prize: "$20"
+                    prize: 20,
+                    selected: "transparent",
                 },
                 {
                     id: 2,
                     check: false,
                     title: "Beard Trim",
                     duration: "15 mins",
-                    prize: "$15"
+                    prize: 15,
+                    selected: "transparent",
                 },
                 {
                     id: 3,
                     check: false,
                     title: "Design",
                     duration: "30 mins",
-                    prize: "$20"
+                    prize: 20,
+                    selected: "transparent",
                 },
                 {
                     id: 4,
                     check: false,
                     title: "Hot Towel Shape",
                     duration: "45 mins",
-                    prize: "$40"
+                    prize: 40,
+                    selected: "transparent",
                 },
                 {
                     id: 5,
                     check: false,
                     title: "Housecall",
                     duration: "1 hr",
-                    prize: "$100"
+                    prize: 100,
+                    selected: "transparent",
                 }
 
             ]
@@ -138,19 +157,25 @@ export default class ClientBarberProfile extends Component {
         return new Date(date.setDate(diff));
     }
 
-    itemSelect(id) {
-        //alert("hello"+id);
-        id=id-1;
+    itemSelect(indx) {
+        //alert("index-"+indx);
         let dataDay = this.state.dayData;
-        if(dataDay[id].selected==="transparent")
-        {
-            dataDay[id].selected="green";
-            //alert("green"+id);
-        }else {
-            dataDay[id].selected="transparent";
-            //alert("transp "+id);
+        for (let i = 0; i < dataDay.length; i++) {
+            if (i === indx) {
+                dataDay[indx].selected = "green";
+
+                if (dataDay[indx].surgePrice === true) {
+                    this.setState({surgePriceSelected: true})
+                } else {
+                    this.setState({surgePriceSelected: false})
+                }
+            } else {
+                dataDay[i].selected = "transparent";
+            }
+
         }
-        this.setState({dayData:dataDay});
+        console.log("SurgePriceSelected-" + this.state.surgePriceSelected)
+        this.setState({dayData: dataDay, serviceTimeSelected: true});
     }
 
     renderWeekDay(item) {
@@ -218,6 +243,36 @@ export default class ClientBarberProfile extends Component {
         this.setState({
             dataSource: items
         });
+
+
+        ////////////////////////////////////////////////////////////////////Calender
+        const input = getmonth + 1 + "-19";
+        const output = moment(input, "MM-YY");
+        console.log("DateMonth--" + output);
+        let lastDay = output.endOf('month').format('DD');
+        let daysData = [];
+        for (let i = getDate; i <= lastDay; i++) {
+            if (getDay == 1)
+                daysData.push({id: i, day: i, dayColor: "#ffffff", weekDay: "Mon", bottomColor: "transparent"})
+            if (getDay == 2)
+                daysData.push({id: i, day: i, dayColor: "#ffffff", weekDay: "Tue", bottomColor: "transparent"})
+            if (getDay == 3)
+                daysData.push({id: i, day: i, dayColor: "#ffffff", weekDay: "Wed", bottomColor: "transparent"})
+            if (getDay == 4)
+                daysData.push({id: i, day: i, dayColor: "#ffffff", weekDay: "Thur", bottomColor: "transparent"})
+            if (getDay == 5)
+                daysData.push({id: i, day: i, dayColor: "#ffffff", weekDay: "Fri", bottomColor: "transparent"})
+            if (getDay == 6)
+                daysData.push({id: i, day: i, dayColor: "#ffffff", weekDay: "Sat", bottomColor: "transparent"})
+            if (getDay == 7)
+                daysData.push({id: i, day: i, dayColor: "#ffffff", weekDay: "Sun", bottomColor: "transparent"})
+
+            if (getDay === 7)
+                getDay = 1;
+            getDay++;
+        }
+        let mon = this.state.month[getmonth];
+        this.setState({monthSet: mon, monthDays: daysData})
     }
 
     setFavorite() {
@@ -227,19 +282,19 @@ export default class ClientBarberProfile extends Component {
             this.setState({barberFav: true})
     }
 
-    renderItem(item) {
+    renderItem(item, index) {
         var m = moment(new Date(2011, 2, 12, 0, 0, 0));
         m.add(item.id * 30, "minutes");
         if (item.surgePrice === true) {
             return (<View>
-                <TouchableOpacity onPress={() => this.itemSelect(item.id)}>
+                <TouchableOpacity onPress={() => this.itemSelect(index)}>
                     <View style={{
                         height: 20,
                         flexDirection: "row",
                         borderRadius: 10,
                         borderWidth: 1,
                         borderColor: item.selected,
-                        marginStart: 20,
+                        marginStart: 10,
                     }} cellKey={item.id}>
                         <Image resizeMode={"contain"} source={require("../../../assets/images/dollar_surge.png")}
                                style={{width: 12, height: 12, marginStart: 5, marginTop: 2}}/>
@@ -260,14 +315,14 @@ export default class ClientBarberProfile extends Component {
             </View>)
         } else {
             return (<View>
-                <TouchableOpacity onPress={() => this.itemSelect(item.id)}>
+                <TouchableOpacity onPress={() => this.itemSelect(index)}>
                     <View style={{
                         height: 20,
                         flexDirection: "row",
                         borderRadius: 10,
                         borderWidth: 1,
                         borderColor: item.selected,
-                        marginStart: 10,
+                        marginStart: 3,
                     }} cellKey={item.id}>
                         <Text style={{
                             textAlignVertical: "top",
@@ -296,15 +351,61 @@ export default class ClientBarberProfile extends Component {
 
     }
 
+    checkSurgePriceSelected() {
+        if (this.state.serviceTypeSelected === true && this.state.serviceDaySelected === true && this.state.serviceTimeSelected === true) {
+            if (this.state.surgePriceSelected === true)
+                this.props.navigation.navigate('SurgePricingRate');
+            else
+                this.props.navigation.navigate('ClientLeaveReview');
+
+        } else {
+            alert("Please select Service Type,Time and Day for further procedure.");
+        }
+    }
+
     checkBoxClicked(id) {
         id = id - 1;
         let mainData = this.state.ListData2;
         if (mainData[id].check === true) {
             mainData[id].check = false;
+            let totalprice = this.state.totalPriceService;
+            totalprice = totalprice - mainData[id].prize;
+            this.setState({totalPriceService: totalprice});
         } else {
             mainData[id].check = true;
+            let totalprice = this.state.totalPriceService;
+            totalprice = totalprice + mainData[id].prize;
+            this.setState({totalPriceService: totalprice});
+        }
+
+        this.setState({serviceTypeSelected: false});
+        for (let j = 0; j < mainData.length; j++) {
+            if (mainData[j].check === true) {
+                this.setState({serviceTypeSelected: true});
+            }
         }
         this.setState({ListData2: mainData});
+    }
+
+    selectday(indx) {
+        //alert("dayselected " + indx);
+        let monthDaysData = this.state.monthDays;
+        for (let s = 0; s < monthDaysData.length; s++) {
+            console.log("slectDay-loop"+s);
+            if (s === indx) {
+                console.log("slectDay-loop-index-true"+s);
+                monthDaysData[s].dayColor = "green";
+                monthDaysData[s].bottomColor = "green";
+            } else {
+                console.log("slectDay-loop-index-false"+s);
+                monthDaysData[s].dayColor = "#ffffff";
+                monthDaysData[s].bottomColor = "transparent";
+            }
+        }
+        console.log("NEWMonthdata1 ",JSON.stringify(monthDaysData));
+        this.setState({monthDays: monthDaysData},()=>{
+        console.log("NEWMonthdata ",JSON.stringify(this.state.monthDays));
+        });
     }
 
     render() {
@@ -459,7 +560,7 @@ export default class ClientBarberProfile extends Component {
                                             <Text style={{color: "white", fontSize: 12}}>{item.duration}</Text>
                                         </View>
                                         <View style={[{flexDirection: "row", width: "25%", alignItems: "center"}]}>
-                                            <Text style={{color: "white", fontSize: 12}}>{item.prize}</Text>
+                                            <Text style={{color: "white", fontSize: 12}}>{"$" + item.prize}</Text>
                                         </View>
                                     </View>
                                     <View style={{height: 0.5, backgroundColor: "#868791"}}/>
@@ -485,18 +586,44 @@ export default class ClientBarberProfile extends Component {
                                 marginTop: 12,
                                 color: Colors.red1
                             }}
-                        >{"April 2019"}</Text>
-                        <View style={styles.calendar_weekly_header}>
+                        >{this.state.month[getmonth + 1] + " " + getYear}</Text>
+                        {/*<View style={styles.calendar_weekly_header}>
                             {this.state.dataSource}
-                        </View>
+                        </View>*/}
                         <FlatList
-                            keyExtractor={(item, index) => index.toString()}
+                            data={this.state.monthDays}
+                            keyExtractor={(item, index) => index}
+                            showsHorizontalScrollIndicator={false}
+                            numColumns={1}
+                            horizontal={true}
+                            extraData={this.state}
+                            renderItem={({item, index}) => <View
+                                style={{justifyContent: "center", alignItems: "center"}}>
+                                <TouchableOpacity style={{
+                                    width: "100%", justifyContent: "center",
+                                    alignItems: "center", height: 60, marginStart: 20, marginEnd: 20,
+                                    borderBottomWidth: 2,
+                                    borderBottomColor: item.bottomColor
+                                }} onPress={() => this.selectday(index)}>
+                                    <Text style={{color: item.dayColor, fontSize: 14}}>{item.weekDay}</Text>
+                                    <Text
+                                        style={{
+                                            color: item.dayColor,
+                                            fontWeight: "bold",
+                                            fontSize: 12
+                                        }}>{item.day}</Text>
+
+                                </TouchableOpacity>
+                            </View>
+                            }/>
+                        <View style={{height: 0.5, width: "100%", backgroundColor: "grey", marginBottom: 10}}/>
+                        <FlatList
                             data={this.state.dayData}
                             /* data={this.state.listData}*/
-                            renderItem={({item}) => this.renderItem(item)}
+                            renderItem={({item, index}) => this.renderItem(item, index)}
                             numColumns={1}
-                            extraData={this.state.dayData}
-                            showsVerticalScrollIndicator={false}
+                            extraData={this.state}
+                            showsHorizontalScrollIndicator={false}
                             keyExtractor={(item, index) => index}
                             horizontal={true}/>
                     </View>
@@ -530,10 +657,13 @@ export default class ClientBarberProfile extends Component {
                                             textAlign: "left",
                                             color: "white",
                                         }}
-                                    >$36.25</Text>
+                                    >${this.state.totalPriceService}</Text>
                                     <Text style={{color: "white", fontFamily: "AvertaStd-Thin", fontSize: 12}}>Service
                                         Fee:
-                                        <Text style={{fontWeight: "bold", color: "white"}}>$1.25</Text>
+                                        <Text style={{
+                                            fontWeight: "bold",
+                                            color: "white"
+                                        }}>{"$" + this.state.totalPriceService}</Text>
                                     </Text>
                                 </View>
                             </View>
@@ -561,7 +691,7 @@ export default class ClientBarberProfile extends Component {
                                     source={require("../../../assets/images/arrow_down.png")}/>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => {
-                                this.props.navigation.navigate('SurgePricingRate');
+                                this.checkSurgePriceSelected()
                             }} style={{
                                 backgroundColor: "red",
                                 width: "20%",
@@ -569,7 +699,11 @@ export default class ClientBarberProfile extends Component {
                                 alignItems: "center",
                                 justifyContent: "center"
                             }}>
-                                <Text style={{fontSize: 16, color: "white", fontWeight: "bold"}}>Pay</Text>
+                                <Text style={{
+                                    fontSize: 16,
+                                    color: "white",
+                                    fontWeight: "bold"
+                                }}>{this.state.buttonPayText}</Text>
                             </TouchableOpacity>
 
                         </View>
