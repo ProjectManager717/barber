@@ -31,7 +31,6 @@ export default class ChooseTimings extends Component {
         this.state = {
             dataSource: [],
             dayData: [],
-            isConnected: false,
             workingDays: [],
             startTime: new Date(),
             endTime: new Date(),
@@ -46,30 +45,12 @@ export default class ChooseTimings extends Component {
 
     componentDidMount() {
         this.fetchWorkingHours();
-        NetInfo.isConnected.addEventListener(
-            'change',
-            this._handleConnectivityChange
-        );
-        NetInfo.isConnected.fetch().done(
-            (isConnected) => {
-                this.setState({isConnected});
-            }
-        );
-    }
-
-    componentWillMount(): void {
-
     }
 
     setDate(newDate) {
         this.setState({chosenDate: newDate});
     }
 
-    _handleConnectivityChange = (isConnected) => {
-        this.setState({
-            isConnected
-        });
-    };
 
     startOfWeek(date) {
         var diff = date.getDate() - date.getDay() + (date.getDay() === 0 ? -6 : 1);

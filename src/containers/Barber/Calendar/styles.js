@@ -9,7 +9,6 @@ export const styles = {
   },
   calendar_weekly_header: {
     height: 60,
-    flexDirection: "row"
   },
   week_day_container: {
     alignSelf: "center",

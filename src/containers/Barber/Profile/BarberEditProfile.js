@@ -42,7 +42,7 @@ export default class BarberEditProfile extends Component {
             houseCall: false,
             Experience: "1",
             pickMonth: false,
-            experiance: "0",
+            experience: "0",
             userShopName: "CLYPR Barbershop",
             DialogVisible: false,
             DialogBarberShop: false,
@@ -437,7 +437,7 @@ export default class BarberEditProfile extends Component {
                                         <Text style={[styles.allFontStyle, styles.reviewText, {
                                             color: "white",
                                             fontFamily: "AvertaStd-Extrathin",
-                                        }]}>{"Years of Experience " + this.state.experiance}</Text>
+                                        }]}>{"Years of Experience " + this.state.experience}</Text>
                                         <PopupDialog
                                             visible={this.state.DialogVisible}
                                             width={0.6}
@@ -460,102 +460,102 @@ export default class BarberEditProfile extends Component {
                                                     <Text style={{fontSize: 16, marginTop: 5, color: "black"}}>Select
                                                         Years of Experience</Text>
                                                     <Text onPress={() => this.setState({
-                                                        experiance: "01",
+                                                        experience: "01",
                                                         DialogVisible: false
                                                     })}
                                                           style={{fontSize: 15, marginTop: 5, color: "black"}}>01</Text>
                                                     <Text onPress={() => this.setState({
-                                                        experiance: "02",
+                                                        experience: "02",
                                                         DialogVisible: false
                                                     })}
                                                           style={{fontSize: 15, marginTop: 5, color: "black"}}>02</Text>
                                                     <Text onPress={() => this.setState({
-                                                        experiance: "03",
+                                                        experience: "03",
                                                         DialogVisible: false
                                                     })}
                                                           style={{fontSize: 15, marginTop: 5, color: "black"}}>03</Text>
                                                     <Text onPress={() => this.setState({
-                                                        experiance: "04",
+                                                        experience: "04",
                                                         DialogVisible: false
                                                     })}
                                                           style={{fontSize: 15, marginTop: 5, color: "black"}}>04</Text>
                                                     <Text onPress={() => this.setState({
-                                                        experiance: "05",
+                                                        experience: "05",
                                                         DialogVisible: false
                                                     })}
                                                           style={{fontSize: 15, marginTop: 5, color: "black"}}>05</Text>
                                                     <Text onPress={() => this.setState({
-                                                        experiance: "06",
+                                                        experience: "06",
                                                         DialogVisible: false
                                                     })}
                                                           style={{fontSize: 15, marginTop: 5, color: "black"}}>06</Text>
                                                     <Text onPress={() => this.setState({
-                                                        experiance: "07",
+                                                        experience: "07",
                                                         DialogVisible: false
                                                     })}
                                                           style={{fontSize: 15, marginTop: 5, color: "black"}}>07</Text>
                                                     <Text onPress={() => this.setState({
-                                                        experiance: "08",
+                                                        experience: "08",
                                                         DialogVisible: false
                                                     })}
                                                           style={{fontSize: 15, marginTop: 5, color: "black"}}>08</Text>
                                                     <Text onPress={() => this.setState({
-                                                        experiance: "09",
+                                                        experience: "09",
                                                         DialogVisible: false
                                                     })}
                                                           style={{fontSize: 15, marginTop: 5, color: "black"}}>09</Text>
                                                     <Text onPress={() => this.setState({
-                                                        experiance: "10",
+                                                        experience: "10",
                                                         DialogVisible: false
                                                     })}
                                                           style={{fontSize: 15, marginTop: 5, color: "black"}}>10</Text>
                                                     <Text onPress={() => this.setState({
-                                                        experiance: "11",
+                                                        experience: "11",
                                                         DialogVisible: false
                                                     })}
                                                           style={{fontSize: 15, marginTop: 5, color: "black"}}>11</Text>
                                                     <Text onPress={() => this.setState({
-                                                        experiance: "12",
+                                                        experience: "12",
                                                         DialogVisible: false
                                                     })}
                                                           style={{fontSize: 15, marginTop: 5, color: "black"}}>12</Text>
                                                     <Text onPress={() => this.setState({
-                                                        experiance: "13",
+                                                        experience: "13",
                                                         DialogVisible: false
                                                     })}
                                                           style={{fontSize: 15, marginTop: 5, color: "black"}}>13</Text>
                                                     <Text onPress={() => this.setState({
-                                                        experiance: "14",
+                                                        experience: "14",
                                                         DialogVisible: false
                                                     })}
                                                           style={{fontSize: 15, marginTop: 5, color: "black"}}>14</Text>
                                                     <Text onPress={() => this.setState({
-                                                        experiance: "15",
+                                                        experience: "15",
                                                         DialogVisible: false
                                                     })}
                                                           style={{fontSize: 15, marginTop: 5, color: "black"}}>15</Text>
                                                     <Text onPress={() => this.setState({
-                                                        experiance: "16",
+                                                        experience: "16",
                                                         DialogVisible: false
                                                     })}
                                                           style={{fontSize: 15, marginTop: 5, color: "black"}}>16</Text>
                                                     <Text onPress={() => this.setState({
-                                                        experiance: "17",
+                                                        experience: "17",
                                                         DialogVisible: false
                                                     })}
                                                           style={{fontSize: 15, marginTop: 5, color: "black"}}>17</Text>
                                                     <Text onPress={() => this.setState({
-                                                        experiance: "18",
+                                                        experience: "18",
                                                         DialogVisible: falseadb
                                                     })}
                                                           style={{fontSize: 15, marginTop: 5, color: "black"}}>18</Text>
                                                     <Text onPress={() => this.setState({
-                                                        experiance: "19",
+                                                        experience: "19",
                                                         DialogVisible: false
                                                     })}
                                                           style={{fontSize: 15, marginTop: 5, color: "black"}}>19</Text>
                                                     <Text onPress={() => this.setState({
-                                                        experiance: "20",
+                                                        experience: "20",
                                                         DialogVisible: false
                                                     })}
                                                           style={{fontSize: 15, marginTop: 5, color: "black"}}>20</Text>

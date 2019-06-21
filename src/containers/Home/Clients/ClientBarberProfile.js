@@ -605,7 +605,7 @@ export default class ClientBarberProfile extends Component {
                                     borderBottomWidth: 2,
                                     borderBottomColor: item.bottomColor
                                 }} onPress={() => this.selectday(index)}>
-                                    <Text style={{color: item.dayColor, fontSize: 14}}>{item.weekDay}</Text>
+                                    <Text style={{color: item.dayColor, fontSize: 15}}>{item.weekDay}</Text>
                                     <Text
                                         style={{
                                             color: item.dayColor,
