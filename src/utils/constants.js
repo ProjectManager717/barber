@@ -16,6 +16,7 @@ export const constants = {
     ClientBlastMessage : Base_url + path2 + "sendClientBlast",
     GetNotifications : Base_url + path3 + "notifications",
     GetCalenderSlots : Base_url + path2 + "calenderSlots",
+    BarberBookingPreference:Base_url+path3+"settings",
 
     ClientLogin : Base_url + clientPath + "login",
     ClientSocialLogin : Base_url + clientPath + "socialLogin",

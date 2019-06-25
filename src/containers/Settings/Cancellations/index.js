@@ -5,6 +5,7 @@ import {globalStyles} from "../../../themes/globalStyles";
 //import { styles } from "./styles";
 import {Header} from "react-native-elements";
 import CheckBox from "../../../components/CheckBox";
+import {constants} from "../../../utils/constants";
 
 
 export default class Cancellations extends Component {
@@ -12,6 +13,7 @@ export default class Cancellations extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            showLoading: false,
             policy: false,
             twoHour: false,
             oneHour: false,
@@ -19,58 +21,112 @@ export default class Cancellations extends Component {
             noShowPolicy: false,
             bookingPrefrence: false,
             cancellationNoShow: false,
-            surgePrice: true
+            surgePrice: false
         }
+    }
+
+    componentDidMount(): void {
+        this.getCancellationsNoShow();
+    }
+
+    getCancellationsNoShow() {
+        this.setState({showLoading: true});
+        fetch(constants.BarberBookingPreference + "?user_id=" + "5d1206c0a70da23e2c2ae205" /*Preference.get("userId")*/, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        }).then(response => response.json())
+            .then(response => {
+                console.log("responseBookingPrefrence-->", "-" + JSON.stringify(response));
+                if (response.ResultType === 1) {
+                    this.setState({showLoading: false});
+                    let prefrence = response.Data;
+                    if (prefrence.cancellation_policy === true)
+                        this.setState({policy: true})
+                    else
+                        this.setState({policy: false})
+                    if (prefrence.no_show_policy === true)
+                        this.setState({noShowPolicy: true})
+                    else
+                        this.setState({noShowPolicy: false})
+
+                    if (prefrence.cancellation_policy_value === "1")
+                        this.setState({twoHour: true})
+                    if (prefrence.cancellation_policy_value === "2")
+                        this.setState({oneHour: true})
+                    if (prefrence.cancellation_policy_value === "3")
+                        this.setState({thirtyMin: true})
+
+                    if (prefrence.no_show_policy_value === "1")
+                        this.setState({bookingPrefrence: true})
+                    if (prefrence.no_show_policy_value === "2")
+                        this.setState({cancellationNoShow: true})
+                    if (prefrence.no_show_policy_value === "3")
+                        this.setState({surgePrice: true})
+
+                } else {
+                    this.setState({showLoading: false});
+                    if (response.ResultType === 0) {
+                        alert(response.Message);
+                    }
+                }
+            }).catch(error => {
+            this.setState({showLoading: false});
+            //console.error('Errorr:', error);
+            console.log('Error:', error);
+            alert("Error: " + error);
+        });
     }
 
     checkBox(val) {
         if (val === "2 Hours Ahead,No Fee, 1 Reschedule") {
             if (this.state.twoHour === false)
-                this.setState({twoHour: true})
-            else
-                this.setState({twoHour: false})
+                this.setState({twoHour: true,oneHour:false,thirtyMin:false})
+           /* else
+                this.setState({twoHour: false})*/
         } else if (val === "1 Hour Ahead, 25% Fee, 1 Reschedule") {
             if (this.state.oneHour === false)
-                this.setState({oneHour: true})
-            else
-                this.setState({oneHour: false})
+                this.setState({oneHour: true,twoHour: false,thirtyMin:false})
+            /*else
+                this.setState({oneHour: false})*/
         } else if (val === "30 Minutes Ahead, 75% Fee, 0 Reschedule") {
             if (this.state.thirtyMin === false)
-                this.setState({thirtyMin: true})
-            else
-                this.setState({thirtyMin: false})
+                this.setState({thirtyMin: true,twoHour: false,oneHour:false})
+           /* else
+                this.setState({thirtyMin: false})*/
         } else if (val === "Booking Preferences") {
             if (this.state.bookingPrefrence === false)
-                this.setState({bookingPrefrence: true})
-            else
-                this.setState({bookingPrefrence: false})
+                this.setState({bookingPrefrence: true,cancellationNoShow:false,surgePrice:false})
+           /* else
+                this.setState({bookingPrefrence: false})*/
         } else if (val === "Cancellations & No-Shows") {
             if (this.state.cancellationNoShow === false)
-                this.setState({cancellationNoShow: true})
-            else
-                this.setState({cancellationNoShow: false})
+                this.setState({cancellationNoShow: true,bookingPrefrence: false,surgePrice:false})
+            /*else
+                this.setState({cancellationNoShow: false})*/
         } else if (val === "Surge Pricing") {
             if (this.state.surgePrice === false)
-                this.setState({surgePrice: true})
-            else
-                this.setState({surgePrice: false})
+                this.setState({surgePrice: true,bookingPrefrence: false,cancellationNoShow:false})
+            /*else
+                this.setState({surgePrice: false})*/
         }
 
     }
 
-    setPolicy()
-    {
-        if(this.state.policy===true)
-            this.setState({policy:false})
+    setPolicy() {
+        if (this.state.policy === true)
+            this.setState({policy: false})
         else
-            this.setState({policy:true})
+            this.setState({policy: true})
     }
-    setNoShowPolicy()
-    {
-        if(this.state.noShowPolicy===true)
-            this.setState({noShowPolicy:false})
+
+    setNoShowPolicy() {
+        if (this.state.noShowPolicy === true)
+            this.setState({noShowPolicy: false})
         else
-            this.setState({noShowPolicy:true})
+            this.setState({noShowPolicy: true})
     }
 
     renderRow(item) {
@@ -113,7 +169,7 @@ export default class Cancellations extends Component {
                             <Image style={styles.leftIcon}
                                    source={require("../../../assets/images/ic_cancellation_policy.png")}/>
                             <Text style={styles.row_title}>Cancellation Policy</Text>
-                            <Switch onChange={()=>this.setPolicy()} value={this.state.policy} style={{
+                            <Switch onChange={() => this.setPolicy()} value={this.state.policy} style={{
                                 position: 'absolute',
                                 right: 14,
                                 alignSelf: 'center',
@@ -129,7 +185,7 @@ export default class Cancellations extends Component {
                         <View style={{flex: 1, flexDirection: 'row', height: 36}}>
                             <Image style={styles.leftIcon} source={require("../../../assets/images/ic_no_show.png")}/>
                             <Text style={styles.row_title}>No-Show Policy</Text>
-                            <Switch onChange={()=>this.setNoShowPolicy()} value={this.state.noShowPolicy} style={{
+                            <Switch onChange={() => this.setNoShowPolicy()} value={this.state.noShowPolicy} style={{
                                 position: 'absolute',
                                 right: 14,
                                 alignSelf: 'center',
@@ -148,7 +204,18 @@ export default class Cancellations extends Component {
                         <Text style={globalStyles.buttonText}>DONE</Text>
                     </TouchableOpacity>
                 </ScrollView>
-
+                {this.state.showLoading && <View style={{
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor: "transparent",
+                    position: "absolute",
+                    opacity: 1,
+                    alignItems: "center",
+                    justifyContent: "center"
+                }}>
+                    <Image resizeMode={"contain"} source={require("../../../assets/images/loading.gif")}
+                           style={{width: 100, height: 100, opacity: 1,}}/>
+                </View>}
             </View>
         );
     }

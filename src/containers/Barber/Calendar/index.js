@@ -235,7 +235,7 @@ export default class Calendar extends Component {
     getCalenderSlots() {
         this.state.calenderSlots = [];
         console.log("userID" + Preference.get("userId"));
-        fetch(constants.GetCalenderSlots + "?user_id=" + /*"5cd522fd463a0a2f38557c85"*/Preference.get("userId"), {
+        fetch(constants.GetCalenderSlots + "?user_id=" + Preference.get("userId"), {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
@@ -255,12 +255,14 @@ export default class Calendar extends Component {
                     }
                 }
             }).catch(error => {
-            console.error('Errorr:', error);
+            //console.error('Errorr:', error);
+            console.log('Error:', error);
+            alert("Error: "+error);
         });
     }
 
     renderItem(item) {
-        console.log("calenderSlots-->"+item._id);
+        console.log("calenderSlots-->" + item._id);
         if (this.state.calenderSlots.length > 0) {
             console.log("calenderSlotslength- > 0");
             let time = item.time_from;
@@ -321,7 +323,7 @@ export default class Calendar extends Component {
             }
 
             if (item.total_time === "30mins") {
-                console.log("calenderSlots-time > "+item.total_time);
+                console.log("calenderSlots-time > " + item.total_time);
                 return <TouchableWithoutFeedback onPress={() => this.itemSelect(bgc, item)}>
                     <View style={{height: 70, flexDirection: "row"}} cellKey={item.id}>
                         <Text style={{
@@ -405,7 +407,7 @@ export default class Calendar extends Component {
                 </TouchableWithoutFeedback>;
             }
             if (item.total_time === "60mins") {
-                console.log("calenderSlots-time > "+item.total_time);
+                console.log("calenderSlots-time > " + item.total_time);
                 return <TouchableOpacity onPress={() => this.itemSelect(bgc, item)}>
                     <View style={{height: 140, flexDirection: "row"}} cellKey={item.id}>
                         <View style={{flexDirection: "column"}}>
@@ -505,7 +507,7 @@ export default class Calendar extends Component {
                 </TouchableOpacity>;
             }
             if (item.total_time === "break") {
-                console.log("calenderSlots-time > "+item.total_time);
+                console.log("calenderSlots-time > " + item.total_time);
                 return (<TouchableOpacity onPress={() => this.props.navigation.navigate("Appointments")}>
                     <View style={{height: 140, flexDirection: "row"}} cellKey={item.id}>
                         <View style={{flexDirection: "column"}}>
@@ -561,7 +563,7 @@ export default class Calendar extends Component {
 
             }
             if (item.total_time === "45mins") {
-                console.log("calenderSlots-time > "+item.total_time);
+                console.log("calenderSlots-time > " + item.total_time);
                 return <TouchableOpacity onPress={() => this.itemSelect(bgc, item)}>
                     <View style={{height: 140, flexDirection: "row"}} cellKey={item.id}>
                         <View style={{flexDirection: "column"}}>
@@ -777,7 +779,7 @@ export default class Calendar extends Component {
                 <View
                     style={{
                         marginLeft: 0,
-                        height: 0.2,marginBottom:20,
+                        height: 0.2, marginBottom: 20,
                         backgroundColor: Colors.lightGrey
                     }}
                 />

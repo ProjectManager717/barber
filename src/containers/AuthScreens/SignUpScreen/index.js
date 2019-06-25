@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {ImageBackground, View, Text, NetInfo} from 'react-native';
+import {ImageBackground, View, Text, NetInfo, Image} from 'react-native';
 import {SafeAreaView} from 'react-navigation';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {styles} from './styles';
@@ -118,6 +118,7 @@ class SignUpScreen extends Component {
                     //alert("Please enter correct data");
                     return false;
                 } else {
+                    this.setState({showLoading:true});
                     const {userInfo} = this.state;
                     var details = {
                         firstname: userInfo.fullName,
@@ -143,6 +144,7 @@ class SignUpScreen extends Component {
                         .then(response => {
                             console.log("responseClientsignup-->", "-" + JSON.stringify(response));
                             if (response.ResultType === 1) {
+                                this.setState({showLoading:false});
                                 Preference.set({
                                     clientlogin: true,
                                     userEmail: response.Data.email,
@@ -153,13 +155,16 @@ class SignUpScreen extends Component {
                                 });
                                 this.moveToSMSScreen();
                             } else {
+                                this.setState({showLoading:false});
                                 if (response.ResultType === 0) {
                                     alert(response.Message);
                                 }
                             }
                         })
                         .catch(error => {
-                            console.error('Error:', error);
+                            this.setState({showLoading:false});
+                            console.log('Error:', error);
+                            alert("Error: "+error);
                         });
                 }
             } else {
@@ -171,6 +176,7 @@ class SignUpScreen extends Component {
                     //alert("Please enter correct data");
                     return false;
                 } else {
+                    this.setState({showLoading:true});
                     const {userInfo} = this.state;
                     var details = {
                         firstname: userInfo.fullName,
@@ -196,6 +202,7 @@ class SignUpScreen extends Component {
                         .then(response => {
                             console.log("responseBarbersignup-->", "-" + JSON.stringify(response));
                             if (response.ResultType === 1) {
+                                this.setState({showLoading:false});
                                 Preference.set({
                                     barberlogin: true,
                                     userEmail: response.Data.email,
@@ -207,13 +214,17 @@ class SignUpScreen extends Component {
                                 });
                                 this.moveToSMSScreen();
                             } else {
+                                this.setState({showLoading:false});
                                 if (response.ResultType === 0) {
                                     alert(response.Message);
                                 }
                             }
                         })
                         .catch(error => {
-                            console.error('Error:', error);
+                            this.setState({showLoading:false});
+                            //console.error('Error:', error);
+                            console.log('Error:', error);
+                            alert("Error: "+error);
                         });
                 }
             } else {
@@ -391,6 +402,17 @@ class SignUpScreen extends Component {
                             </View>
                         </View>
                     </KeyboardAwareScrollView>
+                    {this.state.showLoading && <View style={{
+                        width: "100%",
+                        height: "100%",
+                        backgroundColor: "transparent",
+                        position: "absolute",
+                        opacity: 1,
+                        alignItems: "center",
+                        justifyContent: "center"
+                    }}>
+                        <Image resizeMode={"contain"} source={require("../../../assets/images/loading.gif")} style={{width:100,height:100, opacity: 1,}}/>
+                    </View>}
                 </SafeAreaView>
             </ImageBackground>
         );

@@ -41,7 +41,9 @@ class InitialScreen extends Component {
                 console.log("LandingScreenResult:-->"+JSON.stringify(responseJson) );
             })
             .catch((error) => {
-                console.error(error);
+                //console.error(error);
+                console.log('Error:', error);
+                alert("Error: "+error);
             });
     }
 

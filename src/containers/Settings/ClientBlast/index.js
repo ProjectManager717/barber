@@ -58,7 +58,9 @@ export default class ClientBlast extends Component {
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
+                //console.error('Errorr:', error);
+                console.log('Error:', error);
+                alert("Error: "+error);
             });
     }
 

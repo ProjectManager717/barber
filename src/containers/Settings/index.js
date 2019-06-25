@@ -40,7 +40,9 @@ export default class Settings extends Component {
                 data: ''
             }); // Remove the user from your app's state as well
         } catch (error) {
-            console.error(error);
+            //console.error('Errorr:', error);
+            console.log('Error:', error);
+            alert("Error: "+error);
         }
     };
 

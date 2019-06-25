@@ -26,7 +26,7 @@ export default class MobilePay extends Component {
 
     setMobilePay()
     {
-        alert("Mobile APy");
+        alert("Mobile Pay");
         if(Preference.get("userMobilePay")===true)
         {
             Preference.set("userMobilePay",false);

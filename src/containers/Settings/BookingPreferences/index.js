@@ -5,6 +5,8 @@ import {globalStyles} from "../../../themes/globalStyles";
 //import { styles } from "./styles";
 import {Header} from "react-native-elements";
 import CheckBoxSquare from "../../../components/CheckBox";
+import {constants} from "../../../utils/constants";
+import Preference from "react-native-preference";
 
 
 export default class BookingPreferences extends Component {
@@ -12,16 +14,18 @@ export default class BookingPreferences extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            showLoading: false,
+            isConnected: true,
             autoConfirm: false,
             multipleServices: false,
             mobilePayCheck: false,
             inShopCheck: false,
-            fifteenMin:false,
-            twentyMin:false,
-            thirtyMin:false,
-            fifteenMin1:false,
-            twentyMin1:false,
-            thirtyMin1:false,
+            fifteenMin: false,
+            twentyMin: false,
+            thirtyMin: false,
+            fifteenMin1: false,
+            twentyMin1: false,
+            thirtyMin1: false,
             MP: {
                 MPradiocheck: require("../../../assets/images/radio_unselected.png"),
                 StateMP: false
@@ -35,6 +39,61 @@ export default class BookingPreferences extends Component {
         console.disableYellowBox = true;
     }
 
+    componentDidMount(): void {
+        this.getBookingPrefferenceSetting()
+    }
+
+    getBookingPrefferenceSetting() {
+        this.setState({showLoading: true});
+        fetch(constants.BarberBookingPreference + "?user_id=" + "5d1206c0a70da23e2c2ae205" /*Preference.get("userId")*/, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        }).then(response => response.json())
+            .then(response => {
+                console.log("responseBookingPrefrence-->", "-" + JSON.stringify(response));
+                if (response.ResultType === 1) {
+                    this.setState({showLoading: false});
+                    let prefrence = response.Data;
+                    if (prefrence.accepted_payment_options === "mobilePay")
+                        this.onSelectMP();
+                    if (prefrence.accepted_payment_options === "inShop")
+                        this.onSelectIN();
+                    this.setState({
+                        autoConfirm: prefrence.auto_confirm_appointments,
+                        multipleServices: prefrence.multiple_services
+                    })
+                    if (prefrence.last_minute_booking === "1")
+                        this.setState({fifteenMin: true})
+                    if (prefrence.last_minute_booking === "2")
+                        this.setState({twentyMin: true})
+                    if (prefrence.last_minute_booking === "3")
+                        this.setState({thirtyMin: true})
+
+                    if (prefrence.calender_interval === "1")
+                        this.setState({fifteenMin1: true})
+                    if (prefrence.calender_interval === "2")
+                        this.setState({twentyMin1: true})
+                    if (prefrence.calender_interval === "3")
+                        this.setState({thirtyMin1: true})
+
+
+                } else {
+                    this.setState({showLoading: false});
+                    if (response.ResultType === 0) {
+                        alert(response.Message);
+                    }
+                }
+            }).catch(error => {
+            this.setState({showLoading: false});
+            //console.error('Errorr:', error);
+            console.log('Error:', error);
+            alert("Error: " + error);
+        });
+    }
+
     setAutoConfirm() {
         if (this.state.autoConfirm === true)
             this.setState({autoConfirm: false})
@@ -42,49 +101,42 @@ export default class BookingPreferences extends Component {
             this.setState({autoConfirm: true})
     }
 
-    setCheckBox(idx)
-    {
-        if(idx===1)
-        {
-            if(this.state.fifteenMin===false)
-                this.setState({fifteenMin:true})
-            else
-                this.setState({fifteenMin:false})
+    setCheckBox(idx) {
+        if (idx === 1) {
+            if (this.state.fifteenMin === false)
+                this.setState({fifteenMin: true, twentyMin: false, thirtyMin: false})
+            /*else
+                this.setState({fifteenMin: false})*/
         }
-        if(idx===2)
-        {
-            if(this.state.twentyMin===false)
-                this.setState({twentyMin:true})
-            else
-                this.setState({twentyMin:false})
+        if (idx === 2) {
+            if (this.state.twentyMin === false)
+                this.setState({twentyMin: true,fifteenMin: false, thirtyMin: false})
+            /*else
+                this.setState({twentyMin: false})*/
         }
-        if(idx===3)
-        {
-            if(this.state.thirtyMin===false)
-                this.setState({thirtyMin:true})
-            else
-                this.setState({thirtyMin:false})
+        if (idx === 3) {
+            if (this.state.thirtyMin === false)
+                this.setState({thirtyMin: true,fifteenMin: false, twentyMin: false})
+            /*else
+                this.setState({thirtyMin: false})*/
         }
-        if(idx===4)
-        {
-            if(this.state.fifteenMin1===false)
-                this.setState({fifteenMin1:true})
-            else
-                this.setState({fifteenMin1:false})
+        if (idx === 4) {
+            if (this.state.fifteenMin1 === false)
+                this.setState({fifteenMin1: true, twentyMin1: false, thirtyMin1: false})
+            /*else
+                this.setState({fifteenMin1: false})*/
         }
-        if(idx===5)
-        {
-            if(this.state.twentyMin1===false)
-                this.setState({twentyMin1:true})
-            else
-                this.setState({twentyMin1:false})
+        if (idx === 5) {
+            if (this.state.twentyMin1 === false)
+                this.setState({twentyMin1: true,fifteenMin1: false, thirtyMin1: false})
+           /* else
+                this.setState({twentyMin1: false})*/
         }
-        if(idx===6)
-        {
-            if(this.state.thirtyMin1===false)
-                this.setState({thirtyMin1:true})
-            else
-                this.setState({thirtyMin1:false})
+        if (idx === 6) {
+            if (this.state.thirtyMin1 === false)
+                this.setState({thirtyMin1: true,fifteenMin1: false, twentyMin1: false})
+            /*else
+                this.setState({thirtyMin1: false})*/
         }
 
     }
@@ -98,7 +150,8 @@ export default class BookingPreferences extends Component {
 
     renderRowWithCheck(item) {
         return <View style={{flex: 1, flexDirection: 'row', height: 22, marginLeft: 40}}>
-            <CheckBoxSquare onClick={() => {this.setCheckBox(item.indx)
+            <CheckBoxSquare onClick={() => {
+                this.setCheckBox(item.indx)
             }} isChecked={item.value} style={{alignSelf: 'center'}}/>
             <Text style={styles.row_title}>{item.title}</Text>
         </View>;
@@ -106,22 +159,22 @@ export default class BookingPreferences extends Component {
 
     renderRow(item) {
         return <View style={{flex: 1, flexDirection: 'column'}}>
-            <View style={{flex: 1, flexDirection: 'row',height:20}}>
+            <View style={{flex: 1, flexDirection: 'row', height: 20}}>
                 <Image style={styles.leftIcon} source={item.ic}/>
                 <Image style={styles.leftIcon} source={item.ic2}/>
                 <Text style={styles.row_title}>{item.title}</Text>
             </View>
-            <Text style={{marginStart:"16%",color: "grey", fontSize: 12, fontStyle: "italic"}}>{item.hint}</Text>
+            <Text style={{marginStart: "16%", color: "grey", fontSize: 12, fontStyle: "italic"}}>{item.hint}</Text>
         </View>;
     }
 
     renderRowAppointment(item) {
-        return <View style={{flex: 1, flexDirection: 'row',height:28}}>
+        return <View style={{flex: 1, flexDirection: 'row', height: 28}}>
             <Image style={styles.leftIcon} source={item.ic}/>
             <Text style={styles.row_title}>{item.title}</Text>
             {item.title === "Auto Confirm" && <Switch
-                onTintColor="#00D200"
-                thumbTintColor="#fff"
+                trackColor="#00D200"
+                thumbColor="#fff"
                 onChange={() => this.setAutoConfirm()}
                 value={item.value} style={{
                 position: 'absolute',
@@ -131,8 +184,8 @@ export default class BookingPreferences extends Component {
             }}/>
             }
             {item.title === "Multiple Services" && <Switch
-                onTintColor="#00D200"
-                thumbTintColor="#fff"
+                trackColor="#00D200"
+                thumbColor="#fff"
                 onChange={() => this.setMultipleServices()}
                 value={item.value} style={{
                 position: 'absolute',
@@ -255,20 +308,18 @@ export default class BookingPreferences extends Component {
                         }}>{"Limited"}</Text>
                         <View style={{
                             marginStart: 30, marginEnd: 10, height: 18, marginBottom: 8, backgroundColor: "#5A5B68",
-                            borderRadius: 10,justifyContent:"center"
+                            borderRadius: 10, justifyContent: "center"
                         }}>
                             <Text style={{
                                 marginStart: 5,
-
                                 fontSize: 10,
                                 color: "white",
-
                             }}>{"Client can Book Appointment with you up until last minutes "}</Text>
                         </View>
                     </View>
-                    {this.renderRowWithCheck({title: "Every 15 Minutes",value:this.state.fifteenMin,indx:1})}
-                    {this.renderRowWithCheck({title: "Every 20 Minutes",value:this.state.twentyMin,indx:2})}
-                    {this.renderRowWithCheck({title: "Every 30 Minutes",value:this.state.thirtyMin,indx:3})}
+                    {this.renderRowWithCheck({title: "Every 15 Minutes", value: this.state.fifteenMin, indx: 1})}
+                    {this.renderRowWithCheck({title: "Every 20 Minutes", value: this.state.twentyMin, indx: 2})}
+                    {this.renderRowWithCheck({title: "Every 30 Minutes", value: this.state.thirtyMin, indx: 3})}
 
                     <Text style={styles.txtHeader}>AVAILABILITY</Text>
                     <View style={[globalStyles.rowBackground, styles.row]}>
@@ -283,15 +334,29 @@ export default class BookingPreferences extends Component {
                             fontStyle: "italic"
                         }}>{"Calender Interval"}</Text>
                     </View>
-                    {this.renderRowWithCheck({title: "Every 15 Minutes",value:this.state.fifteenMin1,indx:4})}
-                    {this.renderRowWithCheck({title: "Every 20 Minutes",value:this.state.twentyMin1,indx:5})}
-                    {this.renderRowWithCheck({title: "Every 30 Minutes",value:this.state.thirtyMin1,indx:6})}
+                    {this.renderRowWithCheck({title: "Every 15 Minutes", value: this.state.fifteenMin1, indx: 4})}
+                    {this.renderRowWithCheck({title: "Every 20 Minutes", value: this.state.twentyMin1, indx: 5})}
+                    {this.renderRowWithCheck({title: "Every 30 Minutes", value: this.state.thirtyMin1, indx: 6})}
 
                     <TouchableOpacity style={[globalStyles.button, {marginTop: 70, marginBottom: 30, width: '70%'}]}
                                       onPress={() => this.oNDone()}>
                         <Text style={globalStyles.buttonText}>DONE</Text>
                     </TouchableOpacity>
+
+
                 </ScrollView>
+                {this.state.showLoading && <View style={{
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor: "transparent",
+                    position: "absolute",
+                    opacity: 1,
+                    alignItems: "center",
+                    justifyContent: "center"
+                }}>
+                    <Image resizeMode={"contain"} source={require("../../../assets/images/loading.gif")}
+                           style={{width: 100, height: 100, opacity: 1,}}/>
+                </View>}
 
             </View>
         );

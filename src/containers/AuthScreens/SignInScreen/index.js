@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {ImageBackground, Text, View, TouchableOpacity, NetInfo} from 'react-native';
+import {ImageBackground, Text, View, TouchableOpacity, NetInfo, ActivityIndicator,Image} from 'react-native';
 import {SafeAreaView} from 'react-navigation';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {styles} from './styles';
@@ -32,6 +32,7 @@ class SignInScreen extends Component {
         itemId = navigation.getParam('User');
         console.log("gettingUSersignIn--->" + itemId);
         this.state = {
+            showLoading: false,
             email: '',
             password: '',
             userName: undefined,
@@ -137,7 +138,9 @@ class SignInScreen extends Component {
                         }
                     })
                     .catch(error => {
-                        console.error('Error:', error);
+                        //console.error('Errorr:', error);
+                        console.log('Error:', error);
+                        alert("Error: "+error);
                     });
                 //Keyboard.dismiss();
             } else {
@@ -187,7 +190,9 @@ class SignInScreen extends Component {
                         }
                     })
                     .catch(error => {
-                        console.error('Error:', error);
+                        //console.error('Errorr:', error);
+                        console.log('Error:', error);
+                        alert("Error: "+error);
                     });
                 //Keyboard.dismiss();
             } else {
@@ -205,7 +210,9 @@ class SignInScreen extends Component {
             const userInfo = await GoogleSignin.signInSilently();
             this.setState({userInfo});
         } catch (error) {
-            console.error(error);
+            //console.error('Errorr:', error);
+            console.log('Error:', error);
+            alert("Error: "+error);
         }
     };
 
@@ -215,7 +222,9 @@ class SignInScreen extends Component {
             await GoogleSignin.revokeAccess();
             console.log('deleted');
         } catch (error) {
-            console.error(error);
+            //console.error('Errorr:', error);
+            console.log('Error:', error);
+            alert("Error: "+error);
         }
     };
 
@@ -229,6 +238,7 @@ class SignInScreen extends Component {
                 if (this.state.email === "" || this.state.password === "") {
                     alert("Please fill all fields");
                 } else {
+                    this.setState({showLoading: true});
                     const {email, password} = this.state;
                     var details = {
                         email: email,
@@ -252,6 +262,7 @@ class SignInScreen extends Component {
                         .then(response => {
                             console.log("responseClientlogin-->", "-" + JSON.stringify(response));
                             if (response.ResultType === 1) {
+                                this.setState({showLoading: false});
                                 Preference.set({
                                     clientlogin: true,
                                     userEmail: response.Data.email,
@@ -266,13 +277,16 @@ class SignInScreen extends Component {
                                     this.moveToHome();
                                 }
                             } else {
+                                this.setState({showLoading: false});
                                 if (response.ResultType === 0) {
                                     alert(response.Message);
                                 }
                             }
                         })
                         .catch(error => {
-                            console.error('Error:', error);
+                            //console.error('Errorr:', error);
+                            console.log('Error:', error);
+                            alert("Error: "+error);
                         });
                     //Keyboard.dismiss();
                 }
@@ -286,6 +300,7 @@ class SignInScreen extends Component {
                 if (this.state.email === "" || this.state.password === "") {
                     alert("Please fill all fields");
                 } else {
+                    this.setState({showLoading: true});
                     const {email, password} = this.state;
                     var details = {
                         email: email,
@@ -309,6 +324,7 @@ class SignInScreen extends Component {
                         .then(response => {
                             console.log("responseBarberlogin-->", "-" + JSON.stringify(response));
                             if (response.ResultType === 1) {
+                                this.setState({showLoading: false});
                                 Preference.set({
                                     barberlogin: true,
                                     userEmail: response.Data.email,
@@ -323,13 +339,17 @@ class SignInScreen extends Component {
                                     this.moveToHome();
                                 }
                             } else {
+                                this.setState({showLoading: false});
                                 if (response.ResultType === 0) {
                                     alert(response.Message);
                                 }
                             }
                         })
                         .catch(error => {
-                            console.error('Error:', error);
+                            this.setState({showLoading: false});
+                            //console.error('Errorr:', error);
+                            console.log('Error:', error);
+                            alert("Error: "+error);
                         });
                     //Keyboard.dismiss();
                 }
@@ -438,7 +458,9 @@ class SignInScreen extends Component {
                         }
                     })
                     .catch(error => {
-                        console.error('Error:', error);
+                        //console.error('Errorr:', error);
+                        console.log('Error:', error);
+                        alert("Error: "+error);
                     });
                 //Keyboard.dismiss();
             } else {
@@ -492,7 +514,9 @@ class SignInScreen extends Component {
                         }
                     })
                     .catch(error => {
-                        console.error('Error:', error);
+                        //console.error('Errorr:', error);
+                        console.log('Error:', error);
+                        alert("Error: "+error);
                     });
                 //Keyboard.dismiss();
             } else {
@@ -610,6 +634,18 @@ class SignInScreen extends Component {
                             </Text>
                         </TouchableOpacity>
                     </View>
+
+                    {this.state.showLoading && <View style={{
+                        width: "100%",
+                        height: "100%",
+                        backgroundColor: "transparent",
+                        position: "absolute",
+                        opacity: 1,
+                        alignItems: "center",
+                        justifyContent: "center"
+                    }}>
+                       <Image resizeMode={"contain"} source={require("../../../assets/images/loading.gif")} style={{width:100,height:100, opacity: 1,}}/>
+                    </View>}
                 </SafeAreaView>
             </ImageBackground>
         )

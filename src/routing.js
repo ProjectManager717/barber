@@ -238,7 +238,7 @@ const AuthStack = createStackNavigator({
     ClientHaircuts: ClientHaircuts,
     Share: Share,
 }, {
-    initialRouteName: 'SelectScreen',
+    initialRouteName: 'Settings',
     //initialRouteName: 'TabNavigator',
     //initialRouteName: 'ClientTabNavigator',
     headerMode: 'none'

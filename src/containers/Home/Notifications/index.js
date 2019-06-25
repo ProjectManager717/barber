@@ -48,7 +48,9 @@ export default class Notifications extends Component {
                     }
                 }
             }).catch(error => {
-            console.error('Errorr:', error);
+            //console.error('Errorr:', error);
+            console.log('Error:', error);
+            alert("Error: "+error);
         });
     }
 

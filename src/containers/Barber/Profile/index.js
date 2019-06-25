@@ -126,7 +126,9 @@ export default class BarberProfile extends Component {
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
+                //console.error('Errorr:', error);
+                console.log('Error:', error);
+                alert("Error: "+error);
             });
         //Keyboard.dismiss();
     }

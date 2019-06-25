@@ -6,6 +6,7 @@ import PopupDialog from 'react-native-popup-dialog';
 //import { styles } from "./styles";
 import {Header} from "react-native-elements";
 import CheckBoxSquare from "../../../components/CheckBox";
+import {constants} from "../../../utils/constants";
 
 
 export default class SurgePricing extends Component {
@@ -13,6 +14,7 @@ export default class SurgePricing extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            showLoading:false,
             surgePrice: false,
             holidays: false,
             birthday: false,
@@ -23,6 +25,54 @@ export default class SurgePricing extends Component {
             price:0,
             DialogVisible: false,
         }
+    }
+
+    componentDidMount(): void {
+        this.getSurgePricing()
+    }
+
+    getSurgePricing() {
+        this.setState({showLoading: true});
+        fetch(constants.BarberBookingPreference + "?user_id=" + "5d1206c0a70da23e2c2ae205" /*Preference.get("userId")*/, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        }).then(response => response.json())
+            .then(response => {
+                console.log("responseBookingPrefrence-->", "-" + JSON.stringify(response));
+                if (response.ResultType === 1) {
+                    this.setState({showLoading: false});
+                    let prefrence = response.Data;
+                    if (prefrence.surge_pricing === "1")
+                        this.setState({surgePrice:true})
+                    if (prefrence.holidays === "1")
+                        this.setState({holidays:true})
+                    if (prefrence.birthdays === "1")
+                        this.setState({birthday:true})
+                    if (prefrence.any_day_after_10pm === "1")
+                        this.setState({anyDayAfter10:true})
+                    if (prefrence.housecall === "1")
+                        this.setState({houseCall:true})
+
+                    this.setState({radiousLimit:prefrence.surge_radius_limit,
+                        duration:prefrence.surge_duration,
+                        price:prefrence.surge_price})
+
+
+                } else {
+                    this.setState({showLoading: false});
+                    if (response.ResultType === 0) {
+                        alert(response.Message);
+                    }
+                }
+            }).catch(error => {
+            this.setState({showLoading: false});
+            //console.error('Errorr:', error);
+            console.log('Error:', error);
+            alert("Error: " + error);
+        });
     }
 
     setSurgePrice() {
@@ -244,6 +294,19 @@ export default class SurgePricing extends Component {
                 }]}>
                     <Text style={globalStyles.buttonText}>DONE</Text>
                 </TouchableOpacity>
+
+                {this.state.showLoading && <View style={{
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor: "transparent",
+                    position: "absolute",
+                    opacity: 1,
+                    alignItems: "center",
+                    justifyContent: "center"
+                }}>
+                    <Image resizeMode={"contain"} source={require("../../../assets/images/loading.gif")}
+                           style={{width: 100, height: 100, opacity: 1,}}/>
+                </View>}
             </View>
         );
     }

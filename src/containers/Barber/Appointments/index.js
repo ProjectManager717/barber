@@ -35,8 +35,8 @@ export default class Appointments extends Component {
                 <Image style={styles.leftIcon} source={item.ic}/>
                 <Text style={styles.row_title}>{item.title}</Text>
                 <Switch
-                    onTintColor="#00D200"
-                    thumbTintColor="#fff"
+                    trackColor="#00D200"
+                    thumbColor="#fff"
                     value={true} style={{
                     position: 'absolute',
                     top: 5,

@@ -205,8 +205,8 @@ export default class BarberEditProfile extends Component {
 
                 <Text style={[styles.row_title, {fontWeight: "bold", fontSize: 17}]}>{item.title}</Text>
                 <Switch
-                    onTintColor="#00D200"
-                    thumbTintColor="#fff"
+                    trackColor="#00D200"
+                    thumbColor="#fff"
                     value={this.state.houseCall}
                     onValueChange={() => this.changeHouseCall()}
                     style={{

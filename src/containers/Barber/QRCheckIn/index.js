@@ -26,6 +26,7 @@ export default class QRCheckIn extends Component {
     });
   }
 
+
   render() {
     return (
       <View style={styles.container}>
@@ -67,7 +68,6 @@ export default class QRCheckIn extends Component {
                     ratioOverlayColor: '#00000077' // optional
                 }}
                 onReadQRCode={(event) => console.log("QRScan =="+event.nativeEvent.qrcodeStringValue)} // optional
-
             />
         </View>
         <TouchableOpacity style={[globalStyles.button,{marginTop:70, marginBottom:30}]} onPress={()=>{

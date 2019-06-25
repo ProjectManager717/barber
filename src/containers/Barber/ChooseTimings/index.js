@@ -123,7 +123,9 @@ export default class ChooseTimings extends Component {
                     }
                 }
             }).catch(error => {
-            console.error('Errorr:', error);
+            //console.error('Errorr:', error);
+            console.log('Error:', error);
+            alert("Error: "+error);
         });
     };
 
@@ -181,7 +183,9 @@ export default class ChooseTimings extends Component {
 
                 }
             }).catch(error => {
-            console.error('Errorr:', error);
+            //console.error('Errorr:', error);
+            console.log('Error:', error);
+            alert("Error: "+error);
         });
         this.props.navigation.navigate("Subscription")
     }
