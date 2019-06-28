@@ -6,6 +6,8 @@ import {globalStyles} from "../../../themes/globalStyles";
 import {Header} from "react-native-elements";
 import CheckBoxSquare from "../../../components/CheckBox";
 
+import Preference from "react-native-preference";
+
 export default class Subscription extends Component {
     state = {
         basic: {
@@ -79,8 +81,10 @@ export default class Subscription extends Component {
 
     Onsubmit() {
         if (this.state.SelectedBasic === true) {
+            Preference.set("userPackage","basic")
             this.props.navigation.navigate("PaymentMethod");
         } else if (this.state.SelectedSupreme === true) {
+            Preference.set("userPackage","supreme")
             this.props.navigation.navigate("PaymentMethod")
         }
 
@@ -133,6 +137,7 @@ export default class Subscription extends Component {
                             <View style={{
                                 width: "30%",
                                 alignItems: "center",
+                                justifyContent:"center",
                                 end: 85,
                                 backgroundColor: this.state.basic.basicBgColor,
                                 height: 25,
@@ -172,7 +177,7 @@ export default class Subscription extends Component {
                                             fontFamily: "AvertaStd-Thin"
                                         }}
                                     >Join the CLYPR team and bulid up your clientele! Have your own profile and let your
-                                        clients book using your schedule</Text>
+                                        clients book using your schedule.</Text>
                                     <View style={{marginLeft: 10, flexDirection: "row", marginBottom: 10}}>
                                         <Image source={this.state.basic.basicCheck}
                                                style={{
@@ -205,6 +210,7 @@ export default class Subscription extends Component {
                                 width: "30%",
                                 alignItems: "center",
                                 end: 85,
+                                justifyContent:"center",
                                 backgroundColor: this.state.supreme.supremeBgColor,
                                 height: 27,
                                 marginTop: 20,

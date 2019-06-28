@@ -61,10 +61,10 @@ export default class Home extends Component {
                         <View>
                             <View style={styles.infoContainer}>
                                 <Text style={[styles.allFontStyle, styles.name]}>
-                                    Anthony Martial
+                                    {Preference.get("userName")}
                                 </Text>
                                 <Text style={{color: colors.white, fontSize: 12}}>
-                                    Barber with 9 years of experience
+                                    Barber with {Preference.get("yearExperiance")} years of experience
                                 </Text>
                                 <View style={styles.review}>
                                     <Image

@@ -149,17 +149,17 @@ export default class Settings extends Component {
           </TouchableOpacity>
           <Text style={styles.txtHeader}>FOLLOW US</Text>
             <View style={[globalStyles.rowBackground, styles.row]}>
-                <TouchableOpacity onPress={ ()=>{ Linking.openURL('https://facebook.com/teamCLYPR')}}>
+                <TouchableOpacity onPress={ ()=>{ Linking.openURL('https://www.facebook.com/teamCLYPR')}}>
                     {this.renderRow({title:"Facebook",ic:require("../../assets/images/ic_settings_fb.png")})}
                 </TouchableOpacity>
                 {this.renderSeperator()}
-                <TouchableOpacity onPress={ ()=>{ Linking.openURL('https://instagram.com/teamclypr')}}>
+                <TouchableOpacity onPress={ ()=>{ Linking.openURL('https://www.instagram.com/clypr')}}>
                     {this.renderRow({title:"Instagram",ic:require("../../assets/images/ic_setting_instagram.png")})}
                 </TouchableOpacity>
             </View>
           <Text style={styles.txtHeader}>ABOUT</Text>
             <View style={[globalStyles.rowBackground, styles.row]}>
-                <TouchableOpacity onPress={ ()=>{ Linking.openURL('https://clypr.co')}}>
+                <TouchableOpacity onPress={ ()=>{ Linking.openURL('https://www.clypr.co')}}>
                     {this.renderRow({title:"Website",ic:require("../../assets/images/ic_settings_website.png")})}
                 </TouchableOpacity>
                 {this.renderSeperator()}

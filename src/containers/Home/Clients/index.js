@@ -16,6 +16,7 @@ import {Header, AirbnbRating} from "react-native-elements";
 import {Colors} from "../../../themes";
 import {styles} from "./styles";
 import {globalStyles} from "../../../themes/globalStyles";
+import ClientQR from "../../Settings/ClientQR";
 
 
 export default class ClientHome extends Component {
@@ -325,7 +326,7 @@ export default class ClientHome extends Component {
                     leftComponent={
                         <TouchableOpacity
                             onPress={() => {
-                                this.props.navigation.navigate("QRCheckIn");
+                                this.props.navigation.navigate("ClientQR");
                             }}
                         >
                             <Image

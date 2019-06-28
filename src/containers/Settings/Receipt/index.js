@@ -1,5 +1,15 @@
 import React, {Component} from "react";
-import {View, Switch, Text, StyleSheet, Image, ScrollView, TouchableOpacity, ImageBackground} from "react-native";
+import {
+    View,
+    Switch,
+    Text,
+    StyleSheet,
+    Image,
+    ScrollView,
+    TouchableOpacity,
+    ImageBackground,
+    Linking
+} from "react-native";
 import {Colors} from "../../../themes";
 import {globalStyles} from "../../../themes/globalStyles";
 //import { styles } from "./styles";
@@ -94,7 +104,7 @@ export default class Receipt extends Component {
                                 justifyContent: "flex-end",
                                 fontSize: 12
                             }}>12th September
-                                2019.9:30am</Text>
+                                2019 - 9:30am</Text>
                         </View>
                         <View style={[globalStyles.rowBackground, styles.row]}>
                             <Text style={{
@@ -106,7 +116,7 @@ export default class Receipt extends Component {
                                 marginTop: 10
                             }}>To be paid to:</Text>
                             {this.renderRow({
-                                title: "Anthony Matrial(CYLPR Barbershop)",
+                                title: "Anthony Matrial (CYLPR Barbershop)",
                                 ic: require("../../../assets/images/ic_barbershop.png"),
                             })}
                             {this.renderRow({
@@ -145,7 +155,7 @@ export default class Receipt extends Component {
                             </View>
                             {this.renderRow2({
                                 title: "Service Fee",
-                                value: "$1.25",
+                                value: "$1.00",
                             })}
                             {this.renderRow2({
                                 title: "Tip Left",
@@ -236,10 +246,10 @@ export default class Receipt extends Component {
                             marginBottom: 20
                         }}>
                             <Text style={{fontSize: 16, color: "white"}}>{"Does something look wrong?"}</Text>
-                            <View style={{flexDirection: "row"}}>
+                            <TouchableOpacity onPress={()=>Linking.openURL('mailto:cbanks@clypr.co?subject=Receipt%201234')} style={{flexDirection: "row"}}>
                                 <Text style={{fontSize: 16, color: "red"}}>{"Contact us "}</Text>
                                 <Text style={{fontSize: 16, color: "white"}}>{"if you have any disputes"}</Text>
-                            </View>
+                            </TouchableOpacity>
                         </View>
                     </View>
                 </ScrollView>

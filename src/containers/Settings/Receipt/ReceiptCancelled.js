@@ -28,7 +28,6 @@ export default class ReceiptCancelled extends Component {
     }
 
 
-
     renderSeperator() {
         return <View style={{height: 0.5, backgroundColor: Colors.lightGrey}}></View>
     }
@@ -63,25 +62,22 @@ export default class ReceiptCancelled extends Component {
 
 
                     <View
-                        style={{flex: 1, flexDirection: "column",marginBottom:150}}>
-                        <View style={{width:"100%",alignItems:"center"}}>
+                        style={{flex: 1, flexDirection: "column", marginBottom: 150}}>
+                        <View style={{width: "100%", alignItems: "center"}}>
                             <Image
                                 source={require("../../../assets/images/logo.png")}
                                 style={{marginTop: 20, resizeMode: 'contain', width: 200}}/>
                         </View>
                         <Text style={styles.txtHeader}>CANCELLED</Text>
                         <View style={{width: "100%", flexDirection: "row", marginStart: 30}}>
-                            <Text
-                                style={{width: "40%", color: "white", justifyContent: "flex-start", fontSize: 12}}>Invoice
+                            <Text style={{width: "40%", color: "white", justifyContent: "flex-start", fontSize: 12}}>Invoice
                                 No.00305</Text>
                             <Text style={{
-                                width: "60%",
-                                color: "white",
                                 justifyContent: "flex-end",
-                                fontSize: 12
-                            }}><Text style={{color:"#71747A"}
-                            }  >12th September
-                                2019</Text>.9:30am</Text>
+                                fontSize: 12,
+                                color: "#71747A"
+                            }}>{"13th September 2019"}</Text>
+                            <Text style={{color: "white"}}>{" - 9:30am"}</Text>
                         </View>
                         <View style={[globalStyles.rowBackground, styles.row]}>
                             <Text style={{
@@ -93,11 +89,11 @@ export default class ReceiptCancelled extends Component {
                                 marginTop: 10
                             }}>To be paid to:</Text>
                             {this.renderRow({
-                                title: "Anthony Matrial(CYLPR Barbershop)",
+                                title: "Anthony Matrial (CYLPR Barbershop)",
                                 ic: require("../../../assets/images/ic_barbershop.png"),
                             })}
                             {this.renderRow({
-                                title: "305 Biscayne Blvd,Miami,FL 33132",
+                                title: "305 Biscayne Blvd, Miami, FL 33132",
                                 ic: require("../../../assets/images/location.png"),
                             })}
                             {this.renderSeperator()}
@@ -115,14 +111,14 @@ export default class ReceiptCancelled extends Component {
                                     color: "white",
                                     alignItems: "flex-start",
                                     fontSize: 16,
-                                    width:"75%",
+                                    width: "75%",
                                     fontWeight: "bold",
                                     marginStart: 10,
                                     marginTop: 10
                                 }}>{"Subtotal:"}</Text>
                                 <Text style={{
                                     color: "white",
-                                    width:"25%",
+                                    width: "25%",
                                     alignItems: "flex-end",
                                     fontSize: 16,
                                     fontWeight: "bold",
@@ -144,72 +140,62 @@ export default class ReceiptCancelled extends Component {
                                     color: "white",
                                     alignItems: "flex-start",
                                     fontSize: 16,
-                                    width:"75%",
+                                    width: "75%",
                                     fontWeight: "bold",
                                     marginStart: 10,
-                                    marginTop:5
+                                    marginTop: 5
                                 }}>{"Total:"}</Text>
                                 <Text style={{
                                     color: "white",
-                                    width:"25%",
+                                    width: "25%",
                                     alignItems: "flex-end",
                                     fontSize: 16,
                                     fontWeight: "bold",
                                     marginStart: 10,
-                                    marginTop:5
+                                    marginTop: 5
                                 }}>{"$61.75"}</Text>
 
                             </View>
                             {this.renderSeperator()}
 
 
-
                             <Text style={{
                                 color: "white",
                                 alignItems: "flex-start",
                                 fontSize: 16,
-                                width:"75%",
+                                width: "75%",
                                 fontWeight: "bold",
                                 marginStart: 10,
-                                marginTop:5,
+                                marginTop: 5,
                             }}>{"Cancelled by:"}</Text>
                             <Text
                                 style={{
                                     color: "white",
                                     alignItems: "flex-start",
                                     fontSize: 14,
-                                    width:"75%",
-                                    marginStart: 10,}}>{"Dani Alvez (Client) "}</Text>
+                                    width: "75%",
+                                    marginStart: 10,
+                                }}>{"Dani Alvez (Client) "}</Text>
                             <View style={{width: "100%", flexDirection: 'row', height: 36}}>
                                 <Text style={{
                                     color: "white",
                                     alignItems: "flex-start",
                                     fontSize: 15,
-                                    width:"40%",
+                                    width: "40%",
                                     fontWeight: "bold",
                                     marginStart: 10,
-                                    marginTop:5,
+                                    marginTop: 10,
                                 }}>{"Time Cancelled:"}</Text>
                                 <Text style={{
                                     color: "white",
-                                    width:"55%",
-                                    textAlign:"center",
+                                    width: "55%",
+                                    textAlign: "center",
                                     fontSize: 14,
                                     //backgroundColor:"red",
-
-
-
-                                    marginTop:5
+                                    marginTop: 10
                                 }}>{"2nd September at 10:00 AM"}</Text>
-
-
                             </View>
-
                         </View>
-
-
-
-
                     </View>
                 </ScrollView>
 

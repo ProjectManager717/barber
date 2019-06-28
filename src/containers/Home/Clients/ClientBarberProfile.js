@@ -7,7 +7,7 @@ import {
     ImageBackground,
     Image,
     FlatList,
-    TouchableOpacity, TouchableWithoutFeedback,
+    TouchableOpacity, TouchableWithoutFeedback, Share
 
 } from "react-native";
 import Header from "../../../components/Header";
@@ -36,7 +36,9 @@ export default class ClientBarberProfile extends Component {
 
     rightAction() {
         //this.props.navigation.navigate('BarberEditProfile');
-        this.props.navigation.push('Share');
+        //this.props.navigation.push('Share');
+        Share.share({message: "Share Profile"}).then(result => {
+        }).catch(errorMessage => console.log(errorMsg));
     }
 
     leftAction() {
@@ -391,20 +393,20 @@ export default class ClientBarberProfile extends Component {
         //alert("dayselected " + indx);
         let monthDaysData = this.state.monthDays;
         for (let s = 0; s < monthDaysData.length; s++) {
-            console.log("slectDay-loop"+s);
+            console.log("slectDay-loop" + s);
             if (s === indx) {
-                console.log("slectDay-loop-index-true"+s);
+                console.log("slectDay-loop-index-true" + s);
                 monthDaysData[s].dayColor = "green";
                 monthDaysData[s].bottomColor = "green";
             } else {
-                console.log("slectDay-loop-index-false"+s);
+                console.log("slectDay-loop-index-false" + s);
                 monthDaysData[s].dayColor = "#ffffff";
                 monthDaysData[s].bottomColor = "transparent";
             }
         }
-        console.log("NEWMonthdata1 ",JSON.stringify(monthDaysData));
-        this.setState({monthDays: monthDaysData},()=>{
-        console.log("NEWMonthdata ",JSON.stringify(this.state.monthDays));
+        console.log("NEWMonthdata1 ", JSON.stringify(monthDaysData));
+        this.setState({monthDays: monthDaysData}, () => {
+            console.log("NEWMonthdata ", JSON.stringify(this.state.monthDays));
         });
     }
 
@@ -451,9 +453,9 @@ export default class ClientBarberProfile extends Component {
                                     <Text style={{color: colors.white, fontSize: 12}}>
                                         CLYPR Barbershop
                                     </Text>
-                                    <Image resizeMode={"contain"}
+                                    {/*<Image resizeMode={"contain"}
                                            style={{height: 8, width: 8, marginStart: 10, marginTop: 5}}
-                                           source={require("../../../assets/images/arrow_down.png")}/>
+                                           source={require("../../../assets/images/arrow_down.png")}/>*/}
                                 </View>
 
                                 <View style={styles.review}>

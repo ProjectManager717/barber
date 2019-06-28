@@ -31,9 +31,9 @@ export default class BarberProfile extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            barberName: "Anthony Martial",
+            barberName: Preference.get("userName"),
             barberImage: "",
-            barberShopName: "CLYPR Barbershop",
+            barberShopName: Preference.get("userShopname"),
             barberRatting: 5,
             barberReviews: 17,
             ListData: [

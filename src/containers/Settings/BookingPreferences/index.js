@@ -164,12 +164,12 @@ export default class BookingPreferences extends Component {
                 <Image style={styles.leftIcon} source={item.ic2}/>
                 <Text style={styles.row_title}>{item.title}</Text>
             </View>
-            <Text style={{marginStart: "16%", color: "grey", fontSize: 12, fontStyle: "italic"}}>{item.hint}</Text>
+            <Text style={{marginStart: "16%", color: "grey", fontSize: 12, fontStyle: "italic",marginBottom:3}}>{item.hint}</Text>
         </View>;
     }
 
     renderRowAppointment(item) {
-        return <View style={{flex: 1, flexDirection: 'row', height: 28}}>
+        return <View style={{flex: 1, flexDirection: 'row', height: 32}}>
             <Image style={styles.leftIcon} source={item.ic}/>
             <Text style={styles.row_title}>{item.title}</Text>
             {item.title === "Auto Confirm" && <Switch
@@ -198,9 +198,9 @@ export default class BookingPreferences extends Component {
     }
 
     renderRowTimer(item) {
-        return <View style={{flex: 1, flexDirection: 'row', height: 25}}>
+        return <View style={{flex: 1, flexDirection: 'row', height: 35}}>
             <Image style={styles.leftIcon} source={item.ic}/>
-            <Text style={styles.row_title}>{item.title}</Text>
+            <Text style={[styles.row_title]}>{item.title}</Text>
         </View>;
     }
 
@@ -297,16 +297,17 @@ export default class BookingPreferences extends Component {
                     <Text style={styles.txtHeader}>LAST MINUTE BOOKING</Text>
                     <View style={[globalStyles.rowBackground, styles.row]}>
                         {this.renderRowTimer({
-                            title: "30 Minutes",
+                            /*title: "30 Minutes",*/
+                            title:"Client can Book Appointment with you up until last minutes ",
                             ic: require("../../../assets/images/mins_30.png")
                         })}
-                        <Text style={{
+                        {/*<Text style={{
                             marginStart: "10%",
                             color: "grey",
                             fontSize: 12,
                             fontStyle: "italic"
-                        }}>{"Limited"}</Text>
-                        <View style={{
+                        }}>{"Limited"}</Text>*/}
+                        {/*<View style={{
                             marginStart: 30, marginEnd: 10, height: 18, marginBottom: 8, backgroundColor: "#5A5B68",
                             borderRadius: 10, justifyContent: "center"
                         }}>
@@ -315,7 +316,7 @@ export default class BookingPreferences extends Component {
                                 fontSize: 10,
                                 color: "white",
                             }}>{"Client can Book Appointment with you up until last minutes "}</Text>
-                        </View>
+                        </View>*/}
                     </View>
                     {this.renderRowWithCheck({title: "Every 15 Minutes", value: this.state.fifteenMin, indx: 1})}
                     {this.renderRowWithCheck({title: "Every 20 Minutes", value: this.state.twentyMin, indx: 2})}
@@ -324,15 +325,16 @@ export default class BookingPreferences extends Component {
                     <Text style={styles.txtHeader}>AVAILABILITY</Text>
                     <View style={[globalStyles.rowBackground, styles.row]}>
                         {this.renderRowTimer({
-                            title: "Every 30 Minutes",
+                           /* title: "Every 30 Minutes",*/
+                            title:"Calender Interval",
                             ic: require("../../../assets/images/every_30_min.png"),
                         })}
-                        <Text style={{
+                        {/*<Text style={{
                             marginStart: 30,
                             color: "grey",
                             fontSize: 12,
                             fontStyle: "italic"
-                        }}>{"Calender Interval"}</Text>
+                        }}>{"Calender Interval"}</Text>*/}
                     </View>
                     {this.renderRowWithCheck({title: "Every 15 Minutes", value: this.state.fifteenMin1, indx: 4})}
                     {this.renderRowWithCheck({title: "Every 20 Minutes", value: this.state.twentyMin1, indx: 5})}

@@ -96,17 +96,17 @@ export default class Cancellations extends Component {
                 this.setState({thirtyMin: true,twoHour: false,oneHour:false})
            /* else
                 this.setState({thirtyMin: false})*/
-        } else if (val === "Booking Preferences") {
+        } else if (val === "Charge 100%") {
             if (this.state.bookingPrefrence === false)
                 this.setState({bookingPrefrence: true,cancellationNoShow:false,surgePrice:false})
            /* else
                 this.setState({bookingPrefrence: false})*/
-        } else if (val === "Cancellations & No-Shows") {
+        } else if (val === "Charge 75% with 1 reschedule") {
             if (this.state.cancellationNoShow === false)
                 this.setState({cancellationNoShow: true,bookingPrefrence: false,surgePrice:false})
             /*else
                 this.setState({cancellationNoShow: false})*/
-        } else if (val === "Surge Pricing") {
+        } else if (val === "Charge 50% with 2 reschedule") {
             if (this.state.surgePrice === false)
                 this.setState({surgePrice: true,bookingPrefrence: false,cancellationNoShow:false})
             /*else
@@ -130,7 +130,7 @@ export default class Cancellations extends Component {
     }
 
     renderRow(item) {
-        return <View style={{flex: 1, flexDirection: 'row', height: 22, marginLeft: 40}}>
+        return <View style={{flex: 1, flexDirection: 'row', height: 25, marginLeft: 40}}>
             <CheckBox onClick={() => this.checkBox(item.title)
             } isChecked={item.value} style={{alignSelf: 'center'}}/>
             <Text style={styles.row_title}>{item.title}</Text>
@@ -178,8 +178,8 @@ export default class Cancellations extends Component {
                         </View>
                     </View>
                     {this.renderRow({title: "2 Hours Ahead,No Fee, 1 Reschedule", value: this.state.twoHour})}
-                    {this.renderRow({title: "1 Hour Ahead, 25% Fee, 1 Reschedule", value: this.state.oneHour})}
-                    {this.renderRow({title: "30 Minutes Ahead, 75% Fee, 0 Reschedule", value: this.state.thirtyMin})}
+                    {this.renderRow({title: "1 Hour Ahead, 15% Fee, 1 Reschedule", value: this.state.oneHour})}
+                    {this.renderRow({title: "30 Minutes Ahead, 25% Fee, 1 Reschedule", value: this.state.thirtyMin})}
                     <Text style={styles.txtHeader}>NO-SHOWS</Text>
                     <View style={[globalStyles.rowBackground, styles.row]}>
                         <View style={{flex: 1, flexDirection: 'row', height: 36}}>
@@ -189,13 +189,12 @@ export default class Cancellations extends Component {
                                 position: 'absolute',
                                 right: 14,
                                 alignSelf: 'center',
-                                tintColor: 'white'
-                            }}/>
+                                tintColor: 'white'}}/>
                         </View>
                     </View>
-                    {this.renderRow({title: "Booking Preferences", value: this.state.bookingPrefrence})}
-                    {this.renderRow({title: "Cancellations & No-Shows", value: this.state.cancellationNoShow})}
-                    {this.renderRow({title: "Surge Pricing", value: this.state.surgePrice})}
+                    {this.renderRow({title: "Charge 100%", value: this.state.bookingPrefrence})}
+                    {this.renderRow({title: "Charge 75% with 1 reschedule", value: this.state.cancellationNoShow})}
+                    {this.renderRow({title: "Charge 50% with 2 reschedule", value: this.state.surgePrice})}
 
                     <TouchableOpacity style={[globalStyles.button, {marginTop: 70, marginBottom: 30, width: '70%'}]}
                                       onPress={() => {
@@ -252,7 +251,7 @@ const styles = StyleSheet.create({
     },
     row_title: {
         color: Colors.white,
-        marginTop: 5,
+        marginTop: 0,
         marginLeft: 10,
         alignSelf: 'center',
         fontFamily: "AvertaStd-Regular"

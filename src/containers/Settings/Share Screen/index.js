@@ -23,7 +23,8 @@ const {width, height} = Dimensions.get("window");
 
 const link = "www.clypr.co/pro/" + Preference.get("userName");
 const userName = Preference.get("userName");
-const userAddress = Preference.get("userAddress");
+const shopName =Preference.get("userShopname");;
+const userAddress =Preference.get("userAddress");;
 
 export default class Share extends Component {
 
@@ -39,7 +40,7 @@ export default class Share extends Component {
     saveToClipboard = async (val) => {
         //To copy the text to clipboard
         await Clipboard.setString(val);
-        alert('Copied to Clipboard!');
+        alert('Link Copied');
     };
 
     downloadImage() {
@@ -157,8 +158,13 @@ export default class Share extends Component {
                                         color: "black",
                                         fontSize: 8,
                                     }}
-
-                                >{userAddress}</Text>
+                                >{shopName}</Text>
+                                <Text
+                                    style={{
+                                        color: "black",
+                                        fontSize: 8,
+                                    }}
+                                >{"("+userAddress+")"}</Text>
                             </View>
                             <View style={{
                                 flexDirection: "row",
@@ -189,6 +195,7 @@ export default class Share extends Component {
                                         margin: 5,
                                         marginStart: 7,
                                         marginEnd: 7,
+                                        color:"red",
                                         fontWeight: "bold"
                                     }}>{"Book your appointment"}</Text>
                                 </TouchableOpacity>
@@ -295,7 +302,12 @@ export default class Share extends Component {
                                     color: "black",
                                     fontSize: 8,
 
-                                }}>{userAddress}</Text>
+                                }}>{shopName}</Text>
+                                <Text style={{
+                                    color: "black",
+                                    fontSize: 8,
+
+                                }}>{"("+ userAddress+")"}</Text>
                             </View>
                             <View style={{
                                 flexDirection: "row",

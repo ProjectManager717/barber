@@ -14,7 +14,8 @@ export default class ClientSupremeReview extends Component {
     constructor() {
         super();
         this.state = {
-            dataSource: {}
+            dataSource: {},
+            supremeReviewBlock:false,
         };
     }
 
@@ -118,7 +119,7 @@ export default class ClientSupremeReview extends Component {
                     </View>
                 </View>
 
-                <View style={{
+                {this.state.supremeReviewBlock && <View style={{
                     flexDirection: "row",
                     justifyContent: "center",
                     alignItems: "center",
@@ -277,7 +278,7 @@ export default class ClientSupremeReview extends Component {
                             </View>
                         </TouchableOpacity>
                     </View>
-                </View>
+                </View>}
 
                 <FlatList
                     data={this.state.dataSource}

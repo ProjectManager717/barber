@@ -38,12 +38,12 @@ export default class BarberEditProfile extends Component {
         super(props);
         console.disableYellowBox = true;
         this.state = {
-            barberPackage:"basic",
+            barberPackage: "basic",
             houseCall: false,
             Experience: "1",
             pickMonth: false,
             experience: "0",
-            userShopName: "CLYPR Barbershop",
+            userShopName: Preference.get("userShopname"),
             DialogVisible: false,
             DialogBarberShop: false,
             DialogInstaUsername: false,
@@ -93,13 +93,28 @@ export default class BarberEditProfile extends Component {
         }
     }
 
+    componentDidMount(): void {
+        if(this.state.userShopName==="" ||this.state.userShopName===null)
+        {
+            this.setState({userShopName:"Enter Shop name"})
+        }
+    }
+
+    saveData() {
+        Preference.set({
+            userShopname:this.state.userShopName,
+            yearExperiance:this.state.experience,
+            userInsta:this.state.InstaUsername,
+            userHouseCall:this.state.houseCall,
+            userAddressL:this.state.places[0].formatted_address,
+        })
+    }
+
     changeHouseCall() {
         console.log("housecall clicked");
-        if(this.state.barberPackage==="basic")
-        {
+        if (this.state.barberPackage === "basic") {
             alert("To activate this feature please get Supreme Membership.");
-        }else
-        {
+        } else {
             if (this.state.houseCall === true)
                 this.setState({houseCall: false})
             else
@@ -111,7 +126,7 @@ export default class BarberEditProfile extends Component {
     renderGooglePlacesInput = () => {
         return (
             <GooglePlacesAutocomplete
-                placeholder='Location'
+                placeholder="Location Address"
                 minLength={2} // minimum length of text to search
                 autoFocus={false}
                 returnKeyType={'search'} // Can be left out for default return key https://facebook.github.io/react-native/docs/textinput.html#returnkeytype
@@ -125,9 +140,10 @@ export default class BarberEditProfile extends Component {
 
                     this.state.places.push(details);
                     this.setState({places: this.state.places});
-                    console.log("hello2" + JSON.stringify(this.state.places));
+                    Preference.set("userAddress", this.state.places[0].formatted_address);
+                    console.log("hello2" + JSON.stringify(this.state.places[0].formatted_address));
                 }}
-                getDefaultValue={() => ''}
+                getDefaultValue={() => Preference.get("userAddress")}
                 query={{
                     // available options: https://developers.google.com/places/web-service/autocomplete
                     key: 'AIzaSyD5YuagFFL0m0IcjCIvbThN25l0m2jMm2w',
@@ -142,18 +158,14 @@ export default class BarberEditProfile extends Component {
                     },
 
                     textInputContainer: {
-
                         backgroundColor: Colors.gray,
                         borderWidth: 0.5,
                         borderColor: Colors.border,
                         borderRadius: 5,
-
                         flexDirection: "row",
                         margin: 1
-
                     },
                     description: {
-
                         color: "white",
                         backgroundColor: "transparent"
                     },
@@ -181,20 +193,15 @@ export default class BarberEditProfile extends Component {
 
 
                 filterReverseGeocodingByTypes={['locality', 'administrative_area_level_3']} // filter the reverse geocoding results by types - ['locality', 'administrative_area_level_3'] if you want to display only cities
-
-
                 debounce={200} // debounce the requests in ms. Set to 0 to remove debounce. By default 0ms.
-
                 renderRightButton={() =>
                     <View style={{justifyContent: "center", alignItems: "center"}}>
                         <Image source={require('../../../assets/images/edit.png')}
                                style={{resizeMode: "contain", width: 20, height: 20, marginEnd: 15}}/>
-
                     </View>
 
                 }
                 enablePoweredByContainer={false}
-
             />
         );
     };
@@ -326,11 +333,13 @@ export default class BarberEditProfile extends Component {
         this.setState({ListData: services, DialogAddService: false});
     }
 
-    setInstagramID()
-    {
+    setInstagramID() {
         this.setState({DialogInstaUsername: false});
-        Preference.set("userInsta",this.state.InstaUsername);
+        Preference.set("userInsta", this.state.InstaUsername);
     }
+
+
+
 
     render() {
         return (
@@ -373,7 +382,7 @@ export default class BarberEditProfile extends Component {
                         <View>
                             <View style={[styles.infoContainer]}>
                                 <Text style={[styles.allFontStyle, styles.name]}>
-                                    Anthony Martial</Text>
+                                    {Preference.get("userName")}</Text>
                                 <View style={{flexDirection: "row"}}>
                                     <Text style={{color: colors.white, fontSize: 12,}}>
                                         {this.state.userShopName}</Text>
@@ -404,7 +413,10 @@ export default class BarberEditProfile extends Component {
                                                     Name</Text>
                                                 <TextInput Color={"white"} placeholder={"Enter Shop Name"}
                                                            placeholderTextColor={"grey"}
-                                                           onChangeText={(text) => this.setState({userShopName: text})}
+                                                           onChangeText={(text) => {
+                                                               this.setState({userShopName: text});
+                                                               Preference.set("userShopname", this.state.userShopName)
+                                                           }}
                                                            style={{
                                                                fontWeight: "bold",
                                                                fontSize: 16,
@@ -600,7 +612,7 @@ export default class BarberEditProfile extends Component {
                                                    color: "black"
                                                }}/>
 
-                                    <TouchableOpacity onPress={()=>this.setInstagramID()}
+                                    <TouchableOpacity onPress={() => this.setInstagramID()}
                                                       style={[globalStyles.button, {
                                                           height: 35,
                                                           width: "80%",
@@ -848,7 +860,6 @@ export default class BarberEditProfile extends Component {
                     <View style={[globalStyles.rowBackground, styles.row]}>
                         {this.renderRowSurge({
                             title: "Housecall",
-
                             hint: "Supreme MemberShip Only"
                         })}
 
@@ -902,7 +913,7 @@ export default class BarberEditProfile extends Component {
                         </View>
                     </View>
                     <View style={{justifyContent: 'center', alignItems: "center", width: "100%"}}>
-                        <TouchableOpacity style={[globalStyles.button, {
+                        <TouchableOpacity onPress={()=>this.saveData()} style={[globalStyles.button, {
                             height: 35,
                             width: 250,
                             backgroundColor: "red",
@@ -1027,8 +1038,5 @@ const styles = StyleSheet.create({
     reviewText: {
         fontSize: 16,
         color: colors.white,
-
     }
-
-
 });
