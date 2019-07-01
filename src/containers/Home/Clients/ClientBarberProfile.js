@@ -90,7 +90,7 @@ export default class ClientBarberProfile extends Component {
                 selected: "transparent",
                 surgePrice: false,
             }],
-            savedCard: ["42424242424242424242", "42424242424242424242", "42424242424242424242"],
+            savedCard: ["************4242", "************4242", "************4242"],
             DialogVisible: false,
             barberFav: false,
             month: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
@@ -414,7 +414,6 @@ export default class ClientBarberProfile extends Component {
         return (
             <ScrollView>
                 <View style={styles.container}>
-
                     <Header
                         leftAction={this.leftAction.bind(this)}
                         rightAction={this.rightAction.bind(this)}
@@ -555,7 +554,7 @@ export default class ClientBarberProfile extends Component {
                                             alignItems: "center"
                                         }]}>
                                             <CheckBoxSquare onClick={() => this.checkBoxClicked(item.id)}
-                                                            isChecked={item.check} uncheckedCheckBoxColor={"#84858C"}/>
+                                                            isChecked={item.check} uncheckedCheckBoxColor={"#272727"}/>
                                             <Text style={{color: "white", fontSize: 12}}>   {item.title} </Text>
                                         </View>
                                         <View style={[{flexDirection: "row", width: "25%", alignItems: "center"}]}>
@@ -619,7 +618,7 @@ export default class ClientBarberProfile extends Component {
                             </View>
                             }/>
                         <View style={{height: 0.5, width: "100%", backgroundColor: "grey", marginBottom: 10}}/>
-                        <FlatList
+                        {(this.state.dayData.length>0)&&<FlatList
                             data={this.state.dayData}
                             /* data={this.state.listData}*/
                             renderItem={({item, index}) => this.renderItem(item, index)}
@@ -627,7 +626,10 @@ export default class ClientBarberProfile extends Component {
                             extraData={this.state}
                             showsHorizontalScrollIndicator={false}
                             keyExtractor={(item, index) => index}
-                            horizontal={true}/>
+                            horizontal={true}/>}
+                        {!(this.state.dayData.length>0)&&<View style={{width:"100%",justifyContent:"center",alignItems:"center",backgroundColor:"transparent"}}>
+                            <Text style={{color:"white",fontSize:15}}>{"Fully Booked"}</Text>
+                        </View>}
                     </View>
                     <View
                         style={{flexDirection: "column", height: 100, width: "100%", marginBottom: 30, marginTop: 30}}>
@@ -665,7 +667,7 @@ export default class ClientBarberProfile extends Component {
                                         <Text style={{
                                             fontWeight: "bold",
                                             color: "white"
-                                        }}>{"$" + this.state.totalPriceService}</Text>
+                                        }}>{"$1.00"}</Text>
                                     </Text>
                                 </View>
                             </View>
@@ -716,16 +718,16 @@ export default class ClientBarberProfile extends Component {
                         onTouchOutside={() => {
                             this.setState({DialogVisible: false});
                         }}
-                        width={0.6}
-                        height={0.3}>
+                        width={0.6}>
                         <DialogContent>
+                            <Text style={{fontSize: 18, color: "black",fontWeight:"bold",marginBottom:10,marginTop:10}}>{"Please select your Card"}</Text>
                             <FlatList
                                 keyExtractor={(item, index) => index.toString()}
                                 style={{marginTop: 10}}
                                 data={this.state.savedCard}
                                 renderItem={({item}) =>
                                     <TouchableOpacity onPress={() => this.cardSelected(item)}>
-                                        <Text style={{fontSize: 16, color: "black"}}>{"Card # " + item}</Text>
+                                        <Text style={{fontSize: 18, color: "black",margin:10}}>{"Card # " + item}</Text>
                                         <View style={{width: "100%", height: 0.5, backgroundColor: "black"}}/>
                                     </TouchableOpacity>
                                 }

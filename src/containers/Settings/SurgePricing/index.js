@@ -202,7 +202,7 @@ export default class SurgePricing extends Component {
                         </View>*/}
                     </View>
                     {this.renderRowWithCheck({title: "Holidays", value: this.state.holidays,fontSize:17,infoIcon:true})}
-                    {this.renderRowWithCheck({title: "Birthday-April 11,1980", value: this.state.birthday,fontSize:17,infoIcon:false})}
+                    {this.renderRowWithCheck({title: "Birthday-April "+Preference.get("userDOB"), value: this.state.birthday,fontSize:17,infoIcon:false})}
                     {this.renderRowWithCheck({title: "Any Day After 10 PM", value: this.state.anyDayAfter10,fontSize:17,infoIcon:false})}
                     {this.renderRowWithCheck({title: "HouseCall", value: this.state.houseCall,fontSize:17,infoIcon:false})}
 

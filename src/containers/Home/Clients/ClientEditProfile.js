@@ -9,7 +9,7 @@ import {
     TouchableOpacity,
     ImageBackground,
     Dimensions,
-    TextInput,
+    TextInput, FlatList,
 } from "react-native";
 import colors from "../../../themes/colors";
 import {globalStyles} from "../../../themes/globalStyles";
@@ -22,6 +22,8 @@ import ImagePicker from 'react-native-image-picker';
 import {constants} from "../../../utils/constants";
 import Preference from "react-native-preference";
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
+import Dialog, {DialogContent} from 'react-native-popup-dialog';
+import PopupDialog from "../../Barber/Profile/BarberEditProfile";
 
 const options = {
     title: 'Select Image',
@@ -39,12 +41,13 @@ export default class ClientEditProfile extends Component {
         super(props);
         this.state = {
             avatarSource: null,
-            userName: "Enter your Name",
+            userName: "",
             userAddress: "Enter your address",
             editLocation: false,
             editName: false,
             isConnected: true,
             places: [],
+            DialogVisible:false,
         }
 
     }
@@ -308,29 +311,17 @@ export default class ClientEditProfile extends Component {
                             <View style={[styles.infoContainer]}>
                                 <View style={{
                                     flexDirection: "row",
-                                    width: "80%",
                                     justifyContent: "center",
                                     alignItems: "center"
                                 }}>
-                                    {!this.state.editName &&
                                     <Text style={{
                                         fontWeight: "bold",
                                         marginTop: 15,
                                         marginBottom: 15,
                                         fontSize: 16,
                                         color: "white"
-                                    }}>{this.state.userName}</Text>}
-                                    {this.state.editName &&
-                                    <TextInput Color={"white"} placeholder={"Enter your Name"}
-                                               placeholderTextColor={"white"}
-                                               onChangeText={(text) => this.setState({userName: text})}
-                                               style={{
-                                                   fontWeight: "bold",
-                                                   fontSize: 16,
-                                                   color: "white"
-                                               }}/>}
-                                    <TouchableOpacity style={{width: "20%"}}
-                                                      onPress={() => this.setState({editName: true})}>
+                                    }}>{this.state.userName}</Text>
+                                    <TouchableOpacity onPress={() => this.setState({DialogVisible: true})}>
                                         <Image style={{
                                             height: 15,
                                             width: 15,
@@ -342,7 +333,6 @@ export default class ClientEditProfile extends Component {
                                 </View>
                             </View>
                         </View>
-
                         <View style={[styles.row, {height: 200}]}>
                             {this.renderGooglePlacesInput()}
                         </View>
@@ -352,6 +342,58 @@ export default class ClientEditProfile extends Component {
                         }} style={styles.btnContainer}/>
                     </View>
                 </ScrollView>
+                <Dialog
+                    visible={this.state.DialogVisible}
+                    width={0.6}
+                    onTouchOutside={() => {
+                        this.setState({DialogVisible: false});
+                    }}
+                    ref={(popupDialog) => {
+                        this.popupDialog = popupDialog;
+                    }}>
+                    <ScrollView>
+                        <View style={{flexDirection: "column", alignItems: "center"}}>
+                            <View style={{
+                                width: "100%",
+                                height: 0,
+                                marginTop: 3,
+                                marginBottom: 3,
+                                backgroundColor: "black",
+                                flexDirection: "column",
+                            }}/>
+                            <Text style={{fontSize: 16, marginTop: 5, color: "black"}}>Enter your name</Text>
+                            <TextInput Color={"white"} placeholder={"Your Name"}
+                                       placeholderTextColor={"grey"}
+                                       onChangeText={(text) => {
+                                           this.setState({userName: text});
+                                           //Preference.set("userShopname", this.state.userShopName)
+                                       }}
+                                       style={{
+                                           fontWeight: "bold",
+                                           fontSize: 16,
+                                           color: "black"
+                                       }}/>
+
+                            <TouchableOpacity
+                                onPress={() => this.setState({DialogVisible: false})}
+                                style={[globalStyles.button, {
+                                    height: 35,
+                                    width: "80%",
+                                    backgroundColor: "red",
+                                    marginTop: 20,
+                                    marginBottom: 20,
+                                }]}>
+                                <Text style={{
+                                    fontSize: 15,
+                                    fontWeight: "bold",
+                                    color: "white"
+                                }}>{"Save"}</Text>
+
+                            </TouchableOpacity>
+
+                        </View>
+                    </ScrollView>
+                </Dialog>
             </View>
         )
     }
@@ -443,11 +485,9 @@ const
             borderRadius: width / 6
         },
         infoContainer: {
-
             justifyContent: "center",
             width: "100%",
             alignItems: "center",
-
         },
         allFontStyle: {
             color: "#535361",

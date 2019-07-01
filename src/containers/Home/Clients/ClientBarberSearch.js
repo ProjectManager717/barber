@@ -66,43 +66,29 @@ export default class ClientBarberSearch extends Component {
         }
     }
 
-
     renderRowInput() {
         return <View style={{flex: 1, flexDirection: 'column', width: "100%"}}>
-            <View style={{flexDirection: "row", alignItems: "center"}}>
+            <View style={{flexDirection: "row", alignItems:"center",justifyContent:"center"}}>
                 <Image resizeMode={"contain"} source={require("../../../assets/images/searchicon.png")}
                        style={{
                            width: 16,
                            height: 16,
-                           position: "absolute",
-
-                           left: 30,
-
-
-
+                           marginLeft:30
                        }}/>
                 <TextInput
                     style={{
-                        height: 40,
-
                         color: "white",
-                        marginStart: 50,
                         fontSize: 16,
+                        marginStart:10,
                         fontFamily: "AvertaStd-RegularItalic",
                     }}
                     onChangeText={(text) => this.setState({text})}
                     placeholder={"Search by Instagram, Name, or Barbershop"}
                     placeholderTextColor={"grey"}
-
-
                 />
-
             </View>
-
-
         </View>;
     }
-
 
     renderRowSurge2(item) {
         let ratings = Math.floor(Math.random() * 5 + 1);
@@ -118,14 +104,12 @@ export default class ClientBarberSearch extends Component {
             <ImageBackground source={item.imgPathh2}
                              style={{width: "100%", height: "100%", borderRadius: 7, overflow: 'hidden'}}>
                 <View style={{flexDirection: "row", width: "100%", height: "100%",}}>
-
                     <View style={{
                         flexDirection: "column",
                         width: "60%",
                         height: "100%",
                         marginTop: 75,
                         marginStart: 10
-
                     }}>
                         <Text style={{
                             fontSize: 14,
@@ -141,8 +125,6 @@ export default class ClientBarberSearch extends Component {
                             borderColor: "darkgrey",
                             paddingStart: 5,
                             opacity: 0.8
-
-
                         }}>{item.title2}</Text>
                         <View style={{
                             flexDirection: "row", alignItems: "center", backgroundColor: "#454656",
@@ -160,8 +142,6 @@ export default class ClientBarberSearch extends Component {
                                 textShadowColor: "black",
                                 textShadowOffset: {width: -2, height: 1},
                                 textShadowRadius: 3,
-
-
                             }}>{item.address}</Text>
                         </View>
                         <View style={{
@@ -305,12 +285,8 @@ export default class ClientBarberSearch extends Component {
                         borderWidth: 0.5,
                         borderColor: "grey",
                         borderRadius: 6
-
-
                     }}>
                         {this.renderRowInput({})}
-
-
                     </View>
 
                     <View style={{

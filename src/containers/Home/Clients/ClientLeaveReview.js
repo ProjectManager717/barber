@@ -17,6 +17,7 @@ import CheckBoxSquare from "../../../components/CheckBox";
 import {Colors} from "../../../themes";
 import {globalStyles} from "../../../themes/globalStyles";
 import {AirbnbRating} from "react-native-elements";
+import Dialog, {DialogContent} from 'react-native-popup-dialog';
 
 
 const {height, width} = Dimensions.get("window");
@@ -28,6 +29,8 @@ export default class ClientLeaveReview extends Component {
 
     state = {
         addTip: false,
+        DialogVisible:false,
+        percentage:"25%",
         unselected: require("../../../assets/images/greentick.png"),
         unselected2: require("../../../assets/images/greentick.png"),
         unselected3: require("../../../assets/images/greentick.png"),
@@ -71,17 +74,15 @@ export default class ClientLeaveReview extends Component {
                         rightAction={this.rightAction.bind(this)}
                         leftAction={this.rightAction.bind(this)}
                         bgIcon={require("../../../assets/images/Reviewimage.png")}
-                        centerComponent={{text: "RECEIPT", style: {color: "#fff"}}}
+                        centerComponent={{text: "REVIEW", style: {color: "#fff"}}}
                         leftIcon={require("../../../assets/images/ic_back.png")}/>
                     <View style={styles.detailsContainer}>
                         <View style={styles.profileImageContainer}>
                             <ImageBackground
                                 source={require("../../../assets/images/personface.png")}
-                                style={styles.profileImage}
-                            >
+                                style={styles.profileImage}>
                             </ImageBackground>
                         </View>
-
 
                         <View>
                             <View style={[styles.infoContainer]}>
@@ -305,7 +306,7 @@ export default class ClientLeaveReview extends Component {
                                     fontWeight: "bold",
                                     marginStart: 10
                                 }}>$8.00</Text>
-                                <View style={{
+                                <TouchableOpacity onPress={()=>this.setState({DialogVisible:true})} style={{
                                     flexDirection: "row",
                                     backgroundColor: "#474857",
                                     marginStart: 20,
@@ -316,9 +317,7 @@ export default class ClientLeaveReview extends Component {
                                     alignItems: "center",
                                     marginTop: 3
                                 }}>
-                                    <Text style={{color: "white", fontSize: 13, marginStart: 10}}>
-                                        25%
-                                    </Text>
+                                    <Text style={{color: "white", fontSize: 13, marginStart: 10}}>{this.state.percentage}</Text>
                                     <Image
                                         resizeMode={"contain"}
                                         style={{
@@ -328,13 +327,13 @@ export default class ClientLeaveReview extends Component {
                                             marginEnd: 10
                                         }}
                                         source={require("../../../assets/images/arrow_down.png")}/>
-                                </View>
+                                </TouchableOpacity>
                             </View>
 
 
                         </View>
                         <TouchableOpacity onPress={() => {
-                            this.props.navigation.navigate('ReceiptCancelled');
+                            this.props.navigation.navigate('ClientTabNavigator');
                         }}
                                           style={[globalStyles.button, {
                                               height: 35,
@@ -348,6 +347,20 @@ export default class ClientLeaveReview extends Component {
 
                     </View>
                 </View>
+
+                <Dialog
+                    visible={this.state.DialogVisible}
+                    onTouchOutside={() => {
+                        this.setState({DialogVisible: false});}}
+                    width={0.6}>
+                    <DialogContent>
+                        <Text  style={{fontSize: 18, color: "black",fontWeight:"bold",marginBottom:10,marginTop:10}}>{"Please select Percentage"}</Text>
+                        <Text onPress={()=>this.setState({percentage:"10%",DialogVisible:false})} style={{fontSize: 18, color: "black",marginBottom:10,marginTop:10}}>{"10%"}</Text>
+                        <Text onPress={()=>this.setState({percentage:"20%",DialogVisible:false})} style={{fontSize: 18, color: "black",marginBottom:10,marginTop:10}}>{"20%"}</Text>
+                        <Text onPress={()=>this.setState({percentage:"25%",DialogVisible:false})} style={{fontSize: 18, color: "black",marginBottom:10,marginTop:10}}>{"25%"}</Text>
+                        <Text onPress={()=>this.setState({percentage:"50%",DialogVisible:false})} style={{fontSize: 18, color: "black",marginBottom:10,marginTop:10}}>{"50%"}</Text>
+                    </DialogContent>
+                </Dialog>
             </ScrollView>
         )
     }

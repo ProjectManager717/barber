@@ -21,53 +21,54 @@ import {globalStyles} from "../../../themes/globalStyles";
 
 export default class ClientBarberSearch extends Component {
 
-    constructor(props){
+    constructor(props) {
         super(props);
-        this.state={
-            CheckBox1:require("../../../assets/images/tic_grey.png"),
-            CheckBox2:require("../../../assets/images/tic_grey.png"),
-            CheckBox3:require("../../../assets/images/tic_grey.png"),
-            value:0,
-            unselected:require("../../../assets/images/greentick.png"),
-            unselected2:require("../../../assets/images/greentick.png"),
-            unselected3:require("../../../assets/images/greentick.png"),
-            unselected4:require("../../../assets/images/greentick.png"),
+        this.state = {
+            optionOne:"white",
+            optionTwo:"white",
+            optionThree:"white",
+            CheckBox1: require("../../../assets/images/tic_grey.png"),
+            CheckBox2: require("../../../assets/images/tic_grey.png"),
+            CheckBox3: require("../../../assets/images/tic_grey.png"),
+            value: 0,
+            unselected: require("../../../assets/images/greentick.png"),
+            unselected2: require("../../../assets/images/greentick.png"),
+            unselected3: require("../../../assets/images/greentick.png"),
+            unselected4: require("../../../assets/images/greentick.png"),
         };
 
     }
+
     Selected() {
-        if(this.state.unselected===require("../../../assets/images/greenticked.png")){
+        if (this.state.unselected === require("../../../assets/images/greenticked.png")) {
             this.setState({unselected: require("../../../assets/images/greentick.png")})
+        } else {
+            this.setState({unselected: require("../../../assets/images/greenticked.png")})
         }
-        else{
-        this.setState({unselected: require("../../../assets/images/greenticked.png")})}
     }
 
     Selected2() {
-        if(this.state.unselected2===require("../../../assets/images/greenticked.png")){
+        if (this.state.unselected2 === require("../../../assets/images/greenticked.png")) {
             this.setState({unselected2: require("../../../assets/images/greentick.png")})
-        }
-        else {
+        } else {
 
             this.setState({unselected2: require("../../../assets/images/greenticked.png")})
         }
     }
 
     Selected3() {
-        if(this.state.unselected3===require("../../../assets/images/greenticked.png")){
+        if (this.state.unselected3 === require("../../../assets/images/greenticked.png")) {
             this.setState({unselected3: require("../../../assets/images/greentick.png")})
-        }
-        else {
+        } else {
 
             this.setState({unselected3: require("../../../assets/images/greenticked.png")})
         }
     }
 
     Selected4() {
-        if(this.state.unselected4===require("../../../assets/images/greenticked.png")){
+        if (this.state.unselected4 === require("../../../assets/images/greenticked.png")) {
             this.setState({unselected4: require("../../../assets/images/greentick.png")})
-        }
-        else {
+        } else {
 
             this.setState({unselected4: require("../../../assets/images/greenticked.png")})
         }
@@ -76,45 +77,39 @@ export default class ClientBarberSearch extends Component {
 
     checkbox1() {
         if (this.state.CheckBox1 === require("../../../assets/images/tic_green.png")) {
-            this.setState({CheckBox1: require("../../../assets/images/tic_grey.png")})
+            this.setState({CheckBox1: require("../../../assets/images/tic_grey.png"),optionOne:"white"})
         } else {
-            this.setState({CheckBox1: require("../../../assets/images/tic_green.png")});
-            this.setState({CheckBox2: require("../../../assets/images/tic_grey.png")});
-            this.setState({CheckBox3: require("../../../assets/images/tic_grey.png")});
+            this.setState({CheckBox1: require("../../../assets/images/tic_green.png"),optionOne:"green"});
+            this.setState({CheckBox2: require("../../../assets/images/tic_grey.png"),optionTwo:"white"});
+            this.setState({CheckBox3: require("../../../assets/images/tic_grey.png"),optionThree:"white"});
 
         }
     }
-        checkbox2()
-        {
-            if (this.state.CheckBox2 === require("../../../assets/images/tic_green.png")) {
-                this.setState({CheckBox2: require("../../../assets/images/tic_grey.png")})
-            }
-            else {
-                this.setState({CheckBox2: require("../../../assets/images/tic_green.png")});
-                this.setState({CheckBox1: require("../../../assets/images/tic_grey.png")});
-                this.setState({CheckBox3: require("../../../assets/images/tic_grey.png")});
-            }
+
+    checkbox2() {
+        if (this.state.CheckBox2 === require("../../../assets/images/tic_green.png")) {
+            this.setState({CheckBox2: require("../../../assets/images/tic_grey.png"),optionTwo:"white"})
+        } else {
+            this.setState({CheckBox2: require("../../../assets/images/tic_green.png"),optionTwo:"green"});
+            this.setState({CheckBox1: require("../../../assets/images/tic_grey.png"),optionOne:"white"});
+            this.setState({CheckBox3: require("../../../assets/images/tic_grey.png"),optionThree:"white"});
         }
-        checkbox3()
-        {
-            if (this.state.CheckBox23=== require("../../../assets/images/tic_green.png")) {
-                this.setState({CheckBox3: require("../../../assets/images/tic_grey.png")})
-            }
-            else {
-                this.setState({CheckBox3: require("../../../assets/images/tic_green.png")});
-                this.setState({CheckBox1: require("../../../assets/images/tic_grey.png")});
-                this.setState({CheckBox2: require("../../../assets/images/tic_grey.png")});
-            }
+    }
+
+    checkbox3() {
+        if (this.state.CheckBox23 === require("../../../assets/images/tic_green.png")) {
+            this.setState({CheckBox3: require("../../../assets/images/tic_grey.png"),optionThree:"white"})
+        } else {
+            this.setState({CheckBox3: require("../../../assets/images/tic_green.png"),optionThree:"green"});
+            this.setState({CheckBox1: require("../../../assets/images/tic_grey.png"),optionOne:"white"});
+            this.setState({CheckBox2: require("../../../assets/images/tic_grey.png"),optionTwo:"white"});
         }
-
-
-
-
+    }
 
 
     renderRowInput() {
         return <View style={{flex: 1, flexDirection: 'column', width: "100%"}}>
-            <View style={{flexDirection: "row", alignItems: "center",height:35}}>
+            <View style={{flexDirection: "row", alignItems: "center", height: 35}}>
                 <Image resizeMode={"contain"} source={require("../../../assets/images/searchicon.png")}
                        style={{
                            width: 16,
@@ -135,13 +130,8 @@ export default class ClientBarberSearch extends Component {
                     onChangeText={(text) => this.setState({text})}
                     placeholder={"Enter City, State or Zip Code"}
                     placeholderTextColor={"grey"}
-
-
                 />
-
             </View>
-
-
         </View>
     }
 
@@ -149,7 +139,6 @@ export default class ClientBarberSearch extends Component {
         return (
             <View style={styles.container}>
                 <Header
-
                     statusBarProps={{barStyle: "light-content"}}
                     barStyle="light-content" // or directly
                     style={{backgroundColor: "yellow"}}
@@ -158,8 +147,7 @@ export default class ClientBarberSearch extends Component {
                         <TouchableOpacity
                             onPress={() => {
                                 this.props.navigation.goBack();
-                            }}
-                        >
+                            }}>
                             <Image
                                 style={{
                                     tintColor: "white",
@@ -170,8 +158,6 @@ export default class ClientBarberSearch extends Component {
                             />
                         </TouchableOpacity>
                     }
-
-
                     centerComponent={{text: "FILTER", style: {color: "#fff"}}}
                     containerStyle={{
                         backgroundColor: Colors.dark,
@@ -190,8 +176,6 @@ export default class ClientBarberSearch extends Component {
 
                     }}>
                         {this.renderRowInput({})}
-
-
                     </View>
                     <View>
                         <Text style={{
@@ -210,28 +194,25 @@ export default class ClientBarberSearch extends Component {
                         marginBottom: 20,
                         alignItems: 'stretch',
                         justifyContent: 'center'
-
                     }}>
                         <Slider
                             value={this.state.value}
-                            onValueChange={value => this.setState({ value })}
+                            onValueChange={value => this.setState({value})}
                             minimumTrackTintColor='red'
                             maximumTrackTintColor="#3D3E4D"
-                            trackStyle={{height:2}}
-                            thumbStyle={{borderWidth:0.5,borderColor:"white"}}
+                            trackStyle={{height: 2}}
+                            thumbStyle={{borderWidth: 0.5, borderColor: "white"}}
                         />
                         <View style={{
                             alignItems: 'stretch',
 
-                            flexDirection:"row"
+                            flexDirection: "row"
 
                         }}>
-                            <Text style={{color:"#686F77",fontSize:10}} >10 MILES</Text>
-                            <Text style={{color:"#686F77",marginStart:45,fontSize:10}} >25 MILES</Text>
-                            <Text style={{color:"#686F77",marginStart:45,fontSize:10}} >50 MILES</Text>
-                            <Text style={{color:"#686F77",marginStart:45,fontSize:10}} >100 MILES</Text>
-
-
+                            <Text style={{color: "#686F77", fontSize: 10}}>10 MILES</Text>
+                            <Text style={{color: "#686F77", marginStart: 45, fontSize: 10}}>25 MILES</Text>
+                            <Text style={{color: "#686F77", marginStart: 45, fontSize: 10}}>50 MILES</Text>
+                            <Text style={{color: "#686F77", marginStart: 45, fontSize: 10}}>100 MILES</Text>
                         </View>
                     </View>
                     <View>
@@ -249,29 +230,27 @@ export default class ClientBarberSearch extends Component {
                         marginStart: 20,
                         marginEnd: 20,
                         marginBottom: 20,
-                        flexDirection:"row",
-
-
+                        flexDirection: "row",
                     }}>
-                        <TouchableOpacity  onPress={()=>this.checkbox1()} >
+                        <TouchableOpacity onPress={() => this.checkbox1()}>
 
-                     <Image  resizeMode={"contain"} source={this.state.CheckBox1}
-                     style={{ width:20,height:20  }}
+                            <Image resizeMode={"contain"} source={this.state.CheckBox1}
+                                   style={{width: 20, height: 20}}
 
-                     /></TouchableOpacity   >
-                        <Text style={{color:"#5BD800" ,marginStart:10,fontSize:15,fontWeight:'bold' }}   >$</Text>
+                            /></TouchableOpacity>
+                        <Text style={{color: this.state.optionOne, marginStart: 10, fontSize: 15, fontWeight: 'bold'}}>$</Text>
 
-                        <TouchableOpacity onPress={()=>this.checkbox2()}  >
-                        <Image style={{ width:20,height:20,marginStart:100  }}
-                            resizeMode={"contain"} source={this.state.CheckBox2} />
+                        <TouchableOpacity onPress={() => this.checkbox2()}>
+                            <Image style={{width: 20, height: 20, marginStart: 100}}
+                                   resizeMode={"contain"} source={this.state.CheckBox2}/>
                         </TouchableOpacity>
-                        <Text  style={{color:"white",marginStart:10,fontSize:15 ,fontWeight:'bold' }} >$$</Text>
+                        <Text style={{color: this.state.optionTwo, marginStart: 10, fontSize: 15, fontWeight: 'bold'}}>$$</Text>
 
-                        <TouchableOpacity onPress={()=>this.checkbox3()} >
-                        <Image resizeMode={"contain"}source={this.state.CheckBox3}
-                               style={{ width:20,height:20,marginStart:85  }} />
+                        <TouchableOpacity onPress={() => this.checkbox3()}>
+                            <Image resizeMode={"contain"} source={this.state.CheckBox3}
+                                   style={{width: 20, height: 20, marginStart: 85}}/>
                         </TouchableOpacity>
-                            <Text   style={{color:"white",marginStart:10,fontSize:15,fontWeight:'bold' }} >$$$</Text>
+                        <Text style={{color: this.state.optionThree, marginStart: 10, fontSize: 15, fontWeight: 'bold'}}>$$$</Text>
 
 
                     </View>
@@ -281,7 +260,7 @@ export default class ClientBarberSearch extends Component {
                             fontWeight: 'bold',
                             marginStart: 20,
                             marginTop: 20,
-                            marginBottom:10,
+                            marginBottom: 10,
                             fontSize: 17
 
                         }}>{"Skill"} </Text>
@@ -298,7 +277,7 @@ export default class ClientBarberSearch extends Component {
                             width: "50%",
                             marginEnd: 4,
                         }}>
-                            <TouchableOpacity onPress={() => this.Selected()}   >
+                            <TouchableOpacity onPress={() => this.Selected()}>
                                 <View style={{
                                     flexDirection: "row",
                                     backgroundColor: "#474857",
@@ -310,15 +289,17 @@ export default class ClientBarberSearch extends Component {
                                     borderColor: "grey",
                                     alignItems: "center",
                                 }}>
-                                    <Image style={{height: 20, width: 20,position:"absolute",top:10,left:5}} resizeMode={"contain"}
+                                    <Image style={{height: 20, width: 20, position: "absolute", top: 10, left: 5}}
+                                           resizeMode={"contain"}
                                            source={require("../../../assets/images/blend.png")}/>
-                                    <Text  style={{color: "white", marginStart: 30, fontSize: 10}}>Blend Quality</Text>
-                                    <Image style={{height: 20, width: 20,position:"absolute",top:10,right:5}} resizeMode={"contain"}
+                                    <Text style={{color: "white", marginStart: 30, fontSize: 10}}>Blend Quality</Text>
+                                    <Image style={{height: 20, width: 20, position: "absolute", top: 10, right: 5}}
+                                           resizeMode={"contain"}
                                            source={this.state.unselected}/>
 
                                 </View>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => this.Selected2()}  >
+                            <TouchableOpacity onPress={() => this.Selected2()}>
                                 <View style={{
                                     flexDirection: "row",
                                     backgroundColor: "#474857",
@@ -331,10 +312,13 @@ export default class ClientBarberSearch extends Component {
                                     borderColor: "grey",
                                     alignItems: "center",
                                 }}>
-                                    <Image style={{height: 20, width: 20,position:"absolute",top:10,left:5}} resizeMode={"contain"}
+                                    <Image style={{height: 20, width: 20, position: "absolute", top: 10, left: 5}}
+                                           resizeMode={"contain"}
                                            source={require("../../../assets/images/scissor.png")}/>
-                                    <Text  style={{color: "white", marginStart: 30, fontSize: 10}}>Scissor Technique</Text>
-                                    <Image style={{height: 20, width: 20,position:"absolute",top:10,right:5}} resizeMode={"contain"}
+                                    <Text style={{color: "white", marginStart: 30, fontSize: 10}}>Scissor
+                                        Technique</Text>
+                                    <Image style={{height: 20, width: 20, position: "absolute", top: 10, right: 5}}
+                                           resizeMode={"contain"}
                                            source={this.state.unselected2}/>
 
                                 </View></TouchableOpacity>
@@ -345,7 +329,7 @@ export default class ClientBarberSearch extends Component {
                             width: "50%",
                             marginEnd: 2, marginStart: 10
                         }}>
-                            <TouchableOpacity onPress={() => this.Selected3()}  >
+                            <TouchableOpacity onPress={() => this.Selected3()}>
                                 <View style={{
                                     flexDirection: "row",
                                     backgroundColor: "#474857",
@@ -357,16 +341,19 @@ export default class ClientBarberSearch extends Component {
                                     borderColor: "grey",
                                     alignItems: "center",
                                 }}>
-                                    <Image style={{height: 20, width: 20,position:"absolute",top:10,left:5}} resizeMode={"contain"}
+                                    <Image style={{height: 20, width: 20, position: "absolute", top: 10, left: 5}}
+                                           resizeMode={"contain"}
                                            source={require("../../../assets/images/shapeblade.png")}/>
-                                    <Text  style={{color: "white", marginStart: 30, fontSize: 10}}>Shape Up Ability</Text>
-                                    <Image style={{height: 20, width: 20,position:"absolute",top:10,right:5}} resizeMode={"contain"}
+                                    <Text style={{color: "white", marginStart: 30, fontSize: 10}}>Shape Up
+                                        Ability</Text>
+                                    <Image style={{height: 20, width: 20, position: "absolute", top: 10, right: 5}}
+                                           resizeMode={"contain"}
                                            source={this.state.unselected3}/>
 
                                 </View>
                             </TouchableOpacity>
 
-                            <TouchableOpacity onPress={() => this.Selected4()}   >
+                            <TouchableOpacity onPress={() => this.Selected4()}>
                                 <View style={{
                                     flexDirection: "row",
                                     backgroundColor: "#474857",
@@ -379,12 +366,13 @@ export default class ClientBarberSearch extends Component {
                                     alignItems: "center", marginTop: 7
                                 }}>
 
-                                    <Image style={{height: 20, width: 20,position:"absolute",top:10,left:5}}resizeMode={"contain"}
+                                    <Image style={{height: 20, width: 20, position: "absolute", top: 10, left: 5}}
+                                           resizeMode={"contain"}
                                            source={require("../../../assets/images/hair.png")}/>
                                     <Text style={{color: "white", marginStart: 30, fontSize: 10}}>Combover Skills</Text>
-                                    <Image style={{height: 20, width: 20,position:"absolute",top:10,right:5}} resizeMode={"contain"}
+                                    <Image style={{height: 20, width: 20, position: "absolute", top: 10, right: 5}}
+                                           resizeMode={"contain"}
                                            source={this.state.unselected4}/>
-
 
 
                                 </View>
@@ -394,7 +382,7 @@ export default class ClientBarberSearch extends Component {
 
 
                 </ScrollView>
-                <TouchableOpacity         style={[globalStyles.button,  {
+                <TouchableOpacity onPress={()=>this.props.navigation.goBack()} style={[globalStyles.button, {
                     marginTop: 70,
                     height: 40,
                     width: 260,
