@@ -7,7 +7,7 @@ import {
     ImageBackground,
     Image,
     FlatList,
-    TouchableOpacity, TouchableWithoutFeedback, Share
+    TouchableOpacity, TouchableWithoutFeedback, Share, Linking
 
 } from "react-native";
 import Header from "../../../components/Header";
@@ -16,6 +16,9 @@ import colors from "../../../themes/colors";
 import CheckBoxSquare from "../../../components/CheckBox";
 import {Colors} from "../../../themes";
 import Dialog, {DialogContent} from 'react-native-popup-dialog';
+import {constants} from "../../../utils/constants";
+import Preference from "react-native-preference";
+import {AirbnbRating} from "react-native-elements";
 
 
 const {height, width} = Dimensions.get("window");
@@ -31,7 +34,7 @@ let getDate = new Date().getDate();
 let getDay = new Date().getDay();
 let getYear = new Date().getFullYear();
 
-
+let barberId = 0;
 export default class ClientBarberProfile extends Component {
 
     rightAction() {
@@ -48,8 +51,11 @@ export default class ClientBarberProfile extends Component {
 
     constructor(props) {
         super(props);
-
+        const {navigation} = this.props;
+        barberId = navigation.getParam('barberId');
         this.state = {
+            barberProfileImage: require("../../../assets/images/personface.png"),
+            barberData:undefined,
             dataSource: [],
             monthSet: undefined,
             monthDays: [],
@@ -59,37 +65,38 @@ export default class ClientBarberProfile extends Component {
             serviceTimeSelected: false,
             totalPriceService: 0,
             buttonPayText: "Pay",
-            dayData: [{
-                id: 1,
-                time: "10:00AM",
-                selected: "transparent",
-                surgePrice: true,
-            }, {
-                id: 2,
-                time: "10:30AM",
-                selected: "transparent",
-                surgePrice: false,
-            }, {
-                id: 3,
-                time: "11:00AM",
-                selected: "transparent",
-                surgePrice: false,
-            }, {
-                id: 4,
-                time: "11:30AM",
-                selected: "transparent",
-                surgePrice: false,
-            }, {
-                id: 5,
-                time: "12:00PM",
-                selected: "transparent",
-                surgePrice: false,
-            }, {
-                id: 6,
-                time: "12:30AM",
-                selected: "transparent",
-                surgePrice: false,
-            }],
+            dayData: [
+                {
+                    id: 1,
+                    time: "10:00AM",
+                    selected: "transparent",
+                    surgePrice: true,
+                }, {
+                    id: 2,
+                    time: "10:30AM",
+                    selected: "transparent",
+                    surgePrice: false,
+                }, {
+                    id: 3,
+                    time: "11:00AM",
+                    selected: "transparent",
+                    surgePrice: false,
+                }, {
+                    id: 4,
+                    time: "11:30AM",
+                    selected: "transparent",
+                    surgePrice: false,
+                }, {
+                    id: 5,
+                    time: "12:00PM",
+                    selected: "transparent",
+                    surgePrice: false,
+                }, {
+                    id: 6,
+                    time: "12:30AM",
+                    selected: "transparent",
+                    surgePrice: false,
+                }],
             savedCard: ["************4242", "************4242", "************4242"],
             DialogVisible: false,
             barberFav: false,
@@ -107,7 +114,6 @@ export default class ClientBarberProfile extends Component {
                     id: 3,
                     imagePath: require('../../../assets/images/vp2.png')
                 }],
-
             ListData2: [
                 {
                     id: 1,
@@ -153,6 +159,7 @@ export default class ClientBarberProfile extends Component {
             ]
         }
     }
+
 
     startOfWeek(date) {
         var diff = date.getDate() - date.getDay() + (date.getDay() === 0 ? -6 : 1);
@@ -227,7 +234,6 @@ export default class ClientBarberProfile extends Component {
 
     componentDidMount() {
         let items = [];
-
         this.setState({barberFav: true});
         for (i = 0; i < 7; i++) {
             var weekDate = this.startOfWeek(new Date());
@@ -274,8 +280,34 @@ export default class ClientBarberProfile extends Component {
             getDay++;
         }
         let mon = this.state.month[getmonth];
-        this.setState({monthSet: mon, monthDays: daysData})
+        this.setState({monthSet: mon, monthDays: daysData});
+        this.getBarberDetails();
     }
+
+    getBarberDetails() {
+        fetch(constants.ClientBarbersProfile + "/" + barberId + "/profile", {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        }).then(response => response.json())
+            .then(response => {
+                console.log("getBarberDetails-->", "-" + JSON.stringify(response));
+                if (response.ResultType === 1) {
+                    this.setState({barberData: response.Data});
+                } else {
+                    if (response.ResultType === 0) {
+                        alert(response.Message);
+                    }
+                }
+            }).catch(error => {
+            //console.error('Errorr:', error);
+            console.log('Error:', error);
+            alert("Error: " + error);
+        });
+    }
+
 
     setFavorite() {
         if (this.state.barberFav === true)
@@ -433,24 +465,27 @@ export default class ClientBarberProfile extends Component {
                     <View style={styles.detailsContainer}>
                         <View style={styles.profileImageContainer}>
                             <ImageBackground
-                                source={require("../../../assets/images/personface.png")}
+                                source={this.state.barberProfileImage}
                                 style={styles.profileImage}>
                             </ImageBackground>
                         </View>
 
-                        <Image
-                            source={require("../../../assets/images/insta.png")}
-                            style={styles.icon}
-                        />
+                        <TouchableOpacity  style={styles.icon} onPress={()=>Linking.openURL('https://www.instagram.com/'+this.state.barberData.username)}>
+                            <Image
+                                source={require("../../../assets/images/insta.png")}
+                                style={{height: 50, width: 50,}}
+                            />
+                        </TouchableOpacity>
+
 
                         <View>
                             <View style={[styles.infoContainer]}>
                                 <Text style={[styles.allFontStyle, styles.name]}>
-                                    Anthony Martial
+                                    {this.state.barberData.firstname}
                                 </Text>
                                 <View style={{flexDirection: "row",}}>
                                     <Text style={{color: colors.white, fontSize: 12}}>
-                                        CLYPR Barbershop
+                                        {this.state.barberData.shop_name}
                                     </Text>
                                     {/*<Image resizeMode={"contain"}
                                            style={{height: 8, width: 8, marginStart: 10, marginTop: 5}}
@@ -461,11 +496,19 @@ export default class ClientBarberProfile extends Component {
                                     <TouchableOpacity onPress={() => {
                                         this.props.navigation.navigate('ClientSupremeReview');
                                     }}>
-                                        <Image
+                                        <AirbnbRating
+                                            isDisabled={true}
+                                            showRating={false}
+                                            count={5}
+                                            defaultRating={4}
+                                            size={10}
+                                            style={{marginStart: 10, height: 30}}
+                                        />
+                                        {/*<Image
                                             resizeMode="contain"
                                             source={require("../../../assets/images/start.png")}
                                             style={styles.rating}
-                                        />
+                                        />*/}
                                     </TouchableOpacity>
                                     <Text style={[styles.allFontStyle, styles.reviewText]}>
                                         (17 Reviews)
@@ -618,7 +661,7 @@ export default class ClientBarberProfile extends Component {
                             </View>
                             }/>
                         <View style={{height: 0.5, width: "100%", backgroundColor: "grey", marginBottom: 10}}/>
-                        {(this.state.dayData.length>0)&&<FlatList
+                        {(this.state.dayData.length > 0) && <FlatList
                             data={this.state.dayData}
                             /* data={this.state.listData}*/
                             renderItem={({item, index}) => this.renderItem(item, index)}
@@ -627,8 +670,13 @@ export default class ClientBarberProfile extends Component {
                             showsHorizontalScrollIndicator={false}
                             keyExtractor={(item, index) => index}
                             horizontal={true}/>}
-                        {!(this.state.dayData.length>0)&&<View style={{width:"100%",justifyContent:"center",alignItems:"center",backgroundColor:"transparent"}}>
-                            <Text style={{color:"white",fontSize:15}}>{"Fully Booked"}</Text>
+                        {!(this.state.dayData.length > 0) && <View style={{
+                            width: "100%",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            backgroundColor: "transparent"
+                        }}>
+                            <Text style={{color: "white", fontSize: 15}}>{"Fully Booked"}</Text>
                         </View>}
                     </View>
                     <View
@@ -720,14 +768,21 @@ export default class ClientBarberProfile extends Component {
                         }}
                         width={0.6}>
                         <DialogContent>
-                            <Text style={{fontSize: 18, color: "black",fontWeight:"bold",marginBottom:10,marginTop:10}}>{"Please select your Card"}</Text>
+                            <Text style={{
+                                fontSize: 18,
+                                color: "black",
+                                fontWeight: "bold",
+                                marginBottom: 10,
+                                marginTop: 10
+                            }}>{"Please select your Card"}</Text>
                             <FlatList
                                 keyExtractor={(item, index) => index.toString()}
                                 style={{marginTop: 10}}
                                 data={this.state.savedCard}
                                 renderItem={({item}) =>
                                     <TouchableOpacity onPress={() => this.cardSelected(item)}>
-                                        <Text style={{fontSize: 18, color: "black",margin:10}}>{"Card # " + item}</Text>
+                                        <Text
+                                            style={{fontSize: 18, color: "black", margin: 10}}>{"Card # " + item}</Text>
                                         <View style={{width: "100%", height: 0.5, backgroundColor: "black"}}/>
                                     </TouchableOpacity>
                                 }

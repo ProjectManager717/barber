@@ -45,7 +45,7 @@ export default class BookingPreferences extends Component {
 
     getBookingPrefferenceSetting() {
         this.setState({showLoading: true});
-        fetch(constants.BarberBookingPreference + "?user_id=" + "5d1206c0a70da23e2c2ae205" /*Preference.get("userId")*/, {
+        fetch(constants.BarberBookingPreference + "?user_id=" + Preference.get("userId"), {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
@@ -110,13 +110,13 @@ export default class BookingPreferences extends Component {
         }
         if (idx === 2) {
             if (this.state.twentyMin === false)
-                this.setState({twentyMin: true,fifteenMin: false, thirtyMin: false})
+                this.setState({twentyMin: true, fifteenMin: false, thirtyMin: false})
             /*else
                 this.setState({twentyMin: false})*/
         }
         if (idx === 3) {
             if (this.state.thirtyMin === false)
-                this.setState({thirtyMin: true,fifteenMin: false, twentyMin: false})
+                this.setState({thirtyMin: true, fifteenMin: false, twentyMin: false})
             /*else
                 this.setState({thirtyMin: false})*/
         }
@@ -128,13 +128,13 @@ export default class BookingPreferences extends Component {
         }
         if (idx === 5) {
             if (this.state.twentyMin1 === false)
-                this.setState({twentyMin1: true,fifteenMin1: false, thirtyMin1: false})
-           /* else
-                this.setState({twentyMin1: false})*/
+                this.setState({twentyMin1: true, fifteenMin1: false, thirtyMin1: false})
+            /* else
+                 this.setState({twentyMin1: false})*/
         }
         if (idx === 6) {
             if (this.state.thirtyMin1 === false)
-                this.setState({thirtyMin1: true,fifteenMin1: false, twentyMin1: false})
+                this.setState({thirtyMin1: true, fifteenMin1: false, twentyMin1: false})
             /*else
                 this.setState({thirtyMin1: false})*/
         }
@@ -164,7 +164,13 @@ export default class BookingPreferences extends Component {
                 <Image style={styles.leftIcon} source={item.ic2}/>
                 <Text style={styles.row_title}>{item.title}</Text>
             </View>
-            <Text style={{marginStart: "16%", color: "grey", fontSize: 12, fontStyle: "italic",marginBottom:3}}>{item.hint}</Text>
+            <Text style={{
+                marginStart: "16%",
+                color: "grey",
+                fontSize: 12,
+                fontStyle: "italic",
+                marginBottom: 3
+            }}>{item.hint}</Text>
         </View>;
     }
 
@@ -219,15 +225,80 @@ export default class BookingPreferences extends Component {
         this.setState({MP: {MPradiocheck: require("../../../assets/images/radio_unselected.png"), StateMP: false}});
     }
 
-    oNDone() {
-        this.props.navigation.goBack();
-        /*if (this.state.MP.StateMP === true) {
-            this.props.navigation.navigate("MobilePay")
-        } else if (this.state.IN.StateIN === true) {
-            this.props.navigation.navigate("MobilePaySettings")
-        }*/
+    updateBookingPrefrence() {
+        let paymentOption = 0;
+        let lastMinBooking = 0;
+        let calendarInterval = 0;
+        if (this.state.MP.StateMP === true) {
+            paymentOption = 0;
+        }
+        if (this.state.IN.StateIN === true) {
+            paymentOption = 1;
+        }
+        console.log("paymentOptionBit--->" + this.state.MP.StateMP);
+        console.log("paymentOptionBit--->" + paymentOption);
+        if (this.state.fifteenMin === true)
+            lastMinBooking = 1;
+        else if (this.state.twentyMin === true)
+            lastMinBooking = 2;
+        else if (this.state.thirtyMin === true)
+            lastMinBooking = 3;
+        else
+            lastMinBooking = 0;
 
+        if (this.state.fifteenMin1 === true)
+            calendarInterval = 1;
+        else if (this.state.twentyMin1 === true)
+            calendarInterval = 2;
+        else if (this.state.thirtyMin1 === true)
+            calendarInterval = 3;
+        else
+            calendarInterval = 0;
 
+        this.setState({showLoading: true})
+        var details = {
+            user_id: Preference.get("userId"),
+            accepted_payment_options: paymentOption,
+            auto_confirm_appointments: this.state.autoConfirm,
+            multiple_services: this.state.multipleServices,
+            alerts: true,
+            last_minute_booking: lastMinBooking,
+            calender_interval: calendarInterval,
+        };
+        var formBody = [];
+        for (var property in details) {
+            var encodedKey = encodeURIComponent(property);
+            var encodedValue = encodeURIComponent(details[property]);
+            formBody.push(encodedKey + "=" + encodedValue);
+        }
+        formBody = formBody.join("&");
+        fetch(constants.UpdateBookingPreference, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: formBody
+        }).then(response => response.json())
+            .then(response => {
+                console.log("updateBookingPrefrence-->", "-" + JSON.stringify(response));
+                if (response.ResultType === 1) {
+                    this.setState({showLoading: false})
+                    alert("Booking preferences updated successfully");
+                    this.props.navigation.goBack();
+                } else {
+                    this.setState({showLoading: false})
+                    if (response.ResultType === 0) {
+                        alert(response.Message);
+                    }
+
+                }
+            }).catch(error => {
+            //console.error('Errorr:', error);
+            this.setState({showLoading: false})
+            console.log('Error:', error);
+            alert("Error: " + error);
+        });
     }
 
 
@@ -298,7 +369,7 @@ export default class BookingPreferences extends Component {
                     <View style={[globalStyles.rowBackground, styles.row]}>
                         {this.renderRowTimer({
                             /*title: "30 Minutes",*/
-                            title:"Client can Book Appointment with you up until last minutes ",
+                            title: "Client can Book Appointment with you up until last minutes ",
                             ic: require("../../../assets/images/mins_30.png")
                         })}
                         {/*<Text style={{
@@ -325,8 +396,8 @@ export default class BookingPreferences extends Component {
                     <Text style={styles.txtHeader}>AVAILABILITY</Text>
                     <View style={[globalStyles.rowBackground, styles.row]}>
                         {this.renderRowTimer({
-                           /* title: "Every 30 Minutes",*/
-                            title:"Calender Interval",
+                            /* title: "Every 30 Minutes",*/
+                            title: "Calender Interval",
                             ic: require("../../../assets/images/every_30_min.png"),
                         })}
                         {/*<Text style={{
@@ -341,7 +412,7 @@ export default class BookingPreferences extends Component {
                     {this.renderRowWithCheck({title: "Every 30 Minutes", value: this.state.thirtyMin1, indx: 6})}
 
                     <TouchableOpacity style={[globalStyles.button, {marginTop: 70, marginBottom: 30, width: '70%'}]}
-                                      onPress={() => this.oNDone()}>
+                                      onPress={() => this.updateBookingPrefrence()}>
                         <Text style={globalStyles.buttonText}>DONE</Text>
                     </TouchableOpacity>
 

@@ -29,6 +29,7 @@ export default class ChooseTimings extends Component {
     constructor() {
         super();
         this.state = {
+            showLoader:false,
             dataSource: [],
             dayData: [],
             workingDays: [],
@@ -58,6 +59,7 @@ export default class ChooseTimings extends Component {
     }
 
     fetchWorkingHours = () => {
+        this.setState({showLoading: true});
         console.log("userID---->" + Preference.get("userId"));
         console.log("url--->" + constants.BarberWorkingHours + "?user_id=" + Preference.get("userId"));
         fetch(constants.BarberWorkingHours + "?user_id=" + Preference.get("userId"), {
@@ -70,6 +72,7 @@ export default class ChooseTimings extends Component {
             .then(response => {
                 console.log("responseworkinghours-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
+                    this.setState({showLoading: false});
                     let worddays = response.Data.working_days;
                     let setWorkDays = [];
                     for (let i = 0; i < 7; i++) {
@@ -102,27 +105,34 @@ export default class ChooseTimings extends Component {
                     console.log("starttime-->" + start);
                     console.log("starttime-->" + end);
                     let startTime1=start.split(" ");
-                    let endTime1=start.split(" ");
-                    console.log("starttime-->" + startTime1);
-                    console.log("starttime-->" + endTime1);
+                    let endTime1=end.split(" ");
+                    console.log("starttime-->" + startTime1[0]);
+                    console.log("starttime-->" + endTime1[0]);
                     let startTime2=startTime1[0].split(":");
                     let endTime2=endTime1[0].split(":");
 
-                    console.log("starttime-->" + startTime2);
+                    console.log("starttime-->" + startTime2[0]);
+                    console.log("starttime-->" + endTime2[0]);
+                    let dateSet=new Date();
+                    dateSet.setHours(startTime2[0],startTime2[1],0)
+                    let dateSet1=new Date();
+                    dateSet1.setHours(endTime2[0],endTime2[1],0)
                     this.setState({
                         dayData: hours,
                         dataSource: items,
-                        startTime: new Date().setHours(startTime2[0],startTime2[1],0),
-                        endTime: new Date().setHours(endTime2[0],endTime2[1],0),
+                        startTime: dateSet,
+                        endTime: dateSet1,
                     });
-                    console.log("starttime-->" + this.state.startTime);
-                    console.log("starttime-->" + this.state.endTime);
+                    console.log("starttime123-->" + this.state.startTime);
+                    console.log("starttime123-->" + this.state.endTime);
                 } else {
+                    this.setState({showLoading: false});
                     if (response.ResultType === 0) {
                         alert(response.Message);
                     }
                 }
             }).catch(error => {
+            this.setState({showLoading: false});
             //console.error('Errorr:', error);
             console.log('Error:', error);
             alert("Error: "+error);
@@ -387,6 +397,17 @@ export default class ChooseTimings extends Component {
                     })}
                     <View style={{marginBottom: 50}}/>
                 </ScrollView>
+                {this.state.showLoading && <View style={{
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor: "transparent",
+                    position: "absolute",
+                    opacity: 1,
+                    alignItems: "center",
+                    justifyContent: "center"
+                }}>
+                    <Image resizeMode={"contain"} source={require("../../../assets/images/loading.gif")} style={{width:100,height:100, opacity: 1,}}/>
+                </View>}
 
             </View>
         );

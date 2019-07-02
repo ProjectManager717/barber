@@ -6,6 +6,7 @@ import {globalStyles} from "../../../themes/globalStyles";
 import {Header} from "react-native-elements";
 import CheckBox from "../../../components/CheckBox";
 import {constants} from "../../../utils/constants";
+import Preference from "react-native-preference";
 
 
 export default class Cancellations extends Component {
@@ -29,9 +30,74 @@ export default class Cancellations extends Component {
         this.getCancellationsNoShow();
     }
 
+    updateCancellation() {
+        let cancellationPolicyValue = 0;
+        let noShowPolicyValue = 0;
+        if (this.state.twoHour === true)
+            cancellationPolicyValue = 1;
+        else if (this.state.oneHour === true)
+            cancellationPolicyValue = 2;
+        else if (this.state.thirtyMin === true)
+            cancellationPolicyValue = 3;
+        else
+            cancellationPolicyValue = 0;
+
+        if (this.state.bookingPrefrence === true)
+            noShowPolicyValue = 1;
+        else if (this.state.cancellationNoShow === true)
+            noShowPolicyValue = 2;
+        else if (this.state.surgePrice === true)
+            noShowPolicyValue = 3;
+        else
+            noShowPolicyValue = 0;
+
+        this.setState({showLoading: true})
+        var details = {
+            user_id: Preference.get("userId"),
+            cancellation_policy: this.state.policy,
+            cancellation_policy_value: cancellationPolicyValue,
+            no_show_policy: this.state.noShowPolicy,
+            no_show_policy_value: noShowPolicyValue,
+        };
+        var formBody = [];
+        for (var property in details) {
+            var encodedKey = encodeURIComponent(property);
+            var encodedValue = encodeURIComponent(details[property]);
+            formBody.push(encodedKey + "=" + encodedValue);
+        }
+        formBody = formBody.join("&");
+        fetch(constants.UpdateCancellation, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: formBody
+        }).then(response => response.json())
+            .then(response => {
+                console.log("updateBookingPrefrence-->", "-" + JSON.stringify(response));
+                if (response.ResultType === 1) {
+                    this.setState({showLoading: false})
+                    alert("Booking preferences updated successfully");
+                    this.props.navigation.goBack();
+                } else {
+                    this.setState({showLoading: false})
+                    if (response.ResultType === 0) {
+                        alert(response.Message);
+                    }
+
+                }
+            }).catch(error => {
+            //console.error('Errorr:', error);
+            this.setState({showLoading: false})
+            console.log('Error:', error);
+            alert("Error: " + error);
+        });
+    }
+
     getCancellationsNoShow() {
         this.setState({showLoading: true});
-        fetch(constants.BarberBookingPreference + "?user_id=" + "5d1206c0a70da23e2c2ae205" /*Preference.get("userId")*/, {
+        fetch(constants.BarberBookingPreference + "?user_id=" +  Preference.get("userId"), {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
@@ -86,12 +152,12 @@ export default class Cancellations extends Component {
                 this.setState({twoHour: true,oneHour:false,thirtyMin:false})
            /* else
                 this.setState({twoHour: false})*/
-        } else if (val === "1 Hour Ahead, 25% Fee, 1 Reschedule") {
+        } else if (val === "1 Hour Ahead, 15% Fee, 1 Reschedule") {
             if (this.state.oneHour === false)
                 this.setState({oneHour: true,twoHour: false,thirtyMin:false})
             /*else
                 this.setState({oneHour: false})*/
-        } else if (val === "30 Minutes Ahead, 75% Fee, 0 Reschedule") {
+        } else if (val === "30 Minutes Ahead, 25% Fee, 1 Reschedule") {
             if (this.state.thirtyMin === false)
                 this.setState({thirtyMin: true,twoHour: false,oneHour:false})
            /* else
@@ -198,7 +264,7 @@ export default class Cancellations extends Component {
 
                     <TouchableOpacity style={[globalStyles.button, {marginTop: 70, marginBottom: 30, width: '70%'}]}
                                       onPress={() => {
-                                          this.props.navigation.goBack();
+                                          this.updateCancellation()
                                       }}>
                         <Text style={globalStyles.buttonText}>DONE</Text>
                     </TouchableOpacity>

@@ -17,12 +17,16 @@ import {Colors} from "../../../themes";
 import {styles} from "./styles";
 import {globalStyles} from "../../../themes/globalStyles";
 import ClientQR from "../../Settings/ClientQR";
+import Preference from "react-native-preference";
+import {constants} from "../../../utils/constants";
+import {SafeAreaView} from "react-navigation";
 
 
 export default class ClientHome extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            showLoading:false,
             dataSource: [{
                 id: 0,
                 imgPathh: require("../../../assets/images/anthony.png"),
@@ -72,6 +76,65 @@ export default class ClientHome extends Component {
         }
 
 
+    }
+
+    componentDidMount(): void {
+        this.getRecentBookings();
+    }
+
+    getRecentBookings()
+    {
+        this.setState({showLoading:true});
+        fetch(constants.ClientRecentBookings + "?client_id=" +"5cf0db2d50e6184aae5eb5d5"/*Preference.get("userId")*/, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        }).then(response => response.json())
+            .then(response => {
+                console.log("getRecentBookings-->", "-" + JSON.stringify(response));
+                if (response.ResultType === 1) {
+                    this.setState({showLoading:false});
+                    this.setState({dataSource:response.Data});
+                    this.getFavoriteBarbers();
+                } else {
+                    this.setState({showLoading:false});
+                    if (response.ResultType === 0) {
+                        alert(response.Message);
+                    }
+                }
+            }).catch(error => {
+            this.setState({showLoading:false});
+            //console.error('Errorr:', error);
+            console.log('Error:', error);
+            alert("Error: "+error);
+        });
+    }
+
+    getFavoriteBarbers()
+    {
+        fetch(constants.ClientFavoritBarbers + "?client_id=" + "5cf0db2d50e6184aae5eb5d5"/*Preference.get("userId")*/, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        }).then(response => response.json())
+            .then(response => {
+                console.log("getFavoriteBarbers-->", "-" + JSON.stringify(response));
+                if (response.ResultType === 1) {
+                    this.setState({dataSource2:response.Data}) ;
+                } else {
+                    if (response.ResultType === 0) {
+                        alert(response.Message);
+                    }
+                }
+            }).catch(error => {
+            //console.error('Errorr:', error);
+            console.log('Error:', error);
+            alert("Error: "+error);
+        });
     }
 
 
@@ -188,12 +251,9 @@ export default class ClientHome extends Component {
                 width: "100%",
                 alignItems: "center",
                 height: 150,
-
-
                 borderRadius: 30,
-
             }}>
-            <ImageBackground source={item.imgPathh2}
+            <ImageBackground source={require("../../../assets/images/imgbck1.png")}
                              style={{width: "100%", height: "100%", borderRadius: 7, overflow: 'hidden'}}>
                 <View style={{flexDirection: "row", width: "100%", height: "100%",}}>
 
@@ -219,7 +279,7 @@ export default class ClientHome extends Component {
                             borderColor: "darkgrey",
                             paddingStart: 5,
                             opacity: 0.8
-                        }}>{item.title2}</Text>
+                        }}>{item.barber_name}</Text>
                         <View style={{
                             flexDirection: "row", alignItems: "center", backgroundColor: "#454656",
                             borderRadius: 10,
@@ -236,9 +296,7 @@ export default class ClientHome extends Component {
                                 textShadowColor: "black",
                                 textShadowOffset: {width: -2, height: 1},
                                 textShadowRadius: 3,
-
-
-                            }}>{item.address}</Text>
+                            }}>{item.shop_name}</Text>
                         </View>
                         <View style={{
                             flexDirection: "row", alignItems: "center", backgroundColor: "#454656",
@@ -252,7 +310,7 @@ export default class ClientHome extends Component {
                             <AirbnbRating
                                 showRating={false}
                                 count={5}
-                                defaultRating={ratings}
+                                defaultRating={item.average_rating}
                                 size={10}
                                 style={{marginStart: 10, height: 30}}
                             />
@@ -261,21 +319,19 @@ export default class ClientHome extends Component {
                                 textShadowColor: "black",
                                 textShadowOffset: {width: -2, height: 1},
                                 textShadowRadius: 3,
-                            }}>{"(17 Reviews)"}</Text>
+                            }}>{"("+item.total_reviews+" Reviews)"}</Text>
                         </View>
                     </View>
                     <View style={{flexDirection: "column", width: "40%", height: "100%"}}>
                         <View style={{alignItems: "flex-end", marginEnd: 20}}>
-                            <TouchableOpacity>
+
                                 <Image resizeMode={"contain"} source={require("../../../assets/images/star.png")}
                                        style={{width: 20, height: 20, marginTop: 10}}/>
-                            </TouchableOpacity>
-                            <TouchableOpacity>
-                                <Image resizeMode={"contain"} source={require("../../../assets/images/price.png")}
-                                       style={{width: 20, height: 20, marginTop: 10}}/>
-                            </TouchableOpacity>
+                            {item.mobilePayEnabled &&<Image resizeMode={"contain"} source={require("../../../assets/images/price.png")}
+                                       style={{width: 20, height: 20, marginTop: 10}}/>}
+                            {!item.mobilePayEnabled &&<Image resizeMode={"contain"} style={{width: 20, height: 20, marginTop: 10}}/>}
                             <TouchableOpacity
-                                onPress={() => this.props.navigation.navigate("ClientBarberProfile")}
+                                onPress={() => this.props.navigation.navigate("ClientBarberProfile",{barberId:item.id})}
                                 style={{width: "100%", alignItems: "flex-end"}}>
                                 <View style={{
                                     marginTop: 20,
@@ -311,8 +367,6 @@ export default class ClientHome extends Component {
                 </View>
             </ImageBackground>
         </View>
-
-
     }
 
     render() {
@@ -356,11 +410,16 @@ export default class ClientHome extends Component {
                         }}>{"Recent Bookings"} </Text>
                     </View>
                     <View style={{marginTop: 0, marginStart: 20, marginEnd: 20}}>
-                        <FlatList renderItem={({item}) => this.renderRecentBookings(item)}
+                        {(this.state.dataSource.length>0) &&<FlatList renderItem={({item}) => this.renderRecentBookings(item)}
                                   data={this.state.dataSource}
                                   keyExtractor={(item, index) => index}
                                   numColumns={1}
-                        />
+                        />}
+
+                        {!(this.state.dataSource.length>0) &&<View style={{width:"100%",height:80,alignItems:"center",justifyContent:"center"}}>
+                            <Text style={{fontSize:15,color:"white"}}>{"You don't have any recent Bookings"}</Text>
+                        </View>}
+
                     </View>
                     <View>
                         <Text style={{
@@ -373,13 +432,28 @@ export default class ClientHome extends Component {
                     </View>
 
                     <View style={{marginTop: 0, marginStart: 20, marginEnd: 20, marginBottom: 20}}>
-                        <FlatList renderItem={({item}) => this.renderFavBarbers(item)}
+                        {(this.state.dataSource2.length>0) &&<FlatList renderItem={({item}) => this.renderFavBarbers(item)}
                                   data={this.state.dataSource2}
                                   keyExtractor={(item, index) => index}
                                   numColumns={1}
-                        />
+                        />}
+
+                        {!(this.state.dataSource2.length>0) &&<View style={{width:"100%",height:80,alignItems:"center",justifyContent:"center"}}>
+                            <Text style={{fontSize:15,color:"white",textAlign:"center"}}>{"You don't have any Favorite Barbers \n Please make search for making favorites"}</Text>
+                        </View>}
                     </View>
                 </ScrollView>
+                {this.state.showLoading && <View style={{
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor: "transparent",
+                    position: "absolute",
+                    opacity: 1,
+                    alignItems: "center",
+                    justifyContent: "center"
+                }}>
+                    <Image resizeMode={"contain"} source={require("../../../assets/images/loading.gif")} style={{width:100,height:100, opacity: 1,}}/>
+                </View>}
 
             </View>
 

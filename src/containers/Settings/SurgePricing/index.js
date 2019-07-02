@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {View, Switch, Text, StyleSheet, Image, ScrollView, TouchableOpacity, TextInput,Alert} from "react-native";
+import {View, Switch, Text, StyleSheet, Image, ScrollView, TouchableOpacity, TextInput, Alert} from "react-native";
 import {Colors} from "../../../themes";
 import {globalStyles} from "../../../themes/globalStyles";
 import PopupDialog from 'react-native-popup-dialog';
@@ -34,9 +34,88 @@ export default class SurgePricing extends Component {
         this.getSurgePricing()
     }
 
+    updateSurgePricing() {
+        let holidayBit = 0;
+        let birthdaysBit = 0;
+        let any_day_after_10pmBit = 0;
+        let houseCallBit = 0;
+        if (this.state.holidays === true)
+            holidayBit = 1;
+        else
+            holidayBit = 0;
+
+        if (this.state.birthday === true)
+            birthdaysBit = 1;
+        else
+            birthdaysBit = 0;
+
+        if (this.state.anyDayAfter10 === true)
+            any_day_after_10pmBit = 1;
+        else
+            any_day_after_10pmBit = 0;
+
+        if (this.state.houseCall === true)
+            houseCallBit = 1;
+        else
+            houseCallBit = 0;
+
+
+        console.log("SurgeData1:-->"+holidayBit )
+        console.log("SurgeData2:-->"+birthdaysBit )
+        console.log("SurgeData3:-->"+any_day_after_10pmBit )
+        console.log("SurgeData4:-->"+houseCallBit )
+
+        this.setState({showLoading: true})
+        var details = {
+            user_id: Preference.get("userId"),
+            surge_radius_limit: this.state.radiousLimit,
+            surge_duration: this.state.duration,
+            surge_price: this.state.price,
+            surge_pricing: this.state.surgePrice,
+            holidays: holidayBit,
+            birthdays: birthdaysBit,
+            any_day_after_10pm: any_day_after_10pmBit,
+            housecall: houseCallBit,
+        };
+        var formBody = [];
+        for (var property in details) {
+            var encodedKey = encodeURIComponent(property);
+            var encodedValue = encodeURIComponent(details[property]);
+            formBody.push(encodedKey + "=" + encodedValue);
+        }
+        formBody = formBody.join("&");
+        fetch(constants.UpdateSurgePricing, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: formBody
+        }).then(response => response.json())
+            .then(response => {
+                console.log("updateBookingPrefrence-->", "-" + JSON.stringify(response));
+                if (response.ResultType === 1) {
+                    this.setState({showLoading: false})
+                    alert("Surge Pricing updated successfully");
+                    this.props.navigation.goBack();
+                } else {
+                    this.setState({showLoading: false})
+                    if (response.ResultType === 0) {
+                        alert(response.Message);
+                    }
+
+                }
+            }).catch(error => {
+            //console.error('Errorr:', error);
+            this.setState({showLoading: false})
+            console.log('Error:', error);
+            alert("Error: " + error);
+        });
+    }
+
     getSurgePricing() {
         this.setState({showLoading: true});
-        fetch(constants.BarberBookingPreference + "?user_id=" + "5d1206c0a70da23e2c2ae205" /*Preference.get("userId")*/, {
+        fetch(constants.BarberBookingPreference + "?user_id=" + Preference.get("userId"), {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
@@ -48,15 +127,15 @@ export default class SurgePricing extends Component {
                 if (response.ResultType === 1) {
                     this.setState({showLoading: false});
                     let prefrence = response.Data;
-                    if (prefrence.surge_pricing === "1")
+                    if (prefrence.surge_pricing === 1)
                         this.setState({surgePrice: true})
-                    if (prefrence.holidays === "1")
+                    if (prefrence.holidays === 1)
                         this.setState({holidays: true})
-                    if (prefrence.birthdays === "1")
+                    if (prefrence.birthdays === 1)
                         this.setState({birthday: true})
-                    if (prefrence.any_day_after_10pm === "1")
+                    if (prefrence.any_day_after_10pm === 1)
                         this.setState({anyDayAfter10: true})
-                    if (prefrence.housecall === "1")
+                    if (prefrence.housecall === 1)
                         this.setState({houseCall: true})
 
                     this.setState({
@@ -83,7 +162,7 @@ export default class SurgePricing extends Component {
     setSurgePrice() {
         if (Preference.get("userPackage") === "basic") {
             this.setState({DialogSurgePrice: true})
-        }else {
+        } else {
             if (this.state.surgePrice === true)
                 this.setState({surgePrice: false})
             else
@@ -122,10 +201,14 @@ export default class SurgePricing extends Component {
         return <View style={{flex: 1, flexDirection: 'row', height: 22, marginLeft: 40}}>
             <CheckBoxSquare onClick={() => this.checkBox(item.title)} isChecked={item.value}
                             style={{alignSelf: 'center'}}/>
-            <Text style={[styles.row_title,{fontSize:item.fontSize}]}>{item.title}</Text>
-            {item.infoIcon&&<TouchableOpacity onPress={()=>Alert.alert(
-                'Holidays'," New Years, Valentines Day, Easter, Cinco de Mayo, 4th of July, Memorial Day, Labor Day, Halloween, Thanksgiving, Christmas")}>
-            <Image style={{marginStart:10,width:16,height:16,marginTop:3}} source={require("../../../assets/images/info.png")}/>
+            <Text style={[styles.row_title, {fontSize: item.fontSize}]}>{item.title}</Text>
+            {(item.title === "Birthday") &&
+            <Text style={[styles.row_title, {fontSize: item.fontSize}]}>{"- " + Preference.get("userDOB")}</Text>}
+
+            {item.infoIcon && <TouchableOpacity onPress={() => Alert.alert(
+                'Holidays', " New Years, Valentines Day, Easter, Cinco de Mayo, 4th of July, Memorial Day, Labor Day, Halloween, Thanksgiving, Christmas")}>
+                <Image style={{marginStart: 10, width: 16, height: 16, marginTop: 3}}
+                       source={require("../../../assets/images/info.png")}/>
             </TouchableOpacity>}
         </View>;
     }
@@ -201,10 +284,30 @@ export default class SurgePricing extends Component {
 
                         </View>*/}
                     </View>
-                    {this.renderRowWithCheck({title: "Holidays", value: this.state.holidays,fontSize:17,infoIcon:true})}
-                    {this.renderRowWithCheck({title: "Birthday-April "+Preference.get("userDOB"), value: this.state.birthday,fontSize:17,infoIcon:false})}
-                    {this.renderRowWithCheck({title: "Any Day After 10 PM", value: this.state.anyDayAfter10,fontSize:17,infoIcon:false})}
-                    {this.renderRowWithCheck({title: "HouseCall", value: this.state.houseCall,fontSize:17,infoIcon:false})}
+                    {this.renderRowWithCheck({
+                        title: "Holidays",
+                        value: this.state.holidays,
+                        fontSize: 17,
+                        infoIcon: true
+                    })}
+                    {this.renderRowWithCheck({
+                        title: "Birthday",
+                        value: this.state.birthday,
+                        fontSize: 17,
+                        infoIcon: false
+                    })}
+                    {this.renderRowWithCheck({
+                        title: "Any Day After 10 PM",
+                        value: this.state.anyDayAfter10,
+                        fontSize: 17,
+                        infoIcon: false
+                    })}
+                    {this.renderRowWithCheck({
+                        title: "HouseCall",
+                        value: this.state.houseCall,
+                        fontSize: 17,
+                        infoIcon: false
+                    })}
 
                     <View
                         style={[globalStyles.rowBackground, styles.row, {marginTop: 20, marginLeft: 40, height: 30,}]}>
@@ -233,24 +336,33 @@ export default class SurgePricing extends Component {
                                 ref={(popupDialog) => {
                                     this.popupDialog = popupDialog;
                                 }}>
-                                <View style={{flexDirection: "column", alignItems: "center",marginTop:20,marginBottom:20}}>
+                                <View style={{
+                                    flexDirection: "column",
+                                    alignItems: "center",
+                                    marginTop: 20,
+                                    marginBottom: 20
+                                }}>
                                     <View style={{
                                         width: "100%",
                                         marginTop: 3,
                                         marginBottom: 3,
-                                        backgroundColor: "black"
+                                        backgroundColor: "black",
                                     }}/>
                                     {/* <Text>Radious Limit</Text>*/}
-                                    <TextInput
-                                        style={styles.input}
-                                        onChangeText={(text) => this.setState({radiousLimit: text})}
-                                        value={this.state.radiousLimit}
-                                        fontSize={17}
-                                        keyboardType="numeric"
-                                        maxLength={5}
-                                        placeholder={"Radoius Limit"}
-                                        autoFocus={true}
-                                    />
+                                    <View style={{flexDirection: "row"}}>
+                                        <Text style={{fontSize: 15, color: "black", marginTop: 12}}>Radious
+                                            Limit :</Text>
+                                        <TextInput
+                                            onChangeText={(text) => this.setState({radiousLimit: text})}
+                                            value={this.state.radiousLimit}
+                                            fontSize={17}
+                                            keyboardType="numeric"
+                                            maxLength={5}
+                                            placeholder={"Radoius Limit"}
+                                            autoFocus={true}
+                                        />
+                                    </View>
+
                                     <View style={{
                                         width: "100%",
                                         height: 0.2,
@@ -258,15 +370,18 @@ export default class SurgePricing extends Component {
                                         marginBottom: 5,
                                         backgroundColor: "black"
                                     }}/>
-                                    <TextInput
-                                        style={styles.input}
-                                        onChangeText={(text) => this.setState({duration: text})}
-                                        value={this.state.duration}
-                                        fontSize={17}
-                                        keyboardType="numeric"
-                                        placeholder={"Duration"}
-                                        maxLength={5}
-                                    />
+                                    <View style={{flexDirection: "row"}}>
+                                        <Text style={{fontSize: 15, color: "black", marginTop: 12}}>Duration :</Text>
+                                        <TextInput
+                                            style={styles.input}
+                                            onChangeText={(text) => this.setState({duration: text})}
+                                            value={this.state.duration}
+                                            fontSize={17}
+                                            keyboardType="numeric"
+                                            placeholder={"Duration"}
+                                            maxLength={5}
+                                        />
+                                    </View>
                                     <View style={{
                                         width: "100%",
                                         height: 0.2,
@@ -274,15 +389,18 @@ export default class SurgePricing extends Component {
                                         marginBottom: 5,
                                         backgroundColor: "black"
                                     }}/>
-                                    <TextInput
-                                        style={styles.input}
-                                        onChangeText={(text) => this.setState({price: text})}
-                                        value={this.state.price}
-                                        fontSize={17}
-                                        keyboardType="numeric"
-                                        placeholder={"Price"}
-                                        maxLength={5}
-                                    />
+                                    <View style={{flexDirection: "row"}}>
+                                        <Text style={{fontSize: 15, color: "black", marginTop: 12}}>Price :</Text>
+                                        <TextInput
+                                            style={styles.input}
+                                            onChangeText={(text) => this.setState({price: text})}
+                                            value={this.state.price}
+                                            fontSize={17}
+                                            keyboardType="numeric"
+                                            placeholder={"Price"}
+                                            maxLength={5}
+                                        />
+                                    </View>
                                     <View style={{
                                         width: "100%",
                                         height: 0.2,
@@ -306,7 +424,7 @@ export default class SurgePricing extends Component {
                     </View>
                 </ScrollView>
                 <TouchableOpacity onPress={() => {
-                    this.props.navigation.navigate("Settings");
+                    this.updateSurgePricing();
                 }} style={[globalStyles.button, {
                     marginTop: 70,
                     height: 40,
@@ -342,21 +460,33 @@ export default class SurgePricing extends Component {
                     <View style={{
                         flexDirection: "column",
                         alignItems: "center",
-                        justifyContent:"center",
+                        justifyContent: "center",
                     }}>
-                        <Text style={{marginTop: 10, fontSize: 18,textAlign: "center",marginBottom:20,marginStart:10,marginEnd:10}}>Only Supreme Barbers can use this feature!
+                        <Text style={{
+                            marginTop: 10,
+                            fontSize: 18,
+                            textAlign: "center",
+                            marginBottom: 20,
+                            marginStart: 10,
+                            marginEnd: 10
+                        }}>Only Supreme Barbers can use this feature!
                             Do you want to upgrade your account?</Text>
                         <View style={{width: "100%", height: 1, marginBottom: 0, backgroundColor: "black"}}/>
-                        <View style={{width:"100%",height:50,flexDirection:"row"}}>
-                            <TouchableOpacity onPress={()=>this.setState({DialogSurgePrice:false})} style={{width:"50%",height:"100%",justifyContent:"center",alignItems:"center"}}>
-                                <Text style={{color:"red",fontSize:18}}>NO</Text>
+                        <View style={{width: "100%", height: 50, flexDirection: "row"}}>
+                            <TouchableOpacity onPress={() => this.setState({DialogSurgePrice: false})} style={{
+                                width: "50%",
+                                height: "100%",
+                                justifyContent: "center",
+                                alignItems: "center"
+                            }}>
+                                <Text style={{color: "red", fontSize: 18}}>NO</Text>
                             </TouchableOpacity>
                             <View style={{width: 1, height: "100%", marginBottom: 0, backgroundColor: "black"}}/>
-                            <TouchableOpacity onPress={()=>{
-                                this.setState({DialogSurgePrice:false});
+                            <TouchableOpacity onPress={() => {
+                                this.setState({DialogSurgePrice: false});
                                 this.props.navigation.push("Subscription");
-                            }} style={{width:"50%",height:"100%",justifyContent:"center",alignItems:"center"}}>
-                                <Text style={{color:"green",fontSize:18}}>YES</Text>
+                            }} style={{width: "50%", height: "100%", justifyContent: "center", alignItems: "center"}}>
+                                <Text style={{color: "green", fontSize: 18}}>YES</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
