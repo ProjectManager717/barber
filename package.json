@@ -38,8 +38,7 @@
     "react-native-svg": "^9.5.1",
     "react-native-vector-icons": "^6.3.0",
     "react-native-view-shot": "^2.6.0",
-    "react-navigation": "^3.3.2",
-    "tipsi-stripe": "^7.5.0"
+    "react-navigation": "^3.3.2"
   },
   "devDependencies": {
     "babel-core": "^7.0.0-bridge.0",

@@ -14,6 +14,9 @@ import {ScrollView} from "react-native-gesture-handler";
 import colors from "../../../themes/colors";
 import CheckBoxSquare from "../../../components/CheckBox";
 import Preference from "react-native-preference";
+import {constants} from "../../../utils/constants";
+import {AirbnbRating} from "react-native-elements";
+import {SafeAreaView} from "react-navigation";
 
 
 const {height, width} = Dimensions.get("window");
@@ -31,10 +34,13 @@ export default class BarberProfile extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            barberInsta:"",
+            showLoading:false,
+            barberShopNme: "",
             barberName: Preference.get("userName"),
             barberImage: "",
             barberShopName: Preference.get("userShopname"),
-            barberRatting: 5,
+            barberRating: 5,
             barberReviews: 17,
             ListData: [
                 {
@@ -88,54 +94,54 @@ export default class BarberProfile extends Component {
 
             ]
         }
-        this.getBarberProfileData = this.getBarberProfileData.bind(this);
     }
 
     componentDidMount(): void {
-
-        //this.getBarberProfileData();
+        this.getBarberDetails();
     }
 
-    getBarberProfileData() {
-        fetch("https://CYLPR.app/api/get_profile", {
-            method: 'POST', // or 'PUT'
-            body: JSON.stringify({
-                user_id: Prefrence.get("userId"),
-            }), // data can be `string` or {object}!
+    getBarberDetails() {
+        this.setState({showLoading:true})
+        fetch(constants.ClientBarbersProfile + "/" + Preference.get("userId") + "/profile", {
+            method: 'GET',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             }
         }).then(response => response.json())
             .then(response => {
-                console.log("response-->", "-" + JSON.stringify(response));
-                if (response.code === 200) {
+                console.log("getBarberDetails-->", "-" + JSON.stringify(response));
+                if (response.ResultType === 1) {
+                    this.setState({showLoading:false})
+                    let barberData = response.Data;
                     this.setState({
-                        barberName: Prefrence.get("userName"),
-                        barberImage: "",
-                        barberShopName: "",
-                        barberRatting: "",
-                        barberReviews: "",
-                        ListData: "",
-                        ListData2: ""
+                        barberInsta: barberData.username,
+                        barberName: barberData.firstname,
+                        barberShopNme: barberData.shop_name,
+                        ListData: barberData.portoflios,
+                        ListData2: barberData.services,
+                        barberRating: barberData.rating,
+                        barberReviews: barberData.reviews,
                     });
+                    //this.setState({barberData: response.Data});
                 } else {
-                    if (response.code === 100) {
+                    this.setState({showLoading:false})
+                    if (response.ResultType === 0) {
                         alert(response.Message);
                     }
                 }
-            })
-            .catch(error => {
-                //console.error('Errorr:', error);
-                console.log('Error:', error);
-                alert("Error: "+error);
-            });
-        //Keyboard.dismiss();
+            }).catch(error => {
+            //console.error('Errorr:', error);
+            this.setState({showLoading:false})
+            console.log('Error:', error);
+            alert("Error: " + error);
+        });
     }
 
 
+
     render() {
-        return (
+        return (<View style={{width:"100%",height:"100%"}}>
             <ScrollView>
                 <View style={styles.container}>
                     <Header
@@ -154,7 +160,7 @@ export default class BarberProfile extends Component {
                         </View>
 
                         <TouchableOpacity onPress={() =>{
-                            Linking.openURL('https://www.instagram.com/' + Preference.get("userInsta"))
+                            Linking.openURL('https://www.instagram.com/' + this.state.barberInsta)
                         }} style={{position: 'absolute', top: 10, right: width / 2 - width / 2.7 / 2}}>
                             <Image source={require("../../../assets/images/insta.png")}
                                 style={styles.icon}/>
@@ -174,11 +180,18 @@ export default class BarberProfile extends Component {
                                            source={require("../../../assets/images/arrow_down.png")}/>*/}
                                 </View>
                                 <View style={styles.review}>
-                                    <Image
+                                    <AirbnbRating
+                                        showRating={false}
+                                        count={6}
+                                        defaultRating={this.state.barberRating}
+                                        size={10}
+                                        style={{marginStart: 10, height: 30}}
+                                    />
+                                   {/* <Image
                                         resizeMode="contain"
                                         source={require("../../../assets/images/start.png")}
                                         style={styles.rating}
-                                    />
+                                    />*/}
                                     <Text style={[styles.allFontStyle, styles.reviewText]}>
                                         {"("}{this.state.barberReviews}{" Reviews)"}
                                     </Text>
@@ -193,10 +206,11 @@ export default class BarberProfile extends Component {
                         flex: 1,
                         width: '100%',
                         height: "100%",
-                        flexDirection: "row"
+                        flexDirection: "row",
+                        alignItems:"center",
                     }]}>
 
-                        <FlatList
+                        {this.state.ListData.length>0 &&<FlatList
                             data={this.state.ListData}
                             horizontal={true}
                             showsHorizontalScrollIndicator={false}
@@ -213,9 +227,12 @@ export default class BarberProfile extends Component {
                                            resizeMode='cover'
                                            source={item.imagePath}/>
                                 </View>}
-                        />
-                        <Image resizeMode={"contain"} source={require("../../../assets/images/arrow1.png")}
-                               style={{position: "absolute", width: 35, height: 35, right: 10, top: 50}}/>
+                        />}
+                        {this.state.ListData.length<1 &&<View style={{width:"100%",height:60,alignItems:"center",justifyContent:"center"}}>
+                            <Text style={{fontSize:15,color:"white"}}>{"You dont have any Experience Images"}</Text>
+                        </View>}
+                        {this.state.ListData.length>0 && <Image resizeMode={"contain"} source={require("../../../assets/images/arrow1.png")}
+                               style={{position: "absolute", width: 35, height: 35, right: 10, top: 50}}/>}
 
                     </View>
 
@@ -258,7 +275,7 @@ export default class BarberProfile extends Component {
                             </View>
                         </View>
 
-                        <FlatList
+                        {this.state.ListData2.length>0 && <FlatList
                             data={this.state.ListData2}
                             keyExtractor={item => item.id}
                             showsVerticalScrollIndicator={true}
@@ -291,12 +308,28 @@ export default class BarberProfile extends Component {
                                     </View>
                                     <View style={{height: 0.5, backgroundColor: "#868791"}}/>
                                 </View>}
-                        />
+                        />}
+
+                        {this.state.ListData2.length<1 &&<View style={{width:"100%",height:60,alignItems:"center",justifyContent:"center"}}>
+                            <Text style={{fontSize:15,color:"white"}}>{"You dont have any Services"}</Text>
+                        </View>}
                     </View>
 
 
                 </View>
             </ScrollView>
+                {this.state.showLoading && <View style={{
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor: "transparent",
+                    position: "absolute",
+                    opacity: 1,
+                    alignItems: "center",
+                    justifyContent: "center"
+                }}>
+                    <Image resizeMode={"contain"} source={require("../../../assets/images/loading.gif")} style={{width:100,height:100, opacity: 1,}}/>
+                </View>}
+            </View>
         );
     }
 }

@@ -193,9 +193,7 @@ export default class SurgePricing extends Component {
             else
                 this.setState({houseCall: false})
         }
-
     }
-
 
     renderRowWithCheck(item) {
         return <View style={{flex: 1, flexDirection: 'row', height: 22, marginLeft: 40}}>

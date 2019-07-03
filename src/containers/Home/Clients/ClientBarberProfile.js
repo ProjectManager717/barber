@@ -35,6 +35,7 @@ let getDay = new Date().getDay();
 let getYear = new Date().getFullYear();
 
 let barberId = 0;
+let barberMobilePay = false;
 export default class ClientBarberProfile extends Component {
 
     rightAction() {
@@ -53,9 +54,22 @@ export default class ClientBarberProfile extends Component {
         super(props);
         const {navigation} = this.props;
         barberId = navigation.getParam('barberId');
+        let barberRating = navigation.getParam('barberRating');
+        barberMobilePay
+        let barberReviews = navigation.getParam('barberReviews');
+        barberMobilePay = navigation.getParam('barberMobilePay');
         this.state = {
             barberProfileImage: require("../../../assets/images/personface.png"),
-            barberData:undefined,
+            barberInsta: "",
+            barberName: "",
+            barberShopNme: "",
+            barberRating: barberRating,
+            barberReviews: barberReviews,
+            barberImages: [],
+            barberServices: [],
+            barberTimeSlots: [],
+            barberTotalAmout: 0,
+            //barberData:undefined,
             dataSource: [],
             monthSet: undefined,
             monthDays: [],
@@ -157,6 +171,11 @@ export default class ClientBarberProfile extends Component {
                 }
 
             ]
+        }
+        if (barberMobilePay === true) {
+            this.setState({buttonPayText: "PAY"})
+        } else {
+            this.setState({buttonPayText: "RESERVE"})
         }
     }
 
@@ -285,6 +304,7 @@ export default class ClientBarberProfile extends Component {
     }
 
     getBarberDetails() {
+        console.log("barberID-->" + barberId);
         fetch(constants.ClientBarbersProfile + "/" + barberId + "/profile", {
             method: 'GET',
             headers: {
@@ -295,7 +315,17 @@ export default class ClientBarberProfile extends Component {
             .then(response => {
                 console.log("getBarberDetails-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
-                    this.setState({barberData: response.Data});
+                    let barberData = response.Data;
+                    this.setState({
+                        barberInsta: barberData.username,
+                        barberName: barberData.firstname,
+                        barberShopNme: barberData.shop_name,
+                        barberImages: barberData.portoflios,
+                        barberServices: barberData.services,
+                        barberTimeSlots: barberData.firstname,
+                        barberTotalAmout: 0,
+                    });
+                    //this.setState({barberData: response.Data});
                 } else {
                     if (response.ResultType === 0) {
                         alert(response.Message);
@@ -470,7 +500,8 @@ export default class ClientBarberProfile extends Component {
                             </ImageBackground>
                         </View>
 
-                        <TouchableOpacity  style={styles.icon} onPress={()=>Linking.openURL('https://www.instagram.com/'+this.state.barberData.username)}>
+                        <TouchableOpacity style={styles.icon}
+                                          onPress={() => Linking.openURL('https://www.instagram.com/' + this.state.barberData.username)}>
                             <Image
                                 source={require("../../../assets/images/insta.png")}
                                 style={{height: 50, width: 50,}}
@@ -481,11 +512,11 @@ export default class ClientBarberProfile extends Component {
                         <View>
                             <View style={[styles.infoContainer]}>
                                 <Text style={[styles.allFontStyle, styles.name]}>
-                                    {this.state.barberData.firstname}
+                                    {this.state.barberName}
                                 </Text>
                                 <View style={{flexDirection: "row",}}>
                                     <Text style={{color: colors.white, fontSize: 12}}>
-                                        {this.state.barberData.shop_name}
+                                        {this.state.barberShopName}
                                     </Text>
                                     {/*<Image resizeMode={"contain"}
                                            style={{height: 8, width: 8, marginStart: 10, marginTop: 5}}
@@ -500,7 +531,7 @@ export default class ClientBarberProfile extends Component {
                                             isDisabled={true}
                                             showRating={false}
                                             count={5}
-                                            defaultRating={4}
+                                            defaultRating={this.state.barberRating}
                                             size={10}
                                             style={{marginStart: 10, height: 30}}
                                         />
@@ -510,9 +541,8 @@ export default class ClientBarberProfile extends Component {
                                             style={styles.rating}
                                         />*/}
                                     </TouchableOpacity>
-                                    <Text style={[styles.allFontStyle, styles.reviewText]}>
-                                        (17 Reviews)
-                                    </Text>
+                                    <Text
+                                        style={[styles.allFontStyle, styles.reviewText]}>{"(" + this.state.barberReviews + " Reviews)"}</Text>
 
                                 </View>
 

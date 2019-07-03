@@ -27,7 +27,8 @@ export default class ClientHome extends Component {
         super(props);
         this.state = {
             showLoading:false,
-            dataSource: [{
+            dataSource:[],
+           /* dataSource: [{
                 id: 0,
                 imgPathh: require("../../../assets/images/anthony.png"),
                 title: "Anthony Martial",
@@ -52,9 +53,10 @@ export default class ClientHome extends Component {
                 btnTxt: "Cancelled",
                 btnClr: "#EF0525",
             }
-            ],
+            ],*/
+           dataSource2:[],
 
-            dataSource2: [{
+           /* dataSource2: [{
                 id: 0,
                 imgPathh2: require("../../../assets/images/imgbck1.png"),
                 title2: "RENATO SANCHEZ",
@@ -71,7 +73,7 @@ export default class ClientHome extends Component {
                 surgeImg: require("../../../assets/images/price.png")
 
             },
-            ]
+            ]*/
 
         }
 
@@ -331,7 +333,12 @@ export default class ClientHome extends Component {
                                        style={{width: 20, height: 20, marginTop: 10}}/>}
                             {!item.mobilePayEnabled &&<Image resizeMode={"contain"} style={{width: 20, height: 20, marginTop: 10}}/>}
                             <TouchableOpacity
-                                onPress={() => this.props.navigation.navigate("ClientBarberProfile",{barberId:item.id})}
+                                onPress={() => this.props.navigation.push("ClientBarberProfile",{
+                                    barberId:item.barber_id,
+                                    barberRating:item.average_rating,
+                                    barberReviews:item.total_reviews,
+                                    barberMobilePay:item.mobilePayEnabled
+                                })}
                                 style={{width: "100%", alignItems: "flex-end"}}>
                                 <View style={{
                                     marginTop: 20,

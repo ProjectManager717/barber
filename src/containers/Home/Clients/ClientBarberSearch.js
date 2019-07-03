@@ -16,12 +16,16 @@ import {Header, AirbnbRating} from "react-native-elements";
 import {Colors} from "../../../themes";
 import {styles} from "./styles";
 import {globalStyles} from "../../../themes/globalStyles";
+import {constants} from "../../../utils/constants";
+import Preference from "react-native-preference";
 
 
 export default class ClientBarberSearch extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            searchBarbers:[],
+            showLoading:false,
             setLocationToggle:false,
             LocationToggle:require("../../../assets/images/LocationOff.png"),
             dataSource2: [{
@@ -66,6 +70,34 @@ export default class ClientBarberSearch extends Component {
         }
     }
 
+    searchBarber(txt)
+    {
+        this.setState({showLoading:true})
+        fetch(constants.ClientBarbersSearch+"/"+txt, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        }).then(response => response.json())
+            .then(response => {
+                console.log("getBarberDetails-->", "-" + JSON.stringify(response));
+                if (response.ResultType === 1) {
+                    this.setState({showLoading:false,searchBarbers:response.Data})
+                } else {
+                    this.setState({showLoading:false})
+                    if (response.ResultType === 0) {
+                        alert(response.Message);
+                    }
+                }
+            }).catch(error => {
+            //console.error('Errorr:', error);
+            this.setState({showLoading:false})
+            console.log('Error:', error);
+            alert("Error: " + error);
+        });
+    }
+
     renderRowInput() {
         return <View style={{flex: 1, flexDirection: 'column', width: "100%"}}>
             <View style={{flexDirection: "row", alignItems:"center",justifyContent:"center"}}>
@@ -82,7 +114,7 @@ export default class ClientBarberSearch extends Component {
                         marginStart:10,
                         fontFamily: "AvertaStd-RegularItalic",
                     }}
-                    onChangeText={(text) => this.setState({text})}
+                    onChangeText={(text) => this.searchBarber(text)}
                     placeholder={"Search by Instagram, Name, or Barbershop"}
                     placeholderTextColor={"grey"}
                 />
@@ -289,7 +321,7 @@ export default class ClientBarberSearch extends Component {
                         {this.renderRowInput({})}
                     </View>
 
-                    <View style={{
+                    {(this.state.searchBarbers.length<1) &&<View style={{
                         flexDirection: "row",
                         marginTop: 20,
                         marginStart: 20,
@@ -309,10 +341,7 @@ export default class ClientBarberSearch extends Component {
                             fontSize: 12,
                             position:"absolute",
                             top: 12
-                        }}
-
-                        >TOP RATED PROFESSIONALS IN YOUR AREA</Text>
-
+                        }}>TOP RATED PROFESSIONALS IN YOUR AREA</Text>
 
                         <View style={{
                             width: "90%",
@@ -372,9 +401,9 @@ export default class ClientBarberSearch extends Component {
                             </TouchableWithoutFeedback>
                         </View>
 
-                    </View>
+                    </View>}
 
-
+                    {(this.state.searchBarbers.length<1) &&<View>
                     <View>
                         <Text style={{
                             color: "white",
@@ -410,9 +439,29 @@ export default class ClientBarberSearch extends Component {
                         />
                     </View>
 
+                    </View>}
+
+                    {(this.state.searchBarbers.length>0) &&<View style={{marginTop: 0, marginStart: 20, marginEnd: 20, marginBottom: 30}}>
+                        <FlatList renderItem={({item}) => this.renderRowSurge2(item)}
+                                  data={this.state.searchBarbrs}
+                                  keyExtractor={(item, index) => index}
+                                  numColumns={1}
+                        />
+                    </View>}
+
 
                 </ScrollView>
-
+                {this.state.showLoading && <View style={{
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor: "transparent",
+                    position: "absolute",
+                    opacity: 1,
+                    alignItems: "center",
+                    justifyContent: "center"
+                }}>
+                    <Image resizeMode={"contain"} source={require("../../../assets/images/loading.gif")} style={{width:100,height:100, opacity: 1,}}/>
+                </View>}
             </View>
 
         )

@@ -20,6 +20,9 @@ export const constants = {
     UpdateBookingPreference:Base_url+path3+"settings/bookingPreference",
     UpdateCancellation:Base_url+path3+"settings/cancellationPolicy",
     UpdateSurgePricing:Base_url+path3+"settings/surgePricing",
+    BarbersProfile : Base_url + path2,
+    BarberAddService : Base_url + path2 + "addservice",
+    BarberUpdateService : Base_url + path2 + "updateService",
 
 
     ClientLogin : Base_url + clientPath + "login",
@@ -31,5 +34,6 @@ export const constants = {
     ClientPaymentMethod : Base_url + "/api/paymentCard/" + "add",
     ClientRecentBookings : Base_url + clientPath1 + "calenderSlots",
     ClientFavoritBarbers : Base_url + clientPath1 + "favoriteBarbers",
-    ClientBarbersProfile : Base_url + path2 ,
+    ClientBarbersProfile : Base_url + path2,
+    ClientBarbersSearch : Base_url + clientPath1+"clientSearchBarber",
 };

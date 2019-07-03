@@ -40,6 +40,7 @@ export default class ClientEditProfile extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            showLoading: false,
             avatarSource: null,
             userName: "",
             userAddress: "Enter your address",
@@ -47,7 +48,7 @@ export default class ClientEditProfile extends Component {
             editName: false,
             isConnected: true,
             places: [],
-            DialogVisible:false,
+            DialogVisible: false,
         }
 
     }
@@ -77,7 +78,7 @@ export default class ClientEditProfile extends Component {
                     this.setState({places: []});
 
                     this.state.places.push(details);
-                    this.setState({userAddress:details});
+                    this.setState({userAddress: details.formatted_address});
                     this.setState({places: this.state.places});
                     console.log("hello2" + JSON.stringify(this.state.places));
                 }}
@@ -93,7 +94,7 @@ export default class ClientEditProfile extends Component {
                     textInput: {
                         backgroundColor: colors.gray,
                         color: 'white',
-                        fontSize:13,
+                        fontSize: 13,
                     },
 
                     textInputContainer: {
@@ -144,7 +145,7 @@ export default class ClientEditProfile extends Component {
 
                 }
                 renderLeftButton={() => <View style={{justifyContent: "center", alignItems: "center"}}>
-                    <Text style={{marginStart:10,fontSize:12,color:Colors.grey}}>{"Location :"}</Text>
+                    <Text style={{marginStart: 10, fontSize: 12, color: Colors.grey}}>{"Location :"}</Text>
                 </View>
                 }
                 enablePoweredByContainer={false}
@@ -177,63 +178,57 @@ export default class ClientEditProfile extends Component {
             if (this.state.userName === "" || this.state.userAddress === "" || this.state.userName === "Enter your Name" || this.state.userAddress === "Enter your address") {
                 alert("Please enter full data.");
             } else {
-                const {email, password} = this.state;
-                var details = {
-                    client_id: Preference.get("userId"),
-                    address: this.state.userAddress,
-                    username: this.state.userName,
-                };
+                this.setState({showLoading: true})
 
-                // client_image:"",
-
-
-                let formdata = new FormData();
-
-                for (var property in details) {
-                    formdata.append(property, details[property])
-                }
+                let requestBody = new FormData();
+                requestBody.append("client_id", Preference.get("userId"))
+                requestBody.append("address", this.state.userAddress)
+                requestBody.append("username", this.state.userName)
 
                 if (this.state.avatarSource) {
-                    let photo = {uri: this.state.avatarSource.uri}
-                    formdata.append("client_image", {uri: photo.uri, name: 'image.jpg', type: 'image/jpeg'})
-                }/*else{
-                    alert("Please select profile image.");
-                    return;
-                }*/
-
-                this.props.navigation.goBack();
-
-                // fetch(constants.ClientProfileUpdate, {
-                //     method: 'POST',
-                //     headers: {
-                //         'Content-Type': 'multipart/form-data',
-                //     },
-                //     body: formdata
-                // }).then(response => response.json())
-                //     .then(response => {
-                //         console.log('ClientProfileEdit -- response -- '+ JSON.stringify(response))
-                //         if (response.ResultType === 1) {
-                //             Preference.set({
-                //                 userName: this.state.userName,
-                //                 userAddress: this.state.userAddress,
-                //             });
-                //             this.props.navigation.push("PaymentMethod");
-                //         } else {
-                //             if (response.ResultType === 0) {
-                //                 alert(response.Message);
-                //             }
-                //         }
-                //     })
-                //     .catch(error => {
-                //         console.error('Error:', error);
-                //     });
+                    requestBody.append("client_image", {
+                        uri: this.state.avatarSource.uri,
+                        name: "imageAvatar.png",
+                        type: 'image/jpeg'
+                    })
+                }
+                console.log("URL:--> " + constants.ClientProfileUpdate);
+                console.log("URL body:--> " + JSON.stringify(requestBody));
+                fetch(constants.ClientProfileUpdate, {
+                    method: 'POST',
+                    headers: {
+                        /*'Content-Type': 'multipart/form-data',*/
+                        'Accept': 'application/json',
+                    },
+                    body: requestBody
+                }).then(response => response.json())
+                    .then(response => {
+                        console.log('ClientProfileEdit -- response -- ' + JSON.stringify(response))
+                        if (response.ResultType === 1) {
+                            this.setState({showLoading: false});
+                            alert("Profile updated")
+                            /*Preference.set({
+                                userName: this.state.userName,
+                                userAddress: this.state.userAddress,
+                            });*/
+                            this.props.navigation.goBack();
+                        } else {
+                            this.setState({showLoading: false})
+                            if (response.ResultType === 0) {
+                                alert(response.Message);
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        this.setState({showLoading: false})
+                        //alert('Error:', error);
+                        console.log('Error:', error);
+                    });
             }
         } else {
             alert("Please connect Internet");
         }
-
     }
-
 
     selectImage = () => {
         ImagePicker.showImagePicker(options, (response) => {
@@ -251,9 +246,7 @@ export default class ClientEditProfile extends Component {
                 // You can also display the image using data:
                 // const source = { uri: 'data:image/jpeg;base64,' + response.data };
 
-                this.setState({
-                    avatarSource: source,
-                });
+                this.setState({avatarSource: source});
             }
         });
     }
@@ -394,6 +387,18 @@ export default class ClientEditProfile extends Component {
                         </View>
                     </ScrollView>
                 </Dialog>
+                {this.state.showLoading && <View style={{
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor: "transparent",
+                    position: "absolute",
+                    opacity: 1,
+                    alignItems: "center",
+                    justifyContent: "center"
+                }}>
+                    <Image resizeMode={"contain"} source={require("../../../assets/images/loading.gif")}
+                           style={{width: 100, height: 100, opacity: 1,}}/>
+                </View>}
             </View>
         )
     }

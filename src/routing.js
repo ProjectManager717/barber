@@ -239,8 +239,8 @@ const AuthStack = createStackNavigator({
     Share: Share,
 }, {
     //initialRouteName: 'Settings',
-    initialRouteName: 'TabNavigator',
-    //initialRouteName: 'ClientTabNavigator',
+    //initialRouteName: 'TabNavigator',
+    initialRouteName: 'ClientTabNavigator',
     headerMode: 'none'
 });
 
