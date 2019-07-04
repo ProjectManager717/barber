@@ -110,7 +110,7 @@ export default class ClientSupremeReview extends Component {
                 <View style={{justifyContent: "center", marginTop: 5, marginBottom: 20}}>
                     <View style={{flexDirection: "row", alignSelf: "center"}}>
                         <AirbnbRating
-                            showRating={false}
+                            showRating={true}
                             count={5}
                             defaultRating={ratings}
                             size={18}

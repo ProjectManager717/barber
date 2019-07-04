@@ -43,7 +43,7 @@ export default class BarberEditProfile extends Component {
             showLoading:false,
             barberInsta: "",
             barberName: "",
-            barberShopNme: "",
+            barberShopName: "",
             imagesData: [],
             barberRating: 0,
             barberReviews: 0,
@@ -126,9 +126,10 @@ export default class BarberEditProfile extends Component {
                     this.setState({showLoading:false})
                     let barberData = response.Data;
                     this.setState({
+                        avatarSource: {uri: barberData.user_image},
                         barberInsta: barberData.username,
                         barberName: barberData.firstname,
-                        barberShopNme: barberData.shop_name,
+                        barberShopName: barberData.shop_name,
                         imagesData: barberData.portoflios,
                         ListData: barberData.services,
                         barberRating: barberData.rating,

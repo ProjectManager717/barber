@@ -128,7 +128,7 @@ export default class ClientHome extends Component {
                                 color: "white",
                                 marginStart: 5,
                                 marginTop: 20
-                            }}>{this.state.newCustomers + "New Customers"} </Text>
+                            }}>{this.state.newCustomers + " New Customers"} </Text>
                         </View>
                         <View style={{width: "50%", flexDirection: "row", justifyContent: "flex-end", marginEnd: 20}}>
                             <Image resizeMode={"contain"}
@@ -139,7 +139,7 @@ export default class ClientHome extends Component {
                                 fontSize: 12,
                                 marginStart: 5,
                                 marginTop: 20
-                            }}>{this.state.newCustomers + "Returning Customers"} </Text>
+                            }}>{this.state.newCustomers + " Total Customers"} </Text>
                         </View>
                     </View>
 

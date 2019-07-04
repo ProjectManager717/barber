@@ -36,63 +36,13 @@ export default class BarberProfile extends Component {
         this.state = {
             barberInsta:"",
             showLoading:false,
-            barberShopNme: "",
             barberName: Preference.get("userName"),
             barberImage: "",
             barberShopName: Preference.get("userShopname"),
             barberRating: 5,
             barberReviews: 17,
-            ListData: [
-                {
-                    id: 1,
-                    imagePath: require('../../../assets/images/vp2.png')
-                },
-                {
-                    id: 2,
-                    imagePath: require('../../../assets/images/vp2.png')
-                },
-                {
-                    id: 3,
-                    imagePath: require('../../../assets/images/vp2.png')
-                }],
-            ListData2: [
-                {
-                    id: 1,
-                    check: true,
-                    title: "Haircut",
-                    duration: "30 mins",
-                    prize: "$20"
-                },
-                {
-                    id: 2,
-                    check: true,
-                    title: "Beard Trim",
-                    duration: "15 mins",
-                    prize: "$15"
-                },
-                {
-                    id: 3,
-                    check: false,
-                    title: "Design",
-                    duration: "30 mins",
-                    prize: "$20"
-                },
-                {
-                    id: 4,
-                    check: false,
-                    title: "Hot Towel Shape",
-                    duration: "45 mins",
-                    prize: "$40"
-                },
-                {
-                    id: 5,
-                    check: false,
-                    title: "Housecall",
-                    duration: "1 hr",
-                    prize: "$100"
-                }
-
-            ]
+            ListData:[],
+            ListData2:[],
         }
     }
 
@@ -117,11 +67,12 @@ export default class BarberProfile extends Component {
                     this.setState({
                         barberInsta: barberData.username,
                         barberName: barberData.firstname,
-                        barberShopNme: barberData.shop_name,
+                        barberShopName: barberData.shop_name,
                         ListData: barberData.portoflios,
                         ListData2: barberData.services,
                         barberRating: barberData.rating,
                         barberReviews: barberData.reviews,
+                        barberImage: {uri: barberData.user_image},
                     });
                     //this.setState({barberData: response.Data});
                 } else {
@@ -152,11 +103,11 @@ export default class BarberProfile extends Component {
                         leftIcon={require("../../../assets/images/ic_back.png")}/>
                     <View style={styles.detailsContainer}>
                         <View style={styles.profileImageContainer}>
-                            <ImageBackground
-                                source={require("../../../assets/images/personface.png")}
+                            <Image
+                                source={this.state.barberImage}
                                 style={styles.profileImage}
                             >
-                            </ImageBackground>
+                            </Image>
                         </View>
 
                         <TouchableOpacity onPress={() =>{
@@ -210,14 +161,15 @@ export default class BarberProfile extends Component {
                         alignItems:"center",
                     }]}>
 
-                        {this.state.ListData.length>0 &&<FlatList
+                        {(this.state.ListData.length>0) &&<FlatList
                             data={this.state.ListData}
+                            extraData={this.state}
                             horizontal={true}
                             showsHorizontalScrollIndicator={false}
-                            keyExtractor={item => item.id}
+                            keyExtractor={index => index}
                             renderItem={({item}) =>
                                 <View>
-                                    <Image style={{
+                                    {!(item.image_url==="")&&<Image style={{
                                         borderRadius: 10,
                                         marginStart: 8,
                                         height: 140,
@@ -225,13 +177,13 @@ export default class BarberProfile extends Component {
                                         backgroundColor: "grey"
                                     }}
                                            resizeMode='cover'
-                                           source={item.imagePath}/>
+                                           source={{uri:constants.portfolioImagePath+item.image_url}}/>}
                                 </View>}
                         />}
-                        {this.state.ListData.length<1 &&<View style={{width:"100%",height:60,alignItems:"center",justifyContent:"center"}}>
+                        {(this.state.ListData.length<1) &&<View style={{width:"100%",height:60,alignItems:"center",justifyContent:"center"}}>
                             <Text style={{fontSize:15,color:"white"}}>{"You dont have any Experience Images"}</Text>
                         </View>}
-                        {this.state.ListData.length>0 && <Image resizeMode={"contain"} source={require("../../../assets/images/arrow1.png")}
+                        {(this.state.ListData.length>0) && <Image resizeMode={"contain"} source={require("../../../assets/images/arrow1.png")}
                                style={{position: "absolute", width: 35, height: 35, right: 10, top: 50}}/>}
 
                     </View>
@@ -297,13 +249,13 @@ export default class BarberProfile extends Component {
                                         }]}>
                                             {false &&
                                             <CheckBoxSquare isChecked={item.check} uncheckedCheckBoxColor={"#84858C"}/>}
-                                            <Text style={{color: "white", fontSize: 12}}>   {item.title} </Text>
+                                            <Text style={{color: "white", fontSize: 12}}>   {item.name} </Text>
                                         </View>
                                         <View style={[{flexDirection: "row", width: "25%", alignItems: "center"}]}>
                                             <Text style={{color: "white", fontSize: 12}}>{item.duration}</Text>
                                         </View>
                                         <View style={[{flexDirection: "row", width: "25%", alignItems: "center"}]}>
-                                            <Text style={{color: "white", fontSize: 12}}>{item.prize}</Text>
+                                            <Text style={{color: "white", fontSize: 12}}>{"$"+item.price}</Text>
                                         </View>
                                     </View>
                                     <View style={{height: 0.5, backgroundColor: "#868791"}}/>
@@ -360,7 +312,8 @@ const styles = StyleSheet.create({
         height: width / 3,
         width: width / 3,
         justifyContent: "flex-end",
-        alignItems: "flex-end"
+        alignItems: "flex-end",
+        borderRadius: (width / 3)/2,
     },
     infoContainer: {
         height: 80,

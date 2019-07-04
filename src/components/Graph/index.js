@@ -47,7 +47,7 @@ export default class lGraphComp extends Component {
                                style={[styles.arrow_down, {marginLeft: 5, marginTop: 5}]}/>
                         <PopupDialog
                             visible={this.state.DialogVisible}
-                            width={0.3}
+                        
                             onTouchOutside={() => {
                                 this.setState({DialogVisible: false});
                             }}
@@ -55,80 +55,92 @@ export default class lGraphComp extends Component {
                                 this.popupDialog = popupDialog;
                             }}
                         >
+                            <ScrollView>
                             <View style={{flexDirection: "column", alignItems: "center"}}>
                                 <View style={{
                                     width: "100%",
                                     height: 0,
                                     marginTop: 3,
-                                    marginBottom: 3,
+                                
                                     backgroundColor: "black"
                                 }}/>
+
+                                <Text style={{margin:10,fontSize:20,fontWeight:"bold"}}>
+                                {"Please Select Month"}</Text>
                                 <Text style={{marginTop:10,fontSize:20}}
                                     onPress={() => this.setState({
                                         monthSelect: "Jan",
                                         DialogVisible: false
                                     })}>Jan</Text>
-
+<View style={{width:"80%",height:0.5,backgroundColor:"grey",marginTop:10}}/>
                                 <Text style={{marginTop:10,fontSize:20}}
                                     onPress={() => this.setState({
                                         monthSelect: "Feb",
                                         DialogVisible: false
                                     })}>Feb</Text>
-
+<View style={{width:"80%",height:0.5,backgroundColor:"grey",marginTop:10}}/>
                                 <Text style={{marginTop:10,fontSize:20}}
                                     onPress={() => this.setState({
                                         monthSelect: "Mar",
                                         DialogVisible: false
                                     })}>Mar</Text>
+                                    <View style={{width:"80%",height:0.5,backgroundColor:"grey",marginTop:10}}/>
                                 <Text style={{marginTop:10,fontSize:20}}
                                     onPress={() => this.setState({
                                         monthSelect: "Apr",
                                         DialogVisible: false
                                     })}>Apr</Text>
-
+<View style={{width:"80%",height:0.5,backgroundColor:"grey",marginTop:10}}/>
                                 <Text style={{marginTop:10,fontSize:20}}
                                     onPress={() => this.setState({
                                         monthSelect: "May",
                                         DialogVisible: false
                                     })}>May</Text>
+                                    <View style={{width:"80%",height:0.5,backgroundColor:"grey",marginTop:10}}/>
                                 <Text style={{marginTop:10,fontSize:20}}
                                     onPress={() => this.setState({
                                         monthSelect: "Jun",
                                         DialogVisible: false
                                     })}>Jun</Text>
+                                    <View style={{width:"80%",height:0.5,backgroundColor:"grey",marginTop:10}}/>
                                 <Text style={{marginTop:10,fontSize:20}}
                                     onPress={() => this.setState({
                                         monthSelect: "Jul",
                                         DialogVisible: false
                                     })}>Jul</Text>
+                                    <View style={{width:"80%",height:0.5,backgroundColor:"grey",marginTop:10}}/>
                                 <Text style={{marginTop:10,fontSize:20}}
                                     onPress={() => this.setState({
                                         monthSelect: "Aug",
                                         DialogVisible: false
                                     })}>Aug</Text>
+                                    <View style={{width:"80%",height:0.5,backgroundColor:"grey",marginTop:10}}/>
                                 <Text style={{marginTop:10,fontSize:20}}
                                     onPress={() => this.setState({
                                         monthSelect: "Sep",
                                         DialogVisible: false
                                     })}>Sep</Text>
-
+<View style={{width:"80%",height:0.5,backgroundColor:"grey",marginTop:10}}/>
                                 <Text style={{marginTop:10,fontSize:20}}
                                     onPress={() => this.setState({
                                         monthSelect: "Oct",
                                         DialogVisible: false
                                     })}>Oct</Text>
+                                    <View style={{width:"80%",height:0.5,backgroundColor:"grey",marginTop:10}}/>
 
                                 <Text style={{marginTop:10,fontSize:20}}
                                     onPress={() => this.setState({
                                         monthSelect: "Nov",
                                         DialogVisible: false
                                     })}>Nov</Text>
-                                <Text style={{marginTop:10,fontSize:20,marginBottom:20}}
+                                    <View style={{width:"80%",height:0.5,backgroundColor:"grey",marginTop:10}}/>
+                                <Text style={{marginTop:10,fontSize:20,marginBottom:10}}
                                     onPress={() => this.setState({
                                         monthSelect: "Dec",
                                         DialogVisible: false
                                     })}>Dec</Text>
                             </View>
+                            </ScrollView>
                         </PopupDialog>
                     </TouchableOpacity>
                     <TouchableOpacity style={{marginLeft: 20, flexDirection: "row"}}
@@ -143,7 +155,6 @@ export default class lGraphComp extends Component {
 
                         <PopupDialog
                             visible={this.state.DialogVisible1}
-                            width={0.4}
                             onTouchOutside={() => {
                                 this.setState({DialogVisible1: false});
                             }}
@@ -151,17 +162,21 @@ export default class lGraphComp extends Component {
                                 this.popupDialog = popupDialog;
                             }}
                         >
-                            <View style={{flexDirection: "column", alignItems: "center",marginTop:30,marginBottom:30}}>
+                            <View style={{flexDirection: "column", alignItems: "center",marginTop:10,marginBottom:10}}>
+                                <Text style={{margin:10,fontSize:20,fontWeight:"bold"}} >{"Please select Week"}</Text>
 
                                 <Text style={{marginTop:10,fontSize:20}} onPress={() => this.setState({weekSelect: "Week 1", DialogVisible1: false})}>Week
                                     1</Text>
+                                    <View style={{width:"80%",height:0.5,backgroundColor:"grey",marginTop:10}}/>
                                 <Text style={{marginTop:10,fontSize:20}} onPress={() => this.setState({weekSelect: "Week 2", DialogVisible1: false})}>Week
                                     2</Text>
+                                    <View style={{width:"80%",height:0.5,backgroundColor:"grey",marginTop:10}}/>
                                 <Text style={{marginTop:10,fontSize:20}} onPress={() => this.setState({weekSelect: "Week 3", DialogVisible1: false})}>Week
                                     3</Text>
+                                    <View style={{width:"80%",height:0.5,backgroundColor:"grey",marginTop:10}}/>
                                 <Text style={{marginTop:10,fontSize:20}} onPress={() => this.setState({weekSelect: "Week 4", DialogVisible1: false})}>Week
                                     4</Text>
-                                <View style={{width: "100%", height: 0, marginBottom: 10, backgroundColor: "black"}}/>
+
                             </View>
                         </PopupDialog>
                     </TouchableOpacity>

@@ -8,7 +8,7 @@ import {
     ScrollView,
     TouchableOpacity,
     TouchableHighlight,
-    TextInput, Dimensions
+    TextInput, Dimensions,Alert
 } from "react-native";
 import {Colors} from "../../../themes";
 import {globalStyles} from "../../../themes/globalStyles";
@@ -50,7 +50,7 @@ export default class ClientBlast extends Component {
             .then(response => {
                 console.log("responseClientBlast-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
-                    alert("Your message sent successfully to all Clients.");
+                    Alert.alert("Success!","Your message was successfully sent to all your clients.");
                 } else {
                     if (response.ResultType === 0) {
                         alert(response.Message);

@@ -8,7 +8,7 @@ import {
     ScrollView,
     TouchableOpacity,
     TouchableHighlight, Clipboard,
-    TextInput, Dimensions, ImageBackground
+    TextInput, Dimensions, ImageBackground,Alert
 } from "react-native";
 import LinearGradient from 'react-native-linear-gradient';
 import {Colors} from "../../../themes";
@@ -40,7 +40,8 @@ export default class Share extends Component {
     saveToClipboard = async (val) => {
         //To copy the text to clipboard
         await Clipboard.setString(val);
-        alert('Link Copied');
+        //alert('Link Copied');
+        Alert.alert("Success!", "CLYPR Profile copied");
     };
 
     downloadImage() {
@@ -49,6 +50,7 @@ export default class Share extends Component {
             RNFS.copyFile(uri, destPath)
                 .then((success) => {
                     console.log('file copied!');
+                    Alert.alert("Success!", "Image is downloaded");
                 })
                 .catch((err) => {
                     console.log('Error copying file: ' + err.message);
@@ -64,6 +66,7 @@ export default class Share extends Component {
             RNFS.copyFile(uri, destPath)
                 .then((success) => {
                     console.log('file copied!');
+                    Alert.alert("Success!", "Image is downloaded");
                 })
                 .catch((err) => {
                     console.log('Error copying file: ' + err.message);

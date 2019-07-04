@@ -24,10 +24,10 @@ export default class ClientBarberSearch extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            searchBarbers:[],
-            showLoading:false,
-            setLocationToggle:false,
-            LocationToggle:require("../../../assets/images/LocationOff.png"),
+            searchBarbers: [],
+            showLoading: false,
+            setLocationToggle: false,
+            LocationToggle: require("../../../assets/images/LocationOff.png"),
             dataSource2: [{
                 id: 0,
                 imgPathh2: require("../../../assets/images/imgbck1.png"),
@@ -35,7 +35,7 @@ export default class ClientBarberSearch extends Component {
                 address: "Anfield Barbershop",
                 time: "10:00 AM",
                 surgeImg: require("../../../assets/images/price.png"),
-                starimg:require("../../../assets/images/star.png")
+                starimg: require("../../../assets/images/star.png")
 
             }, {
                 id: 1,
@@ -44,7 +44,7 @@ export default class ClientBarberSearch extends Component {
                 time: "10:00 AM",
                 address: "Santiago Bernabeu Barbershop",
                 surgeImg: require("../../../assets/images/price.png"),
-                starimg:require("../../../assets/images/star.png")
+                starimg: require("../../../assets/images/star.png")
             },
             ],
             dataSource3: [{
@@ -54,7 +54,7 @@ export default class ClientBarberSearch extends Component {
                 address: "Santiago Bernabeu Barbershop",
                 time: "10:00 AM",
                 surgeImg: require("../../../assets/images/price.png"),
-                starimg:require("../../../assets/images/star-unselected.png")
+                starimg: require("../../../assets/images/star-unselected.png")
 
             }, {
                 id: 1,
@@ -63,17 +63,16 @@ export default class ClientBarberSearch extends Component {
                 time: "10:00 AM",
                 address: "Old Trafford Barbershop",
                 surgeImg: require("../../../assets/images/price.png"),
-                starimg:require("../../../assets/images/star-unselected.png")
+                starimg: require("../../../assets/images/star-unselected.png")
 
             },
             ]
         }
     }
 
-    searchBarber(txt)
-    {
-        this.setState({showLoading:true})
-        fetch(constants.ClientBarbersSearch+"/"+txt, {
+    searchBarber(txt) {
+        this.setState({showLoading: true})
+        fetch(constants.ClientBarbersSearch + "?search_barber=" + txt, {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
@@ -81,18 +80,22 @@ export default class ClientBarberSearch extends Component {
             }
         }).then(response => response.json())
             .then(response => {
-                console.log("getBarberDetails-->", "-" + JSON.stringify(response));
+                console.log("getSearchDetails-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
-                    this.setState({showLoading:false,searchBarbers:response.Data})
+                    this.setState({
+                        showLoading: false,
+                        searchBarbers: response.Data
+                    })
+                    console.log("getSearchDetails-->", "-" + JSON.stringify(this.state.searchBarbers));
                 } else {
-                    this.setState({showLoading:false})
+                    this.setState({showLoading: false, searchBarbers: []})
                     if (response.ResultType === 0) {
                         alert(response.Message);
                     }
                 }
             }).catch(error => {
             //console.error('Errorr:', error);
-            this.setState({showLoading:false})
+            this.setState({showLoading: false})
             console.log('Error:', error);
             alert("Error: " + error);
         });
@@ -100,21 +103,21 @@ export default class ClientBarberSearch extends Component {
 
     renderRowInput() {
         return <View style={{flex: 1, flexDirection: 'column', width: "100%"}}>
-            <View style={{flexDirection: "row", alignItems:"center",justifyContent:"center"}}>
+            <View style={{flexDirection: "row", alignItems: "center", justifyContent: "center"}}>
                 <Image resizeMode={"contain"} source={require("../../../assets/images/searchicon.png")}
                        style={{
                            width: 16,
                            height: 16,
-                           marginLeft:30
+                           marginLeft: 30
                        }}/>
                 <TextInput
                     style={{
                         color: "white",
                         fontSize: 16,
-                        marginStart:10,
+                        marginStart: 10,
                         fontFamily: "AvertaStd-RegularItalic",
                     }}
-                    onChangeText={(text) => this.searchBarber(text)}
+                    onChange={(text) => this.searchBarber(text)}
                     placeholder={"Search by Instagram, Name, or Barbershop"}
                     placeholderTextColor={"grey"}
                 />
@@ -123,6 +126,7 @@ export default class ClientBarberSearch extends Component {
     }
 
     renderRowSurge2(item) {
+        console.log("Barber Detail---->" + JSON.stringify(item));
         let ratings = Math.floor(Math.random() * 5 + 1);
         return <View
             style={{
@@ -133,7 +137,7 @@ export default class ClientBarberSearch extends Component {
                 height: 150,
                 borderRadius: 30,
             }}>
-            <ImageBackground source={item.imgPathh2}
+            <ImageBackground source={require("../../../assets/images/imgbck-3.png")}
                              style={{width: "100%", height: "100%", borderRadius: 7, overflow: 'hidden'}}>
                 <View style={{flexDirection: "row", width: "100%", height: "100%",}}>
                     <View style={{
@@ -157,7 +161,7 @@ export default class ClientBarberSearch extends Component {
                             borderColor: "darkgrey",
                             paddingStart: 5,
                             opacity: 0.8
-                        }}>{item.title2}</Text>
+                        }}>{item.barber_name}</Text>
                         <View style={{
                             flexDirection: "row", alignItems: "center", backgroundColor: "#454656",
                             borderRadius: 10,
@@ -174,7 +178,7 @@ export default class ClientBarberSearch extends Component {
                                 textShadowColor: "black",
                                 textShadowOffset: {width: -2, height: 1},
                                 textShadowRadius: 3,
-                            }}>{item.address}</Text>
+                            }}>{item.shop_name}</Text>
                         </View>
                         <View style={{
                             flexDirection: "row", alignItems: "center", backgroundColor: "#454656",
@@ -188,7 +192,7 @@ export default class ClientBarberSearch extends Component {
                             <AirbnbRating
                                 showRating={false}
                                 count={5}
-                                defaultRating={ratings}
+                                defaultRating={item.average_rating}
                                 size={10}
                                 style={{marginStart: 10, height: 30}}
                             />
@@ -197,7 +201,7 @@ export default class ClientBarberSearch extends Component {
                                 textShadowColor: "black",
                                 textShadowOffset: {width: -2, height: 1},
                                 textShadowRadius: 3,
-                            }}>{"(17 Reviews)"}</Text>
+                            }}>{"(" + item.total_reviews + " Reviews)"}</Text>
                         </View>
                     </View>
                     <View style={{flexDirection: "column", width: "40%", height: "100%"}}>
@@ -206,12 +210,18 @@ export default class ClientBarberSearch extends Component {
                                 <Image resizeMode={"contain"} source={item.starimg}
                                        style={{width: 20, height: 20, marginTop: 10}}/>
                             </View>
-                            <View>
+                            <View style={{width: 20, height: 20}}>
+                                {item.mobilePayEnabled &&
                                 <Image resizeMode={"contain"} source={require("../../../assets/images/price.png")}
-                                       style={{width: 20, height: 20, marginTop: 10}}/>
+                                       style={{width: 20, height: 20, marginTop: 10}}/>}
                             </View>
                             <TouchableOpacity
-                                onPress={() => this.props.navigation.navigate("ClientBarberProfile")}
+                                onPress={() => this.props.navigation.push("ClientBarberProfile",{
+                                    barberId:item.barber_id,
+                                    barberRating:item.average_rating,
+                                    barberReviews:item.total_reviews,
+                                    barberMobilePay:item.mobilePayEnabled
+                                })}
                                 style={{width: "100%", alignItems: "flex-end"}}>
                                 <View style={{
                                     marginTop: 20,
@@ -223,7 +233,12 @@ export default class ClientBarberSearch extends Component {
                                     alignItems: "center",
                                     justifyContent: "center"
                                 }}>
-                                    <Text style={{marginStart: 5, fontSize: 10, color: "red",fontWeight:'bold'}}>{"Next Available"}</Text>
+                                    <Text style={{
+                                        marginStart: 5,
+                                        fontSize: 10,
+                                        color: "red",
+                                        fontWeight: 'bold'
+                                    }}>{"Next Available"}</Text>
                                     <Image resizeMode={"contain"}
                                            source={require("../../../assets/images/nextarrow.png")}
                                            style={{width: 8, height: 8, marginStart: 5}}/>
@@ -241,15 +256,11 @@ export default class ClientBarberSearch extends Component {
                                 justifyContent: "center"
 
                             }}>
-                                <Text style={{fontSize: 12, color: "white",fontWeight:"bold"}}>{"10:00 AM"}</Text>
+                                <Text style={{fontSize: 12, color: "white", fontWeight: "bold"}}>{"10:00 AM"}</Text>
                             </View>
                         </View>
                     </View>
-
-
                 </View>
-
-
             </ImageBackground>
 
 
@@ -258,14 +269,14 @@ export default class ClientBarberSearch extends Component {
 
     }
 
-    setLocationImage()
-    {
-        if(this.state.setLocationToggle===false)
-        {
-            this.setState({LocationToggle:require("../../../assets/images/location1.png"),setLocationToggle:true});
-        }else
-        {
-            this.setState({LocationToggle:require("../../../assets/images/LocationOff.png"),setLocationToggle:false});
+    setLocationImage() {
+        if (this.state.setLocationToggle === false) {
+            this.setState({LocationToggle: require("../../../assets/images/location1.png"), setLocationToggle: true});
+        } else {
+            this.setState({
+                LocationToggle: require("../../../assets/images/LocationOff.png"),
+                setLocationToggle: false
+            });
         }
     }
 
@@ -288,7 +299,7 @@ export default class ClientBarberSearch extends Component {
                             />
                         </TouchableOpacity>
                     }
-                    rightComponent={  <TouchableOpacity
+                    rightComponent={<TouchableOpacity
                         onPress={() => {
                             this.props.navigation.navigate("ClientFilter");
                         }}
@@ -310,146 +321,151 @@ export default class ClientBarberSearch extends Component {
                     }}
                 />
                 <ScrollView>
-                    <View style={{
-                        marginTop: 20,
-                        marginStart: 20, marginEnd: 20,
-                        backgroundColor: "#474857",
-                        borderWidth: 0.5,
-                        borderColor: "grey",
-                        borderRadius: 6
-                    }}>
-                        {this.renderRowInput({})}
-                    </View>
-
-                    {(this.state.searchBarbers.length<1) &&<View style={{
-                        flexDirection: "row",
-                        marginTop: 20,
-                        marginStart: 20,
-                        marginEnd: 20,
-                        borderRadius: 8,
-                        height: 65,
-                        justifyContent: "center",
-                        alignItems: "center",
-                        marginBottom: 25
-                    }}>
-                        <Image resizeMode={"cover"}
-                               source={require("../../../assets/images/red_bg.png")}
-                               style={{width:"100%",height:"100%",borderRadius:7}}/>
-                        <Text style={{
-                            color: "white",
-                            fontWeight: "bold",
-                            fontSize: 12,
-                            position:"absolute",
-                            top: 12
-                        }}>TOP RATED PROFESSIONALS IN YOUR AREA</Text>
-
+                    <View>
                         <View style={{
-                            width: "90%",
-                            height: 60,
-                            position: "absolute",
-                            top: 32,
-                            justifyContent: "center",
-                            flexDirection:"row",
-                            alignItems: "center",
+                            marginTop: 20,
+                            marginStart: 20, marginEnd: 20,
+                            backgroundColor: "#474857",
+                            borderWidth: 0.5,
+                            borderColor: "grey",
+                            borderRadius: 6
                         }}>
-                            <TouchableWithoutFeedback onPress={()=>this.props.navigation.navigate("ClientBarberProfile")}  >
-
-                            <Image resizeMode={"contain"} source={require("../../../assets/images/img-1.png")}
-                                   style={{
-                                       borderRadius:25,
-                                       height: 50,
-                                       width: "16%",
-                                   }}
-
-                            />
-                            </TouchableWithoutFeedback>
-                            <TouchableWithoutFeedback onPress={()=>this.props.navigation.navigate("ClientBarberProfile")}  >
-                            <Image resizeMode={"contain"} source={require("../../../assets/images/img-2.png")}
-                                   style={{
-                                       borderRadius:25,
-                                       marginStart:10,
-                                       height: 50,
-                                       width: "16%"
-                                   }}/>
-                            </TouchableWithoutFeedback>
-                            <TouchableWithoutFeedback onPress={()=>this.props.navigation.navigate("ClientBarberProfile")}>
-                            <Image resizeMode={"contain"} source={require("../../../assets/images/img-3.png")}
-                                   style={{
-                                       borderRadius:25,
-                                       marginStart:10,
-                                       height: 50,
-                                       width: "16%"
-                                   }}/>
-                            </TouchableWithoutFeedback>
-                            <TouchableWithoutFeedback onPress={()=>this.props.navigation.navigate("ClientBarberProfile")}>
-                            <Image resizeMode={"contain"} source={require("../../../assets/images/img-4.png")}
-                                   style={{
-                                       borderRadius:25,
-                                       marginStart:10,
-                                       height: 50,
-                                       width: "16%"
-                                   }}/>
-                            </TouchableWithoutFeedback>
-                            <TouchableWithoutFeedback onPress={()=>this.props.navigation.navigate("ClientBarberProfile")} >
-                            <Image resizeMode={"contain"} source={require("../../../assets/images/img-5.png")}
-                                   style={{
-                                       borderRadius:25,
-                                       marginStart:10,
-                                       height: 50,
-                                       width: "16%"
-                                   }}/>
-                            </TouchableWithoutFeedback>
+                            {this.renderRowInput({})}
                         </View>
 
-                    </View>}
-
-                    {(this.state.searchBarbers.length<1) &&<View>
-                    <View>
-                        <Text style={{
-                            color: "white",
-                            fontWeight: 'bold',
-                            marginStart: 20,
+                        {(this.state.searchBarbers.length < 1) && <View style={{
+                            flexDirection: "row",
                             marginTop: 20,
-
-                        }}>{"Favorite Barbers"} </Text>
-                    </View>
-
-                    <View style={{marginTop: 0, marginStart: 20, marginEnd: 20, marginBottom: 20}}>
-                        <FlatList renderItem={({item}) => this.renderRowSurge2(item)}
-                                  data={this.state.dataSource2}
-                                  keyExtractor={(item, index) => index}
-                                  numColumns={1}
-                        />
-                    </View>
-
-                    <View>
-                        <Text style={{
-                            color: "white",
-                            fontWeight: 'bold',
                             marginStart: 20,
-                            marginBottom:10
+                            marginEnd: 20,
+                            borderRadius: 8,
+                            height: 65,
+                            justifyContent: "center",
+                            alignItems: "center",
+                            marginBottom: 25
+                        }}>
+                            <Image resizeMode={"cover"}
+                                   source={require("../../../assets/images/red_bg.png")}
+                                   style={{width: "100%", height: "100%", borderRadius: 7}}/>
+                            <Text style={{
+                                color: "white",
+                                fontWeight: "bold",
+                                fontSize: 12,
+                                position: "absolute",
+                                top: 12
+                            }}>TOP RATED PROFESSIONALS IN YOUR AREA</Text>
 
-                        }}>{"Nearby Barbers"} </Text>
-                    </View>
-                    <View style={{marginTop: 0, marginStart: 20, marginEnd: 20, marginBottom: 30}}>
+                            <View style={{
+                                width: "90%",
+                                height: 60,
+                                position: "absolute",
+                                top: 32,
+                                justifyContent: "center",
+                                flexDirection: "row",
+                                alignItems: "center",
+                            }}>
+                                <TouchableWithoutFeedback
+                                    onPress={() => this.props.navigation.navigate("ClientBarberProfile")}>
+
+                                    <Image resizeMode={"contain"} source={require("../../../assets/images/img-1.png")}
+                                           style={{
+                                               borderRadius: 25,
+                                               height: 50,
+                                               width: "16%",
+                                           }}
+
+                                    />
+                                </TouchableWithoutFeedback>
+                                <TouchableWithoutFeedback
+                                    onPress={() => this.props.navigation.navigate("ClientBarberProfile")}>
+                                    <Image resizeMode={"contain"} source={require("../../../assets/images/img-2.png")}
+                                           style={{
+                                               borderRadius: 25,
+                                               marginStart: 10,
+                                               height: 50,
+                                               width: "16%"
+                                           }}/>
+                                </TouchableWithoutFeedback>
+                                <TouchableWithoutFeedback
+                                    onPress={() => this.props.navigation.navigate("ClientBarberProfile")}>
+                                    <Image resizeMode={"contain"} source={require("../../../assets/images/img-3.png")}
+                                           style={{
+                                               borderRadius: 25,
+                                               marginStart: 10,
+                                               height: 50,
+                                               width: "16%"
+                                           }}/>
+                                </TouchableWithoutFeedback>
+                                <TouchableWithoutFeedback
+                                    onPress={() => this.props.navigation.navigate("ClientBarberProfile")}>
+                                    <Image resizeMode={"contain"} source={require("../../../assets/images/img-4.png")}
+                                           style={{
+                                               borderRadius: 25,
+                                               marginStart: 10,
+                                               height: 50,
+                                               width: "16%"
+                                           }}/>
+                                </TouchableWithoutFeedback>
+                                <TouchableWithoutFeedback
+                                    onPress={() => this.props.navigation.navigate("ClientBarberProfile")}>
+                                    <Image resizeMode={"contain"} source={require("../../../assets/images/img-5.png")}
+                                           style={{
+                                               borderRadius: 25,
+                                               marginStart: 10,
+                                               height: 50,
+                                               width: "16%"
+                                           }}/>
+                                </TouchableWithoutFeedback>
+                            </View>
+
+                        </View>}
+
+                        {(this.state.searchBarbers.length < 1) && <View>
+                            <View>
+                                <Text style={{
+                                    color: "white",
+                                    fontWeight: 'bold',
+                                    marginStart: 20,
+                                    marginTop: 20,
+
+                                }}>{"Favorite Barbers"} </Text>
+                            </View>
+
+                            <View style={{marginTop: 0, marginStart: 20, marginEnd: 20, marginBottom: 20}}>
+                                <FlatList renderItem={({item}) => this.renderRowSurge2(item)}
+                                          data={this.state.dataSource2}
+                                          keyExtractor={(item, index) => index}
+                                          numColumns={1}
+                                />
+                            </View>
+
+                            <View>
+                                <Text style={{
+                                    color: "white",
+                                    fontWeight: 'bold',
+                                    marginStart: 20,
+                                    marginBottom: 10
+
+                                }}>{"Nearby Barbers"} </Text>
+                            </View>
+                            <View style={{marginTop: 0, marginStart: 20, marginEnd: 20, marginBottom: 30}}>
+                                <FlatList renderItem={({item}) => this.renderRowSurge2(item)}
+                                          data={this.state.dataSource3}
+                                          keyExtractor={(item, index) => index}
+                                          numColumns={1}
+                                />
+                            </View>
+                        </View>}
+
+
+                        {(this.state.searchBarbers.length > 0) && <View style={{marginTop: 0, marginStart: 20, marginEnd: 20, marginBottom: 30}}>
                         <FlatList renderItem={({item}) => this.renderRowSurge2(item)}
-                                  data={this.state.dataSource3}
-                                  keyExtractor={(item, index) => index}
-                                  numColumns={1}
-                        />
+                                      data={this.state.searchBarbers}
+                                      extraData={this.state.searchBarbers}
+                                      keyExtractor={(item, index) => index}
+                                      numColumns={1}
+                        /></View>}
                     </View>
-
-                    </View>}
-
-                    {(this.state.searchBarbers.length>0) &&<View style={{marginTop: 0, marginStart: 20, marginEnd: 20, marginBottom: 30}}>
-                        <FlatList renderItem={({item}) => this.renderRowSurge2(item)}
-                                  data={this.state.searchBarbrs}
-                                  keyExtractor={(item, index) => index}
-                                  numColumns={1}
-                        />
-                    </View>}
-
-
                 </ScrollView>
                 {this.state.showLoading && <View style={{
                     width: "100%",
@@ -460,7 +476,8 @@ export default class ClientBarberSearch extends Component {
                     alignItems: "center",
                     justifyContent: "center"
                 }}>
-                    <Image resizeMode={"contain"} source={require("../../../assets/images/loading.gif")} style={{width:100,height:100, opacity: 1,}}/>
+                    <Image resizeMode={"contain"} source={require("../../../assets/images/loading.gif")}
+                           style={{width: 100, height: 100, opacity: 1,}}/>
                 </View>}
             </View>
 
@@ -469,8 +486,32 @@ export default class ClientBarberSearch extends Component {
 }
 
 
-
-
+const searchData = [
+    {
+        "barber_id": "5ccc53909919464b892ed656",
+        "barber_name": "",
+        "shop_name": "CLYPR Barber Shop",
+        "mobilePayEnabled": false,
+        "total_reviews": 0,
+        "average_rating": 0
+    },
+    {
+        "barber_id": "5cd522fd463a0a2f38557c85",
+        "barber_name": "test123",
+        "shop_name": "CLYPR Barber Shop",
+        "mobilePayEnabled": false,
+        "total_reviews": 9,
+        "average_rating": 4.133333333333334
+    },
+    {
+        "barber_id": "5ce6c62a3ab19d406b89f1a3",
+        "barber_name": "Clypr",
+        "shop_name": "CLYPR Barber Shop",
+        "mobilePayEnabled": false,
+        "total_reviews": 0,
+        "average_rating": 0
+    }
+]
 
 
 

@@ -338,7 +338,7 @@ export default class ChooseTimings extends Component {
                         }}>{"FROM"}</Text>
                         <DatePicker
                             date={this.state.startTime}
-                            style={{marginLeft: -40}}
+                            style={{marginLeft: -50}}
                             onDateChange={date => this.setState({startTime:date})}
                             mode={"time"}
                             textColor={"#ffffff"}
@@ -359,7 +359,7 @@ export default class ChooseTimings extends Component {
                             date={this.state.endTime}
                             onDateChange={date => this.setState({endTime:date})}
                             mode={"time"}
-                            style={{marginLeft: -40}}
+                            style={{marginLeft: -50}}
                             textColor={"#ffffff"}
                         />
                     </View>
@@ -369,11 +369,11 @@ export default class ChooseTimings extends Component {
 
 
                 <View style={{flexDirection: 'row', height: 40, marginLeft: 20, marginTop: 130}}>
-                    <CheckBoxSquare onClick={() => {
+                    {/*<CheckBoxSquare onClick={() => {
                     }} isChecked={this.state.isOffToday} style={{alignSelf: 'center'}}/>
                     <Text style={{color: "white", textAlignVertical: "center", marginStart: 7}}>{"Off"}<Text style={
                         {color: "grey",}
-                    }>{"  (Today Not Working)"}</Text></Text>
+                    }>{"  (Today Not Working)"}</Text></Text>*/}
                 </View>
 
 

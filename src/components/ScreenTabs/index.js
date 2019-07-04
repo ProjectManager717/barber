@@ -72,7 +72,7 @@ export default class ScreenTabs extends Component {
                                 source={require("../../assets/images/revenue.png")}
                                 style={styles.icon}/>}
                             {!getViewIndex == 0 && <Image
-                                source={require("../../assets/images/revenue.png")}
+                                source={require("../../assets/images/revenue_grey.png")}
                                 style={styles.icon}
                             />}
                             <Text style={{
@@ -87,14 +87,14 @@ export default class ScreenTabs extends Component {
                         style={{height: "100%", width: TabWidth}}>
                         <View style={styles.iconContainer}>
                             {getViewIndex == 1 && <Image
-                                source={require("../../assets/images/clientgrey.png")}
+                                source={require("../../assets/images/client_green.png")}
                                 style={styles.icon}
                             />}
                             {!(getViewIndex == 1) && <Image
                                 source={require("../../assets/images/clientgrey.png")}
                                 style={styles.icon}
                             />}
-                            <Text style={{color: getViewIndex == 1 ? "blue" : "#535361"}}>
+                            <Text style={{color: getViewIndex == 1 ? "green" : "#535361"}}>
                                 Clients
                             </Text>
                         </View>
@@ -106,14 +106,14 @@ export default class ScreenTabs extends Component {
                     >
                         <View style={styles.iconContainer}>
                             {(getViewIndex == 2 )&& <Image
-                                source={require("../../assets/images/notification.png")}
+                                source={require("../../assets/images/notification_green.png")}
                                 style={styles.icon}
                             />}
                             {!(getViewIndex == 2 )&& <Image
                                 source={require("../../assets/images/notification.png")}
                                 style={styles.icon}
                             />}
-                            <Text style={{color: getViewIndex == 2 ? "yellow" : "#535361"}}>
+                            <Text style={{color: getViewIndex == 2 ? "green" : "#535361"}}>
                                 Notifications
                             </Text>
                         </View>
@@ -157,12 +157,12 @@ const styles = StyleSheet.create({
     tabIndicator1: {
         height: 4,
         width: "70%",
-        backgroundColor: "blue"
+        backgroundColor: "green"
     },
     tabIndicator2: {
         height: 4,
         width: "70%",
-        backgroundColor: "yellow"
+        backgroundColor: "green"
     },
     tabsContainer: {
         height: 100,

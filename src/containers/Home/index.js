@@ -16,6 +16,8 @@ import GraphComp from "../../components/Graph/";
 import Clients from "./Clients/Clients";
 import Notifications from "./Notifications";
 import Preference from "react-native-preference";
+import {AirbnbRating} from "react-native-elements";
+import {constants} from "../../utils/constants";
 
 const {height, width} = Dimensions.get("window");
 
@@ -30,7 +32,53 @@ export default class Home extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {}
+        this.state = {
+            showLoading: false,
+            barberName: Preference.get("userName"),
+            barberImage: "",
+            barberExperiance: 0,
+            barberShopName: Preference.get("userShopname"),
+            barberRating: 5,
+            barberReviews: 17,
+        }
+        this.getBarberDetails();
+    }
+
+    getBarberDetails() {
+        this.setState({showLoading: true})
+        fetch(constants.ClientBarbersProfile + "/" + Preference.get("userId") + "/profile", {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        }).then(response => response.json())
+            .then(response => {
+                console.log("getBarberDetails-->", "-" + JSON.stringify(response));
+                if (response.ResultType === 1) {
+                    this.setState({showLoading: false})
+                    let barberData = response.Data;
+                    console.log("USerImage===>" + barberData.user_image);
+                    this.setState({
+                        barberImage: {uri: barberData.user_image},
+                        barberName: barberData.firstname,
+                        barberRating: barberData.rating,
+                        barberReviews: barberData.reviews,
+                        barberExperiance: barberData.experience
+                    });
+                    //this.setState({barberData: response.Data});
+                } else {
+                    this.setState({showLoading: false})
+                    if (response.ResultType === 0) {
+                        alert(response.Message);
+                    }
+                }
+            }).catch(error => {
+            //console.error('Errorr:', error);
+            this.setState({showLoading: false})
+            console.log('Error:', error);
+            alert("Error: " + error);
+        });
     }
 
     render() {
@@ -45,14 +93,14 @@ export default class Home extends Component {
                         leftIcon={require("../../assets/images/qr.png")}/>
                     <View style={styles.detailsContainer}>
                         <View style={styles.profileImageContainer}>
-                            <ImageBackground
-                                source={require("../../assets/images/personface.png")}
+                            <Image
+                                source={this.state.barberImage}
                                 style={styles.profileImage}
                             >
-                            </ImageBackground>
+                            </Image>
                         </View>
                         <TouchableOpacity style={{position: 'absolute', top: 10, right: width / 2 - width / 2.7 / 2}}
-                            onPress={() => Linking.openURL('https://www.instagram.com/' + Preference.get("userInsta"))}>
+                                          onPress={() => Linking.openURL('https://www.instagram.com/' + Preference.get("userInsta"))}>
                             <Image
                                 source={require("../../assets/images/insta.png")}
                                 style={styles.icon}
@@ -61,19 +109,26 @@ export default class Home extends Component {
                         <View>
                             <View style={styles.infoContainer}>
                                 <Text style={[styles.allFontStyle, styles.name]}>
-                                    {Preference.get("userName")}
+                                    {this.state.barberName}
                                 </Text>
                                 <Text style={{color: colors.white, fontSize: 12}}>
-                                    Barber with {Preference.get("yearExperiance")} years of experience
+                                    Barber with {this.state.barberExperiance} years of experience
                                 </Text>
                                 <View style={styles.review}>
-                                    <Image
+                                    {/*<Image
                                         resizeMode="contain"
                                         source={require("../../assets/images/start.png")}
                                         style={styles.rating}
+                                    />*/}
+                                    <AirbnbRating
+                                        showRating={false}
+                                        count={6}
+                                        defaultRating={this.state.barberRating}
+                                        size={10}
+                                        style={{marginStart: 10, height: 30}}
                                     />
                                     <Text style={[styles.allFontStyle, styles.reviewText]}>
-                                        (17 Reviews)
+                                        {"(" + this.state.barberReviews + " Reviews)"}
                                     </Text>
                                 </View>
                                 <TouchableOpacity style={styles.button} onPress={() => {
@@ -117,13 +172,14 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         marginTop: -width / 5
     },
-    icon: {height: 50, width: 50, },
+    icon: {height: 50, width: 50,},
     iconContainer: {},
     profileImage: {
         height: width / 3,
         width: width / 3,
         justifyContent: "flex-end",
-        alignItems: "flex-end"
+        alignItems: "flex-end",
+        borderRadius:(width/3)/2
     },
     infoContainer: {
         height: height / 5,

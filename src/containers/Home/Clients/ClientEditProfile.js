@@ -43,7 +43,7 @@ export default class ClientEditProfile extends Component {
             showLoading: false,
             avatarSource: null,
             userName: "",
-            userAddress: "Enter your address",
+            userAddress: "",
             editLocation: false,
             editName: false,
             isConnected: true,
@@ -54,17 +54,52 @@ export default class ClientEditProfile extends Component {
     }
 
     componentDidMount(): void {
-        if (Preference.get("userName") != null) {
-            this.setState({userName: Preference.get("userName")})
-        }
-        if (Preference.get("userAddress") != null) {
-            this.setState({userAddress: Preference.get("userAddress")})
-        }
+        this.getProfileData();
+    }
+
+    getProfileData()
+    {
+        this.setState({showLoading:true})
+        console.log("userID---->"+Preference.get("userId"))
+        fetch(constants.ClientProfileData + "/" + Preference.get("userId") + "/clientProfile", {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        }).then(response => response.json())
+            .then(response => {
+                console.log("getClientDetails-->", "-" + JSON.stringify(response));
+                if (response.ResultType === 1) {
+                    this.setState({showLoading:false})
+                    let clientData = response.Data;
+                    this.setState({
+                        avatarSource:{uri:clientData.client_image} ,
+                        userAddress: clientData.address,
+                        userName: clientData.firstname,
+                    });
+                    this.locationRef.setAddressText(this.state.userAddress);
+                    console.log("DataUSER:--->"+this.state.userAddress);
+                    console.log("DataUSER:--->"+this.state.userName);
+                    //this.setState({barberData: response.Data});
+                } else {
+                    this.setState({showLoading:false})
+                    if (response.ResultType === 0) {
+                        alert(response.Message);
+                    }
+                }
+            }).catch(error => {
+            //console.error('Errorr:', error);
+            this.setState({showLoading:false})
+            console.log('Error:', error);
+            alert("Error: " + error);
+        });
     }
 
     renderGooglePlacesInput = () => {
         return (
             <GooglePlacesAutocomplete
+                ref={(instance) => { this.locationRef = instance }}
                 placeholder='Enter Address'
                 minLength={2} // minimum length of text to search
                 autoFocus={false}
@@ -82,7 +117,8 @@ export default class ClientEditProfile extends Component {
                     this.setState({places: this.state.places});
                     console.log("hello2" + JSON.stringify(this.state.places));
                 }}
-                getDefaultValue={() => ''}
+
+                getDefaultValue={() => this.state.userAddress}
                 query={{
                     // available options: https://developers.google.com/places/web-service/autocomplete
                     key: 'AIzaSyD5YuagFFL0m0IcjCIvbThN25l0m2jMm2w',
@@ -153,24 +189,6 @@ export default class ClientEditProfile extends Component {
             />
         );
     };
-
-    renderRowED2(item) {
-        return <View style={{flex: 1, flexDirection: 'row', alignItems: "center"}}>
-            <Text style={{color: "grey", fontSize: 10, marginStart: 10, marginTop: 10}}>{item.hintText}</Text>
-            {!this.state.editLocation &&
-            <Text style={[styles.row_title, {marginTop: 10, alignItems: "center", fontSize: 11, marginStart: 5}
-            ]}>{item.title}</Text>}
-            {this.state.editLocation &&
-            <TextInput value={this.state.userAddress}
-                       onChangeText={(text) => this.setState({userAddress: text})}
-                       style={{color: "white", fontSize: 10, height: 50, width: "70%", marginTop: 10}}/>}
-            <TouchableOpacity onPress={() => this.setState({editLocation: true})}
-                              style={[styles.right_arrow, {resizeMode: "contain", height: 30, top: 5}]}>
-                <Image style={{resizeMode: "contain", height: 15, marginTop: 5}} source={item.ic}/>
-            </TouchableOpacity>
-
-        </View>;
-    }
 
     saveData = () => {
         //this.props.navigation.push("PaymentMethod");
