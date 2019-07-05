@@ -395,10 +395,9 @@ class SignInScreen extends Component {
                             this.signinFacebook(this.state.dataFacebook, this.state.accessToken);
                             //alert('Success fetching data: ' + JSON.stringify(result));
                         }
-                    }
-                );
+                    });
 
-                new GraphRequestManager().addRequest(infoRequest).start();
+                await new GraphRequestManager().addRequest(infoRequest).start();
             }
 
             // this.setState({

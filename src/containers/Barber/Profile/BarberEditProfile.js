@@ -39,8 +39,8 @@ export default class BarberEditProfile extends Component {
         super(props);
         console.disableYellowBox = true;
         this.state = {
-            serviceEditId:"",
-            showLoading:false,
+            serviceEditId: "",
+            showLoading: false,
             barberInsta: "",
             barberName: "",
             barberShopName: "",
@@ -67,39 +67,39 @@ export default class BarberEditProfile extends Component {
             InstaUsername: Preference.get("userInsta"),
             places: [],
             avatarSource: require("../../../assets/images/personface.png"),
-           /* ListData: [
-                {
-                    id: 1,
-                    service_type: "Haircut",
-                    duration_type: "30 mins",
-                    prize_type: "20",
-                    showLine: true
+            /* ListData: [
+                 {
+                     id: 1,
+                     service_type: "Haircut",
+                     duration_type: "30 mins",
+                     prize_type: "20",
+                     showLine: true
 
-                },
-                {
-                    id: 2,
-                    service_type: "Beard Trim",
-                    duration_type: "15 mins",
-                    prize_type: "15",
-                    showLine: true
+                 },
+                 {
+                     id: 2,
+                     service_type: "Beard Trim",
+                     duration_type: "15 mins",
+                     prize_type: "15",
+                     showLine: true
 
-                },
-                {
-                    id: 3,
-                    service_type: "Design",
-                    duration_type: "20 mins",
-                    prize_type: "30",
-                    showLine: true
+                 },
+                 {
+                     id: 3,
+                     service_type: "Design",
+                     duration_type: "20 mins",
+                     prize_type: "30",
+                     showLine: true
 
-                },
-                {
-                    id: 4,
-                    service_type: "Hot Towel Shave",
-                    duration_type: "45 mins",
-                    prize_type: "40",
-                    showLine: false
-                }
-            ],*/
+                 },
+                 {
+                     id: 4,
+                     service_type: "Hot Towel Shave",
+                     duration_type: "45 mins",
+                     prize_type: "40",
+                     showLine: false
+                 }
+             ],*/
             ListData: [],
         }
     }
@@ -112,7 +112,7 @@ export default class BarberEditProfile extends Component {
     }
 
     getBarberDetails() {
-        this.setState({showLoading:true})
+        this.setState({showLoading: true})
         fetch(constants.ClientBarbersProfile + "/" + Preference.get("userId") + "/profile", {
             method: 'GET',
             headers: {
@@ -123,7 +123,7 @@ export default class BarberEditProfile extends Component {
             .then(response => {
                 console.log("getBarberDetails-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
-                    this.setState({showLoading:false})
+                    this.setState({showLoading: false})
                     let barberData = response.Data;
                     this.setState({
                         avatarSource: {uri: barberData.user_image},
@@ -138,20 +138,20 @@ export default class BarberEditProfile extends Component {
                         experience: barberData.experience,
                     });
 
-                    if(barberData.supreme_barber===0)
-                        this.setState({barberPackage:"Basic"})
+                    if (barberData.supreme_barber === 0)
+                        this.setState({barberPackage: "Basic"})
                     else
-                        this.setState({barberPackage:"Supreme"})
+                        this.setState({barberPackage: "Supreme"})
                     //this.setState({barberData: response.Data});
                 } else {
-                    this.setState({showLoading:false})
+                    this.setState({showLoading: false})
                     if (response.ResultType === 0) {
                         alert(response.Message);
                     }
                 }
             }).catch(error => {
             //console.error('Errorr:', error);
-            this.setState({showLoading:false})
+            this.setState({showLoading: false})
             console.log('Error:', error);
             alert("Error: " + error);
         });
@@ -164,7 +164,13 @@ export default class BarberEditProfile extends Component {
             userInsta: this.state.InstaUsername,
             userHouseCall: this.state.houseCall,
             userAddressL: this.state.places[0].formatted_address,
-        })
+        });
+
+        if (Preference.get("newUser") === true)
+            this.props.navigation.push("ChooseTimings");
+        else
+            this.props.navigation.goBack();
+
     }
 
     changeHouseCall() {
@@ -369,7 +375,7 @@ export default class BarberEditProfile extends Component {
         services[indx].service_type = this.state.serviceName;
         services[indx].duration_type = this.state.serviceDuration;
         services[indx].prize_type = this.state.servicePrice;
-        this.setState({ListData: services,showLoading:true});
+        this.setState({ListData: services, showLoading: true});
 
 
         var details = {
@@ -410,7 +416,7 @@ export default class BarberEditProfile extends Component {
                 this.setState({showLoading: false});
                 //console.error('Errorr:', error);
                 console.log('Error:', error);
-                alert("Error: "+error);
+                alert("Error: " + error);
             });
     }
 
@@ -429,7 +435,7 @@ export default class BarberEditProfile extends Component {
             prize_type: this.state.servicePrice,
             showLine: true
         });
-        this.setState({ListData: services, DialogAddService: false,showLoading:true});
+        this.setState({ListData: services, DialogAddService: false, showLoading: true});
 
         var details = {
             user_id: Preference.get("userId"),
@@ -468,7 +474,7 @@ export default class BarberEditProfile extends Component {
                 this.setState({showLoading: false});
                 //console.error('Errorr:', error);
                 console.log('Error:', error);
-                alert("Error: "+error);
+                alert("Error: " + error);
             });
     }
 
@@ -766,7 +772,7 @@ export default class BarberEditProfile extends Component {
                         </View>
                     </View>
                     <View style={[globalStyles.rowBackground, styles.row, {marginTop: 5}]}>
-                        {this.state.ListData.length>0&&<FlatList renderItem={({item, index}) =>
+                        {this.state.ListData.length > 0 && <FlatList renderItem={({item, index}) =>
                             <View style={{flexDirection: "column"}}>
                                 <View style={{
                                     flexDirection: "row",
@@ -813,7 +819,7 @@ export default class BarberEditProfile extends Component {
                                         }}>{"$" + item.price}</Text>
                                         <TouchableOpacity onPress={() => this.setState({
                                             DialogEditService: true,
-                                            serviceEditId:item._id,
+                                            serviceEditId: item._id,
                                             serviceName: item.name,
                                             serviceDuration: item.duration,
                                             servicePrice: item.price,
@@ -835,14 +841,15 @@ export default class BarberEditProfile extends Component {
                                 </View>
                                 {item.showLine && <View style={{height: 0.5, backgroundColor: "#868791"}}/>}
                             </View>}
-                                  data={this.state.ListData}
-                                  extraData={this.state}
-                                  keyExtractor={item => item.id}
-                                  showsVerticalScrollIndicator={true}
-                                  removeClippedSubviews={false}
-                                  numColumns={1}/>}
-                        {this.state.ListData.length<1 &&<View style={{width:"100%",height:60,alignItems:"center",justifyContent:"center"}}>
-                            <Text style={{fontSize:15,color:"white"}}>{"You dont have any Services"}</Text>
+                                                                     data={this.state.ListData}
+                                                                     extraData={this.state}
+                                                                     keyExtractor={item => item.id}
+                                                                     showsVerticalScrollIndicator={true}
+                                                                     removeClippedSubviews={false}
+                                                                     numColumns={1}/>}
+                        {this.state.ListData.length < 1 &&
+                        <View style={{width: "100%", height: 60, alignItems: "center", justifyContent: "center"}}>
+                            <Text style={{fontSize: 15, color: "white"}}>{"You don't have any Services"}</Text>
                         </View>}
                         <PopupDialog
                             visible={this.state.DialogEditService}
@@ -1073,7 +1080,8 @@ export default class BarberEditProfile extends Component {
                     alignItems: "center",
                     justifyContent: "center"
                 }}>
-                    <Image resizeMode={"contain"} source={require("../../../assets/images/loading.gif")} style={{width:100,height:100, opacity: 1,}}/>
+                    <Image resizeMode={"contain"} source={require("../../../assets/images/loading.gif")}
+                           style={{width: 100, height: 100, opacity: 1,}}/>
                 </View>}
             </View>)
     }

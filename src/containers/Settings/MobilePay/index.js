@@ -10,32 +10,37 @@ import Preference from "react-native-preference"
 export default class MobilePay extends Component {
     constructor(props) {
         super(props);
-        this.state={
-            mobilePayText:"Enable Mobile Pay"
+        this.state = {
+            mobilePayText: "Enable Mobile Pay"
         }
     }
 
     componentDidMount(): void {
-        if(Preference.get("userMobilePay")===true)
-        {
-            this.setState({mobilePayText:"Disable Mobile Pay"})
-        }else {
-            this.setState({mobilePayText:"Enable Mobile Pay"})
+        if (Preference.get("userMobilePay") === true) {
+            this.setState({mobilePayText: "Disable Mobile Pay"})
+        } else {
+            this.setState({mobilePayText: "Enable Mobile Pay"})
         }
     }
 
-    setMobilePay()
-    {
-        alert("Mobile Pay");
-        if(Preference.get("userMobilePay")===true)
-        {
-            Preference.set("userMobilePay",false);
-            this.setState({mobilePayText:"Disable Mobile Pay"})
-        }else {
-            Preference.set("userMobilePay",true);
-            this.setState({mobilePayText:"Enable Mobile Pay"})
+    setMobilePay() {
+        //alert("Mobile Pay");
+        if (Preference.get("userMobilePay") === true) {
+            Preference.set("userMobilePay", false);
+            this.setState({mobilePayText: "Disable Mobile Pay"})
+        } else {
+            Preference.set("userMobilePay", true);
+            this.setState({mobilePayText: "Enable Mobile Pay"})
+            if (Preference.get("newUser") === true) {
+                this.props.navigation.push("MobilePaySettings");
+            } else {
+                //this.props.navigation.goBack();
+                this.props.navigation.push("MobilePaySettings");
+            }
         }
-        this.props.navigation.goBack();
+
+
+
     }
 
     render() {
@@ -96,7 +101,7 @@ export default class MobilePay extends Component {
                         <Image resizeMode={"contain"} source={require("../../../assets/images/down_arrow.png")}
                                style={{width: 12}}/>
                         <TouchableOpacity style={[globalStyles.button, {marginTop: 60, width: 300}]}
-                                          onPress={()=>this.setMobilePay()}>
+                                          onPress={() => this.setMobilePay()}>
                             <Text style={globalStyles.buttonText}>{this.state.mobilePayText}</Text>
                         </TouchableOpacity>
                     </View>

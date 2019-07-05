@@ -15,8 +15,8 @@ export default class Reviews extends Component {
         super();
         this.state = {
             dataSource: {},
-            reviews:[],
-            AverageRating:"",
+            reviews: [],
+            AverageRating: "",
         };
         this.getReviews = this.getReviews.bind(this);
     }
@@ -35,7 +35,7 @@ export default class Reviews extends Component {
 
     getReviews() {
         this.state.reviews = [];
-        fetch(constants.GetNotifications + "?user_id=" + Preference.get("userId"), {
+        fetch(constants.GetReviews + "?user_id=" + Preference.get("userId"), {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
@@ -45,8 +45,8 @@ export default class Reviews extends Component {
             .then(response => {
                 console.log("responseReviews-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
-                    let val=Math.round(response.Data.averageRating);
-                    this.setState({reviews: response.Data.ratings,AverageRating:val})
+                    let val = Math.round(response.Data.averageRating);
+                    this.setState({reviews: response.Data.ratings, AverageRating: val})
                 } else {
                     if (response.ResultType === 0) {
                         alert(response.Message);
@@ -55,7 +55,7 @@ export default class Reviews extends Component {
             }).catch(error => {
             //console.error('Errorr:', error);
             console.log('Error:', error);
-            alert("Error: "+error);
+            alert("Error: " + error);
         });
     }
 
@@ -100,7 +100,7 @@ export default class Reviews extends Component {
     }
 
     renderListHeader() {
-        let ratings = Math.floor(Math.random() * 5 + 1);
+
         return (
             <View style={{height: 90, justifyContent: "center"}}>
                 <View style={{flexDirection: "row", alignSelf: "center"}}>
@@ -118,6 +118,7 @@ export default class Reviews extends Component {
     }
 
     render() {
+        let ratings = Math.floor(Math.random() * 5 + 1);
         return (
             <View style={styles.container}>
                 <Header
@@ -133,14 +134,30 @@ export default class Reviews extends Component {
                         justifyContent: "space-around"
                     }}
                 />
-                <FlatList
+
+                <View style={{height: 90, justifyContent: "center"}}>
+                    <View style={{flexDirection: "row", alignSelf: "center"}}>
+                        <AirbnbRating
+                            isDisabled={true}
+                            showRating={false}
+                            count={5}
+                            defaultRating={this.state.AverageRating}
+                            size={25}
+                        />
+                        <Text style={[styles.rating_text, {fontSize: 16}]}>({this.state.AverageRating} of 5.0)</Text>
+                    </View>
+                </View>
+                {(this.state.reviews.length > 0) && <FlatList
                     data={this.state.reviews}
                     renderItem={this.renderItem}
                     ItemSeparatorComponent={this.renderSeparator}
-                    ListHeaderComponent={this.renderListHeader}
                     numColumns={1}
                     keyExtractor={(item, index) => index}
-                />
+                />}
+                {(this.state.reviews.length < 1) &&
+                <View style={{marginTop: 30, height: 30, marginStart: 20, marginEnd: 20,alignItems:"center"}}>
+                    <Text style={{color:"white",fontSize:20,}}>{"You have no reviews yet!"}</Text>
+                </View>}
             </View>
         );
     }

@@ -167,12 +167,12 @@ export default class Cancellations extends Component {
                 this.setState({bookingPrefrence: true,cancellationNoShow:false,surgePrice:false})
            /* else
                 this.setState({bookingPrefrence: false})*/
-        } else if (val === "Charge 75% with 1 reschedule") {
+        } else if (val === "Charge 75%") {
             if (this.state.cancellationNoShow === false)
                 this.setState({cancellationNoShow: true,bookingPrefrence: false,surgePrice:false})
             /*else
                 this.setState({cancellationNoShow: false})*/
-        } else if (val === "Charge 50% with 2 reschedule") {
+        } else if (val === "Charge 50%") {
             if (this.state.surgePrice === false)
                 this.setState({surgePrice: true,bookingPrefrence: false,cancellationNoShow:false})
             /*else
@@ -259,8 +259,8 @@ export default class Cancellations extends Component {
                         </View>
                     </View>
                     {this.renderRow({title: "Charge 100%", value: this.state.bookingPrefrence})}
-                    {this.renderRow({title: "Charge 75% with 1 reschedule", value: this.state.cancellationNoShow})}
-                    {this.renderRow({title: "Charge 50% with 2 reschedule", value: this.state.surgePrice})}
+                    {this.renderRow({title: "Charge 75%", value: this.state.cancellationNoShow})}
+                    {this.renderRow({title: "Charge 50%", value: this.state.surgePrice})}
 
                     <TouchableOpacity style={[globalStyles.button, {marginTop: 70, marginBottom: 30, width: '70%'}]}
                                       onPress={() => {

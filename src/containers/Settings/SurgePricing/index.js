@@ -60,10 +60,10 @@ export default class SurgePricing extends Component {
             houseCallBit = 0;
 
 
-        console.log("SurgeData1:-->"+holidayBit )
-        console.log("SurgeData2:-->"+birthdaysBit )
-        console.log("SurgeData3:-->"+any_day_after_10pmBit )
-        console.log("SurgeData4:-->"+houseCallBit )
+        console.log("SurgeData1:-->" + holidayBit)
+        console.log("SurgeData2:-->" + birthdaysBit)
+        console.log("SurgeData3:-->" + any_day_after_10pmBit)
+        console.log("SurgeData4:-->" + houseCallBit)
 
         this.setState({showLoading: true})
         var details = {
@@ -95,9 +95,12 @@ export default class SurgePricing extends Component {
             .then(response => {
                 console.log("updateBookingPrefrence-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
-                    this.setState({showLoading: false})
+                    this.setState({showLoading: false});
                     alert("Surge Pricing updated successfully");
-                    this.props.navigation.goBack();
+                    if (Preference.get("newUser") === true)
+                        this.props.navigation.push("BookingPreferences");
+                    else
+                        this.props.navigation.goBack();
                 } else {
                     this.setState({showLoading: false})
                     if (response.ResultType === 0) {
@@ -240,8 +243,8 @@ export default class SurgePricing extends Component {
 
     renderRowSurge2(item) {
         return <View style={{flex: 1, flexDirection: 'row', marginStart: 15, marginTop: 5}}>
-            <Text style={{color: "grey", fontSize: 9}}>{item.hint}</Text>
-            <Text style={{marginLeft: 7, fontSize: 10, fontWeight: "bold", color: "white"}}>{item.value}</Text>
+            <Text style={{color: "grey", fontSize: 11}}>{item.hint}</Text>
+            <Text style={{marginLeft: 7, fontSize: 11, fontWeight: "bold", color: "white"}}>{item.value}</Text>
         </View>
     }
 
@@ -311,15 +314,15 @@ export default class SurgePricing extends Component {
                         style={[globalStyles.rowBackground, styles.row, {marginTop: 20, marginLeft: 40, height: 30,}]}>
                         <View style={{flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
                             {this.renderRowSurge2({
-                                hint: "Radius Limit",
+                                hint: "Radius Limit :",
                                 value: this.state.radiousLimit
                             })}
                             {this.renderRowSurge2({
-                                hint: "Duration",
+                                hint: "Duration :",
                                 value: this.state.duration
                             })}
                             {this.renderRowSurge2({
-                                hint: "Price",
+                                hint: "Price :",
                                 value: this.state.price
                             })}
                             <TouchableOpacity onPress={() => this.setState({DialogVisible: true})}>

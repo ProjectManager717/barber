@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {View, Switch, Text, StyleSheet, Image, ScrollView, TouchableOpacity, TextInput} from "react-native";
+import {View, Switch, Text, StyleSheet, Image, ScrollView, TouchableOpacity, TextInput,Alert} from "react-native";
 import {Colors} from "../../../themes";
 import {globalStyles} from "../../../themes/globalStyles";
 //import { styles } from "./styles";
@@ -51,11 +51,15 @@ export default class MobilePaySettings extends Component {
         </View>;
     }
 
+    SaveMobilePay()
+    {
+        Alert.alert("Success!","MobilePay Setting Saved.");
+        this.props.navigation.navigate("Settings");
+    }
+
 
     render() {
         return (<View style={styles.container}>
-
-
             <Header
                 statusBarProps={{barStyle: "light-content"}}
                 barStyle="light-content" // or directly
@@ -175,9 +179,7 @@ export default class MobilePaySettings extends Component {
 
 
                 </View>
-                <TouchableOpacity onPress={()=>{
-                    this.props.navigation.navigate("TabNavigator");
-                }}
+                <TouchableOpacity onPress={()=>{this.SaveMobilePay()}}
                     style={[globalStyles.button, {
                     marginTop:70,
                     height: 40,

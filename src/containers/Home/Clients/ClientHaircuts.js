@@ -37,12 +37,12 @@ export default class ClientHaircuts extends Component {
             blue:"transparent",
             red:"transparent",
             green:"transparent",
-
-
-
-
         };
         this.calenderDayClicked=this.calenderDayClicked.bind(this);
+    }
+
+    componentDidMount(): void {
+        this.optionSelected("all");
     }
 
 
@@ -55,8 +55,6 @@ export default class ClientHaircuts extends Component {
             this.setState({blue:"#1999CE",});
             this.setState({green:"transparent"});
             this.setState({red:"transparent"});
-
-
         }
         if (item === "complete") {
             this.setState({completeBack: "#00D200", completetext: "white"});
@@ -65,7 +63,6 @@ export default class ClientHaircuts extends Component {
             this.setState({allBack: "transparent", alltext: "grey"});
             this.setState({green:"#00D200"});
             this.setState({blue:"transparent",});
-
             this.setState({red:"transparent"});
         }
         if (item === "cancelled") {
@@ -84,17 +81,12 @@ export default class ClientHaircuts extends Component {
             this.setState({upcomingBack: "transparent", upcomingtext: "grey"});
             this.setState({red:"red",green:"#00D200",blue:"#1999CE"})
         }
-
     }
     calenderDayClicked()
-    {
-
-    }
-
+    {}
 
     render() {
         return (<View style={styles.container}>
-
                 <Header
                     statusBarProps={{barStyle: "light-content"}}
                     barStyle="light-content" // or directly
@@ -108,20 +100,16 @@ export default class ClientHaircuts extends Component {
                     leftComponent={
                         <TouchableOpacity
                             onPress={() => {
-                                this.props.navigation.navigate("QRCheckIn");
-                            }}
-                        >
+                                this.props.navigation.navigate("ClientQR");
+                            }}>
                             <Image
                                 style={{
                                     tintColor: "white",
                                     height: 25,
                                     resizeMode: "contain"
                                 }}
-                                source={require("../../../assets/images/qr.png")}
-                            />
-                        </TouchableOpacity>
-                    }
-                />
+                                source={require("../../../assets/images/qr.png")}/>
+                        </TouchableOpacity>}/>
                 <ScrollView>
                     <View style={{
                         flex: 1,
@@ -130,11 +118,9 @@ export default class ClientHaircuts extends Component {
                         height: height - 110,
                         marginTop: 20
                     }}>
-
-
                         <Calendar
                             style={styles.calendar}
-                            current={today}
+                            current={""}
                             minDate={'1970-1-1'}
                             maxDate={'2050-12-31'}
                             firstDay={1}
@@ -142,8 +128,7 @@ export default class ClientHaircuts extends Component {
                             onDayLongPress={(val) => {
                                 console.log('selectedday')
                             }}
-
-                            markedDates={{
+                            /*markedDates={{
                                 '2019-05-09': {
                                     selected: true, selectedColor:this.state.red,
                                 },
@@ -152,8 +137,7 @@ export default class ClientHaircuts extends Component {
                                 },
                                 '2019-05-22': {selected: true,selectedColor:this.state.blue},
                                 today: {marked: true, dotColor: "red"},
-                            }}
-
+                            }}*/
                             hideDayNames={true}
                             onPressArrowLeft={substractMonth => substractMonth()}
                             onPressArrowRight={addMonth => addMonth()}
@@ -164,9 +148,7 @@ export default class ClientHaircuts extends Component {
                             }}
                             hideExtraDays={true}
                             disabledByDefault={true}
-
                         />
-
                         <View style={{
                             flexDirection: "row",
                             borderColor: "grey",
@@ -184,10 +166,8 @@ export default class ClientHaircuts extends Component {
                                                   backgroundColor: this.state.upcomingBack,
                                                   borderRadius: 15,
                                                   alignItems: "center"
-                                              }}
-                            >
-                                <Text
-                                    style={{
+                                              }}>
+                                <Text style={{
                                         color: this.state.upcomingtext,
                                         fontSize: 10,
                                         height: 20,
@@ -203,10 +183,8 @@ export default class ClientHaircuts extends Component {
                                                   width: "20%",
                                                   marginStart: 10,
                                                   alignItems: "center"
-                                         }}
-                            >
-                                <Text
-                                    style={{
+                                         }}>
+                                <Text style={{
                                         color: this.state.completetext,
                                         fontSize: 10,
                                         height: 20,
@@ -217,15 +195,14 @@ export default class ClientHaircuts extends Component {
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => this.optionSelected("cancelled")}
                                               style={{
+
                                                   backgroundColor: this.state.cancelledBack,
                                                   borderRadius: 15,
                                                   width: "25%",
                                                   alignItems: "center",
                                                   marginStart: 10,
-                                              }}
-                            >
-                                <Text
-                                    style={{
+                                              }}>
+                                <Text style={{
                                         color: this.state.cancelledtext,
                                         fontSize: 10,
                                         height: 20,
@@ -240,8 +217,7 @@ export default class ClientHaircuts extends Component {
                                                   marginStart: 10,
                                                   alignItems: "center"
                                               }}>
-                                <Text
-                                    style={{
+                                <Text style={{
                                         color: this.state.alltext,
                                         fontSize: 10,
                                         marginEnd: 5,
@@ -250,13 +226,9 @@ export default class ClientHaircuts extends Component {
                                     }}>{"ALL"}</Text>
                             </TouchableOpacity>
                         </View>
-
                     </View>
                 </ScrollView>
-
-
             </View>
-
         )
     }
 }

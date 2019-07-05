@@ -285,7 +285,15 @@ export default class BookingPreferences extends Component {
                 if (response.ResultType === 1) {
                     this.setState({showLoading: false})
                     alert("Booking preferences updated successfully");
-                    this.props.navigation.goBack();
+                    if (Preference.get("newUser") === true) {
+                        if (this.state.MP.StateMP === true) {
+                            this.props.navigation.push("MobilePay");
+                        } else {
+                            this.props.navigation.navigate("TabNavigator");
+                        }
+                    } else {
+                        this.props.navigation.goBack();
+                    }
                 } else {
                     this.setState({showLoading: false})
                     if (response.ResultType === 0) {
@@ -369,7 +377,7 @@ export default class BookingPreferences extends Component {
                     <View style={[globalStyles.rowBackground, styles.row]}>
                         {this.renderRowTimer({
                             /*title: "30 Minutes",*/
-                            title: "Client can Book Appointment with you up until last minutes ",
+                            title: "Minimum time needed for a client to book an appointment",
                             ic: require("../../../assets/images/mins_30.png")
                         })}
                         {/*<Text style={{

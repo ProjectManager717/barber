@@ -26,6 +26,7 @@ export const constants = {
     BarbersProfile: Base_url + path2,
     BarberAddService: Base_url + path2 + "addservice",
     BarberUpdateService: Base_url + path2 + "updateService",
+    GetReviews: Base_url +"/api/reviews?",
 
 
     ClientLogin: Base_url + clientPath + "login",

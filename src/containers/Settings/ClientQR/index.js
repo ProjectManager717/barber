@@ -40,7 +40,7 @@ export default class ClientQR extends Component {
                 />
                 <ScrollView>
                     <View style={{flex: 1, flexDirection: "column", alignItems: "center"}}>
-                        <Text style={{color: "white", fontSize: 16, fontWeight: "bold", marginTop: 20}}>Your Barbar Scan
+                        <Text style={{color: "white", fontSize: 16, fontWeight: "bold", marginTop: 20}}>Your Barber Scan
                             Your Code</Text>
                             <View style={{margin:30}}>
                                 <Image source={require("../../../assets/images/QR_code.png")}

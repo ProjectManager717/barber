@@ -102,25 +102,25 @@ export default class ClientBarberSearch extends Component {
     }
 
     renderRowInput() {
-        return <View style={{flex: 1, flexDirection: 'column', width: "100%"}}>
+        return <View style={{width: "100%"}}>
             <View style={{flexDirection: "row", alignItems: "center", justifyContent: "center"}}>
                 <Image resizeMode={"contain"} source={require("../../../assets/images/searchicon.png")}
                        style={{
                            width: 16,
                            height: 16,
-                           marginLeft: 30
                        }}/>
-                <TextInput
-                    style={{
-                        color: "white",
-                        fontSize: 16,
-                        marginStart: 10,
-                        fontFamily: "AvertaStd-RegularItalic",
-                    }}
-                    onChange={(text) => this.searchBarber(text)}
-                    placeholder={"Search by Instagram, Name, or Barbershop"}
-                    placeholderTextColor={"grey"}
-                />
+                <View style={{marginStart: 10}}>
+                    <TextInput
+                        style={{
+                            color: "white",
+                            fontSize: 16,
+                            fontFamily: "AvertaStd-RegularItalic",
+                        }}
+                        onChange={(text) => this.searchBarber(text)}
+                        placeholder={"Search by Instagram, Name, or Barbershop"}
+                        placeholderTextColor={"grey"}
+                    />
+                </View>
             </View>
         </View>;
     }
@@ -216,11 +216,11 @@ export default class ClientBarberSearch extends Component {
                                        style={{width: 20, height: 20, marginTop: 10}}/>}
                             </View>
                             <TouchableOpacity
-                                onPress={() => this.props.navigation.push("ClientBarberProfile",{
-                                    barberId:item.barber_id,
-                                    barberRating:item.average_rating,
-                                    barberReviews:item.total_reviews,
-                                    barberMobilePay:item.mobilePayEnabled
+                                onPress={() => this.props.navigation.push("ClientBarberProfile", {
+                                    barberId: item.barber_id,
+                                    barberRating: item.average_rating,
+                                    barberReviews: item.total_reviews,
+                                    barberMobilePay: item.mobilePayEnabled
                                 })}
                                 style={{width: "100%", alignItems: "flex-end"}}>
                                 <View style={{
@@ -302,8 +302,7 @@ export default class ClientBarberSearch extends Component {
                     rightComponent={<TouchableOpacity
                         onPress={() => {
                             this.props.navigation.navigate("ClientFilter");
-                        }}
-                    >
+                        }}>
                         <Image
                             style={{
                                 tintColor: "white",
@@ -458,13 +457,14 @@ export default class ClientBarberSearch extends Component {
                         </View>}
 
 
-                        {(this.state.searchBarbers.length > 0) && <View style={{marginTop: 0, marginStart: 20, marginEnd: 20, marginBottom: 30}}>
-                        <FlatList renderItem={({item}) => this.renderRowSurge2(item)}
+                        {(this.state.searchBarbers.length > 0) &&
+                        <View style={{marginTop: 0, marginStart: 20, marginEnd: 20, marginBottom: 30}}>
+                            <FlatList renderItem={({item}) => this.renderRowSurge2(item)}
                                       data={this.state.searchBarbers}
                                       extraData={this.state.searchBarbers}
                                       keyExtractor={(item, index) => index}
                                       numColumns={1}
-                        /></View>}
+                            /></View>}
                     </View>
                 </ScrollView>
                 {this.state.showLoading && <View style={{

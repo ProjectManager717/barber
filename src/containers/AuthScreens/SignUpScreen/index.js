@@ -151,7 +151,8 @@ class SignUpScreen extends Component {
                                     userName: response.Data.username,
                                     userId: response.Data.id,
                                     userType: "Client",
-                                    userToken: response.Data.token
+                                    userToken: response.Data.token,
+                                    newUser:true
                                 });
                                 this.moveToSMSScreen();
                             } else {
@@ -210,7 +211,8 @@ class SignUpScreen extends Component {
                                     userId: response.Data.id,
                                     userMobilePay:false,
                                     userType: "Barber",
-                                    userToken: response.Data.token
+                                    userToken: response.Data.token,
+                                    newUser:true
                                 });
                                 this.moveToSMSScreen();
                             } else {

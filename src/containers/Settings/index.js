@@ -133,11 +133,11 @@ export default class Settings extends Component {
           </View>
           <Text style={styles.txtHeader}>SHARE</Text>
             <View style={[globalStyles.rowBackground, styles.row]}>
-                <TouchableOpacity onPress={ ()=>{ Linking.openURL('sms:?body=Invite Barbers')}}>
+                <TouchableOpacity onPress={ ()=>{ Linking.openURL('sms:?&body=Invite Barbers')}}>
                     {this.renderRow({title:"Invite Barbers",ic:require("../../assets/images/ic_invite_barbers.png")})}
                 </TouchableOpacity>
                 {this.renderSeperator()}
-                <TouchableOpacity onPress={ ()=>{ Linking.openURL('sms:?body=Invite Clients')}}>
+                <TouchableOpacity onPress={ ()=>{ Linking.openURL('sms:?&body=Invite Clients')}}>
                     {this.renderRow({title:"Invite Clients",ic:require("../../assets/images/ic_settings_clients.png")})}
                 </TouchableOpacity>
             </View>

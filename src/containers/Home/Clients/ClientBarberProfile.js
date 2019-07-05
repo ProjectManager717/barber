@@ -55,7 +55,6 @@ export default class ClientBarberProfile extends Component {
         const {navigation} = this.props;
         barberId = navigation.getParam('barberId');
         let barberRating = navigation.getParam('barberRating');
-        barberMobilePay
         let barberReviews = navigation.getParam('barberReviews');
         barberMobilePay = navigation.getParam('barberMobilePay');
         this.state = {

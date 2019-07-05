@@ -108,29 +108,26 @@ export default class ClientBarberSearch extends Component {
 
 
     renderRowInput() {
-        return <View style={{flex: 1, flexDirection: 'column', width: "100%"}}>
-            <View style={{flexDirection: "row", alignItems: "center", height: 35}}>
+        return <View style={{width: "100%"}}>
+            <View style={{flexDirection: "row", alignItems: "center", justifyContent: "center"}}>
                 <Image resizeMode={"contain"} source={require("../../../assets/images/searchicon.png")}
                        style={{
                            width: 16,
                            height: 16,
-                           position: "absolute",
-                           left: 65,
                        }}/>
-                <TextInput
-                    style={{
-                        height: 40,
-                        color: "white",
-                        fontSize: 16,
-                        position: "absolute",
-                        left: 83,
-                        fontFamily: "AvertaStd-RegularItalic",
-                        textAlign: "center"
-                    }}
-                    onChangeText={(text) => this.setState({text})}
-                    placeholder={"Enter City, State or Zip Code"}
-                    placeholderTextColor={"grey"}
-                />
+                       <View style={{marginStart:10}}>
+                           <TextInput
+                               style={{
+                                   color: "white",
+                                   fontSize: 16,
+                                   fontFamily: "AvertaStd-RegularItalic",
+                               }}
+                               onChange={(text) => (text)}
+                               placeholder={"Search by Instagram, Name, or Barbershop"}
+                               placeholderTextColor={"grey"}
+                           />
+                       </View>
+
             </View>
         </View>
     }
@@ -172,8 +169,6 @@ export default class ClientBarberSearch extends Component {
                         borderWidth: 0.5,
                         borderColor: "grey",
                         borderRadius: 6
-
-
                     }}>
                         {this.renderRowInput({})}
                     </View>

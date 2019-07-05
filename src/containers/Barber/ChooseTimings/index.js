@@ -29,7 +29,7 @@ export default class ChooseTimings extends Component {
     constructor() {
         super();
         this.state = {
-            showLoader:false,
+            showLoader: false,
             dataSource: [],
             dayData: [],
             workingDays: [],
@@ -104,19 +104,19 @@ export default class ChooseTimings extends Component {
                     let end = response.Data.working_to;
                     console.log("starttime-->" + start);
                     console.log("starttime-->" + end);
-                    let startTime1=start.split(" ");
-                    let endTime1=end.split(" ");
+                    let startTime1 = start.split(" ");
+                    let endTime1 = end.split(" ");
                     console.log("starttime-->" + startTime1[0]);
                     console.log("starttime-->" + endTime1[0]);
-                    let startTime2=startTime1[0].split(":");
-                    let endTime2=endTime1[0].split(":");
+                    let startTime2 = startTime1[0].split(":");
+                    let endTime2 = endTime1[0].split(":");
 
                     console.log("starttime-->" + startTime2[0]);
                     console.log("starttime-->" + endTime2[0]);
-                    let dateSet=new Date();
-                    dateSet.setHours(startTime2[0],startTime2[1],0)
-                    let dateSet1=new Date();
-                    dateSet1.setHours(endTime2[0],endTime2[1],0)
+                    let dateSet = new Date();
+                    dateSet.setHours(startTime2[0], startTime2[1], 0)
+                    let dateSet1 = new Date();
+                    dateSet1.setHours(endTime2[0], endTime2[1], 0)
                     this.setState({
                         dayData: hours,
                         dataSource: items,
@@ -135,7 +135,7 @@ export default class ChooseTimings extends Component {
             this.setState({showLoading: false});
             //console.error('Errorr:', error);
             console.log('Error:', error);
-            alert("Error: "+error);
+            alert("Error: " + error);
         });
     };
 
@@ -156,10 +156,10 @@ export default class ChooseTimings extends Component {
         if (this.state.workingDays[6] === false)
             offDays += ",Sun";
 
-        if(offDays.charAt(0)===",")
-           offDays=offDays.substr(1);
+        if (offDays.charAt(0) === ",")
+            offDays = offDays.substr(1);
 
-        console.log("offDays--->"+JSON.stringify(offDays));
+        console.log("offDays--->" + JSON.stringify(offDays));
         var details = {
             user_id: Preference.get("userId"),
             working_from: this.state.startTime,
@@ -186,6 +186,11 @@ export default class ChooseTimings extends Component {
                 console.log("responseworkinghours-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
                     alert("Your working hours updated.");
+                    if (Preference.get("newUser") === true)
+                        this.props.navigation.push("Subscription")
+                    else
+                        this.props.navigation.goBack();
+
                 } else {
                     if (response.ResultType === 0) {
                         alert(response.Message);
@@ -195,9 +200,8 @@ export default class ChooseTimings extends Component {
             }).catch(error => {
             //console.error('Errorr:', error);
             console.log('Error:', error);
-            alert("Error: "+error);
+            alert("Error: " + error);
         });
-        this.props.navigation.navigate("Subscription")
     }
 
     setNotWorkingDay(val) {
@@ -230,58 +234,68 @@ export default class ChooseTimings extends Component {
         });
     }
 
+    dayItemClicked() {
+
+    }
+
     renderWeekDay(item) {
         var week = new Array("MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN");
         console.log("workingDay--->>" + this.state.workingDays[item.k]);
         if (this.state.workingDays[item.k] === true) {
-            return (
-                <TouchableOpacity key={item.k} style={{
+            return (<View style={{
                     justifyContent: "center",
                     flexDirection: "column",
                     flex: 1,
                     backgroundColor: item.bg
-                }} onPress={() => this.setNotWorkingDay(item.k)}>
+                }}>
+                    <TouchableOpacity key={item.k} onPress={() => this.setNotWorkingDay(item.k)}>
 
-                    <Image
-                        style={{
-                            height: 16,
-                            resizeMode: "contain",
-                            alignSelf: "center",
-                            marginBottom: 10
-                        }}
-                        source={require("../../../assets/images/ic_working.png")}
-                    />
-                    <Text
-                        style={[styles.week_day_container, {fontFamily: "AvertaStd-Thin"}]}
-                    >
-                        {week[item.k]}
-                    </Text>
-                </TouchableOpacity>
+                        <Image
+                            style={{
+                                height: 16,
+                                resizeMode: "contain",
+                                alignSelf: "center",
+                                marginBottom: 10
+                            }}
+                            source={require("../../../assets/images/ic_working.png")}
+                        />
+
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => this.dayItemClicked(item.k)}>
+                        <Text
+                            style={[styles.week_day_container, {fontFamily: "AvertaStd-Thin"}]}>
+                            {week[item.k]}
+                        </Text>
+                    </TouchableOpacity>
+                </View>
             );
         } else {
-            return (
-                <TouchableOpacity key={item.k}
-                                  style={{
-                                      justifyContent: "center",
-                                      flexDirection: "column",
-                                      flex: 1,
-                                      backgroundColor: item.bg
-                                  }} onPress={() => this.setWorkingDay(item.k)}>
-                    <Image
-                        style={{
-                            height: 16,
-                            resizeMode: "contain",
-                            alignSelf: "center",
-                            marginBottom: 10
-                        }}
-                        source={require("../../../assets/images/ic_notworking.png")}
-                    />
-                    <Text
-                        style={[styles.week_day_container, {fontFamily: "AvertaStd-Thin"}]}
-                    >
-                        {week[item.k]}
-                    </Text>
-                </TouchableOpacity>
+            return (<View style={{
+                    justifyContent: "center",
+                    flexDirection: "column",
+                    flex: 1,
+                    backgroundColor: item.bg
+                }}>
+                    <TouchableOpacity key={item.k}
+                                      onPress={() => this.setWorkingDay(item.k)}>
+                        <Image
+                            style={{
+                                height: 16,
+                                resizeMode: "contain",
+                                alignSelf: "center",
+                                marginBottom: 10
+                            }}
+                            source={require("../../../assets/images/ic_notworking.png")}
+                        />
+
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => this.dayItemClicked(item.k)}>
+                        <Text
+                            style={[styles.week_day_container, {fontFamily: "AvertaStd-Thin"}]}>
+                            {week[item.k]}
+                        </Text>
+                    </TouchableOpacity>
+                </View>
             );
         }
     }
@@ -339,7 +353,8 @@ export default class ChooseTimings extends Component {
                         <DatePicker
                             date={this.state.startTime}
                             style={{marginLeft: -50}}
-                            onDateChange={date => this.setState({startTime:date})}
+                            minuteInterval={15}
+                            onDateChange={date => this.setState({startTime: date})}
                             mode={"time"}
                             textColor={"#ffffff"}
                         />
@@ -357,7 +372,8 @@ export default class ChooseTimings extends Component {
 
                         <DatePicker
                             date={this.state.endTime}
-                            onDateChange={date => this.setState({endTime:date})}
+                            onDateChange={date => this.setState({endTime: date})}
+                            minuteInterval={15}
                             mode={"time"}
                             style={{marginLeft: -50}}
                             textColor={"#ffffff"}
@@ -377,13 +393,10 @@ export default class ChooseTimings extends Component {
                 </View>
 
 
-                <TouchableOpacity
-                    style={[
-                        globalStyles.button,
-                        {marginTop: 10, marginBottom: 10, width: "80%"}
-                    ]}
-                    onPress={() => this.updateWorkingHours()}
-                >
+                <TouchableOpacity style={[
+                    globalStyles.button,
+                    {marginTop: 10, marginBottom: 10, width: "80%"}]}
+                                  onPress={() => this.updateWorkingHours()}>
                     <Text style={globalStyles.buttonText}>Update Now</Text>
                 </TouchableOpacity>
                 <ScrollView>
@@ -406,7 +419,8 @@ export default class ChooseTimings extends Component {
                     alignItems: "center",
                     justifyContent: "center"
                 }}>
-                    <Image resizeMode={"contain"} source={require("../../../assets/images/loading.gif")} style={{width:100,height:100, opacity: 1,}}/>
+                    <Image resizeMode={"contain"} source={require("../../../assets/images/loading.gif")}
+                           style={{width: 100, height: 100, opacity: 1,}}/>
                 </View>}
 
             </View>

@@ -80,13 +80,25 @@ export default class Subscription extends Component {
     }
 
     Onsubmit() {
-        if (this.state.SelectedBasic === true) {
-            Preference.set("userPackage","basic")
-            this.props.navigation.navigate("PaymentMethod");
-        } else if (this.state.SelectedSupreme === true) {
-            Preference.set("userPackage","supreme")
-            this.props.navigation.navigate("PaymentMethod")
+        if(Preference.get("newUser")===true)
+        {
+            if (this.state.SelectedBasic === true) {
+                Preference.set("userPackage","basic")
+                this.props.navigation.navigate("BookingPreferences");
+            } else if (this.state.SelectedSupreme === true) {
+                Preference.set("userPackage","supreme")
+                this.props.navigation.navigate("SurgePricing")
+            }
+        }else {
+            if (this.state.SelectedBasic === true) {
+                Preference.set("userPackage","basic")
+                this.props.navigation.goBack()
+            } else if (this.state.SelectedSupreme === true) {
+                Preference.set("userPackage","supreme")
+                this.props.navigation.navigate("PaymentMethod")
+            }
         }
+
 
 
     }

@@ -92,7 +92,7 @@ export default class BarberProfile extends Component {
 
 
     render() {
-        return (<View style={{width:"100%",height:"100%"}}>
+        return (<View style={{width:"100%",height:"100%", backgroundColor: colors.themeBackground}}>
             <ScrollView>
                 <View style={styles.container}>
                     <Header
@@ -181,7 +181,7 @@ export default class BarberProfile extends Component {
                                 </View>}
                         />}
                         {(this.state.ListData.length<1) &&<View style={{width:"100%",height:60,alignItems:"center",justifyContent:"center"}}>
-                            <Text style={{fontSize:15,color:"white"}}>{"You dont have any Experience Images"}</Text>
+                            <Text style={{fontSize:15,color:"white"}}>{"You don't have any Experience Images"}</Text>
                         </View>}
                         {(this.state.ListData.length>0) && <Image resizeMode={"contain"} source={require("../../../assets/images/arrow1.png")}
                                style={{position: "absolute", width: 35, height: 35, right: 10, top: 50}}/>}
@@ -263,7 +263,7 @@ export default class BarberProfile extends Component {
                         />}
 
                         {this.state.ListData2.length<1 &&<View style={{width:"100%",height:60,alignItems:"center",justifyContent:"center"}}>
-                            <Text style={{fontSize:15,color:"white"}}>{"You dont have any Services"}</Text>
+                            <Text style={{fontSize:15,color:"white"}}>{"You don't have any Services"}</Text>
                         </View>}
                     </View>
 
