@@ -14,7 +14,7 @@ export const constants = {
     BarberSignUp: Base_url + barberPath + "signup",
     BarberForgetPassword: Base_url + barberPath + "forgot",
     BarberResetPassword: Base_url + barberPath + "reset",
-    BarberWorkingHours: Base_url + path2 + "workingHour",
+    BarberWorkingHours: Base_url + path2 + "getworkingHour",
     UpdateWorkingHours: Base_url + path2 + "updateWorkingHours",
     ClientBlastMessage: Base_url + path2 + "sendClientBlast",
     GetNotifications: Base_url + path3 + "notifications",

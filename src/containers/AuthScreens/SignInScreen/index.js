@@ -362,14 +362,15 @@ class SignInScreen extends Component {
 
     facebokLogin = async () => {
         try {
-            let result = await LoginManager.logInWithReadPermissions(['email', 'public_profile']);
+            let result = await LoginManager.logInWithPermissions(['email', 'public_profile']);
             if (result.isCancelled) {
                 alert("Login was cancelled");
             } else {
                 //alert("Login is succesfull with permission " + result.grantedPermissions.toString())
+                this.FBGraphRequest('id,email,name,first_name,last_name,picture', this.FBLoginCallback);
             }
 
-            const accessToken = await AccessToken.getCurrentAccessToken();
+           /* const accessToken = await AccessToken.getCurrentAccessToken();
             console.log("Facebook access token: " + JSON.stringify(accessToken))
             if (accessToken) {
                 //this.fetchFacebookData(accessToken.accessToken.toString());
@@ -398,13 +399,39 @@ class SignInScreen extends Component {
                     });
 
                 await new GraphRequestManager().addRequest(infoRequest).start();
-            }
+            }*/
 
             // this.setState({
             //     accessToken: accessToken
             // }).bind(this)
         } catch (e) {
             alert("Login error: " + e);
+        }
+    }
+
+    async FBGraphRequest(fields, callback) {
+        const accessData = await AccessToken.getCurrentAccessToken();
+        // Create a graph request asking for user information
+        this.setState({accessToken: accessData.accessToken})
+        const infoRequest = new GraphRequest('/me', {
+            accessToken: accessData.accessToken,
+            parameters: {
+                fields: {
+                    string: fields
+                }
+            }
+        }, callback.bind(this));
+        // Execute the graph request created above
+        new GraphRequestManager().addRequest(infoRequest).start();
+    }
+
+    async FBLoginCallback(error, result) {
+        if (error) {
+            alert(JSON.stringify(error))
+        } else {
+            alert(JSON.stringify(result))
+            this.setState({dataFacebook: result});
+            this.signinFacebook(this.state.dataFacebook, this.state.accessToken);
         }
     }
 

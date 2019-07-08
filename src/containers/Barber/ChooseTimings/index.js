@@ -31,7 +31,7 @@ export default class ChooseTimings extends Component {
         this.state = {
             showLoader: false,
             dataSource: [],
-            dayData: [],
+            daysData: [],
             workingDays: [],
             startTime: new Date(),
             endTime: new Date(),
@@ -61,8 +61,8 @@ export default class ChooseTimings extends Component {
     fetchWorkingHours = () => {
         this.setState({showLoading: true});
         console.log("userID---->" + Preference.get("userId"));
-        console.log("url--->" + constants.BarberWorkingHours + "?user_id=" + Preference.get("userId"));
-        fetch(constants.BarberWorkingHours + "?user_id=" + Preference.get("userId"), {
+        console.log("url--->" + constants.BarberWorkingHours + "?user_id=" + "5d23353d2dee382eb7959ed0") /*Preference.get("userId"))*/;
+        fetch(constants.BarberWorkingHours + "?user_id=" + "5d23353d2dee382eb7959ed0", {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
@@ -73,58 +73,9 @@ export default class ChooseTimings extends Component {
                 console.log("responseworkinghours-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
                     this.setState({showLoading: false});
-                    let worddays = response.Data.working_days;
-                    let setWorkDays = [];
-                    for (let i = 0; i < 7; i++) {
-                        if (worddays[i] === "Mon"
-                            || worddays[i] === "Tue"
-                            || worddays[i] === "Wed"
-                            || worddays[i] === "Thurs"
-                            || worddays[i] === "Fri"
-                            || worddays[i] === "Sat"
-                            || worddays[i] === "Sun") {
-                            setWorkDays.push(true);
-                        } else {
-                            setWorkDays.push(false);
-                        }
-                    }
-                    console.log("setWorkDays-->" + JSON.stringify(setWorkDays));
-
-                    this.setState({workingDays: setWorkDays, isOffToday: response.Data.is_off});
-                    let items = [];
-                    for (i = 0; i < 7; i++) {
-                        var weekDate = this.startOfWeek(new Date());
-                        var newDate = weekDate.addDays(i);
-                        items.push(this.renderWeekDay({k: i, d: newDate}));
-                    }
-                    let hours = Array.apply(null, Array(48)).map((v, i) => {
-                        return {id: i, title: "Title " + i};
-                    });
-                    let start = response.Data.working_from;
-                    let end = response.Data.working_to;
-                    console.log("starttime-->" + start);
-                    console.log("starttime-->" + end);
-                    let startTime1 = start.split(" ");
-                    let endTime1 = end.split(" ");
-                    console.log("starttime-->" + startTime1[0]);
-                    console.log("starttime-->" + endTime1[0]);
-                    let startTime2 = startTime1[0].split(":");
-                    let endTime2 = endTime1[0].split(":");
-
-                    console.log("starttime-->" + startTime2[0]);
-                    console.log("starttime-->" + endTime2[0]);
-                    let dateSet = new Date();
-                    dateSet.setHours(startTime2[0], startTime2[1], 0)
-                    let dateSet1 = new Date();
-                    dateSet1.setHours(endTime2[0], endTime2[1], 0)
-                    this.setState({
-                        dayData: hours,
-                        dataSource: items,
-                        startTime: dateSet,
-                        endTime: dateSet1,
-                    });
-                    console.log("starttime123-->" + this.state.startTime);
-                    console.log("starttime123-->" + this.state.endTime);
+                    this.setState({workingDays:response.Data.working_days});
+                    //this.setWorkingDay();
+                    this.setDays();
                 } else {
                     this.setState({showLoading: false});
                     if (response.ResultType === 0) {
@@ -205,29 +156,36 @@ export default class ChooseTimings extends Component {
     }
 
     setNotWorkingDay(val) {
-        let workdays = this.state.workingDays;
-        workdays[val] = false;
-        this.setState({workdays: workdays});
+        let workdays=this.state.workingDays;
+        workdays[val].is_off=true;
+        this.setState({workingDays:workdays})
         let items = [];
         for (i = 0; i < 7; i++) {
-            var weekDate = this.startOfWeek(new Date());
-            var newDate = weekDate.addDays(i);
-            items.push(this.renderWeekDay({k: i, d: newDate}));
+            items.push(this.renderWeekDay({k: i}));
         }
         this.setState({
             dataSource: items
         });
     }
 
-    setWorkingDay(val) {
-        let workdays = this.state.workingDays;
-        workdays[val] = true;
-        this.setState({workdays: workdays});
+    setDays()
+    {
+        console.log("WorkingDays-->--->"+this.state.workingDays.length)
+        let workingdayz=this.state.workingDays;
         let items = [];
         for (i = 0; i < 7; i++) {
-            var weekDate = this.startOfWeek(new Date());
-            var newDate = weekDate.addDays(i);
-            items.push(this.renderWeekDay({k: i, d: newDate}));
+            items.push(this.renderWeekDay({k: i}));
+        }
+        this.setState({dataSource: items});
+    }
+
+    setWorkingDay(val) {
+        let workdays=this.state.workingDays;
+        workdays[val].is_off=false;
+        this.setState({workingDays:workdays})
+        let items = [];
+        for (i = 0; i < 7; i++) {
+            items.push(this.renderWeekDay({k: i}));
         }
         this.setState({
             dataSource: items
@@ -241,7 +199,7 @@ export default class ChooseTimings extends Component {
     renderWeekDay(item) {
         var week = new Array("MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN");
         console.log("workingDay--->>" + this.state.workingDays[item.k]);
-        if (this.state.workingDays[item.k] === true) {
+        if (this.state.workingDays[item.k].is_off === false) {
             return (<View style={{
                     justifyContent: "center",
                     flexDirection: "column",
@@ -249,7 +207,6 @@ export default class ChooseTimings extends Component {
                     backgroundColor: item.bg
                 }}>
                     <TouchableOpacity key={item.k} onPress={() => this.setNotWorkingDay(item.k)}>
-
                         <Image
                             style={{
                                 height: 16,

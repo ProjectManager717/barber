@@ -28,7 +28,6 @@
 		184BF45D22AF920100357CB1 /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 184BF45A22AF920000357CB1 /* FBSDKCoreKit.framework */; };
 		184BF45E22AF920100357CB1 /* FBSDKLoginKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 184BF45B22AF920100357CB1 /* FBSDKLoginKit.framework */; };
 		184BF49322AF938500357CB1 /* Bolts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 184BF46C22AF938500357CB1 /* Bolts.framework */; };
-		184BF49422AF95D100357CB1 /* libRCTFBSDK.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 184BF45822AF8FAD00357CB1 /* libRCTFBSDK.a */; };
 		184BF4A622AF986700357CB1 /* libRCTWebSocket.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 139FDEF41B06529B00C62182 /* libRCTWebSocket.a */; };
 		188CEDEC22AFE024009E40D9 /* GoogleSignIn.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 188CEDEB22AFE024009E40D9 /* GoogleSignIn.framework */; };
 		188CEDEE22AFE062009E40D9 /* GoogleSignIn.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 188CEDED22AFE062009E40D9 /* GoogleSignIn.bundle */; };
@@ -41,7 +40,6 @@
 		188CEE4422AFEE5F009E40D9 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 188CEE4322AFEE5F009E40D9 /* GoogleService-Info.plist */; };
 		1D496B91C63F4EFFBB83AB93 /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EA618D39966A4627AAE431F6 /* Octicons.ttf */; };
 		2A6FC90EE8754B55846572D8 /* AvertaStd-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 90C6EC3E9BC54F5DA22D8930 /* AvertaStd-ExtraBold.ttf */; };
-		2B6BA28AB889451CB56072B9 /* libRCTFBSDK.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4ACCF79CD5AE4ADE8B2A6C5F /* libRCTFBSDK.a */; };
 		2CC2A43288034D5194733499 /* FontAwesome5_Solid.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9B79037544364708B5979892 /* FontAwesome5_Solid.ttf */; };
 		2D02E4BC1E0B4A80006451C7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		2D02E4BD1E0B4A84006451C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
@@ -250,13 +248,6 @@
 			proxyType = 2;
 			remoteGlobalIDString = 64AA15081EF7F30100718508;
 			remoteInfo = "BVLinearGradient-tvOS";
-		};
-		188CED5422AFDABD009E40D9 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 41A05EA7F69C4DDB8598C3D4 /* RCTFBSDK.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 9350E0F11CE3B0920041D815;
-			remoteInfo = RCTFBSDK;
 		};
 		188CED7B22AFDABD009E40D9 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -518,10 +509,8 @@
 		2D16E6891FA4F8E400B85C8A /* libReact.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libReact.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D38C8A8A4C042F8B02C9DA0 /* AvenirNext-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "AvenirNext-Bold.ttf"; path = "../src/assets/fonts/AvenirNext-Bold.ttf"; sourceTree = "<group>"; };
 		3DD1FC80C76F430082947BC9 /* RNGoogleSignin.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNGoogleSignin.xcodeproj; path = "../node_modules/react-native-google-signin/ios/RNGoogleSignin.xcodeproj"; sourceTree = "<group>"; };
-		41A05EA7F69C4DDB8598C3D4 /* RCTFBSDK.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RCTFBSDK.xcodeproj; path = "../node_modules/react-native-fbsdk/ios/RCTFBSDK.xcodeproj"; sourceTree = "<group>"; };
 		4845413103AA4BE5A08D36F7 /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
 		49BA823E99E14BA4B247EB2A /* libRNImagePicker.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNImagePicker.a; sourceTree = "<group>"; };
-		4ACCF79CD5AE4ADE8B2A6C5F /* libRCTFBSDK.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRCTFBSDK.a; sourceTree = "<group>"; };
 		4DD999B563304E63A8CE6D6C /* AntDesign.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = AntDesign.ttf; path = "../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf"; sourceTree = "<group>"; };
 		4DFC5C7102874EC4AA686710 /* libBVLinearGradient.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libBVLinearGradient.a; sourceTree = "<group>"; };
 		4EA01BC1E0344C0AA0981FD1 /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
@@ -574,6 +563,7 @@
 		D7A25617A312484896A29F62 /* libRNViewShot.a */ = {isa = PBXFileReference; name = "libRNViewShot.a"; path = "libRNViewShot.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 		D65D5A5AB1A2494696BE69A5 /* RNFS.xcodeproj */ = {isa = PBXFileReference; name = "RNFS.xcodeproj"; path = "../node_modules/react-native-fs/RNFS.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 		9168CA01010C435B8AB2F249 /* libRNFS.a */ = {isa = PBXFileReference; name = "libRNFS.a"; path = "libRNFS.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		67E23C00DC474392ABE6F8C6 /* RCTFBSDK.xcodeproj */ = {isa = PBXFileReference; name = "RCTFBSDK.xcodeproj"; path = "../node_modules/react-native-fbsdk/ios/RCTFBSDK.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -595,7 +585,6 @@
 				188CEDF122AFE0AB009E40D9 /* AddressBook.framework in Frameworks */,
 				188CEDEF22AFE096009E40D9 /* libRNGoogleSignin.a in Frameworks */,
 				184BF4A622AF986700357CB1 /* libRCTWebSocket.a in Frameworks */,
-				184BF49422AF95D100357CB1 /* libRCTFBSDK.a in Frameworks */,
 				184BF45E22AF920100357CB1 /* FBSDKLoginKit.framework in Frameworks */,
 				ED297163215061F000B7C4FE /* JavaScriptCore.framework in Frameworks */,
 				ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */,
@@ -880,14 +869,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		188CED4B22AFDABD009E40D9 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				188CED5522AFDABD009E40D9 /* libRCTFBSDK.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		188CED7822AFDABD009E40D9 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -976,16 +957,15 @@
 				257F85715243400A90321A7F /* BVLinearGradient.xcodeproj */,
 				8A2BD2B050424471A251A593 /* RNDatePicker.xcodeproj */,
 				BFD0BCD1A7C840F2BF35ED28 /* RNPreferenceManager.xcodeproj */,
-				41A05EA7F69C4DDB8598C3D4 /* RCTFBSDK.xcodeproj */,
 				A7C373E5867C4B81BD6DFCBC /* RNImagePicker.xcodeproj */,
 				3DD1FC80C76F430082947BC9 /* RNGoogleSignin.xcodeproj */,
-				CADF87034008499A9749BBB6 /* RCTFBSDK.xcodeproj */,
 				DDB52C27000E4CC99ED5C4F9 /* RNGestureHandler.xcodeproj */,
 				0979F200267B40B2B1EF1D1F /* RNVectorIcons.xcodeproj */,
 				B39DC05DD1684EE6926F693F /* ReactNativeCameraKit.xcodeproj */,
 				669595B04DF04ABB92953D63 /* RNSVG.xcodeproj */,
 				56F7FA8F016E4646BAD661A9 /* RNViewShot.xcodeproj */,
 				D65D5A5AB1A2494696BE69A5 /* RNFS.xcodeproj */,
+				67E23C00DC474392ABE6F8C6 /* RCTFBSDK.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1212,10 +1192,6 @@
 					ProjectRef = CADF87034008499A9749BBB6 /* RCTFBSDK.xcodeproj */;
 				},
 				{
-					ProductGroup = 188CED4B22AFDABD009E40D9 /* Products */;
-					ProjectRef = 41A05EA7F69C4DDB8598C3D4 /* RCTFBSDK.xcodeproj */;
-				},
-				{
 					ProductGroup = 00C302B61ABCB90400DB3ED1 /* Products */;
 					ProjectRef = 00C302B51ABCB90400DB3ED1 /* RCTGeolocation.xcodeproj */;
 				},
@@ -1396,13 +1372,6 @@
 			remoteRef = 184BF45222AF8FAD00357CB1 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		184BF45822AF8FAD00357CB1 /* libRCTFBSDK.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libRCTFBSDK.a;
-			remoteRef = 184BF45722AF8FAD00357CB1 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		184BF50122AF994C00357CB1 /* libRNGestureHandler.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -1429,13 +1398,6 @@
 			fileType = archive.ar;
 			path = libBVLinearGradient.a;
 			remoteRef = 188CED4922AFDAB6009E40D9 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		188CED5522AFDABD009E40D9 /* libRCTFBSDK.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libRCTFBSDK.a;
-			remoteRef = 188CED5422AFDABD009E40D9 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		188CED7C22AFDABD009E40D9 /* libRNImagePicker.a */ = {
@@ -1830,13 +1792,13 @@
 					"$(SRCROOT)\..\node_modules\react-native-svg\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-view-shot\ios",
 					"$(SRCROOT)\..\node_modules\react-native-fs/**",
+					"$(SRCROOT)\..\node_modules\react-native-fbsdk\ios\RCTFBSDK/**",
 				);
 				INFOPLIST_FILE = BarberTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -1869,13 +1831,13 @@
 					"$(SRCROOT)\..\node_modules\react-native-svg\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-view-shot\ios",
 					"$(SRCROOT)\..\node_modules\react-native-fs/**",
+					"$(SRCROOT)\..\node_modules\react-native-fbsdk\ios\RCTFBSDK/**",
 				);
 				INFOPLIST_FILE = BarberTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -1916,6 +1878,7 @@
 					"$(SRCROOT)\..\node_modules\react-native-svg\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-view-shot\ios",
 					"$(SRCROOT)\..\node_modules\react-native-fs/**",
+					"$(SRCROOT)\..\node_modules\react-native-fbsdk\ios\RCTFBSDK/**",
 				);
 				INFOPLIST_FILE = Barber/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1958,6 +1921,7 @@
 					"$(SRCROOT)\..\node_modules\react-native-svg\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-view-shot\ios",
 					"$(SRCROOT)\..\node_modules\react-native-fs/**",
+					"$(SRCROOT)\..\node_modules\react-native-fbsdk\ios\RCTFBSDK/**",
 				);
 				INFOPLIST_FILE = Barber/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -2000,12 +1964,12 @@
 					"$(SRCROOT)\..\node_modules\react-native-svg\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-view-shot\ios",
 					"$(SRCROOT)\..\node_modules\react-native-fs/**",
+					"$(SRCROOT)\..\node_modules\react-native-fbsdk\ios\RCTFBSDK/**",
 				);
 				INFOPLIST_FILE = "Barber-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -2047,12 +2011,12 @@
 					"$(SRCROOT)\..\node_modules\react-native-svg\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-view-shot\ios",
 					"$(SRCROOT)\..\node_modules\react-native-fs/**",
+					"$(SRCROOT)\..\node_modules\react-native-fbsdk\ios\RCTFBSDK/**",
 				);
 				INFOPLIST_FILE = "Barber-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -2093,12 +2057,12 @@
 					"$(SRCROOT)\..\node_modules\react-native-svg\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-view-shot\ios",
 					"$(SRCROOT)\..\node_modules\react-native-fs/**",
+					"$(SRCROOT)\..\node_modules\react-native-fbsdk\ios\RCTFBSDK/**",
 				);
 				INFOPLIST_FILE = "Barber-tvOSTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -2139,12 +2103,12 @@
 					"$(SRCROOT)\..\node_modules\react-native-svg\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-view-shot\ios",
 					"$(SRCROOT)\..\node_modules\react-native-fs/**",
+					"$(SRCROOT)\..\node_modules\react-native-fbsdk\ios\RCTFBSDK/**",
 				);
 				INFOPLIST_FILE = "Barber-tvOSTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",

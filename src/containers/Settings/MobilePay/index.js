@@ -27,16 +27,17 @@ export default class MobilePay extends Component {
         //alert("Mobile Pay");
         if (Preference.get("userMobilePay") === true) {
             Preference.set("userMobilePay", false);
-            this.setState({mobilePayText: "Disable Mobile Pay"})
-        } else {
-            Preference.set("userMobilePay", true);
             this.setState({mobilePayText: "Enable Mobile Pay"})
+        } else {
+            this.props.navigation.push("MobilePaySettings");
+            /*Preference.set("userMobilePay", true);
+            this.setState({mobilePayText: "Disable Mobile Pay"})
             if (Preference.get("newUser") === true) {
                 this.props.navigation.push("MobilePaySettings");
             } else {
                 //this.props.navigation.goBack();
                 this.props.navigation.push("MobilePaySettings");
-            }
+            }*/
         }
 
 

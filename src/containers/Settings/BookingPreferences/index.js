@@ -401,23 +401,23 @@ export default class BookingPreferences extends Component {
                     {this.renderRowWithCheck({title: "Every 20 Minutes", value: this.state.twentyMin, indx: 2})}
                     {this.renderRowWithCheck({title: "Every 30 Minutes", value: this.state.thirtyMin, indx: 3})}
 
-                    <Text style={styles.txtHeader}>AVAILABILITY</Text>
-                    <View style={[globalStyles.rowBackground, styles.row]}>
-                        {this.renderRowTimer({
-                            /* title: "Every 30 Minutes",*/
-                            title: "Calender Interval",
-                            ic: require("../../../assets/images/every_30_min.png"),
-                        })}
-                        {/*<Text style={{
-                            marginStart: 30,
-                            color: "grey",
-                            fontSize: 12,
-                            fontStyle: "italic"
-                        }}>{"Calender Interval"}</Text>*/}
-                    </View>
-                    {this.renderRowWithCheck({title: "Every 15 Minutes", value: this.state.fifteenMin1, indx: 4})}
-                    {this.renderRowWithCheck({title: "Every 20 Minutes", value: this.state.twentyMin1, indx: 5})}
-                    {this.renderRowWithCheck({title: "Every 30 Minutes", value: this.state.thirtyMin1, indx: 6})}
+                    {/*<Text style={styles.txtHeader}>AVAILABILITY</Text>*/}
+                    {/*<View style={[globalStyles.rowBackground, styles.row]}>*/}
+                        {/*{this.renderRowTimer({*/}
+                            {/* title: "Every 30 Minutes",*/}
+                            {/*title: "Calender Interval",*/}
+                            {/*ic: require("../../../assets/images/every_30_min.png"),*/}
+                        {/*})}*/}
+                        {/*<Text style={{*/}
+                            {/*marginStart: 30,*/}
+                            {/*color: "grey",*/}
+                            {/*fontSize: 12,*/}
+                            {/*fontStyle: "italic"*/}
+                        {/*}}>{"Calender Interval"}</Text>*/}
+                    {/*</View>*/}
+                    {/*{this.renderRowWithCheck({title: "Every 15 Minutes", value: this.state.fifteenMin1, indx: 4})}*/}
+                    {/*{this.renderRowWithCheck({title: "Every 20 Minutes", value: this.state.twentyMin1, indx: 5})}*/}
+                    {/*{this.renderRowWithCheck({title: "Every 30 Minutes", value: this.state.thirtyMin1, indx: 6})}*/}
 
                     <TouchableOpacity style={[globalStyles.button, {marginTop: 70, marginBottom: 30, width: '70%'}]}
                                       onPress={() => this.updateBookingPrefrence()}>
