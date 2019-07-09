@@ -15,7 +15,7 @@ export const constants = {
     BarberForgetPassword: Base_url + barberPath + "forgot",
     BarberResetPassword: Base_url + barberPath + "reset",
     BarberWorkingHours: Base_url + path2 + "getworkingHour",
-    UpdateWorkingHours: Base_url + path2 + "updateWorkingHours",
+    UpdateWorkingHours: Base_url + path2 + "slotWorkingHours",
     ClientBlastMessage: Base_url + path2 + "sendClientBlast",
     GetNotifications: Base_url + path3 + "notifications",
     GetCalenderSlots: Base_url + path2 + "calenderSlots",
@@ -41,4 +41,5 @@ export const constants = {
     ClientBarbersProfile: Base_url + path2,
     ClientBarbersSearch: Base_url + clientPath1 + "clientSearchBarber",
     ClientProfileData: Base_url + clientPath1,
+    ClientBarbersProfileSlots: Base_url + path2+"getSlots",
 };

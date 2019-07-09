@@ -87,7 +87,7 @@ export default class ClientHome extends Component {
     getRecentBookings()
     {
         this.setState({showLoading:true});
-        fetch(constants.ClientRecentBookings + "?client_id=" +"5cf0db2d50e6184aae5eb5d5"/*Preference.get("userId")*/, {
+        fetch(constants.ClientRecentBookings + "?client_id=" +Preference.get("userId"), {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
@@ -116,7 +116,7 @@ export default class ClientHome extends Component {
 
     getFavoriteBarbers()
     {
-        fetch(constants.ClientFavoritBarbers + "?client_id=" + "5cf0db2d50e6184aae5eb5d5"/*Preference.get("userId")*/, {
+        fetch(constants.ClientFavoritBarbers + "?client_id=" +Preference.get("userId"), {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',

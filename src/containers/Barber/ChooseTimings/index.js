@@ -37,7 +37,8 @@ export default class ChooseTimings extends Component {
             endTime: new Date(),
             chosenDate: new Date(),
             isOffToday: false,
-            date: new Date().setHours(13, 0, 0)
+            date: new Date().setHours(13, 0, 0),
+            daySelected:"",
         };
         this.setDate = this.setDate.bind(this);
         console.log("Timimng:::" + this.state.date);
@@ -61,8 +62,8 @@ export default class ChooseTimings extends Component {
     fetchWorkingHours = () => {
         this.setState({showLoading: true});
         console.log("userID---->" + Preference.get("userId"));
-        console.log("url--->" + constants.BarberWorkingHours + "?user_id=" + "5d23353d2dee382eb7959ed0") /*Preference.get("userId"))*/;
-        fetch(constants.BarberWorkingHours + "?user_id=" + "5d23353d2dee382eb7959ed0", {
+        console.log("url--->" + constants.BarberWorkingHours + "?user_id=" +  Preference.get("userId"));
+        fetch(constants.BarberWorkingHours + "?user_id=" + Preference.get("userId"), {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
@@ -91,51 +92,26 @@ export default class ChooseTimings extends Component {
     };
 
     updateWorkingHours() {
-        let offDays = "";
-        if (this.state.workingDays[0] === false)
-            offDays += "Mon";
-        if (this.state.workingDays[1] === false)
-            offDays += ",Tue";
-        if (this.state.workingDays[2] === false)
-            offDays += ",Wed";
-        if (this.state.workingDays[3] === false)
-            offDays += ",Thur";
-        if (this.state.workingDays[4] === false)
-            offDays += ",Fri";
-        if (this.state.workingDays[5] === false)
-            offDays += ",Sat";
-        if (this.state.workingDays[6] === false)
-            offDays += ",Sun";
 
-        if (offDays.charAt(0) === ",")
-            offDays = offDays.substr(1);
-
-        console.log("offDays--->" + JSON.stringify(offDays));
-        var details = {
-            user_id: Preference.get("userId"),
-            working_from: this.state.startTime,
-            working_to: this.state.endTime,
-            is_off: this.state.isOffToday,
-            off_day: offDays,
+        let details = {
+            barber_id:Preference.get("userId"),
+            working_days:this.state.workingDays
         };
-        var formBody = [];
-        for (var property in details) {
-            var encodedKey = encodeURIComponent(property);
-            var encodedValue = encodeURIComponent(details[property]);
-            formBody.push(encodedKey + "=" + encodedValue);
-        }
-        formBody = formBody.join("&");
+        console.log("OutPutData::",JSON.stringify(details));
+        console.log("OutPutData::",constants.UpdateWorkingHours);
+        this.setState({showLoading:true});
         fetch(constants.UpdateWorkingHours, {
             method: 'POST',
+            body: JSON.stringify(details),
             headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: formBody
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
         }).then(response => response.json())
             .then(response => {
                 console.log("responseworkinghours-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
+                    this.setState({showLoading:false})
                     alert("Your working hours updated.");
                     if (Preference.get("newUser") === true)
                         this.props.navigation.push("Subscription")
@@ -143,16 +119,18 @@ export default class ChooseTimings extends Component {
                         this.props.navigation.goBack();
 
                 } else {
+                    this.setState({showLoading:false})
                     if (response.ResultType === 0) {
                         alert(response.Message);
                     }
-
                 }
             }).catch(error => {
+            this.setState({showLoading:false})
             //console.error('Errorr:', error);
             console.log('Error:', error);
             alert("Error: " + error);
         });
+        console.log("OutPutData::",details);
     }
 
     setNotWorkingDay(val) {
@@ -166,6 +144,7 @@ export default class ChooseTimings extends Component {
         this.setState({
             dataSource: items
         });
+        console.log("SortedArray::",JSON.stringify(this.state.workingDays));
     }
 
     setDays()
@@ -177,6 +156,38 @@ export default class ChooseTimings extends Component {
             items.push(this.renderWeekDay({k: i}));
         }
         this.setState({dataSource: items});
+        this.setTimeofDay("Mon");
+    }
+
+    setTimeofDay(day)
+    {
+        this.setState({daySelected:day})
+        let workingdayz=this.state.workingDays;
+        for(let j=0;j<7;j++)
+        {
+            if(day===workingdayz[j].day)
+            {
+                let startTime=workingdayz[j].working_from;
+                let startTime1=startTime.split(":");
+                console.log("SetTime Splited time:::-->"+startTime1);
+                let startimeDay=this.state.startTime;
+                startimeDay.setHours(startTime1[0]);
+                startimeDay.setMinutes(startTime1[1]);
+                this.setState({startTime:startimeDay})
+                console.log("SetTime:::-->"+startTime1);
+
+                let endTime=workingdayz[j].working_to;
+                let endTime1=endTime.split(":");
+                console.log("SetTime Splited time:::-->"+endTime1);
+                let endtimeDay=this.state.endTime;
+                endtimeDay.setHours(endTime1[0]);
+                endtimeDay.setMinutes(endTime1[1]);
+                this.setState({endTime:endtimeDay})
+                console.log("SetTime:::-->"+this.state.endTime);
+            }
+
+        }
+
     }
 
     setWorkingDay(val) {
@@ -192,7 +203,35 @@ export default class ChooseTimings extends Component {
         });
     }
 
-    dayItemClicked() {
+    dayItemClicked(index) {
+        if(index===0)
+        {
+            this.setTimeofDay("Mon");
+        }
+        if(index===1)
+        {
+            this.setTimeofDay("Tue");
+        }
+        if(index===2)
+        {
+            this.setTimeofDay("Wed");
+        }
+        if(index===3)
+        {
+            this.setTimeofDay("Thurs");
+        }
+        if(index===4)
+        {
+            this.setTimeofDay("Fri");
+        }
+        if(index===5)
+        {
+            this.setTimeofDay("Sat");
+        }
+        if(index===6)
+        {
+            this.setTimeofDay("Sun");
+        }
 
     }
 
@@ -258,7 +297,37 @@ export default class ChooseTimings extends Component {
     }
 
     onTimeSelected = date => {
+
     };
+
+    setTimeStart(date)
+    {
+        let workdays=this.state.workingDays;
+        this.setState({startTime: date});
+        for(let h=0;h<7;h++)
+        {
+            if(this.state.daySelected===workdays[h].day)
+            {
+                workdays[h].working_from=date.getHours()+":"+date.getMinutes();
+            }
+        }
+        console.log("TimeSetAfter:",JSON.stringify(this.state.workingDays));
+    }
+
+    setTimeEnd(date)
+    {
+        let workdays=this.state.workingDays;
+        this.setState({endTime: date});
+        for(let h=0;h<7;h++)
+        {
+            if(this.state.daySelected===workdays[h].day)
+            {
+                workdays[h].working_to=date.getHours()+":"+date.getMinutes();
+            }
+        }
+        console.log("TimeSetAfter:",JSON.stringify(this.state.workingDays));
+    }
+
 
 
     render() {
@@ -311,7 +380,7 @@ export default class ChooseTimings extends Component {
                             date={this.state.startTime}
                             style={{marginLeft: -50}}
                             minuteInterval={15}
-                            onDateChange={date => this.setState({startTime: date})}
+                            onDateChange={date => this.setTimeStart(date)}
                             mode={"time"}
                             textColor={"#ffffff"}
                         />
@@ -329,7 +398,7 @@ export default class ChooseTimings extends Component {
 
                         <DatePicker
                             date={this.state.endTime}
-                            onDateChange={date => this.setState({endTime: date})}
+                            onDateChange={date => this.setTimeEnd(date)}
                             minuteInterval={15}
                             mode={"time"}
                             style={{marginLeft: -50}}

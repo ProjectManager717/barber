@@ -71,6 +71,7 @@ export default class ClientBarberSearch extends Component {
     }
 
     searchBarber(txt) {
+        console.log("getSearchDetails-txt->", "-" + txt);
         this.setState({showLoading: true})
         fetch(constants.ClientBarbersSearch + "?search_barber=" + txt, {
             method: 'GET',
@@ -80,8 +81,10 @@ export default class ClientBarberSearch extends Component {
             }
         }).then(response => response.json())
             .then(response => {
+                this.setState({searchBarbers:[]});
                 console.log("getSearchDetails-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
+
                     this.setState({
                         showLoading: false,
                         searchBarbers: response.Data
@@ -103,7 +106,7 @@ export default class ClientBarberSearch extends Component {
 
     renderRowInput() {
         return <View style={{width: "100%"}}>
-            <View style={{flexDirection: "row", alignItems: "center", justifyContent: "center"}}>
+            <View style={{height:50,flexDirection: "row", alignItems: "center", justifyContent: "center"}}>
                 <Image resizeMode={"contain"} source={require("../../../assets/images/searchicon.png")}
                        style={{
                            width: 16,
@@ -116,7 +119,7 @@ export default class ClientBarberSearch extends Component {
                             fontSize: 16,
                             fontFamily: "AvertaStd-RegularItalic",
                         }}
-                        onChange={(text) => this.searchBarber(text)}
+                        onChangeText={(text) => this.searchBarber(text)}
                         placeholder={"Search by Instagram, Name, or Barbershop"}
                         placeholderTextColor={"grey"}
                     />
@@ -461,7 +464,7 @@ export default class ClientBarberSearch extends Component {
                         <View style={{marginTop: 0, marginStart: 20, marginEnd: 20, marginBottom: 30}}>
                             <FlatList renderItem={({item}) => this.renderRowSurge2(item)}
                                       data={this.state.searchBarbers}
-                                      extraData={this.state.searchBarbers}
+                                      extraData={this.state}
                                       keyExtractor={(item, index) => index}
                                       numColumns={1}
                             /></View>}

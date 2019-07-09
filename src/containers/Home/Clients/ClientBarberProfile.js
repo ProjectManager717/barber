@@ -35,6 +35,7 @@ let getDay = new Date().getDay();
 let getYear = new Date().getFullYear();
 
 let barberId = 0;
+
 let barberMobilePay = false;
 export default class ClientBarberProfile extends Component {
 
@@ -61,7 +62,7 @@ export default class ClientBarberProfile extends Component {
             barberProfileImage: require("../../../assets/images/personface.png"),
             barberInsta: "",
             barberName: "",
-            barberShopNme: "",
+            barberShopName: "",
             barberRating: barberRating,
             barberReviews: barberReviews,
             barberImages: [],
@@ -178,6 +179,14 @@ export default class ClientBarberProfile extends Component {
         }
     }
 
+
+    getDateToday() {
+        let date = new Date();
+        let setMonth = date.getMonth() + 1;
+        let dateSelected = date.getFullYear() + "-" + setMonth + "-" + date.getDate();
+        console.log("TodayDate--->", dateSelected);
+        return dateSelected;
+    }
 
     startOfWeek(date) {
         var diff = date.getDate() - date.getDay() + (date.getDay() === 0 ? -6 : 1);
@@ -304,26 +313,43 @@ export default class ClientBarberProfile extends Component {
 
     getBarberDetails() {
         console.log("barberID-->" + barberId);
-        fetch(constants.ClientBarbersProfile + "/" + barberId + "/profile", {
-            method: 'GET',
+        var details = {
+            barber_id: barberId,
+            check_date: this.getDateToday(),
+        };
+        var formBody = [];
+        for (var property in details) {
+            var encodedKey = encodeURIComponent(property);
+            var encodedValue = encodeURIComponent(details[property]);
+            formBody.push(encodedKey + "=" + encodedValue);
+        }
+        formBody = formBody.join("&");
+        console.log("formData:" + JSON.stringify(formBody));
+        fetch(constants.ClientBarbersProfileSlots, {
+            method: 'POST',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: formBody,
         }).then(response => response.json())
             .then(response => {
-                console.log("getBarberDetails-->", "-" + JSON.stringify(response));
+                console.log("ClientBarbersProfileSlots-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
                     let barberData = response.Data;
                     this.setState({
+                        barberProfileImage: {uri: barberData.user_image},
                         barberInsta: barberData.username,
-                        barberName: barberData.firstname,
-                        barberShopNme: barberData.shop_name,
-                        barberImages: barberData.portoflios,
-                        barberServices: barberData.services,
-                        barberTimeSlots: barberData.firstname,
+                        barberName: barberData.firstname + barberData.lastname,
+                        barberShopName: barberData.shop_name,
+                        ListData: barberData.portoflios,
+                        ListData2: barberData.services,
+                        barberTimeSlots: barberData.slots,
+                        barberRating: barberData.average_rating,
+                        barberReviews: barberData.total_reviews,
                         barberTotalAmout: 0,
                     });
+                    console.log("Slotsdata::",this.state.barberTimeSlots);
                     //this.setState({barberData: response.Data});
                 } else {
                     if (response.ResultType === 0) {
@@ -346,9 +372,9 @@ export default class ClientBarberProfile extends Component {
     }
 
     renderItem(item, index) {
-        var m = moment(new Date(2011, 2, 12, 0, 0, 0));
-        m.add(item.id * 30, "minutes");
-        if (item.surgePrice === true) {
+        //var m = moment(new Date(2011, 2, 12, 0, 0, 0));
+        //m.add(item.id * 30, "minutes");
+        /*if (item.surgePrice === true) {
             return (<View>
                 <TouchableOpacity onPress={() => this.itemSelect(index)}>
                     <View style={{
@@ -376,7 +402,7 @@ export default class ClientBarberProfile extends Component {
                     </View>
                 </TouchableOpacity>
             </View>)
-        } else {
+        } else */{
             return (<View>
                 <TouchableOpacity onPress={() => this.itemSelect(index)}>
                     <View style={{
@@ -386,7 +412,7 @@ export default class ClientBarberProfile extends Component {
                         borderWidth: 1,
                         borderColor: item.selected,
                         marginStart: 3,
-                    }} cellKey={item.id}>
+                    }} cellKey={item._id}>
                         <Text style={{
                             textAlignVertical: "top",
                             marginLeft: 10,
@@ -397,7 +423,7 @@ export default class ClientBarberProfile extends Component {
                             fontSize: 12,
                             fontWeight: "bold",
                         }}>
-                            {item.time}
+                            {item.start_time}
                         </Text>
                     </View>
                 </TouchableOpacity>
@@ -493,14 +519,14 @@ export default class ClientBarberProfile extends Component {
                     </TouchableOpacity>}
                     <View style={styles.detailsContainer}>
                         <View style={styles.profileImageContainer}>
-                            <ImageBackground
+                            <Image
                                 source={this.state.barberProfileImage}
                                 style={styles.profileImage}>
-                            </ImageBackground>
+                            </Image>
                         </View>
 
                         <TouchableOpacity style={styles.icon}
-                                          onPress={() => Linking.openURL('https://www.instagram.com/' + this.state.barberData.username)}>
+                                          onPress={() => Linking.openURL('https://www.instagram.com/' + this.state.barberInsta)}>
                             <Image
                                 source={require("../../../assets/images/insta.png")}
                                 style={{height: 50, width: 50,}}
@@ -558,7 +584,7 @@ export default class ClientBarberProfile extends Component {
                         flexDirection: "row"
                     }]}>
 
-                        <FlatList renderItem={({item}) =>
+                        {/*<FlatList renderItem={({item}) =>
                             <View>
                                 <Image style={{
                                     borderRadius: 10,
@@ -575,7 +601,33 @@ export default class ClientBarberProfile extends Component {
                                   showsHorizontalScrollIndicator={false}
                                   keyExtractor={item => item.id}/>
                         <Image resizeMode={"contain"} source={require("../../../assets/images/arrow1.png")}
-                               style={{position: "absolute", width: 35, height: 35, right: 10, top: 50}}/>
+                               style={{position: "absolute", width: 35, height: 35, right: 10, top: 50}}/>*/}
+                        {(this.state.ListData.length > 0) && <FlatList
+                            data={this.state.ListData}
+                            extraData={this.state}
+                            horizontal={true}
+                            showsHorizontalScrollIndicator={false}
+                            keyExtractor={index => index}
+                            renderItem={({item}) =>
+                                <View>
+                                    {!(item.image_url === "") && <Image style={{
+                                        borderRadius: 10,
+                                        marginStart: 8,
+                                        height: 140,
+                                        width: 160,
+                                        backgroundColor: "grey"
+                                    }}
+                                                                        resizeMode='cover'
+                                                                        source={{uri: constants.portfolioImagePath + item.image_url}}/>}
+                                </View>}
+                        />}
+                        {(this.state.ListData.length < 1) &&
+                        <View style={{width: "100%", height: 60, alignItems: "center", justifyContent: "center"}}>
+                            <Text style={{fontSize: 15, color: "white"}}>{"You don't have any Experience Images"}</Text>
+                        </View>}
+                        {(this.state.ListData.length > 0) &&
+                        <Image resizeMode={"contain"} source={require("../../../assets/images/arrow1.png")}
+                               style={{position: "absolute", width: 35, height: 35, right: 10, top: 50}}/>}
                     </View>
                     <View style={{height: 15}}/>
                     <View style={[{
@@ -615,7 +667,7 @@ export default class ClientBarberProfile extends Component {
                             </View>
                         </View>
 
-                        <FlatList
+                        {this.state.ListData2.length > 0 && <FlatList
                             renderItem={({item}) =>
                                 <View style={{flexDirection: "column"}}>
                                     <View style={[{flexDirection: "row", height: 30, backgroundColor: "#686975"}]}>
@@ -627,7 +679,7 @@ export default class ClientBarberProfile extends Component {
                                         }]}>
                                             <CheckBoxSquare onClick={() => this.checkBoxClicked(item.id)}
                                                             isChecked={item.check} uncheckedCheckBoxColor={"#272727"}/>
-                                            <Text style={{color: "white", fontSize: 12}}>   {item.title} </Text>
+                                            <Text style={{color: "white", fontSize: 12}}>   {item.name} </Text>
                                         </View>
                                         <View style={[{flexDirection: "row", width: "25%", alignItems: "center"}]}>
                                             <Text style={{color: "white", fontSize: 12}}>{item.duration}</Text>
@@ -647,11 +699,16 @@ export default class ClientBarberProfile extends Component {
                             style={{
                                 borderBottomLeftRadius: 12,
                                 borderBottomRightRadius: 12, paddingBottom: 12, backgroundColor: "#686975"
-                            }}/>
+                            }}/>}
+
+                        {this.state.ListData2.length < 1 &&
+                        <View style={{width: "100%", height: 60, alignItems: "center", justifyContent: "center"}}>
+                            <Text style={{fontSize: 15, color: "white"}}>{"You don't have any Services"}</Text>
+                        </View>}
 
 
                     </View>
-                    <View Style={{flexDirection: "column"}}>
+                    {this.state.ListData2.length > 0 &&<View Style={{flexDirection: "column"}}>
                         <Text
                             style={{
                                 fontFamily: "AvertaStd-Semibold",
@@ -690,8 +747,9 @@ export default class ClientBarberProfile extends Component {
                             </View>
                             }/>
                         <View style={{height: 0.5, width: "100%", backgroundColor: "grey", marginBottom: 10}}/>
-                        {(this.state.dayData.length > 0) && <FlatList
-                            data={this.state.dayData}
+                        {(this.state.barberTimeSlots.length > 0) && <FlatList
+                           /* data={this.state.dayData}*/
+                            data={this.state.barberTimeSlots}
                             /* data={this.state.listData}*/
                             renderItem={({item, index}) => this.renderItem(item, index)}
                             numColumns={1}
@@ -707,9 +765,8 @@ export default class ClientBarberProfile extends Component {
                         }}>
                             <Text style={{color: "white", fontSize: 15}}>{"Fully Booked"}</Text>
                         </View>}
-                    </View>
-                    <View
-                        style={{flexDirection: "column", height: 100, width: "100%", marginBottom: 30, marginTop: 30}}>
+                    </View>}
+                    <View style={{flexDirection: "column", height: 100, width: "100%", marginBottom: 30, marginTop: 30}}>
                         <View style={{
                             flexDirection: "row",
                             width: "100%",
@@ -851,6 +908,7 @@ const styles = StyleSheet.create({
     profileImage: {
         height: width / 3,
         width: width / 3,
+        borderRadius: (width / 3) / 2,
         justifyContent: "flex-end",
         alignItems: "flex-end"
     },

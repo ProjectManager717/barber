@@ -109,7 +109,7 @@ export default class ClientBarberSearch extends Component {
 
     renderRowInput() {
         return <View style={{width: "100%"}}>
-            <View style={{flexDirection: "row", alignItems: "center", justifyContent: "center"}}>
+            <View style={{height:50,flexDirection: "row", alignItems: "center", justifyContent: "center"}}>
                 <Image resizeMode={"contain"} source={require("../../../assets/images/searchicon.png")}
                        style={{
                            width: 16,
