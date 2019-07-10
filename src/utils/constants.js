@@ -42,4 +42,6 @@ export const constants = {
     ClientBarbersSearch: Base_url + clientPath1 + "clientSearchBarber",
     ClientProfileData: Base_url + clientPath1,
     ClientBarbersProfileSlots: Base_url + path2+"getSlots",
+    ClientBookAppointment: Base_url + path2+"oppointment",
+    ClientAddFavoriteBarber: Base_url + clientPath1+"favoriteBarber",
 };

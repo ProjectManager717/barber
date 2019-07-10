@@ -33,7 +33,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>1.2</string>
+	<string>1.1.7</string>
 	<key>FacebookAppID</key>
 	<string>300952084145848</string>
 	<key>FacebookDisplayName</key>
@@ -63,7 +63,7 @@
 	<key>NSCameraUsageDescription</key>
 	<string>Barber uses camera to take profile picture</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string/>
+	<string>So that CLYPR uses your location</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Barber uses photos to choose profile picture</string>
 	<key>UIAppFonts</key>

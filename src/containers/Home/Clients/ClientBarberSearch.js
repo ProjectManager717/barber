@@ -28,7 +28,8 @@ export default class ClientBarberSearch extends Component {
             showLoading: false,
             setLocationToggle: false,
             LocationToggle: require("../../../assets/images/LocationOff.png"),
-            dataSource2: [{
+            dataSource2:[],
+            /*dataSource2: [{
                 id: 0,
                 imgPathh2: require("../../../assets/images/imgbck1.png"),
                 title2: "RENATO SANCHEZ",
@@ -46,8 +47,9 @@ export default class ClientBarberSearch extends Component {
                 surgeImg: require("../../../assets/images/price.png"),
                 starimg: require("../../../assets/images/star.png")
             },
-            ],
-            dataSource3: [{
+            ],*/
+            dataSource3: [],
+           /* dataSource3: [{
                 id: 0,
                 imgPathh2: require("../../../assets/images/imgbck-3.png"),
                 title2: "PAUL POGBA",
@@ -66,8 +68,12 @@ export default class ClientBarberSearch extends Component {
                 starimg: require("../../../assets/images/star-unselected.png")
 
             },
-            ]
+            ]*/
         }
+    }
+
+    componentDidMount(): void {
+        this.getFavoriteBarbers();
     }
 
     searchBarber(txt) {
@@ -101,6 +107,31 @@ export default class ClientBarberSearch extends Component {
             this.setState({showLoading: false})
             console.log('Error:', error);
             alert("Error: " + error);
+        });
+    }
+
+    getFavoriteBarbers()
+    {
+        fetch(constants.ClientFavoritBarbers + "?client_id=" +Preference.get("userId"), {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        }).then(response => response.json())
+            .then(response => {
+                console.log("getFavoriteBarbers-->", "-" + JSON.stringify(response));
+                if (response.ResultType === 1) {
+                    this.setState({dataSource2:response.Data}) ;
+                } else {
+                    if (response.ResultType === 0) {
+                        alert(response.Message);
+                    }
+                }
+            }).catch(error => {
+            //console.error('Errorr:', error);
+            console.log('Error:', error);
+            alert("Error: "+error);
         });
     }
 
@@ -434,11 +465,14 @@ export default class ClientBarberSearch extends Component {
                             </View>
 
                             <View style={{marginTop: 0, marginStart: 20, marginEnd: 20, marginBottom: 20}}>
-                                <FlatList renderItem={({item}) => this.renderRowSurge2(item)}
+                                {(this.state.dataSource2.length>0) && <FlatList renderItem={({item}) => this.renderRowSurge2(item)}
                                           data={this.state.dataSource2}
                                           keyExtractor={(item, index) => index}
                                           numColumns={1}
-                                />
+                                />}
+                                {!(this.state.dataSource2.length>0) &&<View style={{width:"100%",height:80,alignItems:"center",justifyContent:"center"}}>
+                                    <Text style={{fontSize:15,color:"white"}}>{"You don't have Nearby Barber"}</Text>
+                                </View>}
                             </View>
 
                             <View>
@@ -451,11 +485,14 @@ export default class ClientBarberSearch extends Component {
                                 }}>{"Nearby Barbers"} </Text>
                             </View>
                             <View style={{marginTop: 0, marginStart: 20, marginEnd: 20, marginBottom: 30}}>
-                                <FlatList renderItem={({item}) => this.renderRowSurge2(item)}
+                                {(this.state.dataSource3.length>0) &&<FlatList renderItem={({item}) => this.renderRowSurge2(item)}
                                           data={this.state.dataSource3}
                                           keyExtractor={(item, index) => index}
                                           numColumns={1}
-                                />
+                                />}
+                                {!(this.state.dataSource3.length>0) &&<View style={{width:"100%",height:80,alignItems:"center",justifyContent:"center"}}>
+                                    <Text style={{fontSize:15,color:"white"}}>{"You don't have Nearby Barber"}</Text>
+                                </View>}
                             </View>
                         </View>}
 

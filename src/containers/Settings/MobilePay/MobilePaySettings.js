@@ -2,6 +2,7 @@ import React, {Component} from "react";
 import {View, Switch, Text, StyleSheet, Image, ScrollView, TouchableOpacity, TextInput, Alert} from "react-native";
 import {Colors} from "../../../themes";
 import {globalStyles} from "../../../themes/globalStyles";
+import Preference from "react-native-preference";
 //import { styles } from "./styles";
 import {Header} from "react-native-elements";
 import CheckBoxSquare from "../../../components/CheckBox";

@@ -97,8 +97,6 @@ export default class ChooseTimings extends Component {
             barber_id:Preference.get("userId"),
             working_days:this.state.workingDays
         };
-        console.log("OutPutData::",JSON.stringify(details));
-        console.log("OutPutData::",constants.UpdateWorkingHours);
         this.setState({showLoading:true});
         fetch(constants.UpdateWorkingHours, {
             method: 'POST',
@@ -150,7 +148,6 @@ export default class ChooseTimings extends Component {
     setDays()
     {
         console.log("WorkingDays-->--->"+this.state.workingDays.length)
-        let workingdayz=this.state.workingDays;
         let items = [];
         for (i = 0; i < 7; i++) {
             items.push(this.renderWeekDay({k: i}));
@@ -237,8 +234,9 @@ export default class ChooseTimings extends Component {
 
     renderWeekDay(item) {
         var week = new Array("MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN");
-        console.log("workingDay--->>" + this.state.workingDays[item.k]);
-        if (this.state.workingDays[item.k].is_off === false) {
+        let workingdayz=this.state.workingDays;
+        console.log("workingDay--->>" + workingdayz[item.k]);
+        if (workingdayz[item.k].is_off === false) {
             return (<View style={{
                     justifyContent: "center",
                     flexDirection: "column",

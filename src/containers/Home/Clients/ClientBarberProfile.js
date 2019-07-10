@@ -7,7 +7,7 @@ import {
     ImageBackground,
     Image,
     FlatList,
-    TouchableOpacity, TouchableWithoutFeedback, Share, Linking
+    TouchableOpacity, TouchableWithoutFeedback, Share, Linking,Alert
 
 } from "react-native";
 import Header from "../../../components/Header";
@@ -30,11 +30,21 @@ Date.prototype.addDays = function (days) {
     return date;
 };
 let getmonth = new Date().getMonth();
+let getmonthh = new Date().getMonth();
 let getDate = new Date().getDate();
 let getDay = new Date().getDay();
 let getYear = new Date().getFullYear();
+console.log("todayDate::", getmonthh + 1 + "-" + getDate + "-" + getYear);
+getmonthh = 1 + getmonthh;
+console.log("todayDate::", getmonthh);
+if (getmonthh < 10)
+    getmonthh = "0" + getmonthh;
 
+if (getDate < 10)
+    getDate = "0" + getDate;
+console.log("todayDate::", getmonthh + "-" + getDate + "-" + getYear);
 let barberId = 0;
+
 
 let barberMobilePay = false;
 export default class ClientBarberProfile extends Component {
@@ -59,6 +69,7 @@ export default class ClientBarberProfile extends Component {
         let barberReviews = navigation.getParam('barberReviews');
         barberMobilePay = navigation.getParam('barberMobilePay');
         this.state = {
+            showLoading:false,
             barberProfileImage: require("../../../assets/images/personface.png"),
             barberInsta: "",
             barberName: "",
@@ -78,6 +89,9 @@ export default class ClientBarberProfile extends Component {
             serviceDaySelected: true,
             serviceTimeSelected: false,
             totalPriceService: 0,
+            selectedServices: [],
+            selectedDate: "",
+            selectedSlotTime:"",
             buttonPayText: "Pay",
             dayData: [
                 {
@@ -195,20 +209,19 @@ export default class ClientBarberProfile extends Component {
 
     itemSelect(indx) {
         //alert("index-"+indx);
-        let dataDay = this.state.dayData;
+        let dataDay = this.state.barberTimeSlots;
         for (let i = 0; i < dataDay.length; i++) {
             if (i === indx) {
-                dataDay[indx].selected = "green";
-
+                dataDay[indx].slot_detail.selected = "green";
+                this.setState({selectedSlotTime:dataDay[indx].slot_detail._id})
                 if (dataDay[indx].surgePrice === true) {
                     this.setState({surgePriceSelected: true})
                 } else {
                     this.setState({surgePriceSelected: false})
                 }
             } else {
-                dataDay[i].selected = "transparent";
+                dataDay[i].slot_detail.selected = "transparent";
             }
-
         }
         console.log("SurgePriceSelected-" + this.state.surgePriceSelected)
         this.setState({dayData: dataDay, serviceTimeSelected: true});
@@ -261,7 +274,6 @@ export default class ClientBarberProfile extends Component {
 
     componentDidMount() {
         let items = [];
-        this.setState({barberFav: true});
         for (i = 0; i < 7; i++) {
             var weekDate = this.startOfWeek(new Date());
             var newDate = weekDate.addDays(i);
@@ -278,44 +290,102 @@ export default class ClientBarberProfile extends Component {
         this.setState({
             dataSource: items
         });
-
-
         ////////////////////////////////////////////////////////////////////Calender
-        const input = getmonth + 1 + "-19";
-        const output = moment(input, "MM-YY");
+        this.setMonthDays(getmonthh, getYear);
+    }
+
+    setMonthDays(month, year) {
+        const input = month + "-" + year;
+        const output = moment(input, "MM-YYYY");
         console.log("DateMonth--" + output);
         let lastDay = output.endOf('month').format('DD');
         let daysData = [];
         for (let i = getDate; i <= lastDay; i++) {
+            let setDayDate = "";
+            if (i < 10) {
+                setDayDate = getYear + "-" + month + "-0" + i
+            } else {
+                setDayDate = getYear + "-" + month + "-" + i
+            }
+            console.log("Showdate--" + i, "--->" + setDayDate);
             if (getDay == 1)
-                daysData.push({id: i, day: i, dayColor: "#ffffff", weekDay: "Mon", bottomColor: "transparent"})
+                daysData.push({
+                    id: i,
+                    day: i,
+                    dayColor: "#ffffff",
+                    weekDay: "Mon",
+                    bottomColor: "transparent",
+                    dateOfDay: setDayDate
+                })
             if (getDay == 2)
-                daysData.push({id: i, day: i, dayColor: "#ffffff", weekDay: "Tue", bottomColor: "transparent"})
+                daysData.push({
+                    id: i,
+                    day: i,
+                    dayColor: "#ffffff",
+                    weekDay: "Tue",
+                    bottomColor: "transparent",
+                    dateOfDay: setDayDate
+                })
             if (getDay == 3)
-                daysData.push({id: i, day: i, dayColor: "#ffffff", weekDay: "Wed", bottomColor: "transparent"})
+                daysData.push({
+                    id: i,
+                    day: i,
+                    dayColor: "#ffffff",
+                    weekDay: "Wed",
+                    bottomColor: "transparent",
+                    dateOfDay: setDayDate
+                })
             if (getDay == 4)
-                daysData.push({id: i, day: i, dayColor: "#ffffff", weekDay: "Thur", bottomColor: "transparent"})
+                daysData.push({
+                    id: i,
+                    day: i,
+                    dayColor: "#ffffff",
+                    weekDay: "Thur",
+                    bottomColor: "transparent",
+                    dateOfDay: setDayDate
+                })
             if (getDay == 5)
-                daysData.push({id: i, day: i, dayColor: "#ffffff", weekDay: "Fri", bottomColor: "transparent"})
+                daysData.push({
+                    id: i,
+                    day: i,
+                    dayColor: "#ffffff",
+                    weekDay: "Fri",
+                    bottomColor: "transparent",
+                    dateOfDay: setDayDate
+                })
             if (getDay == 6)
-                daysData.push({id: i, day: i, dayColor: "#ffffff", weekDay: "Sat", bottomColor: "transparent"})
+                daysData.push({
+                    id: i,
+                    day: i,
+                    dayColor: "#ffffff",
+                    weekDay: "Sat",
+                    bottomColor: "transparent",
+                    dateOfDay: setDayDate
+                })
             if (getDay == 7)
-                daysData.push({id: i, day: i, dayColor: "#ffffff", weekDay: "Sun", bottomColor: "transparent"})
+                daysData.push({
+                    id: i,
+                    day: i,
+                    dayColor: "#ffffff",
+                    weekDay: "Sun",
+                    bottomColor: "transparent",
+                    dateOfDay: setDayDate
+                })
 
             if (getDay === 7)
                 getDay = 1;
             getDay++;
         }
-        let mon = this.state.month[getmonth];
+        let mon = this.state.month[getmonth + 1];
         this.setState({monthSet: mon, monthDays: daysData});
-        this.getBarberDetails();
+        this.getBarberDetails(daysData[0].dateOfDay);
     }
 
-    getBarberDetails() {
-        console.log("barberID-->" + barberId);
+    addFavoriteBarber()
+    {
         var details = {
-            barber_id: barberId,
-            check_date: this.getDateToday(),
+            user_id: barberId,
+            client_id: Preference.get("userId"),
         };
         var formBody = [];
         for (var property in details) {
@@ -325,6 +395,50 @@ export default class ClientBarberProfile extends Component {
         }
         formBody = formBody.join("&");
         console.log("formData:" + JSON.stringify(formBody));
+        this.setState({showLoading:true})
+        fetch(constants.ClientAddFavoriteBarber, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: formBody,
+        }).then(response => response.json())
+            .then(response => {
+                console.log("ClientAddFavoriteBarber-->", "-" + JSON.stringify(response));
+                if (response.ResultType === 1) {
+                    this.setState({showLoading:false})
+                    Alert.alert("Success!","Barber set Favorite successfully");
+                } else {
+                    this.setState({showLoading:false})
+                    if (response.ResultType === 0) {
+                        alert(response.Message);
+                    }
+                }
+            }).catch(error => {
+            this.setState({showLoading:false})
+            //console.error('Errorr:', error);
+            console.log('Error:', error);
+            alert("Error: " + error);
+        });
+    }
+
+    getBarberDetails(dateDay) {
+        console.log("getBarberDetails barberID-->" + barberId);
+        console.log("getBarberDetails barberID-->" + dateDay);
+        var details = {
+            barber_id: barberId,
+            check_date: dateDay,
+        };
+        var formBody = [];
+        for (var property in details) {
+            var encodedKey = encodeURIComponent(property);
+            var encodedValue = encodeURIComponent(details[property]);
+            formBody.push(encodedKey + "=" + encodedValue);
+        }
+        formBody = formBody.join("&");
+        console.log("formData:" + JSON.stringify(formBody));
+        this.setState({showLoading:true})
         fetch(constants.ClientBarbersProfileSlots, {
             method: 'POST',
             headers: {
@@ -336,6 +450,7 @@ export default class ClientBarberProfile extends Component {
             .then(response => {
                 console.log("ClientBarbersProfileSlots-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
+                    this.setState({showLoading:false})
                     let barberData = response.Data;
                     this.setState({
                         barberProfileImage: {uri: barberData.user_image},
@@ -349,14 +464,56 @@ export default class ClientBarberProfile extends Component {
                         barberReviews: barberData.total_reviews,
                         barberTotalAmout: 0,
                     });
-                    console.log("Slotsdata::",this.state.barberTimeSlots);
+                    console.log("Slotsdata::", this.state.barberTimeSlots);
                     //this.setState({barberData: response.Data});
+                } else {
+                    this.setState({showLoading:false})
+                    if (response.ResultType === 0) {
+                        alert(response.Message);
+                    }
+                }
+            }).catch(error => {
+            this.setState({showLoading:false})
+            //console.error('Errorr:', error);
+            console.log('Error:', error);
+            alert("Error: " + error);
+        });
+    }
+
+    bookApointment() {
+        var details = {
+            client_id: Preference.get("userId"),
+            barber_id: barberId,
+            selected_services: this.state.selectedServices,
+            date:this.state.selectedDate,
+            selected_slot_id: this.state.selectedSlotTime,
+            total_price: this.state.totalPriceService,
+            service_fee: "1",
+            selected_surge_price: false
+        };
+        this.setState({showLoading:true});
+        console.log("Outputdata::::"+JSON.stringify(details));
+        fetch(constants.ClientBookAppointment, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(details),
+        }).then(response => response.json())
+            .then(response => {
+                console.log("ClientBookAppointment-->", "-" + JSON.stringify(response));
+                this.setState({showLoading:false})
+                if (response.ResultType === 1) {
+                    Alert.alert("Success!","Appointment is Booked");
+                    this.props.navigation.navigate('ClientLeaveReview');
                 } else {
                     if (response.ResultType === 0) {
                         alert(response.Message);
                     }
                 }
             }).catch(error => {
+            this.setState({showLoading:false})
             //console.error('Errorr:', error);
             console.log('Error:', error);
             alert("Error: " + error);
@@ -366,9 +523,13 @@ export default class ClientBarberProfile extends Component {
 
     setFavorite() {
         if (this.state.barberFav === true)
-            this.setState({barberFav: false})
+            this.setState({barberFav: false});
         else
-            this.setState({barberFav: true})
+        {
+            this.setState({barberFav: true});
+            this.addFavoriteBarber();
+        }
+
     }
 
     renderItem(item, index) {
@@ -402,7 +563,8 @@ export default class ClientBarberProfile extends Component {
                     </View>
                 </TouchableOpacity>
             </View>)
-        } else */{
+        } else */
+        {
             return (<View>
                 <TouchableOpacity onPress={() => this.itemSelect(index)}>
                     <View style={{
@@ -410,25 +572,47 @@ export default class ClientBarberProfile extends Component {
                         flexDirection: "row",
                         borderRadius: 10,
                         borderWidth: 1,
-                        borderColor: item.selected,
+                        alignItems:"center",
+                        borderColor: item.slot_detail.selected,
                         marginStart: 3,
-                    }} cellKey={item._id}>
+                    }} cellKey={item.slot_detail._id}>
                         <Text style={{
                             textAlignVertical: "top",
                             marginLeft: 10,
                             marginRight: 10,
                             width: 50,
+                            textAlign:"center",
                             fontFamily: "AvertaStd-Regular",
                             color: Colors.white,
-                            fontSize: 12,
+                            fontSize: 11,
                             fontWeight: "bold",
                         }}>
-                            {item.start_time}
+                            {this.showTime(item.slot_detail.start_time)}
                         </Text>
                     </View>
                 </TouchableOpacity>
             </View>)
         }
+    }
+
+    showTime(time)
+    {
+        let waqt=time.split(":");
+        let am="";
+        if(waqt[0]>11)
+        {
+            waqt[0]=waqt[0]-12;
+            if(waqt[0]===0)
+            {
+                waqt[0]=12;
+            }
+            am="PM";
+
+        }else
+        {
+            am="AM";
+        }
+        return waqt[0]+":"+waqt[1]+" "+am;
     }
 
     showDialog() {
@@ -444,41 +628,57 @@ export default class ClientBarberProfile extends Component {
         if (this.state.serviceTypeSelected === true && this.state.serviceDaySelected === true && this.state.serviceTimeSelected === true) {
             if (this.state.surgePriceSelected === true)
                 this.props.navigation.navigate('SurgePricingRate');
-            else
-                this.props.navigation.navigate('ClientLeaveReview');
+            else{
+                this.bookApointment();
+            }
+
 
         } else {
-            alert("Please select Service Type,Time and Day for further procedure.");
+            alert("Please select Service,Time and Day for further procedure.");
         }
     }
 
     checkBoxClicked(id) {
-        id = id - 1;
+        console.log("IDforService---->"+ id);
         let mainData = this.state.ListData2;
         if (mainData[id].check === true) {
+            //console.log("IDforService---->"+mainData[id].check);
             mainData[id].check = false;
+            //console.log("IDforService---->"+mainData[id].check);
             let totalprice = this.state.totalPriceService;
-            totalprice = totalprice - mainData[id].prize;
+            //totalprice = totalprice - mainData[id].price;
+            totalprice = parseInt(totalprice) - parseInt(mainData[id].price);
             this.setState({totalPriceService: totalprice});
         } else {
+            //console.log("IDforService---->"+ mainData[id].check);
             mainData[id].check = true;
+            //console.log("IDforService---->"+mainData[id].check);
             let totalprice = this.state.totalPriceService;
-            totalprice = totalprice + mainData[id].prize;
+            totalprice = parseInt(totalprice) + parseInt(mainData[id].price);
             this.setState({totalPriceService: totalprice});
         }
 
-        this.setState({serviceTypeSelected: false});
+        this.setState({serviceTypeSelected: false, selectedServices: []});
+        let selectedservice=[];
         for (let j = 0; j < mainData.length; j++) {
+            //console.log("IDforService---->"+j+"--"+ mainData[j].check);
             if (mainData[j].check === true) {
+                //console.log("IDforService---->"+j+"-true-"+ mainData[j].check);
+                selectedservice.push(mainData[j]._id);
                 this.setState({serviceTypeSelected: true});
+                console.log("IDforService---->"+ JSON.stringify(selectedservice));
             }
         }
-        this.setState({ListData2: mainData});
+
+        this.setState({ListData2: mainData, selectedServices: selectedservice});
+        //console.log("IDforService---->"+ JSON.stringify(this.state.selectedServices));
     }
 
     selectday(indx) {
         //alert("dayselected " + indx);
         let monthDaysData = this.state.monthDays;
+        //console.log("Dateselected is",monthDaysData[indx].dateOfDay)
+        this.setState({selectedDate:monthDaysData[indx].dateOfDay});
         for (let s = 0; s < monthDaysData.length; s++) {
             console.log("slectDay-loop" + s);
             if (s === indx) {
@@ -495,10 +695,13 @@ export default class ClientBarberProfile extends Component {
         this.setState({monthDays: monthDaysData}, () => {
             console.log("NEWMonthdata ", JSON.stringify(this.state.monthDays));
         });
+        this.getBarberDetails(monthDaysData[indx].dateOfDay)
+        //alert("dayselected " + this.state.selectedDate);
     }
 
     render() {
         return (
+            <View>
             <ScrollView>
                 <View style={styles.container}>
                     <Header
@@ -668,7 +871,7 @@ export default class ClientBarberProfile extends Component {
                         </View>
 
                         {this.state.ListData2.length > 0 && <FlatList
-                            renderItem={({item}) =>
+                            renderItem={({item,index}) =>
                                 <View style={{flexDirection: "column"}}>
                                     <View style={[{flexDirection: "row", height: 30, backgroundColor: "#686975"}]}>
                                         <View style={[{
@@ -677,7 +880,7 @@ export default class ClientBarberProfile extends Component {
                                             marginStart: 10,
                                             alignItems: "center"
                                         }]}>
-                                            <CheckBoxSquare onClick={() => this.checkBoxClicked(item.id)}
+                                            <CheckBoxSquare onClick={() => this.checkBoxClicked(index)}
                                                             isChecked={item.check} uncheckedCheckBoxColor={"#272727"}/>
                                             <Text style={{color: "white", fontSize: 12}}>   {item.name} </Text>
                                         </View>
@@ -685,13 +888,13 @@ export default class ClientBarberProfile extends Component {
                                             <Text style={{color: "white", fontSize: 12}}>{item.duration}</Text>
                                         </View>
                                         <View style={[{flexDirection: "row", width: "25%", alignItems: "center"}]}>
-                                            <Text style={{color: "white", fontSize: 12}}>{"$" + item.prize}</Text>
+                                            <Text style={{color: "white", fontSize: 12}}>{"$" + item.price}</Text>
                                         </View>
                                     </View>
                                     <View style={{height: 0.5, backgroundColor: "#868791"}}/>
                                 </View>}
                             data={this.state.ListData2}
-                            keyExtractor={item => item.id}
+                            keyExtractor={(index) => index}
                             showsVerticalScrollIndicator={true}
                             removeClippedSubviews={false}
                             initialNumToRender={5}
@@ -708,7 +911,7 @@ export default class ClientBarberProfile extends Component {
 
 
                     </View>
-                    {this.state.ListData2.length > 0 &&<View Style={{flexDirection: "column"}}>
+                    {this.state.ListData2.length > 0 && <View Style={{flexDirection: "column"}}>
                         <Text
                             style={{
                                 fontFamily: "AvertaStd-Semibold",
@@ -716,7 +919,7 @@ export default class ClientBarberProfile extends Component {
                                 marginTop: 12,
                                 color: Colors.red1
                             }}
-                        >{this.state.month[getmonth + 1] + " " + getYear}</Text>
+                        >{this.state.month[getmonth] + " " + getYear}</Text>
                         {/*<View style={styles.calendar_weekly_header}>
                             {this.state.dataSource}
                         </View>*/}
@@ -748,7 +951,7 @@ export default class ClientBarberProfile extends Component {
                             }/>
                         <View style={{height: 0.5, width: "100%", backgroundColor: "grey", marginBottom: 10}}/>
                         {(this.state.barberTimeSlots.length > 0) && <FlatList
-                           /* data={this.state.dayData}*/
+                            /* data={this.state.dayData}*/
                             data={this.state.barberTimeSlots}
                             /* data={this.state.listData}*/
                             renderItem={({item, index}) => this.renderItem(item, index)}
@@ -757,7 +960,7 @@ export default class ClientBarberProfile extends Component {
                             showsHorizontalScrollIndicator={false}
                             keyExtractor={(item, index) => index}
                             horizontal={true}/>}
-                        {!(this.state.dayData.length > 0) && <View style={{
+                        {!(this.state.barberTimeSlots.length > 0) && <View style={{
                             width: "100%",
                             justifyContent: "center",
                             alignItems: "center",
@@ -766,7 +969,8 @@ export default class ClientBarberProfile extends Component {
                             <Text style={{color: "white", fontSize: 15}}>{"Fully Booked"}</Text>
                         </View>}
                     </View>}
-                    <View style={{flexDirection: "column", height: 100, width: "100%", marginBottom: 30, marginTop: 30}}>
+                    <View
+                        style={{flexDirection: "column", height: 100, width: "100%", marginBottom: 30, marginTop: 30}}>
                         <View style={{
                             flexDirection: "row",
                             width: "100%",
@@ -879,6 +1083,18 @@ export default class ClientBarberProfile extends Component {
                     </Dialog>
                 </View>
             </ScrollView>
+                {this.state.showLoading && <View style={{
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor: "transparent",
+                    position: "absolute",
+                    opacity: 1,
+                    alignItems: "center",
+                    justifyContent: "center"
+                }}>
+                    <Image resizeMode={"contain"} source={require("../../../assets/images/loading.gif")} style={{width:100,height:100, opacity: 1,}}/>
+                </View>}
+            </View>
         );
     }
 }
