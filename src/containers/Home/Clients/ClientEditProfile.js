@@ -203,6 +203,8 @@ export default class ClientEditProfile extends Component {
                 requestBody.append("address", this.state.userAddress)
                 requestBody.append("username", this.state.userName)
 
+                requestBody.append("portfolios[]", this.state.userName)
+
                 if (this.state.avatarSource) {
                     requestBody.append("client_image", {
                         uri: this.state.avatarSource.uri,

@@ -7,7 +7,7 @@ import {
     ImageBackground,
     Image,
     FlatList,
-    TouchableOpacity, TouchableWithoutFeedback, Share, Linking,Alert
+    TouchableOpacity, TouchableWithoutFeedback, Share, Linking, Alert
 
 } from "react-native";
 import Header from "../../../components/Header";
@@ -60,7 +60,6 @@ export default class ClientBarberProfile extends Component {
         this.props.navigation.goBack();
     }
 
-
     constructor(props) {
         super(props);
         const {navigation} = this.props;
@@ -69,7 +68,7 @@ export default class ClientBarberProfile extends Component {
         let barberReviews = navigation.getParam('barberReviews');
         barberMobilePay = navigation.getParam('barberMobilePay');
         this.state = {
-            showLoading:false,
+            showLoading: false,
             barberProfileImage: require("../../../assets/images/personface.png"),
             barberInsta: "",
             barberName: "",
@@ -80,6 +79,8 @@ export default class ClientBarberProfile extends Component {
             barberServices: [],
             barberTimeSlots: [],
             barberTotalAmout: 0,
+            barberFav: false,
+            barberMobilePay: "",
             //barberData:undefined,
             dataSource: [],
             monthSet: undefined,
@@ -91,7 +92,7 @@ export default class ClientBarberProfile extends Component {
             totalPriceService: 0,
             selectedServices: [],
             selectedDate: "",
-            selectedSlotTime:"",
+            selectedSlotTime: "",
             buttonPayText: "Pay",
             dayData: [
                 {
@@ -127,7 +128,6 @@ export default class ClientBarberProfile extends Component {
                 }],
             savedCard: ["************4242", "************4242", "************4242"],
             DialogVisible: false,
-            barberFav: false,
             month: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
             ListData: [
                 {
@@ -186,11 +186,6 @@ export default class ClientBarberProfile extends Component {
 
             ]
         }
-        if (barberMobilePay === true) {
-            this.setState({buttonPayText: "PAY"})
-        } else {
-            this.setState({buttonPayText: "RESERVE"})
-        }
     }
 
 
@@ -213,7 +208,7 @@ export default class ClientBarberProfile extends Component {
         for (let i = 0; i < dataDay.length; i++) {
             if (i === indx) {
                 dataDay[indx].slot_detail.selected = "green";
-                this.setState({selectedSlotTime:dataDay[indx].slot_detail._id})
+                this.setState({selectedSlotTime: dataDay[indx].slot_detail._id})
                 if (dataDay[indx].surgePrice === true) {
                     this.setState({surgePriceSelected: true})
                 } else {
@@ -381,8 +376,7 @@ export default class ClientBarberProfile extends Component {
         this.getBarberDetails(daysData[0].dateOfDay);
     }
 
-    addFavoriteBarber()
-    {
+    addFavoriteBarber() {
         var details = {
             user_id: barberId,
             client_id: Preference.get("userId"),
@@ -395,7 +389,7 @@ export default class ClientBarberProfile extends Component {
         }
         formBody = formBody.join("&");
         console.log("formData:" + JSON.stringify(formBody));
-        this.setState({showLoading:true})
+        this.setState({showLoading: true})
         fetch(constants.ClientAddFavoriteBarber, {
             method: 'POST',
             headers: {
@@ -407,16 +401,57 @@ export default class ClientBarberProfile extends Component {
             .then(response => {
                 console.log("ClientAddFavoriteBarber-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
-                    this.setState({showLoading:false})
-                    Alert.alert("Success!","Barber set Favorite successfully");
+                    this.setState({showLoading: false})
+                    Alert.alert("Success!", "Barber set Favorite successfully");
                 } else {
-                    this.setState({showLoading:false})
+                    this.setState({showLoading: false})
                     if (response.ResultType === 0) {
                         alert(response.Message);
                     }
                 }
             }).catch(error => {
-            this.setState({showLoading:false})
+            this.setState({showLoading: false})
+            //console.error('Errorr:', error);
+            console.log('Error:', error);
+            alert("Error: " + error);
+        });
+    }
+
+    removeFavoriteBarber() {
+        var details = {
+            user_id: barberId,
+            client_id: Preference.get("userId"),
+        };
+        var formBody = [];
+        for (var property in details) {
+            var encodedKey = encodeURIComponent(property);
+            var encodedValue = encodeURIComponent(details[property]);
+            formBody.push(encodedKey + "=" + encodedValue);
+        }
+        formBody = formBody.join("&");
+        console.log("formData:" + JSON.stringify(formBody));
+        this.setState({showLoading: true})
+        fetch(constants.ClientRemoveFavoriteBarber, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: formBody,
+        }).then(response => response.json())
+            .then(response => {
+                console.log("ClientAddFavoriteBarber-->", "-" + JSON.stringify(response));
+                if (response.ResultType === 1) {
+                    this.setState({showLoading: false})
+                    Alert.alert("Success!", "Barber set un Favorite successfully");
+                } else {
+                    this.setState({showLoading: false})
+                    if (response.ResultType === 0) {
+                        alert(response.Message);
+                    }
+                }
+            }).catch(error => {
+            this.setState({showLoading: false})
             //console.error('Errorr:', error);
             console.log('Error:', error);
             alert("Error: " + error);
@@ -429,6 +464,7 @@ export default class ClientBarberProfile extends Component {
         var details = {
             barber_id: barberId,
             check_date: dateDay,
+            client_id: Preference.get("userId"),
         };
         var formBody = [];
         for (var property in details) {
@@ -438,7 +474,7 @@ export default class ClientBarberProfile extends Component {
         }
         formBody = formBody.join("&");
         console.log("formData:" + JSON.stringify(formBody));
-        this.setState({showLoading:true})
+        this.setState({showLoading: true})
         fetch(constants.ClientBarbersProfileSlots, {
             method: 'POST',
             headers: {
@@ -450,8 +486,12 @@ export default class ClientBarberProfile extends Component {
             .then(response => {
                 console.log("ClientBarbersProfileSlots-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
-                    this.setState({showLoading:false})
+                    this.setState({showLoading: false})
                     let barberData = response.Data;
+                    if (barberData.favorite_bit === 0)
+                        this.setState({barberFav: false})
+                    else
+                        this.setState({barberFav: true})
                     this.setState({
                         barberProfileImage: {uri: barberData.user_image},
                         barberInsta: barberData.username,
@@ -463,17 +503,24 @@ export default class ClientBarberProfile extends Component {
                         barberRating: barberData.average_rating,
                         barberReviews: barberData.total_reviews,
                         barberTotalAmout: 0,
+                        barberMobilePay: barberData.payment_option,
                     });
-                    console.log("Slotsdata::", this.state.barberTimeSlots);
+
+                    if (this.state.barberMobilePay === "mobilePay") {
+                        this.setState({buttonPayText: "PAY"})
+                    } else {
+                        this.setState({buttonPayText: "RESERVE"})
+                    }
+                    //console.log("Slotsdata::", this.state.barberTimeSlots);
                     //this.setState({barberData: response.Data});
                 } else {
-                    this.setState({showLoading:false})
+                    this.setState({showLoading: false})
                     if (response.ResultType === 0) {
                         alert(response.Message);
                     }
                 }
             }).catch(error => {
-            this.setState({showLoading:false})
+            this.setState({showLoading: false})
             //console.error('Errorr:', error);
             console.log('Error:', error);
             alert("Error: " + error);
@@ -485,14 +532,14 @@ export default class ClientBarberProfile extends Component {
             client_id: Preference.get("userId"),
             barber_id: barberId,
             selected_services: this.state.selectedServices,
-            date:this.state.selectedDate,
+            date: this.state.selectedDate,
             selected_slot_id: this.state.selectedSlotTime,
             total_price: this.state.totalPriceService,
             service_fee: "1",
             selected_surge_price: false
         };
-        this.setState({showLoading:true});
-        console.log("Outputdata::::"+JSON.stringify(details));
+        this.setState({showLoading: true});
+        console.log("Outputdata::::" + JSON.stringify(details));
         fetch(constants.ClientBookAppointment, {
             method: 'POST',
             headers: {
@@ -503,9 +550,9 @@ export default class ClientBarberProfile extends Component {
         }).then(response => response.json())
             .then(response => {
                 console.log("ClientBookAppointment-->", "-" + JSON.stringify(response));
-                this.setState({showLoading:false})
+                this.setState({showLoading: false})
                 if (response.ResultType === 1) {
-                    Alert.alert("Success!","Appointment is Booked");
+                    Alert.alert("Success!", "Appointment is Booked");
                     this.props.navigation.navigate('ClientLeaveReview');
                 } else {
                     if (response.ResultType === 0) {
@@ -513,7 +560,7 @@ export default class ClientBarberProfile extends Component {
                     }
                 }
             }).catch(error => {
-            this.setState({showLoading:false})
+            this.setState({showLoading: false})
             //console.error('Errorr:', error);
             console.log('Error:', error);
             alert("Error: " + error);
@@ -522,14 +569,13 @@ export default class ClientBarberProfile extends Component {
 
 
     setFavorite() {
-        if (this.state.barberFav === true)
+        if (this.state.barberFav === true) {
             this.setState({barberFav: false});
-        else
-        {
+            this.removeFavoriteBarber();
+        } else {
             this.setState({barberFav: true});
             this.addFavoriteBarber();
         }
-
     }
 
     renderItem(item, index) {
@@ -572,7 +618,7 @@ export default class ClientBarberProfile extends Component {
                         flexDirection: "row",
                         borderRadius: 10,
                         borderWidth: 1,
-                        alignItems:"center",
+                        alignItems: "center",
                         borderColor: item.slot_detail.selected,
                         marginStart: 3,
                     }} cellKey={item.slot_detail._id}>
@@ -581,7 +627,7 @@ export default class ClientBarberProfile extends Component {
                             marginLeft: 10,
                             marginRight: 10,
                             width: 50,
-                            textAlign:"center",
+                            textAlign: "center",
                             fontFamily: "AvertaStd-Regular",
                             color: Colors.white,
                             fontSize: 11,
@@ -595,24 +641,20 @@ export default class ClientBarberProfile extends Component {
         }
     }
 
-    showTime(time)
-    {
-        let waqt=time.split(":");
-        let am="";
-        if(waqt[0]>11)
-        {
-            waqt[0]=waqt[0]-12;
-            if(waqt[0]===0)
-            {
-                waqt[0]=12;
+    showTime(time) {
+        let waqt = time.split(":");
+        let am = "";
+        if (waqt[0] > 11) {
+            waqt[0] = waqt[0] - 12;
+            if (waqt[0] === 0) {
+                waqt[0] = 12;
             }
-            am="PM";
+            am = "PM";
 
-        }else
-        {
-            am="AM";
+        } else {
+            am = "AM";
         }
-        return waqt[0]+":"+waqt[1]+" "+am;
+        return waqt[0] + ":" + waqt[1] + " " + am;
     }
 
     showDialog() {
@@ -628,7 +670,7 @@ export default class ClientBarberProfile extends Component {
         if (this.state.serviceTypeSelected === true && this.state.serviceDaySelected === true && this.state.serviceTimeSelected === true) {
             if (this.state.surgePriceSelected === true)
                 this.props.navigation.navigate('SurgePricingRate');
-            else{
+            else {
                 this.bookApointment();
             }
 
@@ -639,7 +681,7 @@ export default class ClientBarberProfile extends Component {
     }
 
     checkBoxClicked(id) {
-        console.log("IDforService---->"+ id);
+        console.log("IDforService---->" + id);
         let mainData = this.state.ListData2;
         if (mainData[id].check === true) {
             //console.log("IDforService---->"+mainData[id].check);
@@ -659,14 +701,14 @@ export default class ClientBarberProfile extends Component {
         }
 
         this.setState({serviceTypeSelected: false, selectedServices: []});
-        let selectedservice=[];
+        let selectedservice = [];
         for (let j = 0; j < mainData.length; j++) {
             //console.log("IDforService---->"+j+"--"+ mainData[j].check);
             if (mainData[j].check === true) {
                 //console.log("IDforService---->"+j+"-true-"+ mainData[j].check);
                 selectedservice.push(mainData[j]._id);
                 this.setState({serviceTypeSelected: true});
-                console.log("IDforService---->"+ JSON.stringify(selectedservice));
+                console.log("IDforService---->" + JSON.stringify(selectedservice));
             }
         }
 
@@ -678,7 +720,7 @@ export default class ClientBarberProfile extends Component {
         //alert("dayselected " + indx);
         let monthDaysData = this.state.monthDays;
         //console.log("Dateselected is",monthDaysData[indx].dateOfDay)
-        this.setState({selectedDate:monthDaysData[indx].dateOfDay});
+        this.setState({selectedDate: monthDaysData[indx].dateOfDay});
         for (let s = 0; s < monthDaysData.length; s++) {
             console.log("slectDay-loop" + s);
             if (s === indx) {
@@ -702,92 +744,92 @@ export default class ClientBarberProfile extends Component {
     render() {
         return (
             <View>
-            <ScrollView>
-                <View style={styles.container}>
-                    <Header
-                        leftAction={this.leftAction.bind(this)}
-                        rightAction={this.rightAction.bind(this)}
-                        bgIcon={require("../../../assets/images/bannerprofile.png")}
-                        rightIcon={require("../../../assets/images/share.png")}
-                        leftIcon={require("../../../assets/images/ic_back.png")}/>
-                    {this.state.barberFav && <TouchableOpacity onPress={() => this.setFavorite()}
-                                                               style={{position: "absolute", top: 40, right: 60}}>
-                        <Image source={require("../../../assets/images/star.png")}
-                               style={{width: 20, height: 20,}}/>
-                    </TouchableOpacity>}
-                    {!this.state.barberFav && <TouchableOpacity onPress={() => this.setFavorite()}
-                                                                style={{position: "absolute", top: 40, right: 60}}>
-                        <Image source={require("../../../assets/images/star-unselected.png")}
-                               style={{width: 20, height: 20,}}/>
-                    </TouchableOpacity>}
-                    <View style={styles.detailsContainer}>
-                        <View style={styles.profileImageContainer}>
-                            <Image
-                                source={this.state.barberProfileImage}
-                                style={styles.profileImage}>
-                            </Image>
-                        </View>
+                <ScrollView>
+                    <View style={styles.container}>
+                        <Header
+                            leftAction={this.leftAction.bind(this)}
+                            rightAction={this.rightAction.bind(this)}
+                            bgIcon={require("../../../assets/images/bannerprofile.png")}
+                            rightIcon={require("../../../assets/images/share.png")}
+                            leftIcon={require("../../../assets/images/ic_back.png")}/>
+                        {this.state.barberFav && <TouchableOpacity onPress={() => this.setFavorite()}
+                                                                   style={{position: "absolute", top: 40, right: 60}}>
+                            <Image source={require("../../../assets/images/star.png")}
+                                   style={{width: 20, height: 20,}}/>
+                        </TouchableOpacity>}
+                        {!this.state.barberFav && <TouchableOpacity onPress={() => this.setFavorite()}
+                                                                    style={{position: "absolute", top: 40, right: 60}}>
+                            <Image source={require("../../../assets/images/star-unselected.png")}
+                                   style={{width: 20, height: 20,}}/>
+                        </TouchableOpacity>}
+                        <View style={styles.detailsContainer}>
+                            <View style={styles.profileImageContainer}>
+                                <Image
+                                    source={this.state.barberProfileImage}
+                                    style={styles.profileImage}>
+                                </Image>
+                            </View>
 
-                        <TouchableOpacity style={styles.icon}
-                                          onPress={() => Linking.openURL('https://www.instagram.com/' + this.state.barberInsta)}>
-                            <Image
-                                source={require("../../../assets/images/insta.png")}
-                                style={{height: 50, width: 50,}}
-                            />
-                        </TouchableOpacity>
+                            <TouchableOpacity style={styles.icon}
+                                              onPress={() => Linking.openURL('https://www.instagram.com/' + this.state.barberInsta)}>
+                                <Image
+                                    source={require("../../../assets/images/insta.png")}
+                                    style={{height: 50, width: 50,}}
+                                />
+                            </TouchableOpacity>
 
 
-                        <View>
-                            <View style={[styles.infoContainer]}>
-                                <Text style={[styles.allFontStyle, styles.name]}>
-                                    {this.state.barberName}
-                                </Text>
-                                <View style={{flexDirection: "row",}}>
-                                    <Text style={{color: colors.white, fontSize: 12}}>
-                                        {this.state.barberShopName}
+                            <View>
+                                <View style={[styles.infoContainer]}>
+                                    <Text style={[styles.allFontStyle, styles.name]}>
+                                        {this.state.barberName}
                                     </Text>
-                                    {/*<Image resizeMode={"contain"}
+                                    <View style={{flexDirection: "row",}}>
+                                        <Text style={{color: colors.white, fontSize: 12}}>
+                                            {this.state.barberShopName}
+                                        </Text>
+                                        {/*<Image resizeMode={"contain"}
                                            style={{height: 8, width: 8, marginStart: 10, marginTop: 5}}
                                            source={require("../../../assets/images/arrow_down.png")}/>*/}
-                                </View>
+                                    </View>
 
-                                <View style={styles.review}>
-                                    <TouchableOpacity onPress={() => {
-                                        this.props.navigation.navigate('ClientSupremeReview');
-                                    }}>
-                                        <AirbnbRating
-                                            isDisabled={true}
-                                            showRating={false}
-                                            count={5}
-                                            defaultRating={this.state.barberRating}
-                                            size={10}
-                                            style={{marginStart: 10, height: 30}}
-                                        />
-                                        {/*<Image
+                                    <View style={styles.review}>
+                                        <TouchableOpacity onPress={() => {
+                                            this.props.navigation.navigate('ClientSupremeReview');
+                                        }}>
+                                            <AirbnbRating
+                                                isDisabled={true}
+                                                showRating={false}
+                                                count={5}
+                                                defaultRating={this.state.barberRating}
+                                                size={10}
+                                                style={{marginStart: 10, height: 30}}
+                                            />
+                                            {/*<Image
                                             resizeMode="contain"
                                             source={require("../../../assets/images/start.png")}
                                             style={styles.rating}
                                         />*/}
-                                    </TouchableOpacity>
-                                    <Text
-                                        style={[styles.allFontStyle, styles.reviewText]}>{"(" + this.state.barberReviews + " Reviews)"}</Text>
+                                        </TouchableOpacity>
+                                        <Text
+                                            style={[styles.allFontStyle, styles.reviewText]}>{"(" + this.state.barberReviews + " Reviews)"}</Text>
+
+                                    </View>
 
                                 </View>
-
                             </View>
+
                         </View>
+                        <View style={{height: 25}}/>
+                        <Text style={styles.row_title}>{"EXPERIENCE"}</Text>
+                        <View style={[{
+                            flex: 1,
+                            width: '100%',
+                            height: "100%",
+                            flexDirection: "row"
+                        }]}>
 
-                    </View>
-                    <View style={{height: 25}}/>
-                    <Text style={styles.row_title}>{"EXPERIENCE"}</Text>
-                    <View style={[{
-                        flex: 1,
-                        width: '100%',
-                        height: "100%",
-                        flexDirection: "row"
-                    }]}>
-
-                        {/*<FlatList renderItem={({item}) =>
+                            {/*<FlatList renderItem={({item}) =>
                             <View>
                                 <Image style={{
                                     borderRadius: 10,
@@ -805,284 +847,303 @@ export default class ClientBarberProfile extends Component {
                                   keyExtractor={item => item.id}/>
                         <Image resizeMode={"contain"} source={require("../../../assets/images/arrow1.png")}
                                style={{position: "absolute", width: 35, height: 35, right: 10, top: 50}}/>*/}
-                        {(this.state.ListData.length > 0) && <FlatList
-                            data={this.state.ListData}
-                            extraData={this.state}
-                            horizontal={true}
-                            showsHorizontalScrollIndicator={false}
-                            keyExtractor={index => index}
-                            renderItem={({item}) =>
-                                <View>
-                                    {!(item.image_url === "") && <Image style={{
-                                        borderRadius: 10,
-                                        marginStart: 8,
-                                        height: 140,
-                                        width: 160,
-                                        backgroundColor: "grey"
-                                    }}
-                                                                        resizeMode='cover'
-                                                                        source={{uri: constants.portfolioImagePath + item.image_url}}/>}
-                                </View>}
-                        />}
-                        {(this.state.ListData.length < 1) &&
-                        <View style={{width: "100%", height: 60, alignItems: "center", justifyContent: "center"}}>
-                            <Text style={{fontSize: 15, color: "white"}}>{"You don't have any Experience Images"}</Text>
-                        </View>}
-                        {(this.state.ListData.length > 0) &&
-                        <Image resizeMode={"contain"} source={require("../../../assets/images/arrow1.png")}
-                               style={{position: "absolute", width: 35, height: 35, right: 10, top: 50}}/>}
-                    </View>
-                    <View style={{height: 15}}/>
-                    <View style={[{
-                        backgroundColor: "grey",
-                        color: "white",
-                        margin: 20,
-                        borderRadius: 12
-                    }]}>
-
-                        <View
-                            style={[{
-                                width: "100%",
-                                flexDirection: "row",
-                                borderTopLeftRadius: 12,
-                                borderTopRightRadius: 12,
-                                alignItems: "center",
-                                height: 35,
-                                backgroundColor: "#868791",
-                            }]}>
-                            <View style={{
-                                width: "45%", height: "100%", justifyContent: "center"
-                                , marginStart: 10
-                            }}>
-                                <Text style={{color: "white", fontSize: 12}}>Type</Text>
-                            </View>
-                            <View style={{
-                                width: "30%", height: "100%", alignItems: "center"
-                                , flexDirection: "row"
-                            }}>
-                                <View style={{width: 3, height: "100%", backgroundColor: "#686975"}}/>
-                                <Text style={{color: "white", marginStart: 15, fontSize: 12}}>Duration </Text>
-                                <View style={{width: 3, height: "100%", marginStart: 10, backgroundColor: "#686975"}}/>
-                            </View>
-                            <View style={[{width: "25%", right: 5, flexDirection: "row"}]}>
-                                <View style={{width: 1, height: "100%", backgroundColor: "#686975"}}/>
-                                <Text style={{color: "white", fontSize: 12}}>Prices</Text>
-                            </View>
-                        </View>
-
-                        {this.state.ListData2.length > 0 && <FlatList
-                            renderItem={({item,index}) =>
-                                <View style={{flexDirection: "column"}}>
-                                    <View style={[{flexDirection: "row", height: 30, backgroundColor: "#686975"}]}>
-                                        <View style={[{
-                                            flexDirection: "row",
-                                            width: "50%",
-                                            marginStart: 10,
-                                            alignItems: "center"
-                                        }]}>
-                                            <CheckBoxSquare onClick={() => this.checkBoxClicked(index)}
-                                                            isChecked={item.check} uncheckedCheckBoxColor={"#272727"}/>
-                                            <Text style={{color: "white", fontSize: 12}}>   {item.name} </Text>
-                                        </View>
-                                        <View style={[{flexDirection: "row", width: "25%", alignItems: "center"}]}>
-                                            <Text style={{color: "white", fontSize: 12}}>{item.duration}</Text>
-                                        </View>
-                                        <View style={[{flexDirection: "row", width: "25%", alignItems: "center"}]}>
-                                            <Text style={{color: "white", fontSize: 12}}>{"$" + item.price}</Text>
-                                        </View>
-                                    </View>
-                                    <View style={{height: 0.5, backgroundColor: "#868791"}}/>
-                                </View>}
-                            data={this.state.ListData2}
-                            keyExtractor={(index) => index}
-                            showsVerticalScrollIndicator={true}
-                            removeClippedSubviews={false}
-                            initialNumToRender={5}
-                            numColumns={1}
-                            style={{
-                                borderBottomLeftRadius: 12,
-                                borderBottomRightRadius: 12, paddingBottom: 12, backgroundColor: "#686975"
-                            }}/>}
-
-                        {this.state.ListData2.length < 1 &&
-                        <View style={{width: "100%", height: 60, alignItems: "center", justifyContent: "center"}}>
-                            <Text style={{fontSize: 15, color: "white"}}>{"You don't have any Services"}</Text>
-                        </View>}
-
-
-                    </View>
-                    {this.state.ListData2.length > 0 && <View Style={{flexDirection: "column"}}>
-                        <Text
-                            style={{
-                                fontFamily: "AvertaStd-Semibold",
-                                alignSelf: "center",
-                                marginTop: 12,
-                                color: Colors.red1
-                            }}
-                        >{this.state.month[getmonth] + " " + getYear}</Text>
-                        {/*<View style={styles.calendar_weekly_header}>
-                            {this.state.dataSource}
-                        </View>*/}
-                        <FlatList
-                            data={this.state.monthDays}
-                            keyExtractor={(item, index) => index}
-                            showsHorizontalScrollIndicator={false}
-                            numColumns={1}
-                            horizontal={true}
-                            extraData={this.state}
-                            renderItem={({item, index}) => <View
-                                style={{justifyContent: "center", alignItems: "center"}}>
-                                <TouchableOpacity style={{
-                                    width: "100%", justifyContent: "center",
-                                    alignItems: "center", height: 60, marginStart: 20, marginEnd: 20,
-                                    borderBottomWidth: 2,
-                                    borderBottomColor: item.bottomColor
-                                }} onPress={() => this.selectday(index)}>
-                                    <Text style={{color: item.dayColor, fontSize: 15}}>{item.weekDay}</Text>
-                                    <Text
-                                        style={{
-                                            color: item.dayColor,
-                                            fontWeight: "bold",
-                                            fontSize: 12
-                                        }}>{item.day}</Text>
-
-                                </TouchableOpacity>
-                            </View>
-                            }/>
-                        <View style={{height: 0.5, width: "100%", backgroundColor: "grey", marginBottom: 10}}/>
-                        {(this.state.barberTimeSlots.length > 0) && <FlatList
-                            /* data={this.state.dayData}*/
-                            data={this.state.barberTimeSlots}
-                            /* data={this.state.listData}*/
-                            renderItem={({item, index}) => this.renderItem(item, index)}
-                            numColumns={1}
-                            extraData={this.state}
-                            showsHorizontalScrollIndicator={false}
-                            keyExtractor={(item, index) => index}
-                            horizontal={true}/>}
-                        {!(this.state.barberTimeSlots.length > 0) && <View style={{
-                            width: "100%",
-                            justifyContent: "center",
-                            alignItems: "center",
-                            backgroundColor: "transparent"
-                        }}>
-                            <Text style={{color: "white", fontSize: 15}}>{"Fully Booked"}</Text>
-                        </View>}
-                    </View>}
-                    <View
-                        style={{flexDirection: "column", height: 100, width: "100%", marginBottom: 30, marginTop: 30}}>
-                        <View style={{
-                            flexDirection: "row",
-                            width: "100%",
-                            height: "100%",
-                            backgroundColor: "#010221"
-                        }}>
-                            <View style={{
-                                flexDirection: "row", width: "40%", justifyContent: "center", alignItems: "center",
-                            }}>
-                                <View style={{
-                                    flexDirection: "column",
-                                    height: "100%",
-                                    width: "100%",
-                                    marginStart: 25,
-                                }}>
-                                    <Text style={{
-                                        fontSize: 16, color: "white",
-                                        fontFamily: "AvertaStd-Thin",
-                                        marginTop: 10
-
-                                    }}>Subtotal:</Text>
-                                    <Text
-                                        style={{
-                                            fontSize: 35,
-                                            fontWeight: "bold",
-                                            textAlign: "left",
-                                            color: "white",
+                            {(this.state.ListData.length > 0) && <FlatList
+                                data={this.state.ListData}
+                                extraData={this.state}
+                                horizontal={true}
+                                showsHorizontalScrollIndicator={false}
+                                keyExtractor={index => index}
+                                renderItem={({item}) =>
+                                    <View>
+                                        {!(item.image_url === "") && <Image style={{
+                                            borderRadius: 10,
+                                            marginStart: 8,
+                                            height: 140,
+                                            width: 160,
+                                            backgroundColor: "grey"
                                         }}
-                                    >${this.state.totalPriceService}</Text>
-                                    <Text style={{color: "white", fontFamily: "AvertaStd-Thin", fontSize: 12}}>Service
-                                        Fee:
-                                        <Text style={{
-                                            fontWeight: "bold",
-                                            color: "white"
-                                        }}>{"$1.00"}</Text>
-                                    </Text>
+                                                                            resizeMode='cover'
+                                                                            source={{uri: constants.portfolioImagePath + item.image_url}}/>}
+                                    </View>}
+                            />}
+                            {(this.state.ListData.length < 1) &&
+                            <View style={{width: "100%", height: 60, alignItems: "center", justifyContent: "center"}}>
+                                <Text style={{
+                                    fontSize: 15,
+                                    color: "white"
+                                }}>{"You don't have any Experience Images"}</Text>
+                            </View>}
+                            {(this.state.ListData.length > 0) &&
+                            <Image resizeMode={"contain"} source={require("../../../assets/images/arrow1.png")}
+                                   style={{position: "absolute", width: 35, height: 35, right: 10, top: 50}}/>}
+                        </View>
+                        <View style={{height: 15}}/>
+                        <View style={[{
+                            backgroundColor: "grey",
+                            color: "white",
+                            margin: 20,
+                            borderRadius: 12
+                        }]}>
+
+                            <View
+                                style={[{
+                                    width: "100%",
+                                    flexDirection: "row",
+                                    borderTopLeftRadius: 12,
+                                    borderTopRightRadius: 12,
+                                    alignItems: "center",
+                                    height: 35,
+                                    backgroundColor: "#868791",
+                                }]}>
+                                <View style={{
+                                    width: "45%", height: "100%", justifyContent: "center"
+                                    , marginStart: 10
+                                }}>
+                                    <Text style={{color: "white", fontSize: 12}}>Type</Text>
+                                </View>
+                                <View style={{
+                                    width: "30%", height: "100%", alignItems: "center"
+                                    , flexDirection: "row"
+                                }}>
+                                    <View style={{width: 3, height: "100%", backgroundColor: "#686975"}}/>
+                                    <Text style={{color: "white", marginStart: 15, fontSize: 12}}>Duration </Text>
+                                    <View style={{
+                                        width: 3,
+                                        height: "100%",
+                                        marginStart: 10,
+                                        backgroundColor: "#686975"
+                                    }}/>
+                                </View>
+                                <View style={[{width: "25%", right: 5, flexDirection: "row"}]}>
+                                    <View style={{width: 1, height: "100%", backgroundColor: "#686975"}}/>
+                                    <Text style={{color: "white", fontSize: 12}}>Prices</Text>
                                 </View>
                             </View>
-                            <TouchableOpacity onPress={() => this.showDialog()} style={{
-                                flexDirection: "row",
-                                width: "40%",
-                                height: "100%",
-                                justifyContent: "center",
-                                alignItems: "center"
-                            }}>
-                                <Image resizeMode={"contain"} source={require("../../../assets/images/visa.png")}
-                                       style={{width: 25}}/>
-                                <Text style={{
-                                    textAlign: "center",
-                                    fontSize: 17,
-                                    marginStart: 5,
 
-                                    color: "white"
+                            {this.state.ListData2.length > 0 && <FlatList
+                                renderItem={({item, index}) =>
+                                    <View style={{flexDirection: "column"}}>
+                                        <View style={[{flexDirection: "row", height: 30, backgroundColor: "#686975"}]}>
+                                            <View style={[{
+                                                flexDirection: "row",
+                                                width: "50%",
+                                                marginStart: 10,
+                                                alignItems: "center"
+                                            }]}>
+                                                <CheckBoxSquare onClick={() => this.checkBoxClicked(index)}
+                                                                isChecked={item.check}
+                                                                uncheckedCheckBoxColor={"#272727"}/>
+                                                <Text style={{color: "white", fontSize: 12}}>   {item.name} </Text>
+                                            </View>
+                                            <View style={[{flexDirection: "row", width: "25%", alignItems: "center"}]}>
+                                                <Text style={{color: "white", fontSize: 12}}>{item.duration}</Text>
+                                            </View>
+                                            <View style={[{flexDirection: "row", width: "25%", alignItems: "center"}]}>
+                                                <Text style={{color: "white", fontSize: 12}}>{"$" + item.price}</Text>
+                                            </View>
+                                        </View>
+                                        <View style={{height: 0.5, backgroundColor: "#868791"}}/>
+                                    </View>}
+                                data={this.state.ListData2}
+                                keyExtractor={(index) => index}
+                                showsVerticalScrollIndicator={true}
+                                removeClippedSubviews={false}
+                                initialNumToRender={5}
+                                numColumns={1}
+                                style={{
+                                    borderBottomLeftRadius: 12,
+                                    borderBottomRightRadius: 12, paddingBottom: 12, backgroundColor: "#686975"
+                                }}/>}
 
-                                }}>****4242</Text>
-                                <Image
-                                    style={{
-                                        marginStart: 5,
-                                    }} resizeMode={"contain"}
-                                    source={require("../../../assets/images/arrow_down.png")}/>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => {
-                                this.checkSurgePriceSelected()
-                            }} style={{
-                                backgroundColor: "red",
-                                width: "20%",
-                                height: "100%",
-                                alignItems: "center",
-                                justifyContent: "center"
-                            }}>
-                                <Text style={{
-                                    fontSize: 16,
-                                    color: "white",
-                                    fontWeight: "bold"
-                                }}>{this.state.buttonPayText}</Text>
-                            </TouchableOpacity>
+                            {this.state.ListData2.length < 1 &&
+                            <View style={{width: "100%", height: 60, alignItems: "center", justifyContent: "center"}}>
+                                <Text style={{fontSize: 15, color: "white"}}>{"You don't have any Services"}</Text>
+                            </View>}
+
 
                         </View>
-
-                    </View>
-                    <Dialog
-                        visible={this.state.DialogVisible}
-                        onTouchOutside={() => {
-                            this.setState({DialogVisible: false});
-                        }}
-                        width={0.6}>
-                        <DialogContent>
-                            <Text style={{
-                                fontSize: 18,
-                                color: "black",
-                                fontWeight: "bold",
-                                marginBottom: 10,
-                                marginTop: 10
-                            }}>{"Please select your Card"}</Text>
+                        {this.state.ListData2.length > 0 && <View Style={{flexDirection: "column"}}>
+                            <Text
+                                style={{
+                                    fontFamily: "AvertaStd-Semibold",
+                                    alignSelf: "center",
+                                    marginTop: 12,
+                                    color: Colors.red1
+                                }}
+                            >{this.state.month[getmonth] + " " + getYear}</Text>
+                            {/*<View style={styles.calendar_weekly_header}>
+                            {this.state.dataSource}
+                        </View>*/}
                             <FlatList
-                                keyExtractor={(item, index) => index.toString()}
-                                style={{marginTop: 10}}
-                                data={this.state.savedCard}
-                                renderItem={({item}) =>
-                                    <TouchableOpacity onPress={() => this.cardSelected(item)}>
-                                        <Text
-                                            style={{fontSize: 18, color: "black", margin: 10}}>{"Card # " + item}</Text>
-                                        <View style={{width: "100%", height: 0.5, backgroundColor: "black"}}/>
-                                    </TouchableOpacity>
-                                }
-                                numColumns={1}
+                                data={this.state.monthDays}
                                 keyExtractor={(item, index) => index}
-                                horizontal={false}/>
-                        </DialogContent>
-                    </Dialog>
-                </View>
-            </ScrollView>
+                                showsHorizontalScrollIndicator={false}
+                                numColumns={1}
+                                horizontal={true}
+                                extraData={this.state}
+                                renderItem={({item, index}) => <View
+                                    style={{justifyContent: "center", alignItems: "center"}}>
+                                    <TouchableOpacity style={{
+                                        width: "100%", justifyContent: "center",
+                                        alignItems: "center", height: 60, marginStart: 20, marginEnd: 20,
+                                        borderBottomWidth: 2,
+                                        borderBottomColor: item.bottomColor
+                                    }} onPress={() => this.selectday(index)}>
+                                        <Text style={{color: item.dayColor, fontSize: 15}}>{item.weekDay}</Text>
+                                        <Text
+                                            style={{
+                                                color: item.dayColor,
+                                                fontWeight: "bold",
+                                                fontSize: 12
+                                            }}>{item.day}</Text>
+
+                                    </TouchableOpacity>
+                                </View>
+                                }/>
+                            <View style={{height: 0.5, width: "100%", backgroundColor: "grey", marginBottom: 10}}/>
+                            {(this.state.barberTimeSlots.length > 0) && <FlatList
+                                /* data={this.state.dayData}*/
+                                data={this.state.barberTimeSlots}
+                                /* data={this.state.listData}*/
+                                renderItem={({item, index}) => this.renderItem(item, index)}
+                                numColumns={1}
+                                extraData={this.state}
+                                showsHorizontalScrollIndicator={false}
+                                keyExtractor={(item, index) => index}
+                                horizontal={true}/>}
+                            {!(this.state.barberTimeSlots.length > 0) && <View style={{
+                                width: "100%",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                backgroundColor: "transparent"
+                            }}>
+                                <Text style={{color: "white", fontSize: 15}}>{"Fully Booked"}</Text>
+                            </View>}
+                        </View>}
+                        <View
+                            style={{
+                                flexDirection: "column",
+                                height: 100,
+                                width: "100%",
+                                marginBottom: 30,
+                                marginTop: 30
+                            }}>
+                            <View style={{
+                                flexDirection: "row",
+                                width: "100%",
+                                height: "100%",
+                                backgroundColor: "#010221"
+                            }}>
+                                <View style={{
+                                    flexDirection: "row", width: "40%", justifyContent: "center", alignItems: "center",
+                                }}>
+                                    <View style={{
+                                        flexDirection: "column",
+                                        height: "100%",
+                                        width: "100%",
+                                        marginStart: 25,
+                                    }}>
+                                        <Text style={{
+                                            fontSize: 16, color: "white",
+                                            fontFamily: "AvertaStd-Thin",
+                                            marginTop: 10
+
+                                        }}>Subtotal:</Text>
+                                        <Text
+                                            style={{
+                                                fontSize: 35,
+                                                fontWeight: "bold",
+                                                textAlign: "left",
+                                                color: "white",
+                                            }}
+                                        >${this.state.totalPriceService}</Text>
+                                        <Text style={{color: "white", fontFamily: "AvertaStd-Thin", fontSize: 12}}>Service
+                                            Fee:
+                                            <Text style={{
+                                                fontWeight: "bold",
+                                                color: "white"
+                                            }}>{"$1.00"}</Text>
+                                        </Text>
+                                    </View>
+                                </View>
+                                <TouchableOpacity onPress={() => this.showDialog()} style={{
+                                    flexDirection: "row",
+                                    width: "40%",
+                                    height: "100%",
+                                    justifyContent: "center",
+                                    alignItems: "center"
+                                }}>
+                                    <Image resizeMode={"contain"} source={require("../../../assets/images/visa.png")}
+                                           style={{width: 25}}/>
+                                    <Text style={{
+                                        textAlign: "center",
+                                        fontSize: 17,
+                                        marginStart: 5,
+
+                                        color: "white"
+
+                                    }}>****4242</Text>
+                                    <Image
+                                        style={{
+                                            marginStart: 5,
+                                        }} resizeMode={"contain"}
+                                        source={require("../../../assets/images/arrow_down.png")}/>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => {
+                                    this.checkSurgePriceSelected()
+                                }} style={{
+                                    backgroundColor: "red",
+                                    width: "20%",
+                                    height: "100%",
+                                    alignItems: "center",
+                                    justifyContent: "center"
+                                }}>
+                                    <Text style={{
+                                        fontSize: 16,
+                                        color: "white",
+                                        fontWeight: "bold"
+                                    }}>{this.state.buttonPayText}</Text>
+                                </TouchableOpacity>
+
+                            </View>
+
+                        </View>
+                        <Dialog
+                            visible={this.state.DialogVisible}
+                            onTouchOutside={() => {
+                                this.setState({DialogVisible: false});
+                            }}
+                            width={0.6}>
+                            <DialogContent>
+                                <Text style={{
+                                    fontSize: 18,
+                                    color: "black",
+                                    fontWeight: "bold",
+                                    marginBottom: 10,
+                                    marginTop: 10
+                                }}>{"Please select your Card"}</Text>
+                                <FlatList
+                                    keyExtractor={(item, index) => index.toString()}
+                                    style={{marginTop: 10}}
+                                    data={this.state.savedCard}
+                                    renderItem={({item}) =>
+                                        <TouchableOpacity onPress={() => this.cardSelected(item)}>
+                                            <Text
+                                                style={{
+                                                    fontSize: 18,
+                                                    color: "black",
+                                                    margin: 10
+                                                }}>{"Card # " + item}</Text>
+                                            <View style={{width: "100%", height: 0.5, backgroundColor: "black"}}/>
+                                        </TouchableOpacity>
+                                    }
+                                    numColumns={1}
+                                    keyExtractor={(item, index) => index}
+                                    horizontal={false}/>
+                            </DialogContent>
+                        </Dialog>
+                    </View>
+                </ScrollView>
                 {this.state.showLoading && <View style={{
                     width: "100%",
                     height: "100%",
@@ -1092,7 +1153,8 @@ export default class ClientBarberProfile extends Component {
                     alignItems: "center",
                     justifyContent: "center"
                 }}>
-                    <Image resizeMode={"contain"} source={require("../../../assets/images/loading.gif")} style={{width:100,height:100, opacity: 1,}}/>
+                    <Image resizeMode={"contain"} source={require("../../../assets/images/loading.gif")}
+                           style={{width: 100, height: 100, opacity: 1,}}/>
                 </View>}
             </View>
         );

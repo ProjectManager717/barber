@@ -26,7 +26,7 @@ export default class DiscoverMe extends Component {
     }
 
     componentDidMount(): void {
-        //this.getDiscovedMe()
+        this.getDiscovedMe()
     }
 
     getDiscovedMe() {

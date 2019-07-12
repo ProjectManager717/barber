@@ -6,12 +6,14 @@ import Preference from "react-native-preference";
 //import { styles } from "./styles";
 import {Header} from "react-native-elements";
 import CheckBoxSquare from "../../../components/CheckBox";
+import {constants} from "../../../utils/constants";
 
 export default class MobilePaySettings extends Component {
     constructor(props) {
         super(props);
         console.disableYellowBox = true;
         this.state = {
+            showLoading:false,
             firstName: "",
             lastName: "",
             DOB: "",
@@ -23,9 +25,10 @@ export default class MobilePaySettings extends Component {
             country: "",
             checking: false,
             saving: false,
+            bankAccountType:"",
             bankAccountHolderName: "",
             bankRoutingNumber: "",
-            banckAccountNumber: "",
+            bankAccountNumber: "",
             text: 'Useless Placeholder'
         };
     }
@@ -75,8 +78,6 @@ export default class MobilePaySettings extends Component {
         if (itm.hintText === "Bank Account Number") {
             this.setState({bankAccountNumber: txt});
         }
-
-
     }
 
     renderRowInput(item) {
@@ -99,25 +100,26 @@ export default class MobilePaySettings extends Component {
                                        }}/>}
             </View>
             <View style={{height: 0.5, backgroundColor: "#52525D", marginStart: 50}}></View>
-
         </View>;
     }
 
     checkBoxChecked(item) {
         if (item.title === "Checking") {
-            if (this.state.checking === true)
-                this.setState({checking: false})
+            if (this.state.checking === true){
+                this.setState({checking: false,bankAccountType:0})
+            }
             else
                 this.setState({checking: true})
 
         }
         if (item.title === "Savings") {
             if (this.state.saving === true)
-                this.setState({saving: false})
+                this.setState({saving: false,bankAccountType:1})
             else
                 this.setState({saving: true})
 
         }
+
     }
 
     renderRowWithChecks(item) {
@@ -130,9 +132,124 @@ export default class MobilePaySettings extends Component {
     }
 
     SaveMobilePay() {
-        Preference.set("userMobilePay", true);
-        Alert.alert("Success!", "MobilePay Setting Saved.");
-        this.props.navigation.navigate("Settings");
+        if (this.checkAllFields()) {
+            this.setState({showLoading: true})
+            var details = {
+                user_id:Preference.get("userId"),
+                firstname: this.state.firstName,
+                lastname: this.state.lastName,
+                dob: this.state.DOB,
+                personal_id_number: this.state.personIdNumber,
+                address: this.state.streetAddress,
+                city: this.state.city,
+                country: this.state.country,
+                state: this.state.region,
+                zipcode: this.state.zipCode,
+                bank_account_type: this.state.bankAccountType,
+                bank_account_holder_name: this.state.bankAccountHolderName,
+                bank_account_number: this.state.bankAccountNumber,
+                bank_account_routing_number: this.state.bankRoutingNumber,
+            };
+            var formBody = [];
+            for (var property in details) {
+                var encodedKey = encodeURIComponent(property);
+                var encodedValue = encodeURIComponent(details[property]);
+                formBody.push(encodedKey + "=" + encodedValue);
+            }
+            formBody = formBody.join("&");
+            fetch(constants.BarberAddMobilePaySetting, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: formBody
+            }).then(response => response.json())
+                .then(response => {
+                    console.log("updateBookingPrefrence-->", "-" + JSON.stringify(response));
+                    if (response.ResultType === 1) {
+                        this.setState({showLoading: false});
+                        Preference.set("userMobilePay", true);
+                        Alert.alert("Success!", "MobilePay Setting Saved.");
+                        //this.props.navigation.navigate("Settings");
+                        if (Preference.get("newUser") === true) {
+                            if (this.state.MP.StateMP === true) {
+                                this.props.navigation.push("MobilePay");
+                            } else {
+                                this.props.navigation.navigate("TabNavigator");
+                            }
+                        } else {
+                            this.props.navigation.navigate("Settings");
+                            //this.props.navigation.goBack();
+                        }
+                    } else {
+                        this.setState({showLoading: false})
+                        if (response.ResultType === 0) {
+                            alert(response.Message);
+                        }
+
+                    }
+                }).catch(error => {
+                //console.error('Errorr:', error);
+                this.setState({showLoading: false})
+                console.log('Error:', error);
+                alert("Error: " + error);
+            });
+        }
+
+    }
+
+    checkAllFields() {
+        if (this.state.firstName === "") {
+            Alert.alert("Missing Field", "Please enter first name.");
+            return false;
+        }
+        if (this.state.lastName === "") {
+            Alert.alert("Missing Field", "Please enter last name.");
+            return false;
+        }
+        if (this.state.DOB === "") {
+            Alert.alert("Missing Field", "Please enter Date of birth.");
+            return false;
+        }
+        if (this.state.personIdNumber === "") {
+            Alert.alert("Missing Field", "Please enter person Id number.");
+            return false;
+        }
+        if (this.state.streetAddress === "") {
+            Alert.alert("Missing Field", "Please enter street Address.");
+            return false;
+        }
+        if (this.state.city === "") {
+            Alert.alert("Missing Field", "Please enter city.");
+            return false;
+        }
+        if (this.state.region === "") {
+            Alert.alert("Missing Field", "Please enter region.");
+            return false;
+        }
+        if (this.state.zipCode === "") {
+            Alert.alert("Missing Field", "Please enter zipCode.");
+            return false;
+        }
+        if (this.state.country === "") {
+            Alert.alert("Missing Field", "Please enter country.");
+            return false;
+        }
+        if (this.state.bankAccountHolderName === "") {
+            Alert.alert("Missing Field", "Please enter bank Account Holder Name.");
+            return false;
+        }
+
+        if (this.state.bankRoutingNumber === "") {
+            Alert.alert("Missing Field", "Please enter bank Routing Number.");
+            return false;
+        }
+        if (this.state.bankAccountNumber === "") {
+            Alert.alert("Missing Field", "Please enter bank Account Number.");
+            return false;
+        }
+        return true;
     }
 
 
@@ -279,8 +396,6 @@ export default class MobilePaySettings extends Component {
                         showIC: false,
                         value: this.state.bankAccountNumber,
                     })}
-
-
                 </View>
                 <TouchableOpacity onPress={() => {
                     this.SaveMobilePay()
@@ -290,14 +405,23 @@ export default class MobilePaySettings extends Component {
                                       height: 40,
                                       width: 260,
                                       marginBottom: 30
-
-
                                   }]}>
                     <Text style={globalStyles.buttonText}>DONE</Text>
                 </TouchableOpacity>
 
             </ScrollView>
-
+            {this.state.showLoading && <View style={{
+                width: "100%",
+                height: "100%",
+                backgroundColor: "transparent",
+                position: "absolute",
+                opacity: 1,
+                alignItems: "center",
+                justifyContent: "center"
+            }}>
+                <Image resizeMode={"contain"} source={require("../../../assets/images/loading.gif")}
+                       style={{width: 100, height: 100, opacity: 1,}}/>
+            </View>}
 
         </View>);
     }

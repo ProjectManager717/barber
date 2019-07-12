@@ -8,7 +8,7 @@ import {
     ScrollView,
     TouchableOpacity,
     ImageBackground,
-    Dimensions,
+    Dimensions,Alert,
     FlatList, Picker, TextInput,
 } from "react-native";
 import colors from "../../../themes/colors";
@@ -45,6 +45,7 @@ export default class BarberEditProfile extends Component {
             barberName: "",
             barberShopName: "",
             imagesData: [],
+            imagesDataServer: [],
             barberRating: 0,
             barberReviews: 0,
 
@@ -67,6 +68,7 @@ export default class BarberEditProfile extends Component {
             InstaUsername: Preference.get("userInsta"),
             places: [],
             avatarSource: require("../../../assets/images/personface.png"),
+            avatarForServer:"",
             /* ListData: [
                  {
                      id: 1,
@@ -158,19 +160,70 @@ export default class BarberEditProfile extends Component {
     }
 
     saveData() {
-        Preference.set({
-            userShopname: this.state.userShopName,
-            yearExperiance: this.state.experience,
-            userInsta: this.state.InstaUsername,
-            userHouseCall: this.state.houseCall,
-            userAddressL: this.state.places[0].formatted_address,
+        let requestBody = new FormData();
+        requestBody.append("user_id",Preference.get("userId"))
+        requestBody.append("firstname", this.state.barberName)
+        requestBody.append("lastname", "")
+        requestBody.append("shop_name", this.state.barberShopName)
+        requestBody.append("experience", this.state.experience)
+        requestBody.append("location", this.state.barberAddress)
+        requestBody.append("house_call", 0)
+        requestBody.append("username", this.state.barberInsta)
+        for(let i=0;i<this.state.imagesDataServer.length;i++)
+        {
+
+            requestBody.append("portfolios[]", {
+                uri: this.state.imagesDataServer[i],
+                name: "imageAvatar.png",
+                type: 'image/jpeg'
+            })
+        }
+        if (this.state.avatarForServer) {
+            requestBody.append("user_image", {
+                uri: this.state.avatarForServer,
+                name: "imageAvatar.png",
+                type: 'image/jpeg'
+            })
+        }
+
+        console.log("SendingData::",JSON.stringify(requestBody));
+        this.setState({showLoading:true});
+        fetch(constants.BarbersProfileUpdate, {
+            method: 'POST',
+            body: requestBody,
+            headers: {
+                /*'Content-Type': 'application/x-www-form-urlencoded',*/
+                'Accept': 'application/json'
+            }
+        }).then(response => response.json())
+            .then(response => {
+                console.log("saveDataForBarberProfile-->", "-" + JSON.stringify(response));
+                if (response.ResultType === 1) {
+                    this.setState({showLoading:false})
+                    Alert.alert("Success!","Your Profile updated.");
+                    if (Preference.get("newUser") === true)
+                        this.props.navigation.push("ChooseTimings");
+                    else
+                        this.props.navigation.goBack();
+
+                    /*if (Preference.get("newUser") === true)
+                        this.props.navigation.push("Subscription")
+                    else
+                        this.props.navigation.goBack();*/
+
+                } else {
+                    this.setState({showLoading:false})
+                    if (response.ResultType === 0) {
+                        alert(response.Message);
+                    }
+                }
+            }).catch(error => {
+            this.setState({showLoading:false})
+            //console.error('Errorr:', error);
+            console.log('Error:', error);
+            alert("Error: " + error);
         });
-
-        if (Preference.get("newUser") === true)
-            this.props.navigation.push("ChooseTimings");
-        else
-            this.props.navigation.goBack();
-
+        //console.log("OutPutData::",details);
     }
 
     changeHouseCall() {
@@ -179,11 +232,10 @@ export default class BarberEditProfile extends Component {
             alert("To activate this feature please get Supreme Membership.");
         } else {
             if (this.state.houseCall === true)
-                this.setState({houseCall: false})
+                this.setState({houseCall: false,houseCallBit:0})
             else
-                this.setState({houseCall: true})
+                this.setState({houseCall: true,houseCallBit:1})
         }
-
     }
 
     renderGooglePlacesInput = () => {
@@ -204,6 +256,7 @@ export default class BarberEditProfile extends Component {
                     this.state.places.push(details);
                     this.setState({places: this.state.places});
                     if (this.state.places.length > 0) {
+                        this.setState({barberAddress:this.state.places[0].formatted_address})
                         Preference.set("userAddress", this.state.places[0].formatted_address);
                     } else {
                         Preference.set("userAddress", "");
@@ -334,7 +387,7 @@ export default class BarberEditProfile extends Component {
                 // const source = { uri: 'data:image/jpeg;base64,' + response.data };
 
                 this.setState({
-                    avatarSource: source,
+                    avatarSource: source,avatarForServer:response.uri
                 });
             }
         });
@@ -353,9 +406,10 @@ export default class BarberEditProfile extends Component {
             } else {
                 const source = {uri: response.uri};
                 let imageDta = this.state.imagesData;
-
-                imageDta.push({id: imageDta.length + 1, imagePath: source})
-                this.setState({imagesData: imageDta});
+                let imgDataServer=this.state.imagesDataServer;
+                imgDataServer.push(response.uri)
+                imageDta.push({image_url: source});
+                this.setState({imagesData: imageDta,imagesDataServer:imgDataServer});
             }
         });
     }
@@ -556,7 +610,7 @@ export default class BarberEditProfile extends Component {
                                                 <TextInput Color={"white"} placeholder={"Enter Shop Name"}
                                                            placeholderTextColor={"grey"}
                                                            onChangeText={(text) => {
-                                                               this.setState({userShopName: text});
+                                                               this.setState({barberShopName: text});
                                                                Preference.set("userShopname", this.state.userShopName)
                                                            }}
                                                            style={{
@@ -747,7 +801,7 @@ export default class BarberEditProfile extends Component {
                                         Name</Text>
                                     <TextInput Color={"white"} placeholder={"Enter Instagram username"}
                                                placeholderTextColor={"grey"}
-                                               onChangeText={(text) => this.setState({InstaUsername: text})}
+                                               onChangeText={(text) => this.setState({barberInsta: text})}
                                                style={{
                                                    fontWeight: "bold",
                                                    fontSize: 16,
@@ -1036,7 +1090,7 @@ export default class BarberEditProfile extends Component {
                             horizontal={true}
                             renderItem={({item, index}) =>
                                 <View style={{width: 100, height: 140, marginStart: 10}}>
-                                    <Image source={item.imagePath} style={{borderRadius: 10, width: 100, height: 140}}
+                                    <Image  source={{uri:constants.portfolioImagePath+item.image_url}} style={{borderRadius: 10, width: 100, height: 140}}
                                            resizeMode={"contain"}/>
                                     <TouchableOpacity style={{position: "absolute", top: 5, right: 5}}
                                                       onPress={() => this.deleteImage(index)}>
