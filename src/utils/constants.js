@@ -38,7 +38,7 @@ export const constants = {
     ClientResetPassword: Base_url + clientPath + "reset",
     ClientProfileUpdate: Base_url + clientPath1 + "update",
     ClientPaymentMethod: Base_url + "/api/paymentCard/" + "add",
-    ClientRecentBookings: Base_url + clientPath1 + "calenderSlots",
+    ClientRecentBookings: Base_url + clientPath1 + "client_recent_booking",
     ClientFavoritBarbers: Base_url + clientPath1 + "favoriteBarbers",
     ClientBarbersProfile: Base_url + path2,
     ClientBarbersSearch: Base_url + clientPath1 + "clientSearchBarber",

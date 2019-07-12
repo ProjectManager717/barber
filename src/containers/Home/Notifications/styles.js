@@ -1,7 +1,7 @@
 import { Colors } from "../../../themes";
 export const styles = {
   MainContainer: {
-    justifyContent: "center",
+
     flex: 1,
     paddingTop: 30
   },

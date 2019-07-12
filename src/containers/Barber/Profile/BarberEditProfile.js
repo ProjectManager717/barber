@@ -48,7 +48,7 @@ export default class BarberEditProfile extends Component {
             imagesDataServer: [],
             barberRating: 0,
             barberReviews: 0,
-
+            NoExperience:false,
             barberPackage: "basic",
             houseCall: false,
             Experience: "1",
@@ -642,10 +642,16 @@ export default class BarberEditProfile extends Component {
                                 </View>
                                 <View style={[styles.review, {flexDirection: "row"}]}>
                                     <TouchableOpacity onPress={() => this.setState({DialogVisible: true})}>
+                                        {this.state.experience==="0" ?
+                                            <Text style={[styles.allFontStyle, styles.reviewText, {
+                                                color: "white",
+                                                fontFamily: "AvertaStd-Extrathin",
+                                            }]}>{"Set your years of experience"}</Text>
+                                            :
                                         <Text style={[styles.allFontStyle, styles.reviewText, {
                                             color: "white",
                                             fontFamily: "AvertaStd-Extrathin",
-                                        }]}>{"Years of Experience " + this.state.experience}</Text>
+                                        }]}>{"Years of Experience " + this.state.experience}</Text>}
                                         <PopupDialog
                                             visible={this.state.DialogVisible}
                                             width={0.6}

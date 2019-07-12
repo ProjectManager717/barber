@@ -23,6 +23,7 @@ export default class ClientHome extends Component {
         super(props);
         this.state = {
             newCustomers: 2,
+            NoClient:false,
             dataSource: [{
                 id: 0,
                 imgPathh: require("../../../assets/images/anthony.png"),
@@ -114,11 +115,36 @@ export default class ClientHome extends Component {
 
         </View>
     }
+    renderRowSurge2(item) {
+        return <View
+            style={{
+                flexDirection: 'row',
+                marginTop: 10,
+                width: "100%",
+                alignItems: "center",
+                height: 70,
+                backgroundColor: "#474857",
+                borderRadius: 5,
+                borderWidth: 0.5,
+                borderColor: "white"
+            }}>
+
+            <View style={{flexDirection: "column", marginStart: 10}}>
+                <Text
+                    style={{fontSize: 15, color: "white"}}
+                >{item.title}</Text>
+
+                </View>
+
+
+            </View>
+    }
 
     render() {
         return (
             <View style={styles.container}>
                 <ScrollView>
+                    {this.state.NoClient===true ?
                     <View style={{height: 50, flexDirection: "row", marginStart: 20, marginEnd: 20}}>
                         <View style={{width: "50%", flexDirection: "row", justifyContent: "flex-start"}}>
                             <Image resizeMode={"contain"} style={{height: 16, width: 16, marginTop: 20}}
@@ -141,14 +167,21 @@ export default class ClientHome extends Component {
                                 marginTop: 20
                             }}>{this.state.newCustomers + " Total Customers"} </Text>
                         </View>
-                    </View>
+                    </View>:<View></View>}
 
                     <View style={{marginTop: 0, marginStart: 20, marginEnd: 20}}>
+                        {this.state.NoClient===true ?
                         <FlatList renderItem={({item}) => this.renderRowSurge(item)}
                                   data={this.state.dataSource}
                                   keyExtractor={(item, index) => index}
                                   numColumns={1}
                         />
+                        :
+
+                        this.renderRowSurge2({
+                            title:"You have no clients yet!"
+                        })}
+
                     </View>
                 </ScrollView>
 

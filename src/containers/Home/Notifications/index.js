@@ -13,7 +13,8 @@ export default class Notifications extends Component {
         super();
         this.state = {
             dataSource: {},
-            Notifications: []
+            Notifications: [],
+            NoNotification:false
         };
     }
 
@@ -66,10 +67,37 @@ export default class Notifications extends Component {
             />
         );
     };
+    renderRowSurge2(item) {
+        return <View
+            style={{
+                flexDirection: 'row',
+                marginTop: 10,
+                width: "100%",
+                alignItems: "center",
+                height: 70,
+                backgroundColor: "#474857",
+                borderRadius: 5,
+                borderWidth: 0.5,
+                borderColor: "white"
+            }}>
 
+            <View style={{flexDirection: "column", marginStart: 10}}>
+                <Text
+                    style={{fontSize: 15, color: "white"}}
+                >{item.title}</Text>
+
+            </View>
+
+
+        </View>
+    }
     render() {
         return (
             <View style={styles.MainContainer}>
+                {this.state.NoNotification===false ?
+                    this.renderRowSurge2({
+                        title:"You have no notifications yet!"
+                    }):
                 <FlatList
                     data={this.state.dataSource}
                     renderItem={({item}) => (
@@ -163,7 +191,9 @@ export default class Notifications extends Component {
                     ItemSeparatorComponent={this.renderSeparator}
                     numColumns={1}
                     keyExtractor={(item, index) => index}
-                />
+                />}
+
+
             </View>
         );
     }

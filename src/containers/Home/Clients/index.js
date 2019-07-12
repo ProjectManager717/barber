@@ -153,23 +153,23 @@ export default class ClientHome extends Component {
                 borderWidth: 0.5,
                 borderColor: "white"
             }}>
-            <Image resizeMode={"contain"} source={item.imgPathh} style={{
-                marginStart: 10, height: "100%", width: 50
+            <Image resizeMode={"contain"} source={{uri:item.barber_image}} style={{
+                marginStart: 10, height: 50, width: 50,borderRadius:25,
             }}/>
             <View style={{flexDirection: "column", marginStart: 10}}>
                 <Text
                     style={{fontSize: 15, color: "white"}}
-                >{item.title}</Text>
+                >{item.barber}</Text>
                 <View style={{flexDirection: "row", marginTop: 5}}>
                     <Image resizeMode={"contain"} source={require("../../../assets/images/time.png")}
                            style={{height: 12, width: 12}}/>
-                    <Text style={{fontSize: 10, color: "#939FB1", marginStart: 4}}>{item.duration}</Text>
+                    <Text style={{fontSize: 10, color: "#939FB1", marginStart: 4}}>{item.start_time}</Text>
                     <Image resizeMode={"contain"} source={require("../../../assets/images/date.png")}
                            style={{height: 12, width: 12, marginStart: 12}}/>
                     <Text style={{fontSize: 10, color: "#939FB1", marginStart: 4}}>{item.date}</Text>
                 </View>
             </View>
-            {item.btnTxt === "Completed" ?
+            {item.appointment_type === "Completed" ?
                 <TouchableOpacity
                     onPress={() => this.props.navigation.navigate("Receipt")}
                     style={{
@@ -187,10 +187,9 @@ export default class ClientHome extends Component {
                         backgroundColor: "#626371"
                     }}>
 
-                    <Text style={{marginTop: 3, color: "white", fontSize: 10, fontWeight: "bold"}}>{item.btnTxt}</Text>
+                    <Text style={{marginTop: 3, color: "white", fontSize: 10, fontWeight: "bold"}}>{item.appointment_type}</Text>
                 </TouchableOpacity>
-                :
-                item.btnTxt === "Cancelled" ?
+                : item.appointment_type === "Cancelled" ?
                     <TouchableOpacity
                         onPress={() => this.props.navigation.navigate("ReceiptCancelled")}
                         style={{
@@ -207,16 +206,14 @@ export default class ClientHome extends Component {
                             borderWidth: 1, borderColor: item.btnClr,
                             backgroundColor: "#626371"
                         }}>
-
                         <Text style={{
                             marginTop: 3,
                             color: "white",
                             fontSize: 10,
                             fontWeight: "bold"
-                        }}>{item.btnTxt}</Text>
+                        }}>{item.appointment_type}</Text>
                     </TouchableOpacity> :
                     <TouchableOpacity
-
                         style={{
                             top: 0,
                             right: 0,
@@ -237,7 +234,7 @@ export default class ClientHome extends Component {
                             color: "white",
                             fontSize: 10,
                             fontWeight: "bold"
-                        }}>{item.btnTxt}</Text>
+                        }}>{item.appointment_type}</Text>
                     </TouchableOpacity>
             }
 
