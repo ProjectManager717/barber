@@ -8,7 +8,7 @@ import {
     ScrollView,
     TouchableOpacity,
     ImageBackground,
-    Dimensions,Alert,
+    Dimensions, Alert,
     FlatList, Picker, TextInput,
 } from "react-native";
 import colors from "../../../themes/colors";
@@ -48,7 +48,7 @@ export default class BarberEditProfile extends Component {
             imagesDataServer: [],
             barberRating: 0,
             barberReviews: 0,
-            NoExperience:false,
+            NoExperience: false,
             barberPackage: "basic",
             houseCall: false,
             Experience: "1",
@@ -62,13 +62,14 @@ export default class BarberEditProfile extends Component {
             DialogEditService: false,
             DialogAddService: false,
             serviceName: "",
+            DialogBarberName:false,
             serviceDuration: "",
             servicePrice: "",
             serviceIndex: undefined,
             InstaUsername: Preference.get("userInsta"),
             places: [],
             avatarSource: require("../../../assets/images/personface.png"),
-            avatarForServer:"",
+            avatarForServer: "",
             /* ListData: [
                  {
                      id: 1,
@@ -161,16 +162,15 @@ export default class BarberEditProfile extends Component {
 
     saveData() {
         let requestBody = new FormData();
-        requestBody.append("user_id",Preference.get("userId"))
-        requestBody.append("firstname", this.state.barberName)
-        requestBody.append("lastname", "")
-        requestBody.append("shop_name", this.state.barberShopName)
+        requestBody.append("user_id", Preference.get("userId"))
+        requestBody.append("firstname", this.state.barberName);
+        requestBody.append("lastname", "");
+        requestBody.append("shop_name", this.state.barberShopName);
         requestBody.append("experience", this.state.experience)
         requestBody.append("location", this.state.barberAddress)
         requestBody.append("house_call", 0)
         requestBody.append("username", this.state.barberInsta)
-        for(let i=0;i<this.state.imagesDataServer.length;i++)
-        {
+        for (let i = 0; i < this.state.imagesDataServer.length; i++) {
 
             requestBody.append("portfolios[]", {
                 uri: this.state.imagesDataServer[i],
@@ -186,8 +186,8 @@ export default class BarberEditProfile extends Component {
             })
         }
 
-        console.log("SendingData::",JSON.stringify(requestBody));
-        this.setState({showLoading:true});
+        console.log("SendingData::", JSON.stringify(requestBody));
+        this.setState({showLoading: true});
         fetch(constants.BarbersProfileUpdate, {
             method: 'POST',
             body: requestBody,
@@ -199,8 +199,8 @@ export default class BarberEditProfile extends Component {
             .then(response => {
                 console.log("saveDataForBarberProfile-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
-                    this.setState({showLoading:false})
-                    Alert.alert("Success!","Your Profile updated.");
+                    this.setState({showLoading: false})
+                    Alert.alert("Success!", "Your Profile updated.");
                     if (Preference.get("newUser") === true)
                         this.props.navigation.push("ChooseTimings");
                     else
@@ -212,13 +212,13 @@ export default class BarberEditProfile extends Component {
                         this.props.navigation.goBack();*/
 
                 } else {
-                    this.setState({showLoading:false})
+                    this.setState({showLoading: false})
                     if (response.ResultType === 0) {
                         alert(response.Message);
                     }
                 }
             }).catch(error => {
-            this.setState({showLoading:false})
+            this.setState({showLoading: false})
             //console.error('Errorr:', error);
             console.log('Error:', error);
             alert("Error: " + error);
@@ -232,9 +232,9 @@ export default class BarberEditProfile extends Component {
             alert("To activate this feature please get Supreme Membership.");
         } else {
             if (this.state.houseCall === true)
-                this.setState({houseCall: false,houseCallBit:0})
+                this.setState({houseCall: false, houseCallBit: 0})
             else
-                this.setState({houseCall: true,houseCallBit:1})
+                this.setState({houseCall: true, houseCallBit: 1})
         }
     }
 
@@ -256,7 +256,7 @@ export default class BarberEditProfile extends Component {
                     this.state.places.push(details);
                     this.setState({places: this.state.places});
                     if (this.state.places.length > 0) {
-                        this.setState({barberAddress:this.state.places[0].formatted_address})
+                        this.setState({barberAddress: this.state.places[0].formatted_address})
                         Preference.set("userAddress", this.state.places[0].formatted_address);
                     } else {
                         Preference.set("userAddress", "");
@@ -387,7 +387,7 @@ export default class BarberEditProfile extends Component {
                 // const source = { uri: 'data:image/jpeg;base64,' + response.data };
 
                 this.setState({
-                    avatarSource: source,avatarForServer:response.uri
+                    avatarSource: source, avatarForServer: response.uri
                 });
             }
         });
@@ -406,10 +406,10 @@ export default class BarberEditProfile extends Component {
             } else {
                 const source = {uri: response.uri};
                 let imageDta = this.state.imagesData;
-                let imgDataServer=this.state.imagesDataServer;
+                let imgDataServer = this.state.imagesDataServer;
                 imgDataServer.push(response.uri)
                 imageDta.push({image_url: source});
-                this.setState({imagesData: imageDta,imagesDataServer:imgDataServer});
+                this.setState({imagesData: imageDta, imagesDataServer: imgDataServer});
             }
         });
     }
@@ -423,55 +423,81 @@ export default class BarberEditProfile extends Component {
     }
 
     setServiceData() {
-        let indx = this.state.serviceIndex;
-        this.setState({DialogEditService: false});
-        let services = this.state.ListData;
-        services[indx].service_type = this.state.serviceName;
-        services[indx].duration_type = this.state.serviceDuration;
-        services[indx].prize_type = this.state.servicePrice;
-        this.setState({ListData: services, showLoading: true});
+        if(parseInt(this.state.serviceDuration)>=15 && parseInt(this.state.servicePrice) >=3 ) {
+            let indx = this.state.serviceIndex;
+            this.setState({DialogEditService: false});
+            let services = this.state.ListData;
+            services[indx].service_type = this.state.serviceName;
+            services[indx].duration_type = this.state.serviceDuration;
+            services[indx].prize_type = this.state.servicePrice;
+            this.setState({ListData: services, showLoading: true});
 
 
-        var details = {
-            service_id: this.state.serviceEditId,
-            name: this.state.serviceName,
-            duration: this.state.serviceDuration,
-            price: this.state.servicePrice
-        };
-        var formBody = [];
-        for (var property in details) {
-            var encodedKey = encodeURIComponent(property);
-            var encodedValue = encodeURIComponent(details[property]);
-            formBody.push(encodedKey + "=" + encodedValue);
-        }
-        formBody = formBody.join("&");
-        fetch(constants.BarberUpdateService, {
-            method: 'PUT',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: formBody
-        }).then(response => response.json())
-            .then(response => {
-                console.log("responseClientlogin-->", "-" + JSON.stringify(response));
-                if (response.ResultType === 1) {
-                    this.setState({showLoading: false});
-                    //alert("Service updated");
-                    this.getBarberDetails();
-                } else {
-                    this.setState({showLoading: false});
-                    if (response.ResultType === 0) {
-                        alert(response.Message);
+            var details = {
+                service_id: this.state.serviceEditId,
+                name: this.state.serviceName,
+                duration: this.state.serviceDuration,
+                price: this.state.servicePrice
+            };
+            var formBody = [];
+            for (var property in details) {
+                var encodedKey = encodeURIComponent(property);
+                var encodedValue = encodeURIComponent(details[property]);
+                formBody.push(encodedKey + "=" + encodedValue);
+            }
+            formBody = formBody.join("&");
+            fetch(constants.BarberUpdateService, {
+                method: 'PUT',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: formBody
+            }).then(response => response.json())
+                .then(response => {
+                    console.log("responseClientlogin-->", "-" + JSON.stringify(response));
+                    if (response.ResultType === 1) {
+                        this.setState({showLoading: false});
+                        //alert("Service updated");
+                        this.getBarberDetails();
+                    } else {
+                        this.setState({showLoading: false});
+                        if (response.ResultType === 0) {
+                            alert(response.Message);
+                        }
                     }
-                }
-            })
-            .catch(error => {
-                this.setState({showLoading: false});
-                //console.error('Errorr:', error);
-                console.log('Error:', error);
-                alert("Error: " + error);
-            });
+                })
+                .catch(error => {
+                    this.setState({showLoading: false});
+                    //console.error('Errorr:', error);
+                    console.log('Error:', error);
+                    alert("Error: " + error);
+                });
+        }else {
+            alert("Minimum duration should be 15 minutes and Minimum price should be $5")
+        }
+    }
+
+    renderYearsRow(item) {
+        return <TouchableOpacity onPress={() => this.setState({
+            experience: item.exp,
+            DialogVisible: false
+        })} style={{
+            width: "100%", borderWidth: 1, height: 50,
+            borderColor: "red", backgroundColor: colors.themeBackground,justifyContent:"center",alignItems:"center"
+        }}>
+            <Text
+                  style={{
+                      fontSize: 20,
+                      color: "white",
+                      textAlign: "center",
+                      textAlignVertical: "center"
+                  }}>{item.exptext}</Text>
+
+
+        </TouchableOpacity>
+
+
     }
 
     deleteService(idx) {
@@ -482,54 +508,60 @@ export default class BarberEditProfile extends Component {
 
     addServiceData() {
         let services = this.state.ListData;
-        services.push({
-            id: this.state.ListData.length + 1,
-            service_type: this.state.serviceName,
-            duration_type: this.state.serviceDuration,
-            prize_type: this.state.servicePrice,
-            showLine: true
-        });
-        this.setState({ListData: services, DialogAddService: false, showLoading: true});
-
-        var details = {
-            user_id: Preference.get("userId"),
-            name: this.state.serviceName,
-            duration: this.state.serviceDuration,
-            price: this.state.servicePrice
-        };
-        var formBody = [];
-        for (var property in details) {
-            var encodedKey = encodeURIComponent(property);
-            var encodedValue = encodeURIComponent(details[property]);
-            formBody.push(encodedKey + "=" + encodedValue);
-        }
-        formBody = formBody.join("&");
-        fetch(constants.BarberAddService, {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: formBody
-        }).then(response => response.json())
-            .then(response => {
-                console.log("responseClientlogin-->", "-" + JSON.stringify(response));
-                if (response.ResultType === 1) {
-                    this.setState({showLoading: false});
-                    alert("Service Added");
-                } else {
-                    this.setState({showLoading: false});
-                    if (response.ResultType === 0) {
-                        alert(response.Message);
-                    }
-                }
-            })
-            .catch(error => {
-                this.setState({showLoading: false});
-                //console.error('Errorr:', error);
-                console.log('Error:', error);
-                alert("Error: " + error);
+        if(parseInt(this.state.serviceDuration)>=15 && parseInt(this.state.servicePrice) >=3 ) {
+            
+            services.push({
+                id: this.state.ListData.length + 1,
+                service_type: this.state.serviceName,
+                duration_type: this.state.serviceDuration,
+                prize_type: this.state.servicePrice,
+                showLine: true
             });
+            this.setState({ListData: services, DialogAddService: false, showLoading: true});
+
+            var details = {
+                user_id: Preference.get("userId"),
+                name: this.state.serviceName,
+                duration: this.state.serviceDuration,
+                price: this.state.servicePrice
+            };
+            var formBody = [];
+            for (var property in details) {
+                var encodedKey = encodeURIComponent(property);
+                var encodedValue = encodeURIComponent(details[property]);
+                formBody.push(encodedKey + "=" + encodedValue);
+            }
+            formBody = formBody.join("&");
+            fetch(constants.BarberAddService, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: formBody
+            }).then(response => response.json())
+                .then(response => {
+                    console.log("responseClientlogin-->", "-" + JSON.stringify(response));
+                    if (response.ResultType === 1) {
+                        this.setState({showLoading: false});
+                        alert("Service Added");
+                    } else {
+                        this.setState({showLoading: false});
+                        if (response.ResultType === 0) {
+                            alert(response.Message);
+                        }
+                    }
+                })
+                .catch(error => {
+                    this.setState({showLoading: false});
+                    //console.error('Errorr:', error);
+                    console.log('Error:', error);
+                    alert("Error: " + error);
+                });
+        }
+        else{
+            alert("Minimum duration should be 15 minutes and Minimum price should be $5")
+        }
     }
 
     setInstagramID() {
@@ -577,10 +609,72 @@ export default class BarberEditProfile extends Component {
                         </View>
                         <View>
                             <View style={[styles.infoContainer]}>
+                                <View style={{flexDirection:"row"}}>
                                 <Text style={[styles.allFontStyle, styles.name]}>
                                     {this.state.barberName}</Text>
-                                <View style={{flexDirection: "row"}}>
-                                    <Text style={{color: colors.white, fontSize: 12,}}>
+                                <TouchableOpacity onPress={() => this.setState({DialogBarberName: true})}>
+                                    <Image style={{height: 15, width: 15, marginStart: 10}}
+                                           source={require("../../../assets/images/edit.png")}/>
+                                </TouchableOpacity>
+                                    <PopupDialog
+                                        visible={this.state.DialogBarberName}
+                                        width={0.6}
+                                        onTouchOutside={() => {
+                                            this.setState({DialogBarberName: false});
+                                        }}
+                                        dialogStyle={{backgroundColor:colors.themeBackground}}
+
+                                        dialog
+                                        ref={(popupDialog) => {
+                                            this.popupDialog = popupDialog;
+                                        }}>
+                                        <ScrollView>
+                                            <View style={{flexDirection: "column", alignItems: "center"}}>
+                                                <View style={{
+                                                    width: "100%",
+                                                    height: 0,
+                                                    marginTop: 3,
+                                                    marginBottom: 3,
+                                                    backgroundColor: "white",
+                                                    flexDirection: "column",
+                                                }}/>
+                                                <Text style={{fontSize: 16, marginTop: 5, color: "white"}}>Barber Name</Text>
+                                                <TextInput Color={"white"} placeholder={"Enter Name"}
+                                                           placeholderTextColor={"grey"}
+                                                           onChangeText={(text) => {
+                                                               this.setState({barberName: text});
+                                                               Preference.set("firstname", this.state.barberName)
+                                                           }}
+                                                           style={{
+                                                               fontWeight: "bold",
+                                                               fontSize: 16,
+                                                               color: "white"
+                                                           }}/>
+
+                                                <TouchableOpacity
+                                                    onPress={() => this.setState({DialogBarberName: false})}
+                                                    style={[globalStyles.button, {
+                                                        height: 35,
+                                                        width: "80%",
+                                                        backgroundColor: "red",
+                                                        marginTop: 20,
+                                                        marginBottom: 20,
+                                                    }]}>
+                                                    <Text style={{
+                                                        fontSize: 15,
+                                                        fontWeight: "bold",
+                                                        color: "white"
+                                                    }}>{"Save"}</Text>
+
+                                                </TouchableOpacity>
+
+                                            </View>
+                                        </ScrollView>
+                                    </PopupDialog>
+                                </View>
+
+                                <View style={{flexDirection: "row", marginTop: 10, marginBottom: 20}}>
+                                    <Text style={{color: colors.white, fontSize: 16,}}>
                                         {this.state.barberShopName}</Text>
                                     <TouchableOpacity onPress={() => this.setState({DialogBarberShop: true})}>
                                         <Image style={{height: 15, width: 15, marginStart: 10}}
@@ -592,6 +686,8 @@ export default class BarberEditProfile extends Component {
                                         onTouchOutside={() => {
                                             this.setState({DialogBarberShop: false});
                                         }}
+                                        dialogStyle={{backgroundColor:colors.themeBackground}}
+
                                         ref={(popupDialog) => {
                                             this.popupDialog = popupDialog;
                                         }}>
@@ -602,10 +698,10 @@ export default class BarberEditProfile extends Component {
                                                     height: 0,
                                                     marginTop: 3,
                                                     marginBottom: 3,
-                                                    backgroundColor: "black",
+                                                    backgroundColor: "white",
                                                     flexDirection: "column",
                                                 }}/>
-                                                <Text style={{fontSize: 16, marginTop: 5, color: "black"}}>Barber Shop
+                                                <Text style={{fontSize: 16, marginTop: 5, color: "white"}}>Barber Shop
                                                     Name</Text>
                                                 <TextInput Color={"white"} placeholder={"Enter Shop Name"}
                                                            placeholderTextColor={"grey"}
@@ -616,7 +712,7 @@ export default class BarberEditProfile extends Component {
                                                            style={{
                                                                fontWeight: "bold",
                                                                fontSize: 16,
-                                                               color: "black"
+                                                               color: "white"
                                                            }}/>
 
                                                 <TouchableOpacity
@@ -642,22 +738,24 @@ export default class BarberEditProfile extends Component {
                                 </View>
                                 <View style={[styles.review, {flexDirection: "row"}]}>
                                     <TouchableOpacity onPress={() => this.setState({DialogVisible: true})}>
-                                        {this.state.experience==="0" ?
+                                        {this.state.experience === "0" ?
                                             <Text style={[styles.allFontStyle, styles.reviewText, {
                                                 color: "white",
                                                 fontFamily: "AvertaStd-Extrathin",
                                             }]}>{"Set your years of experience"}</Text>
                                             :
-                                        <Text style={[styles.allFontStyle, styles.reviewText, {
-                                            color: "white",
-                                            fontFamily: "AvertaStd-Extrathin",
-                                        }]}>{"Years of Experience " + this.state.experience}</Text>}
+                                            <Text style={[styles.allFontStyle, styles.reviewText, {
+                                                color: "white",
+                                                fontFamily: "AvertaStd-Extrathin",
+                                            }]}>{"Years of Experience " + this.state.experience}</Text>}
                                         <PopupDialog
                                             visible={this.state.DialogVisible}
                                             width={0.6}
                                             onTouchOutside={() => {
                                                 this.setState({DialogVisible: false});
                                             }}
+                                            dialogStyle={{backgroundColor:colors.themeBackground}}
+
                                             ref={(popupDialog) => {
                                                 this.popupDialog = popupDialog;
                                             }}>
@@ -671,108 +769,114 @@ export default class BarberEditProfile extends Component {
                                                         backgroundColor: "black",
                                                         flexDirection: "column",
                                                     }}/>
-                                                    <Text style={{fontSize: 16, marginTop: 5, color: "black"}}>Select
+                                                    <Text style={{fontSize: 18, marginBottom: 20, color: "white"}}>Select
                                                         Years of Experience</Text>
-                                                    <Text onPress={() => this.setState({
-                                                        experience: "01",
-                                                        DialogVisible: false
+                                                    {this.renderYearsRow({
+                                                        exp: "01",
+                                                        exptext: '01'
+
                                                     })}
-                                                          style={{fontSize: 15, marginTop: 5, color: "black"}}>01</Text>
-                                                    <Text onPress={() => this.setState({
-                                                        experience: "02",
-                                                        DialogVisible: false
+                                                    {this.renderYearsRow({
+                                                        exp: "02",
+                                                        exptext: '02'
+
                                                     })}
-                                                          style={{fontSize: 15, marginTop: 5, color: "black"}}>02</Text>
-                                                    <Text onPress={() => this.setState({
-                                                        experience: "03",
-                                                        DialogVisible: false
+                                                    {this.renderYearsRow({
+                                                        exp: "02",
+                                                        exptext: '02'
+
                                                     })}
-                                                          style={{fontSize: 15, marginTop: 5, color: "black"}}>03</Text>
-                                                    <Text onPress={() => this.setState({
-                                                        experience: "04",
-                                                        DialogVisible: false
+                                                    {this.renderYearsRow({
+                                                        exp: "03",
+                                                        exptext: '03'
+
                                                     })}
-                                                          style={{fontSize: 15, marginTop: 5, color: "black"}}>04</Text>
-                                                    <Text onPress={() => this.setState({
-                                                        experience: "05",
-                                                        DialogVisible: false
+                                                    {this.renderYearsRow({
+                                                        exp: "04",
+                                                        exptext: '04'
+
                                                     })}
-                                                          style={{fontSize: 15, marginTop: 5, color: "black"}}>05</Text>
-                                                    <Text onPress={() => this.setState({
-                                                        experience: "06",
-                                                        DialogVisible: false
+                                                    {this.renderYearsRow({
+                                                        exp: "05",
+                                                        exptext: '05'
+
                                                     })}
-                                                          style={{fontSize: 15, marginTop: 5, color: "black"}}>06</Text>
-                                                    <Text onPress={() => this.setState({
-                                                        experience: "07",
-                                                        DialogVisible: false
+                                                    {this.renderYearsRow({
+                                                        exp: "06",
+                                                        exptext: '06'
+
                                                     })}
-                                                          style={{fontSize: 15, marginTop: 5, color: "black"}}>07</Text>
-                                                    <Text onPress={() => this.setState({
-                                                        experience: "08",
-                                                        DialogVisible: false
+                                                    {this.renderYearsRow({
+                                                        exp: "07",
+                                                        exptext: '07'
+
                                                     })}
-                                                          style={{fontSize: 15, marginTop: 5, color: "black"}}>08</Text>
-                                                    <Text onPress={() => this.setState({
-                                                        experience: "09",
-                                                        DialogVisible: false
+                                                    {this.renderYearsRow({
+                                                        exp: "08",
+                                                        exptext: '08'
+
                                                     })}
-                                                          style={{fontSize: 15, marginTop: 5, color: "black"}}>09</Text>
-                                                    <Text onPress={() => this.setState({
-                                                        experience: "10",
-                                                        DialogVisible: false
+                                                    {this.renderYearsRow({
+                                                        exp: "09",
+                                                        exptext: '09'
+
                                                     })}
-                                                          style={{fontSize: 15, marginTop: 5, color: "black"}}>10</Text>
-                                                    <Text onPress={() => this.setState({
-                                                        experience: "11",
-                                                        DialogVisible: false
+                                                    {this.renderYearsRow({
+                                                        exp: "10",
+                                                        exptext: '10'
+
                                                     })}
-                                                          style={{fontSize: 15, marginTop: 5, color: "black"}}>11</Text>
-                                                    <Text onPress={() => this.setState({
-                                                        experience: "12",
-                                                        DialogVisible: false
+                                                    {this.renderYearsRow({
+                                                        exp: "11",
+                                                        exptext: '11'
+
                                                     })}
-                                                          style={{fontSize: 15, marginTop: 5, color: "black"}}>12</Text>
-                                                    <Text onPress={() => this.setState({
-                                                        experience: "13",
-                                                        DialogVisible: false
+                                                    {this.renderYearsRow({
+                                                        exp: "12",
+                                                        exptext: '12'
+
                                                     })}
-                                                          style={{fontSize: 15, marginTop: 5, color: "black"}}>13</Text>
-                                                    <Text onPress={() => this.setState({
-                                                        experience: "14",
-                                                        DialogVisible: false
+                                                    {this.renderYearsRow({
+                                                        exp: "13",
+                                                        exptext: '13'
+
                                                     })}
-                                                          style={{fontSize: 15, marginTop: 5, color: "black"}}>14</Text>
-                                                    <Text onPress={() => this.setState({
-                                                        experience: "15",
-                                                        DialogVisible: false
+                                                    {this.renderYearsRow({
+                                                        exp: "14",
+                                                        exptext: '14'
+
                                                     })}
-                                                          style={{fontSize: 15, marginTop: 5, color: "black"}}>15</Text>
-                                                    <Text onPress={() => this.setState({
-                                                        experience: "16",
-                                                        DialogVisible: false
+                                                    {this.renderYearsRow({
+                                                        exp: "15",
+                                                        exptext: '15'
+
                                                     })}
-                                                          style={{fontSize: 15, marginTop: 5, color: "black"}}>16</Text>
-                                                    <Text onPress={() => this.setState({
-                                                        experience: "17",
-                                                        DialogVisible: false
+                                                    {this.renderYearsRow({
+                                                        exp: "16",
+                                                        exptext: '16'
+
                                                     })}
-                                                          style={{fontSize: 15, marginTop: 5, color: "black"}}>17</Text>
-                                                    <Text onPress={() => this.setState({
-                                                        experience: "18",
-                                                        DialogVisible: falseadb
+                                                    {this.renderYearsRow({
+                                                        exp: "17",
+                                                        exptext: '17'
+
                                                     })}
-                                                          style={{fontSize: 15, marginTop: 5, color: "black"}}>18</Text>
-                                                    <Text onPress={() => this.setState({
-                                                        experience: "19",
-                                                        DialogVisible: false
+                                                    {this.renderYearsRow({
+                                                        exp: "18",
+                                                        exptext: '18'
+
                                                     })}
-                                                          style={{fontSize: 15, marginTop: 5, color: "black"}}>19</Text>
-                                                    <Text onPress={() => this.setState({
-                                                        experience: "20",
-                                                        DialogVisible: false
+                                                    {this.renderYearsRow({
+                                                        exp: "19",
+                                                        exptext: '19'
+
                                                     })}
-                                                          style={{fontSize: 15, marginTop: 5, color: "black"}}>20</Text>
+                                                    {this.renderYearsRow({
+                                                        exp: "20",
+                                                        exptext: '20'
+
+                                                    })}
+
                                                 </View>
                                             </ScrollView>
                                         </PopupDialog>
@@ -789,6 +893,7 @@ export default class BarberEditProfile extends Component {
                         })}
                         <PopupDialog
                             visible={this.state.DialogInstaUsername}
+                            dialogStyle={{backgroundColor:colors.themeBackground}}
                             width={0.6}
                             onTouchOutside={() => {
                                 this.setState({DialogInstaUsername: false});
@@ -800,10 +905,10 @@ export default class BarberEditProfile extends Component {
                                         height: 0,
                                         marginTop: 3,
                                         marginBottom: 3,
-                                        backgroundColor: "black",
+                                        backgroundColor: "white",
                                         flexDirection: "column",
                                     }}/>
-                                    <Text style={{fontSize: 16, marginTop: 5, color: "black"}}>Instagram User
+                                    <Text style={{fontSize: 16, marginTop: 5, color: "white"}}>Instagram User
                                         Name</Text>
                                     <TextInput Color={"white"} placeholder={"Enter Instagram username"}
                                                placeholderTextColor={"grey"}
@@ -811,7 +916,7 @@ export default class BarberEditProfile extends Component {
                                                style={{
                                                    fontWeight: "bold",
                                                    fontSize: 16,
-                                                   color: "black"
+                                                   color: "white"
                                                }}/>
 
                                     <TouchableOpacity onPress={() => this.setInstagramID()}
@@ -914,22 +1019,24 @@ export default class BarberEditProfile extends Component {
                         <PopupDialog
                             visible={this.state.DialogEditService}
                             width={0.6}
+                            dialogStyle={{backgroundColor:colors.themeBackground}}
                             onTouchOutside={() => {
                                 this.setState({DialogEditService: false});
                             }}>
-                            <View style={{flexDirection: "column"}}>
+
+                            <View style={{flexDirection: "column",}}>
                                 <View style={{
                                     width: "100%",
                                     height: 0,
                                     marginTop: 3,
                                     marginBottom: 3,
-                                    backgroundColor: "black",
+
                                     flexDirection: "column",
                                 }}/>
                                 <Text style={{
                                     fontSize: 16,
                                     marginTop: 5,
-                                    color: "black",
+                                    color: "white",
                                     fontWeight: "bold",
                                     textAlign: "center"
                                 }}>Edit Service</Text>
@@ -939,25 +1046,27 @@ export default class BarberEditProfile extends Component {
                                            onChangeText={(text) => this.setState({serviceName: text})}
                                            style={{
                                                fontSize: 14,
-                                               color: "black",
-                                               marginStart: 10
+                                               color: "white",
+                                               marginStart: 10,
                                            }}/>
                                 <TextInput Color={"white"} placeholder={"Enter Duration"}
                                            placeholderTextColor={"grey"}
                                            value={this.state.serviceDuration}
                                            onChangeText={(text) => this.setState({serviceDuration: text})}
+                                           keyboardType={'number-pad'}
                                            style={{
                                                fontSize: 14,
-                                               color: "black",
+                                               color: "white",
                                                marginStart: 10
                                            }}/>
                                 <TextInput Color={"white"} placeholder={"Enter Price"}
                                            placeholderTextColor={"grey"}
                                            value={this.state.servicePrice}
                                            onChangeText={(text) => this.setState({servicePrice: text})}
+                                           keyboardType={'number-pad'}
                                            style={{
                                                fontSize: 14,
-                                               color: "black",
+                                               color: "white",
                                                marginStart: 10
                                            }}/>
 
@@ -996,6 +1105,7 @@ export default class BarberEditProfile extends Component {
                         <PopupDialog
                             visible={this.state.DialogAddService}
                             width={0.6}
+                            dialogStyle={{backgroundColor:colors.themeBackground}}
                             onTouchOutside={() => {
                                 this.setState({DialogAddService: false});
                             }}>
@@ -1005,41 +1115,44 @@ export default class BarberEditProfile extends Component {
                                     height: 0,
                                     marginTop: 3,
                                     marginBottom: 3,
-                                    backgroundColor: "black",
+                                    backgroundColor: "white",
                                     flexDirection: "column",
                                 }}/>
                                 <Text style={{
                                     fontSize: 16,
                                     marginTop: 5,
-                                    color: "black",
+                                    color: "white",
                                     fontWeight: "bold",
                                     textAlign: "center"
                                 }}>Edit Service</Text>
-                                <TextInput Color={"white"} placeholder={"Enter Service name"}
+                                <TextInput Color={"white"}
+                                           placeholder={"Enter Service name"}
                                            placeholderTextColor={"grey"}
                                            value={this.state.serviceName}
                                            onChangeText={(text) => this.setState({serviceName: text})}
                                            style={{
                                                fontSize: 14,
-                                               color: "black",
+                                               color: "white",
                                                marginStart: 10
                                            }}/>
                                 <TextInput Color={"white"} placeholder={"Enter Duration"}
                                            placeholderTextColor={"grey"}
                                            value={this.state.serviceDuration}
                                            onChangeText={(text) => this.setState({serviceDuration: text})}
+                                           keyboardType={'number-pad'}
                                            style={{
                                                fontSize: 14,
-                                               color: "black",
+                                               color: "white",
                                                marginStart: 10
                                            }}/>
                                 <TextInput Color={"white"} placeholder={"Enter Price"}
                                            placeholderTextColor={"grey"}
                                            value={this.state.servicePrice}
                                            onChangeText={(text) => this.setState({servicePrice: text})}
+                                           keyboardType={'number-pad'}
                                            style={{
                                                fontSize: 14,
-                                               color: "black",
+                                               color: "white",
                                                marginStart: 10
                                            }}/>
 
@@ -1096,7 +1209,8 @@ export default class BarberEditProfile extends Component {
                             horizontal={true}
                             renderItem={({item, index}) =>
                                 <View style={{width: 100, height: 140, marginStart: 10}}>
-                                    <Image  source={{uri:constants.portfolioImagePath+item.image_url}} style={{borderRadius: 10, width: 100, height: 140}}
+                                    <Image source={{uri: constants.portfolioImagePath + item.image_url}}
+                                           style={{borderRadius: 10, width: 100, height: 140}}
                                            resizeMode={"contain"}/>
                                     <TouchableOpacity style={{position: "absolute", top: 5, right: 5}}
                                                       onPress={() => this.deleteImage(index)}>
