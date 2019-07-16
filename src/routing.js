@@ -236,9 +236,9 @@ const AuthStack = createStackNavigator({
     ClientBarberSearch: ClientBarberSearch,
     ClientFilter: ClientFilter,
     ClientHaircuts: ClientHaircuts,
-    Share: Share,
+    Share: Share
 }, {
-    initialRouteName: 'BarberEditProfile',
+    initialRouteName: 'SplashScreen',
     //initialRouteName: 'TabNavigator',
     //initialRouteName: 'ClientTabNavigator',
     headerMode: 'none'

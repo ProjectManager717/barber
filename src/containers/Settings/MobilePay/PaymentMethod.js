@@ -17,6 +17,12 @@ import {NavigationActions, StackActions} from "react-navigation";
 import Preference from "react-native-preference";
 import {constants} from "../../../utils/constants";
 import PopupDialog from 'react-native-popup-dialog';
+import stripe from 'tipsi-stripe'
+
+stripe.setOptions({
+    publishableKey: 'pk_test_U4Ri0H7rP3PClZwTI5Z2r78J',
+    androidPayMode: 'test', // Android only
+})
 
 export default class PaymentMethod extends Component {
 
@@ -24,21 +30,54 @@ export default class PaymentMethod extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            cardNumber: "",
+            cardNumber: "4242424242424242",
             month: "04",
-            year: "19",
-            cvc: "",
+            year: "20",
+            cvc: "123",
             cardHolderName: "",
             pickMonth: false,
             isConnected: true,
             DialogVisible: false,
-            DialogVisible1: false
+            DialogVisible1: false,
+
+
+            loading: false,
+            token: null,
+            error: null,
+            params: {
+                number: '4242424242424242',
+                expMonth: 12,
+                expYear: 24,
+                cvc: '223',
+                name: 'Test User',
+                currency: 'usd',
+                addressLine1: '123 Test Street',
+                addressLine2: 'Apt. 5',
+                addressCity: 'Test City',
+                addressState: 'Test State',
+                addressCountry: 'Test Country',
+                addressZip: '55555',
+            },
+            errorParams: {
+                number: '4242424242424241',
+                expMonth: 12,
+                expYear: 24,
+                cvc: '223',
+                name: 'Test User',
+                currency: 'usd',
+                addressLine1: '123 Test Street',
+                addressLine2: 'Apt. 5',
+                addressCity: 'Test City',
+                addressState: 'Test State',
+                addressCountry: 'Test Country',
+                addressZip: '55555',
+            },
         }
         console.disableYellowBox = true;
         //this.state = {text: ' 4242 - 4242 - 4242- 4242'};
     }
 
-    saveCard = () => {
+    saveCard = async (shouldPass = true) => {
         /*const resetAction = StackActions.reset({
             index: 0,
             actions: [NavigationActions.navigate({routeName: 'ClientTabNavigator'})],
@@ -49,59 +88,75 @@ export default class PaymentMethod extends Component {
             usertype = "barber";
         else
             usertype = "client";
+        try {
 
-        if (this.state.isConnected) {
-            if (this.state.cardNumber === "" || this.state.cardNumber.length < 16 ||
-                this.state.month === "" || this.state.year === "" || this.state.cvc === "" || this.state.cardHolderName === "") {
-                alert("Please enter full data.");
-            } else {
-                var details = {
-                    user_id: Preference.get("userId"),
-                    card_number: this.state.cardNumber,
-                    expiration_date: this.state.month + "/" + this.state.year,
-                    cvc: this.state.cvc,
-                    card_holder_name: this.state.cardHolderName,
-                    user_type: usertype,
-                };
-                var formBody = [];
-                for (var property in details) {
-                    var encodedKey = encodeURIComponent(property);
-                    var encodedValue = encodeURIComponent(details[property]);
-                    formBody.push(encodedKey + "=" + encodedValue);
-                }
-                formBody = formBody.join("&");
-                fetch(constants.ClientPaymentMethod, {
-                    method: 'POST',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: formBody
-                }).then(response => response.json())
-                    .then(response => {
-                        console.log("responsePaymentCard-->", "-" + JSON.stringify(response));
-                        if (response.ResultType === 1) {
-                            alert("Card Updated successfully");
-                            const resetAction = StackActions.reset({
-                                index: 0,
-                                actions: [NavigationActions.navigate({routeName: 'ClientTabNavigator'})],
-                            });
-                            this.props.navigation.dispatch(resetAction);
-                        } else {
-                            if (response.ResultType === 0) {
-                                alert(response.Message);
-                            }
-                        }
-                    })
-                    .catch(error => {
-                        //console.error('Errorr:', error);
-                        console.log('Error:', error);
-                        alert("Error: "+error);
-                    });
-            }
-        } else {
-            alert("Please connect Internet");
+           /* const source = await stripe.createSourceWithParams({
+                type: 'card',
+                number: '4242424242424242',
+                expMonth: 11,
+                expYear: 22,
+                cvc: '123',
+            })*/
+
+            const params = shouldPass ? this.state.params : this.state.errorParams
+            const token = await stripe.createTokenWithCard(params)
+            console.log("CArdReponse",token);
+        } catch (error) {
+            this.setState({error, loading: false})
         }
+
+        /* if (this.state.isConnected) {
+             if (this.state.cardNumber === "" || this.state.cardNumber.length < 16 ||
+                 this.state.month === "" || this.state.year === "" || this.state.cvc === "" || this.state.cardHolderName === "") {
+                 alert("Please enter full data.");
+             } else {
+                 var details = {
+                     user_id: Preference.get("userId"),
+                     card_number: this.state.cardNumber,
+                     expiration_date: this.state.month + "/" + this.state.year,
+                     cvc: this.state.cvc,
+                     card_holder_name: this.state.cardHolderName,
+                     user_type: usertype,
+                 };
+                 var formBody = [];
+                 for (var property in details) {
+                     var encodedKey = encodeURIComponent(property);
+                     var encodedValue = encodeURIComponent(details[property]);
+                     formBody.push(encodedKey + "=" + encodedValue);
+                 }
+                 formBody = formBody.join("&");
+                 fetch(constants.ClientPaymentMethod, {
+                     method: 'POST',
+                     headers: {
+                         'Accept': 'application/json',
+                         'Content-Type': 'application/x-www-form-urlencoded'
+                     },
+                     body: formBody
+                 }).then(response => response.json())
+                     .then(response => {
+                         console.log("responsePaymentCard-->", "-" + JSON.stringify(response));
+                         if (response.ResultType === 1) {
+                             alert("Card Updated successfully");
+                             const resetAction = StackActions.reset({
+                                 index: 0,
+                                 actions: [NavigationActions.navigate({routeName: 'ClientTabNavigator'})],
+                             });
+                             this.props.navigation.dispatch(resetAction);
+                         } else {
+                             if (response.ResultType === 0) {
+                                 alert(response.Message);
+                             }
+                         }
+                     })
+                     .catch(error => {
+                         //console.error('Errorr:', error);
+                         console.log('Error:', error);
+                         alert("Error: "+error);
+                     });
+             }
+         } else {
+             alert("Please connect Internet");
+         }*/
         //this.props.navigation.navigate("ClientTabNavigator");
     }
 
@@ -268,7 +323,8 @@ export default class PaymentMethod extends Component {
                                                 backgroundColor: "black",
                                                 flexDirection: "column",
                                             }}/>
-                                            <Text style={{fontSize: 16, marginTop: 5, color: "black"}}>Select Year</Text>
+                                            <Text style={{fontSize: 16, marginTop: 5, color: "black"}}>Select
+                                                Year</Text>
                                             <Text onPress={() => this.setState({year: "19", DialogVisible1: false})}
                                                   style={{fontSize: 15, marginTop: 5, color: "black"}}>2019</Text>
                                             <Text onPress={() => this.setState({year: "20", DialogVisible1: false})}

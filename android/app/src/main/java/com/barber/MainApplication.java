@@ -9,7 +9,7 @@ import com.horcrux.svg.SvgPackage;
 import com.wix.RNCameraKit.RNCameraKitPackage;
 import co.apptailor.googlesignin.RNGoogleSigninPackage;
 import com.imagepicker.ImagePickerPackage;
-
+import com.gettipsi.stripe.StripeReactPackage;
 
 import im.shimo.react.preference.PreferencePackage;
 import com.henninghall.date_picker.DatePickerPackage;
@@ -30,6 +30,7 @@ import com.facebook.soloader.SoLoader;
 
 import java.util.Arrays;
 import java.util.List;
+
 import android.support.multidex.MultiDex;
 import android.content.Context;
 
@@ -52,9 +53,10 @@ public class MainApplication extends Application implements ReactApplication {
         protected List<ReactPackage> getPackages() {
             return Arrays.<ReactPackage>asList(
                     new MainReactPackage(),
-            new RNFSPackage(),
-            new RNViewShotPackage(),
-            new SvgPackage(),
+                    new StripeReactPackage(),
+                    new RNFSPackage(),
+                    new RNViewShotPackage(),
+                    new SvgPackage(),
                     new RNCameraKitPackage(),
                     new RNGoogleSigninPackage(),
                     new ImagePickerPackage(),

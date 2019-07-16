@@ -47,7 +47,6 @@ export default class lGraphComp extends Component {
                                style={[styles.arrow_down, {marginLeft: 5, marginTop: 5}]}/>
                         <PopupDialog
                             visible={this.state.DialogVisible}
-                        
                             onTouchOutside={() => {
                                 this.setState({DialogVisible: false});
                             }}

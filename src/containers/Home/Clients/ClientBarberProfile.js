@@ -506,6 +506,14 @@ export default class ClientBarberProfile extends Component {
                         barberMobilePay: barberData.payment_option,
                     });
 
+                    let PortfolioImages = this.state.ListData;
+                    for (let i = 0; i < PortfolioImages.length; i++) {
+                        console.log("ImagesDataURl", PortfolioImages[i].portfolio_image);
+                        PortfolioImages[i].portfolio_image = constants.portfolioImagePath + PortfolioImages[i].portfolio_image;
+                    }
+                    this.setState({ListData: PortfolioImages})
+                    //this.setState({barberData: response.Data});
+
                     if (this.state.barberMobilePay === "mobilePay") {
                         this.setState({buttonPayText: "PAY"})
                     } else {
@@ -855,7 +863,7 @@ export default class ClientBarberProfile extends Component {
                                 keyExtractor={index => index}
                                 renderItem={({item}) =>
                                     <View>
-                                        {!(item.image_url === "") && <Image style={{
+                                       <Image style={{
                                             borderRadius: 10,
                                             marginStart: 8,
                                             height: 140,
@@ -863,7 +871,7 @@ export default class ClientBarberProfile extends Component {
                                             backgroundColor: "grey"
                                         }}
                                                                             resizeMode='cover'
-                                                                            source={{uri: constants.portfolioImagePath + item.image_url}}/>}
+                                                                            source={{uri:item.portfolio_image}}/>
                                     </View>}
                             />}
                             {(this.state.ListData.length < 1) &&

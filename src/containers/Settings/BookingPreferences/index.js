@@ -231,9 +231,11 @@ export default class BookingPreferences extends Component {
         let calendarInterval = 0;
         if (this.state.MP.StateMP === true) {
             paymentOption = 0;
+            Preference.set("paymentOption","mobilepay")
         }
         if (this.state.IN.StateIN === true) {
             paymentOption = 1;
+            Preference.set("paymentOption","inshop")
         }
         console.log("paymentOptionBit--->" + this.state.MP.StateMP);
         console.log("paymentOptionBit--->" + paymentOption);

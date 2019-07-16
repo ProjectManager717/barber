@@ -141,6 +141,17 @@ export default class ClientHome extends Component {
 
 
     renderRecentBookings(item) {
+        var date=item.date;
+        date=date.split("T");
+        var time=item.selected_slot_id[0].start_time;
+        time=time.split(":");
+        var timeShow="";
+        if(time[0]<12)
+        {
+            timeShow=time[0]+":"+time[1]+" AM";
+        }else {
+            timeShow=time[0]+":"+time[1]+" PM";
+        }
         return <View
             style={{
                 flexDirection: 'row',
@@ -163,10 +174,10 @@ export default class ClientHome extends Component {
                 <View style={{flexDirection: "row", marginTop: 5}}>
                     <Image resizeMode={"contain"} source={require("../../../assets/images/time.png")}
                            style={{height: 12, width: 12}}/>
-                    <Text style={{fontSize: 10, color: "#939FB1", marginStart: 4}}>{item.start_time}</Text>
+                    <Text style={{fontSize: 10, color: "#939FB1", marginStart: 4}}>{timeShow}</Text>
                     <Image resizeMode={"contain"} source={require("../../../assets/images/date.png")}
                            style={{height: 12, width: 12, marginStart: 12}}/>
-                    <Text style={{fontSize: 10, color: "#939FB1", marginStart: 4}}>{item.date}</Text>
+                    <Text style={{fontSize: 10, color: "#939FB1", marginStart: 4}}>{date[0]}</Text>
                 </View>
             </View>
             {item.appointment_type === "Completed" ?

@@ -62,7 +62,7 @@ export default class BarberEditProfile extends Component {
             DialogEditService: false,
             DialogAddService: false,
             serviceName: "",
-            DialogBarberName:false,
+            DialogBarberName: false,
             serviceDuration: "",
             servicePrice: "",
             serviceIndex: undefined,
@@ -139,7 +139,16 @@ export default class BarberEditProfile extends Component {
                         barberReviews: barberData.reviews,
                         barberAddress: barberData.location,
                         experience: barberData.experience,
+                        serviceIndex: barberData.services.length,
                     });
+                    let PortfolioImages = this.state.imagesData;
+                    console.log("ImagesDataURlLength", PortfolioImages.length);
+                    for (let i = 0; i < PortfolioImages.length; i++) {
+                        console.log("ImagesDataURl", PortfolioImages[i].portfolio_image);
+                        PortfolioImages[i].portfolio_image = constants.portfolioImagePath + PortfolioImages[i].portfolio_image;
+                    }
+                    this.setState({imagesData: PortfolioImages})
+                    console.log("ImagesData", JSON.stringify(this.state.imagesData));
 
                     if (barberData.supreme_barber === 0)
                         this.setState({barberPackage: "Basic"})
@@ -162,7 +171,7 @@ export default class BarberEditProfile extends Component {
 
     saveData() {
         let requestBody = new FormData();
-        requestBody.append("user_id", Preference.get("userId"))
+        requestBody.append("user_id",Preference.get("userId"));
         requestBody.append("firstname", this.state.barberName);
         requestBody.append("lastname", "");
         requestBody.append("shop_name", this.state.barberShopName);
@@ -171,10 +180,9 @@ export default class BarberEditProfile extends Component {
         requestBody.append("house_call", 0)
         requestBody.append("username", this.state.barberInsta)
         for (let i = 0; i < this.state.imagesDataServer.length; i++) {
-
-            requestBody.append("portfolios[]", {
+            requestBody.append("portfolio_image", {
                 uri: this.state.imagesDataServer[i],
-                name: "imageAvatar.png",
+                name: "protfoliosAvatar.png",
                 type: 'image/jpeg'
             })
         }
@@ -192,8 +200,8 @@ export default class BarberEditProfile extends Component {
             method: 'POST',
             body: requestBody,
             headers: {
-                /*'Content-Type': 'application/x-www-form-urlencoded',*/
-                'Accept': 'application/json'
+                'Accept': 'application/json',
+                'Content-Type': 'multipart/form-data',
             }
         }).then(response => response.json())
             .then(response => {
@@ -404,12 +412,14 @@ export default class BarberEditProfile extends Component {
             } else if (response.customButton) {
                 console.log('User tapped custom button: ', response.customButton);
             } else {
-                const source = {uri: response.uri};
+                const source = response.uri;
+                console.log("URII:::", response.uri);
                 let imageDta = this.state.imagesData;
                 let imgDataServer = this.state.imagesDataServer;
                 imgDataServer.push(response.uri)
-                imageDta.push({image_url: source});
+                imageDta.push({portfolio_image: source});
                 this.setState({imagesData: imageDta, imagesDataServer: imgDataServer});
+                console.log("imageData::::",JSON.stringify(this.state.imagesData))
             }
         });
     }
@@ -423,7 +433,7 @@ export default class BarberEditProfile extends Component {
     }
 
     setServiceData() {
-        if(parseInt(this.state.serviceDuration)>=15 && parseInt(this.state.servicePrice) >=3 ) {
+        if (parseInt(this.state.serviceDuration) >= 15 && parseInt(this.state.servicePrice) < 5) {
             let indx = this.state.serviceIndex;
             this.setState({DialogEditService: false});
             let services = this.state.ListData;
@@ -473,7 +483,7 @@ export default class BarberEditProfile extends Component {
                     console.log('Error:', error);
                     alert("Error: " + error);
                 });
-        }else {
+        } else {
             alert("Minimum duration should be 15 minutes and Minimum price should be $5")
         }
     }
@@ -484,15 +494,15 @@ export default class BarberEditProfile extends Component {
             DialogVisible: false
         })} style={{
             width: "100%", borderWidth: 1, height: 50,
-            borderColor: "red", backgroundColor: colors.themeBackground,justifyContent:"center",alignItems:"center"
+            borderColor: "red", backgroundColor: colors.themeBackground, justifyContent: "center", alignItems: "center"
         }}>
             <Text
-                  style={{
-                      fontSize: 20,
-                      color: "white",
-                      textAlign: "center",
-                      textAlignVertical: "center"
-                  }}>{item.exptext}</Text>
+                style={{
+                    fontSize: 20,
+                    color: "white",
+                    textAlign: "center",
+                    textAlignVertical: "center"
+                }}>{item.exptext}</Text>
 
 
         </TouchableOpacity>
@@ -508,8 +518,8 @@ export default class BarberEditProfile extends Component {
 
     addServiceData() {
         let services = this.state.ListData;
-        if(parseInt(this.state.serviceDuration)>=15 && parseInt(this.state.servicePrice) >=3 ) {
-            
+        if (parseInt(this.state.serviceDuration) >= 15 && parseInt(this.state.servicePrice) >= 3) {
+
             services.push({
                 id: this.state.ListData.length + 1,
                 service_type: this.state.serviceName,
@@ -558,8 +568,7 @@ export default class BarberEditProfile extends Component {
                     console.log('Error:', error);
                     alert("Error: " + error);
                 });
-        }
-        else{
+        } else {
             alert("Minimum duration should be 15 minutes and Minimum price should be $5")
         }
     }
@@ -609,20 +618,20 @@ export default class BarberEditProfile extends Component {
                         </View>
                         <View>
                             <View style={[styles.infoContainer]}>
-                                <View style={{flexDirection:"row"}}>
-                                <Text style={[styles.allFontStyle, styles.name]}>
-                                    {this.state.barberName}</Text>
-                                <TouchableOpacity onPress={() => this.setState({DialogBarberName: true})}>
-                                    <Image style={{height: 15, width: 15, marginStart: 10}}
-                                           source={require("../../../assets/images/edit.png")}/>
-                                </TouchableOpacity>
+                                <View style={{flexDirection: "row"}}>
+                                    <Text style={[styles.allFontStyle, styles.name]}>
+                                        {this.state.barberName}</Text>
+                                    <TouchableOpacity onPress={() => this.setState({DialogBarberName: true})}>
+                                        <Image style={{height: 15, width: 15, marginStart: 10}}
+                                               source={require("../../../assets/images/edit.png")}/>
+                                    </TouchableOpacity>
                                     <PopupDialog
                                         visible={this.state.DialogBarberName}
                                         width={0.6}
                                         onTouchOutside={() => {
                                             this.setState({DialogBarberName: false});
                                         }}
-                                        dialogStyle={{backgroundColor:colors.themeBackground}}
+                                        dialogStyle={{backgroundColor: colors.themeBackground}}
 
                                         dialog
                                         ref={(popupDialog) => {
@@ -638,7 +647,8 @@ export default class BarberEditProfile extends Component {
                                                     backgroundColor: "white",
                                                     flexDirection: "column",
                                                 }}/>
-                                                <Text style={{fontSize: 16, marginTop: 5, color: "white"}}>Barber Name</Text>
+                                                <Text style={{fontSize: 16, marginTop: 5, color: "white"}}>Barber
+                                                    Name</Text>
                                                 <TextInput Color={"white"} placeholder={"Enter Name"}
                                                            placeholderTextColor={"grey"}
                                                            onChangeText={(text) => {
@@ -686,7 +696,7 @@ export default class BarberEditProfile extends Component {
                                         onTouchOutside={() => {
                                             this.setState({DialogBarberShop: false});
                                         }}
-                                        dialogStyle={{backgroundColor:colors.themeBackground}}
+                                        dialogStyle={{backgroundColor: colors.themeBackground}}
 
                                         ref={(popupDialog) => {
                                             this.popupDialog = popupDialog;
@@ -754,7 +764,7 @@ export default class BarberEditProfile extends Component {
                                             onTouchOutside={() => {
                                                 this.setState({DialogVisible: false});
                                             }}
-                                            dialogStyle={{backgroundColor:colors.themeBackground}}
+                                            dialogStyle={{backgroundColor: colors.themeBackground}}
 
                                             ref={(popupDialog) => {
                                                 this.popupDialog = popupDialog;
@@ -893,7 +903,6 @@ export default class BarberEditProfile extends Component {
                         })}
                         <PopupDialog
                             visible={this.state.DialogInstaUsername}
-                            dialogStyle={{backgroundColor:colors.themeBackground}}
                             width={0.6}
                             onTouchOutside={() => {
                                 this.setState({DialogInstaUsername: false});
@@ -908,7 +917,7 @@ export default class BarberEditProfile extends Component {
                                         backgroundColor: "white",
                                         flexDirection: "column",
                                     }}/>
-                                    <Text style={{fontSize: 16, marginTop: 5, color: "white"}}>Instagram User
+                                    <Text style={{fontSize: 16, marginTop: 5}}>Instagram User
                                         Name</Text>
                                     <TextInput Color={"white"} placeholder={"Enter Instagram username"}
                                                placeholderTextColor={"grey"}
@@ -916,7 +925,6 @@ export default class BarberEditProfile extends Component {
                                                style={{
                                                    fontWeight: "bold",
                                                    fontSize: 16,
-                                                   color: "white"
                                                }}/>
 
                                     <TouchableOpacity onPress={() => this.setInstagramID()}
@@ -1019,7 +1027,6 @@ export default class BarberEditProfile extends Component {
                         <PopupDialog
                             visible={this.state.DialogEditService}
                             width={0.6}
-                            dialogStyle={{backgroundColor:colors.themeBackground}}
                             onTouchOutside={() => {
                                 this.setState({DialogEditService: false});
                             }}>
@@ -1030,13 +1037,11 @@ export default class BarberEditProfile extends Component {
                                     height: 0,
                                     marginTop: 3,
                                     marginBottom: 3,
-
                                     flexDirection: "column",
                                 }}/>
                                 <Text style={{
                                     fontSize: 16,
                                     marginTop: 5,
-                                    color: "white",
                                     fontWeight: "bold",
                                     textAlign: "center"
                                 }}>Edit Service</Text>
@@ -1046,7 +1051,6 @@ export default class BarberEditProfile extends Component {
                                            onChangeText={(text) => this.setState({serviceName: text})}
                                            style={{
                                                fontSize: 14,
-                                               color: "white",
                                                marginStart: 10,
                                            }}/>
                                 <TextInput Color={"white"} placeholder={"Enter Duration"}
@@ -1056,7 +1060,6 @@ export default class BarberEditProfile extends Component {
                                            keyboardType={'number-pad'}
                                            style={{
                                                fontSize: 14,
-                                               color: "white",
                                                marginStart: 10
                                            }}/>
                                 <TextInput Color={"white"} placeholder={"Enter Price"}
@@ -1066,7 +1069,6 @@ export default class BarberEditProfile extends Component {
                                            keyboardType={'number-pad'}
                                            style={{
                                                fontSize: 14,
-                                               color: "white",
                                                marginStart: 10
                                            }}/>
 
@@ -1105,7 +1107,6 @@ export default class BarberEditProfile extends Component {
                         <PopupDialog
                             visible={this.state.DialogAddService}
                             width={0.6}
-                            dialogStyle={{backgroundColor:colors.themeBackground}}
                             onTouchOutside={() => {
                                 this.setState({DialogAddService: false});
                             }}>
@@ -1121,7 +1122,6 @@ export default class BarberEditProfile extends Component {
                                 <Text style={{
                                     fontSize: 16,
                                     marginTop: 5,
-                                    color: "white",
                                     fontWeight: "bold",
                                     textAlign: "center"
                                 }}>Edit Service</Text>
@@ -1132,7 +1132,6 @@ export default class BarberEditProfile extends Component {
                                            onChangeText={(text) => this.setState({serviceName: text})}
                                            style={{
                                                fontSize: 14,
-                                               color: "white",
                                                marginStart: 10
                                            }}/>
                                 <TextInput Color={"white"} placeholder={"Enter Duration"}
@@ -1142,7 +1141,6 @@ export default class BarberEditProfile extends Component {
                                            keyboardType={'number-pad'}
                                            style={{
                                                fontSize: 14,
-                                               color: "white",
                                                marginStart: 10
                                            }}/>
                                 <TextInput Color={"white"} placeholder={"Enter Price"}
@@ -1152,7 +1150,6 @@ export default class BarberEditProfile extends Component {
                                            keyboardType={'number-pad'}
                                            style={{
                                                fontSize: 14,
-                                               color: "white",
                                                marginStart: 10
                                            }}/>
 
@@ -1209,7 +1206,7 @@ export default class BarberEditProfile extends Component {
                             horizontal={true}
                             renderItem={({item, index}) =>
                                 <View style={{width: 100, height: 140, marginStart: 10}}>
-                                    <Image source={{uri: constants.portfolioImagePath + item.image_url}}
+                                    <Image source={{uri: item.portfolio_image}}
                                            style={{borderRadius: 10, width: 100, height: 140}}
                                            resizeMode={"contain"}/>
                                     <TouchableOpacity style={{position: "absolute", top: 5, right: 5}}

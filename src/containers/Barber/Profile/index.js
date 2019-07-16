@@ -74,6 +74,12 @@ export default class BarberProfile extends Component {
                         barberReviews: barberData.reviews,
                         barberImage: {uri: barberData.user_image},
                     });
+                    let PortfolioImages = this.state.ListData;
+                    for (let i = 0; i < PortfolioImages.length; i++) {
+                        console.log("ImagesDataURl", PortfolioImages[i].portfolio_image);
+                        PortfolioImages[i].portfolio_image = constants.portfolioImagePath + PortfolioImages[i].portfolio_image;
+                    }
+                    this.setState({ListData: PortfolioImages})
                     //this.setState({barberData: response.Data});
                 } else {
                     this.setState({showLoading:false})
@@ -169,7 +175,7 @@ export default class BarberProfile extends Component {
                             keyExtractor={index => index}
                             renderItem={({item}) =>
                                 <View>
-                                    {!(item.image_url==="")&&<Image style={{
+                                   <Image style={{
                                         borderRadius: 10,
                                         marginStart: 8,
                                         height: 140,
@@ -177,7 +183,7 @@ export default class BarberProfile extends Component {
                                         backgroundColor: "grey"
                                     }}
                                            resizeMode='cover'
-                                           source={{uri:constants.portfolioImagePath+item.image_url}}/>}
+                                           source={{uri:item.portfolio_image}}/>
                                 </View>}
                         />}
                         {(this.state.ListData.length<1) &&<View style={{width:"100%",height:60,alignItems:"center",justifyContent:"center"}}>

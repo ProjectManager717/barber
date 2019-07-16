@@ -13,7 +13,7 @@ export default class MobilePaySettings extends Component {
         super(props);
         console.disableYellowBox = true;
         this.state = {
-            showLoading:false,
+            showLoading: false,
             firstName: "",
             lastName: "",
             DOB: "",
@@ -25,7 +25,7 @@ export default class MobilePaySettings extends Component {
             country: "",
             checking: false,
             saving: false,
-            bankAccountType:"",
+            bankAccountType: "",
             bankAccountHolderName: "",
             bankRoutingNumber: "",
             bankAccountNumber: "",
@@ -105,16 +105,15 @@ export default class MobilePaySettings extends Component {
 
     checkBoxChecked(item) {
         if (item.title === "Checking") {
-            if (this.state.checking === true){
-                this.setState({checking: false,bankAccountType:0})
-            }
-            else
+            if (this.state.checking === true) {
+                this.setState({checking: false, bankAccountType: 0})
+            } else
                 this.setState({checking: true})
 
         }
         if (item.title === "Savings") {
             if (this.state.saving === true)
-                this.setState({saving: false,bankAccountType:1})
+                this.setState({saving: false, bankAccountType: 1})
             else
                 this.setState({saving: true})
 
@@ -135,7 +134,7 @@ export default class MobilePaySettings extends Component {
         if (this.checkAllFields()) {
             this.setState({showLoading: true})
             var details = {
-                user_id:Preference.get("userId"),
+                user_id: Preference.get("userId"),
                 firstname: this.state.firstName,
                 lastname: this.state.lastName,
                 dob: this.state.DOB,
@@ -173,8 +172,9 @@ export default class MobilePaySettings extends Component {
                         Alert.alert("Success!", "MobilePay Setting Saved.");
                         //this.props.navigation.navigate("Settings");
                         if (Preference.get("newUser") === true) {
-                            if (this.state.MP.StateMP === true) {
-                                this.props.navigation.push("MobilePay");
+                            Preference.set("newUser", false);
+                            if (Preference.get("paymentOption") === "mobilepay") {
+                                this.props.navigation.push("PaymentMethod");
                             } else {
                                 this.props.navigation.navigate("TabNavigator");
                             }

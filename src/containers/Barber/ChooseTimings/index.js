@@ -170,7 +170,7 @@ export default class ChooseTimings extends Component {
                 let startimeDay=this.state.startTime;
                 startimeDay.setHours(startTime1[0]);
                 startimeDay.setMinutes(startTime1[1]);
-                this.setState({startTime:startimeDay})
+                this.setState({startTime:startimeDay});
                 console.log("SetTime:::-->"+startTime1);
 
                 let endTime=workingdayz[j].working_to;
@@ -181,10 +181,10 @@ export default class ChooseTimings extends Component {
                 endtimeDay.setMinutes(endTime1[1]);
                 this.setState({endTime:endtimeDay})
                 console.log("SetTime:::-->"+this.state.endTime);
+                workingdayz[j].selected=true;
+                this.setState({workingDays:workingdayz})
             }
-
         }
-
     }
 
     setWorkingDay(val) {
@@ -255,11 +255,12 @@ export default class ChooseTimings extends Component {
                         />
 
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => this.dayItemClicked(item.k)}>
+                    <TouchableOpacity style={{flexDirection:"column",alignItems: "center"}} onPress={() => this.dayItemClicked(item.k)}>
                         <Text
                             style={[styles.week_day_container, {fontFamily: "AvertaStd-Thin"}]}>
                             {week[item.k]}
                         </Text>
+                        {workingdayz[item.k].selected &&<View style={{height:6,width:6,backgroundColor:"white",borderRadius:3,marginTop:3}}/>}
                     </TouchableOpacity>
                 </View>
             );
