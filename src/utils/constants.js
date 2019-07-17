@@ -18,7 +18,7 @@ export const constants = {
     UpdateWorkingHours: Base_url + path2 + "slotWorkingHours",
     ClientBlastMessage: Base_url + path2 + "sendClientBlast",
     GetNotifications: Base_url + path3 + "notifications",
-    GetCalenderSlots: Base_url + path2 + "calenderSlots",
+    GetCalenderSlots: Base_url + path2 + "bookinAgainstBarber",
     BarberBookingPreference: Base_url + path3 + "settings",
     UpdateBookingPreference: Base_url + path3 + "settings/bookingPreference",
     UpdateCancellation: Base_url + path3 + "settings/cancellationPolicy",
@@ -30,6 +30,7 @@ export const constants = {
     BarberAddMobilePaySetting: Base_url + "/api/mobilePay/" + "add",
     BarbersProfileUpdate: Base_url + path2+"update",
     BarbersSendVerfication: Base_url + path2+"sendVerificationCode",
+    BarbersDeleteImage: Base_url + path2+"portfolio_ImageDelete",
 
 
     ClientLogin: Base_url + clientPath + "login",

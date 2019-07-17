@@ -149,11 +149,11 @@ export default class BookingPreferences extends Component {
     }
 
     renderRowWithCheck(item) {
-        return <View style={{flex: 1, flexDirection: 'row', height: 22, marginLeft: 40}}>
-            <CheckBoxSquare onClick={() => {
-                this.setCheckBox(item.indx)
-            }} isChecked={item.value} style={{alignSelf: 'center'}}/>
-            <Text style={styles.row_title}>{item.title}</Text>
+        return <View style={{flexDirection: 'row', height: 22, marginLeft: 40}}>
+            <TouchableOpacity style={{alignSelf: 'center'}} onPress={() => this.setCheckBox(item.indx)}>
+                <CheckBoxSquare onClick={() => {this.setCheckBox(item.indx)}} rightText={item.title} isChecked={item.value} style={{width:200}}  />
+               {/* <Text style={{marginStart:10,color:"white"}}>{item.title}</Text>*/}
+            </TouchableOpacity>
         </View>;
     }
 
@@ -231,11 +231,11 @@ export default class BookingPreferences extends Component {
         let calendarInterval = 0;
         if (this.state.MP.StateMP === true) {
             paymentOption = 0;
-            Preference.set("paymentOption","mobilepay")
+            Preference.set("paymentOption", "mobilepay")
         }
         if (this.state.IN.StateIN === true) {
             paymentOption = 1;
-            Preference.set("paymentOption","inshop")
+            Preference.set("paymentOption", "inshop")
         }
         console.log("paymentOptionBit--->" + this.state.MP.StateMP);
         console.log("paymentOptionBit--->" + paymentOption);
@@ -405,17 +405,17 @@ export default class BookingPreferences extends Component {
 
                     {/*<Text style={styles.txtHeader}>AVAILABILITY</Text>*/}
                     {/*<View style={[globalStyles.rowBackground, styles.row]}>*/}
-                        {/*{this.renderRowTimer({*/}
-                            {/* title: "Every 30 Minutes",*/}
-                            {/*title: "Calender Interval",*/}
-                            {/*ic: require("../../../assets/images/every_30_min.png"),*/}
-                        {/*})}*/}
-                        {/*<Text style={{*/}
-                            {/*marginStart: 30,*/}
-                            {/*color: "grey",*/}
-                            {/*fontSize: 12,*/}
-                            {/*fontStyle: "italic"*/}
-                        {/*}}>{"Calender Interval"}</Text>*/}
+                    {/*{this.renderRowTimer({*/}
+                    {/* title: "Every 30 Minutes",*/}
+                    {/*title: "Calender Interval",*/}
+                    {/*ic: require("../../../assets/images/every_30_min.png"),*/}
+                    {/*})}*/}
+                    {/*<Text style={{*/}
+                    {/*marginStart: 30,*/}
+                    {/*color: "grey",*/}
+                    {/*fontSize: 12,*/}
+                    {/*fontStyle: "italic"*/}
+                    {/*}}>{"Calender Interval"}</Text>*/}
                     {/*</View>*/}
                     {/*{this.renderRowWithCheck({title: "Every 15 Minutes", value: this.state.fifteenMin1, indx: 4})}*/}
                     {/*{this.renderRowWithCheck({title: "Every 20 Minutes", value: this.state.twentyMin1, indx: 5})}*/}

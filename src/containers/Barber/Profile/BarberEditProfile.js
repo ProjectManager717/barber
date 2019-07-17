@@ -427,9 +427,44 @@ export default class BarberEditProfile extends Component {
     deleteImage(indx) {
         //alert("deleting "+indx);
         let imageDta = this.state.imagesData;
-        imageDta.splice(indx, 1);
-        this.setState({imagesData: imageDta});
-        console.log("imagesData+ " + JSON.stringify(this.state.imagesData))
+        var details = {
+            barber_id: Preference.get("userId"),
+            portfolio_image_id:imageDta[indx]._id,
+        };
+        var formBody = [];
+        for (var property in details) {
+            var encodedKey = encodeURIComponent(property);
+            var encodedValue = encodeURIComponent(details[property]);
+            formBody.push(encodedKey + "=" + encodedValue);
+        }
+        formBody = formBody.join("&");
+        fetch(constants.BarbersDeleteImage, {
+            method: 'DELETE',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: formBody
+        }).then(response => response.json())
+            .then(response => {
+                console.log("responseClientlogin-->", "-" + JSON.stringify(response));
+                if (response.ResultType === 1) {
+                    Alert.alert("Success!","Image Deleted Successfully.")
+                    imageDta.splice(indx, 1);
+                    this.setState({imagesData: imageDta});
+                    console.log("imagesData+ " + JSON.stringify(this.state.imagesData));
+                } else {
+                    if (response.ResultType === 0) {
+                        alert(response.Message);
+                    }
+                }
+            })
+            .catch(error => {
+                //console.error('Errorr:', error);
+                console.log('Error:', error);
+                alert("Error: "+error);
+            });
+
     }
 
     setServiceData() {
@@ -518,13 +553,12 @@ export default class BarberEditProfile extends Component {
 
     addServiceData() {
         let services = this.state.ListData;
-        if (parseInt(this.state.serviceDuration) >= 15 && parseInt(this.state.servicePrice) >= 3) {
-
+        if (parseInt(this.state.serviceDuration) >= 15 && parseInt(this.state.servicePrice) >= 5) {
             services.push({
                 id: this.state.ListData.length + 1,
-                service_type: this.state.serviceName,
-                duration_type: this.state.serviceDuration,
-                prize_type: this.state.servicePrice,
+                name: this.state.serviceName,
+                duration: this.state.serviceDuration,
+                price: this.state.servicePrice,
                 showLine: true
             });
             this.setState({ListData: services, DialogAddService: false, showLoading: true});
@@ -717,7 +751,7 @@ export default class BarberEditProfile extends Component {
                                                            placeholderTextColor={"grey"}
                                                            onChangeText={(text) => {
                                                                this.setState({barberShopName: text});
-                                                               Preference.set("userShopname", this.state.userShopName)
+                                                               //Preference.set("userShopname", this.state.userShopName)
                                                            }}
                                                            style={{
                                                                fontWeight: "bold",
@@ -953,7 +987,7 @@ export default class BarberEditProfile extends Component {
                                     height: 40,
                                 }}>
                                     <View style={{
-                                        width: "40%",
+                                        width: "30%",
                                         flexDirection: "row", marginTop: 10
                                     }}>
                                         <Text style={{
@@ -969,7 +1003,6 @@ export default class BarberEditProfile extends Component {
                                     </View>
                                     <View style={{
                                         width: "30%",
-
                                         flexDirection: "row", marginTop: 10
                                     }}>
                                         <Text style={{
@@ -979,9 +1012,9 @@ export default class BarberEditProfile extends Component {
                                         <Text style={{
                                             fontSize: 11,
                                             marginStart: 3, color: "white"
-                                        }}>{item.duration}</Text>
+                                        }}>{item.duration +" min"}</Text>
                                     </View>
-                                    <View style={{width: "30%", flexDirection: "row", marginTop: 10}}>
+                                    <View style={{width: "40%", flexDirection: "row", marginTop: 10}}>
                                         <Text style={{
                                             fontSize: 10,
                                             marginStart: 10, color: "grey"
@@ -990,7 +1023,7 @@ export default class BarberEditProfile extends Component {
                                             fontSize: 11,
                                             marginStart: 3, color: "white"
                                         }}>{"$" + item.price}</Text>
-                                        <TouchableOpacity onPress={() => this.setState({
+                                        <TouchableOpacity style={{position:"absolute",right:20}} onPress={() => this.setState({
                                             DialogEditService: true,
                                             serviceEditId: item._id,
                                             serviceName: item.name,
@@ -1000,13 +1033,13 @@ export default class BarberEditProfile extends Component {
                                         })}>
                                             <Image style={{
                                                 width: 14,
-                                                height: 14, marginStart: 8, resizeMode: 'contain'
+                                                height: 14, resizeMode: 'contain'
                                             }} source={require('../../../assets/images/edit.png')}/>
                                         </TouchableOpacity>
-                                        <TouchableOpacity onPress={() => this.deleteService(index)}>
+                                        <TouchableOpacity style={{position:"absolute",right:40}} onPress={() => this.deleteService(index)}>
                                             <Image style={{
                                                 width: 14, resizeMode: 'contain',
-                                                height: 14, marginStart: 5
+                                                height: 14,
                                             }} source={require('../../../assets/images/delete.png')}/>
                                         </TouchableOpacity>
 
@@ -1124,7 +1157,7 @@ export default class BarberEditProfile extends Component {
                                     marginTop: 5,
                                     fontWeight: "bold",
                                     textAlign: "center"
-                                }}>Edit Service</Text>
+                                }}>Add Service</Text>
                                 <TextInput Color={"white"}
                                            placeholder={"Enter Service name"}
                                            placeholderTextColor={"grey"}

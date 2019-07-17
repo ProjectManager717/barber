@@ -7,6 +7,7 @@ import {Header} from "react-native-elements";
 import CheckBox from "../../../components/CheckBox";
 import {constants} from "../../../utils/constants";
 import Preference from "react-native-preference";
+import CheckBoxSquare from "../SurgePricing";
 
 
 export default class Cancellations extends Component {
@@ -197,9 +198,9 @@ export default class Cancellations extends Component {
 
     renderRow(item) {
         return <View style={{flex: 1, flexDirection: 'row', height: 25, marginLeft: 40}}>
-            <CheckBox onClick={() => this.checkBox(item.title)
-            } isChecked={item.value} style={{alignSelf: 'center'}}/>
-            <Text style={styles.row_title}>{item.title}</Text>
+            <CheckBox rightText={item.title}  onClick={() => this.checkBox(item.title)
+            } isChecked={item.value} style={{width:"90%"}}/>
+           {/* <Text style={styles.row_title}>{item.title}</Text>*/}
         </View>;
     }
 

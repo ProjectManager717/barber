@@ -7,6 +7,7 @@ import {Colors} from "../../../themes";
 import {styles} from "./styles";
 import {constants} from "../../../utils/constants";
 import Preference from "react-native-preference";
+import {SafeAreaView} from "react-navigation";
 
 var moment = require("moment");
 
@@ -28,6 +29,7 @@ export default class Calendar extends Component {
     constructor() {
         super();
         this.state = {
+            showLoading: false,
             dataSource: [],
             dayData: [],
             monthDays: [],
@@ -185,7 +187,7 @@ export default class Calendar extends Component {
             dayData: hours,
             dataSource: items
         });
-        this.getCalenderSlots();
+        //
         //this.setState({calenderSlots:this.state.listData});
 
 
@@ -193,22 +195,78 @@ export default class Calendar extends Component {
         const output = moment(input, "MM-YY");
         console.log("DateMonth--" + output);
         let lastDay = output.endOf('month').format('DD');
+        console.log("DateMonth--" + lastDay);
+        let monthh = getmonth + 1;
+        if (monthh < 10)
+            monthh = "0" + monthh;
         let daysData = [];
         for (let i = getDate; i <= lastDay; i++) {
+
+            let realDate = getYear + "-" + monthh + "-" + i;
+            console.log("Real_date-----> ", realDate);
             if (getDay == 1)
-                daysData.push({id: i, day: i, dayColor: "#ffffff", weekDay: "Mon", bottomColor: "transparent"})
+                daysData.push({
+                    id: i,
+                    day: i,
+                    dayColor: "#ffffff",
+                    weekDay: "Mon",
+                    bottomColor: "transparent",
+                    showdate: realDate
+                })
             if (getDay == 2)
-                daysData.push({id: i, day: i, dayColor: "#ffffff", weekDay: "Tue", bottomColor: "transparent"})
+                daysData.push({
+                    id: i,
+                    day: i,
+                    dayColor: "#ffffff",
+                    weekDay: "Tue",
+                    bottomColor: "transparent",
+                    showdate: realDate
+                })
             if (getDay == 3)
-                daysData.push({id: i, day: i, dayColor: "#ffffff", weekDay: "Wed", bottomColor: "transparent"})
+                daysData.push({
+                    id: i,
+                    day: i,
+                    dayColor: "#ffffff",
+                    weekDay: "Wed",
+                    bottomColor: "transparent",
+                    showdate: realDate
+                })
             if (getDay == 4)
-                daysData.push({id: i, day: i, dayColor: "#ffffff", weekDay: "Thur", bottomColor: "transparent"})
+                daysData.push({
+                    id: i,
+                    day: i,
+                    dayColor: "#ffffff",
+                    weekDay: "Thur",
+                    bottomColor: "transparent",
+                    showdate: realDate
+                })
             if (getDay == 5)
-                daysData.push({id: i, day: i, dayColor: "#ffffff", weekDay: "Fri", bottomColor: "transparent"})
+                daysData.push({
+                    id: i,
+                    day: i,
+                    dayColor: "#ffffff",
+                    weekDay: "Fri",
+                    bottomColor: "transparent",
+                    showdate: realDate
+                })
             if (getDay == 6)
-                daysData.push({id: i, day: i, dayColor: "#ffffff", weekDay: "Sat", bottomColor: "transparent"})
+                daysData.push({
+                    id: i,
+                    day: i,
+                    dayColor: "#ffffff",
+                    weekDay: "Sat",
+                    bottomColor: "transparent",
+                    showdate: realDate
+                })
             if (getDay == 7)
-                daysData.push({id: i, day: i, dayColor: "#ffffff", weekDay: "Sun", bottomColor: "transparent"})
+                daysData.push({
+                    id: i,
+                    day: i,
+                    dayColor: "#ffffff",
+                    weekDay: "Sun",
+                    bottomColor: "transparent",
+                    showdate: realDate
+                })
 
             if (getDay === 7)
                 getDay = 1;
@@ -216,26 +274,33 @@ export default class Calendar extends Component {
         }
         let mon = this.state.month[getmonth];
         this.setState({monthDays: daysData});
+        this.getCalenderSlots(getYear + "-" + monthh + "-" + getDate);
+        //console.log("Real_date-----> ",JSON.stringify(daysData));
+        //console.log("Real_date-----> ",JSON.stringify(this.state.monthDays));
     }
 
-    itemSelect(colorItem, item) {
+    itemSelect(colorItem, item, services) {
+        let endSlot = item.selected_slot_id.length - 1;
         if (colorItem !== "#DF00FF" && colorItem !== "yellow") {
             this.props.navigation.navigate("Appointments", {
                 bgc: colorItem,
-                clientName: item.client,
+                client_Image: item.barber_image,
+                clientName: item.barber,
                 createdAt: item.createdAt,
-                startTime: item.time_from,
-                endtTime: item.time_to,
-                price: item.price,
-                services: item.booking_title
+                startTime: item.selected_slot_id[0].start_time,
+                endtTime: item.selected_slot_id[endSlot].end_time,
+                price: item.total_price,
+                services: services
             })
         }
     }
 
-    getCalenderSlots() {
+    getCalenderSlots(datee) {
         this.state.calenderSlots = [];
-        console.log("userID" + Preference.get("userId"));
-        fetch(constants.GetCalenderSlots + "?user_id=" + Preference.get("userId"), {
+        this.setState({showLoading: true})
+        //let datee = this.state.selectedDate;
+        console.log("URL--->" + constants.GetCalenderSlots + "?barber_id=" + Preference.get("userId") + "&date=" + datee);
+        fetch(constants.GetCalenderSlots + "?barber_id=" + Preference.get("userId") + "&date=" + datee, {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
@@ -245,37 +310,44 @@ export default class Calendar extends Component {
             .then(response => {
                 console.log("responseCalenderSlots-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
-                    this.setState({calenderSlots: response.Data})
+                    this.setState({showLoading: false})
+                    console.log("responseCalenderSlots--->", JSON.stringify(response.Data.appointments));
+                    if (response.Message === "No Appointment found against this Barber") {
+                        this.setState({calenderSlots: []})
+                    } else {
+                        this.setState({calenderSlots: response.Data.appointments})
+                    }
+
                     /*if (this.state.calenderSlots.length < 1) {
                         this.setState({calenderSlots: this.state.listData})
                     }*/
                 } else {
+                    this.setState({showLoading: false})
                     if (response.ResultType === 0) {
                         alert(response.Message);
                     }
                 }
             }).catch(error => {
             //console.error('Errorr:', error);
+            this.setState({showLoading: false})
             console.log('Error:', error);
-            alert("Error: "+error);
+            alert("Error: " + error);
         });
     }
 
     renderItem(item) {
-        console.log("calenderSlots-->" + item._id);
+        console.log("renderItem--->", item.length)
         if (this.state.calenderSlots.length > 0) {
             console.log("calenderSlotslength- > 0");
-            let time = item.time_from;
+            let time = item.selected_slot_id[0].start_time;
             let AM = "";
-            if (time.indexOf("am") !== -1) {
-                time = time.split("am");
+            let vtime = time.split(":");
+            if (vtime[0] < 12) {
                 AM = "AM";
             } else {
-                time = time.split("pm");
                 AM = "PM";
             }
 
-            let vtime = time[0].split(":");
             var m = moment(new Date(2011, 2, 12, vtime[0], vtime[1], 0));
             var n = moment(new Date(2011, 2, 12, vtime[0], vtime[1], 0));
             var o = moment(new Date(2011, 2, 12, vtime[0], vtime[1], 0));
@@ -288,32 +360,32 @@ export default class Calendar extends Component {
             /*2=30minbreak*/
             /*3=45min*/
             let imagep = "", imgText = "", imgTextcolor = "", bgc = "";
-            if (item.booking_type === "Completed") {
+            if (item.appointment_type === "completed") {
                 imagep = require("../../../assets/images/completed.png");
                 imgText = "COMPLETED";
                 imgTextcolor = Colors.green;
                 bgc = Colors.green;
-            } else if (item.booking_type === "In Progress") {
+            } else if (item.appointment_type === "inprogress") {
                 imagep = require("../../../assets/images/progress.png");
                 imgText = "IN PROGRESS";
                 imgTextcolor = Colors.purple;
                 bgc = Colors.purple;
-            } else if (item.booking_type === "Confirmed") {
+            } else if (item.appointment_type === "confirmed") {
                 imagep = require("../../../assets/images/confirmed.png");
                 imgText = "CONFIRMED";
                 imgTextcolor = Colors.magenta;
                 bgc = Colors.magenta;
-            } else if (item.booking_type === "Pending") {
+            } else if (item.appointment_type === "pending") {
                 imagep = require("../../../assets/images/pending.png");
                 imgText = "PENDING";
                 imgTextcolor = Colors.yellow;
                 bgc = Colors.yellow;
-            } else if (item.booking_type === "Cancelled") {
+            } else if (item.appointment_type === "cancelled") {
                 imagep = require("../../../assets/images/cancelled.png");
                 imgText = "CANCELLED";
                 imgTextcolor = Colors.red;
                 bgc = Colors.red;
-            } else if (item.booking_type === "No Show") {
+            } else if (item.appointment_type === "noshow") {
                 imagep = require("../../../assets/images/noShow.png");
                 imgText = "NO SHOW";
                 imgTextcolor = Colors.grey;
@@ -321,10 +393,31 @@ export default class Calendar extends Component {
             } else {
 
             }
+            let numberOfSlotsSlected = item.selected_slot_id.length;
+            console.log("Numberof slots------>", numberOfSlotsSlected)
+            let timeofSlots = numberOfSlotsSlected * 15;
+            if(timeofSlots===15)
+                timeofSlots=30;
+            let period = "";
+            if (timeofSlots < 60) {
+                period = "mins";
+            } else {
+                period = "hr";
+            }
+            let servicesSelected = "";
+            for (let f = 0; f < item.selected_services.length; f++) {
+                if (f === item.selected_slot_id.length) {
+                    servicesSelected += item.selected_services[f].name;
+                } else {
+                    servicesSelected += item.selected_services[f].name + ",";
+                }
 
-            if (item.total_time === "30mins") {
-                console.log("calenderSlots-time > " + item.total_time);
-                return <TouchableWithoutFeedback onPress={() => this.itemSelect(bgc, item)}>
+            }
+
+
+            if (timeofSlots === 15 || timeofSlots === 30) {
+                console.log("calenderSlots-time > " + timeofSlots);
+                return <TouchableWithoutFeedback onPress={() => this.itemSelect(bgc, item, servicesSelected)}>
                     <View style={{height: 70, flexDirection: "row"}} cellKey={item.id}>
                         <Text style={{
                             textAlignVertical: "top",
@@ -360,9 +453,9 @@ export default class Calendar extends Component {
                                         <Text style={{
                                             fontWeight: "bold", color: "white",
                                             fontSize: 11
-                                        }}>{item.booking_title}</Text>
+                                        }}>{servicesSelected}</Text>
                                         <Text style={{marginStart: 8, marginTop: 1, color: "white", fontSize: 10}}>
-                                            {item.client}
+                                            {item.barber}
                                         </Text>
                                     </View>
                                     <View style={{flexDirection: "row", marginTop: 7}}>
@@ -376,7 +469,7 @@ export default class Calendar extends Component {
                                                }}
                                         />
                                         <Text
-                                            style={{color: "#95A2B5", fontSize: 12}}>{item.total_time + ""}</Text>
+                                            style={{color: "#95A2B5", fontSize: 12}}>{" " + timeofSlots + period}</Text>
                                         <View style={{
                                             flexDirection: "column",
                                             width: 1, height: 13,
@@ -385,7 +478,7 @@ export default class Calendar extends Component {
                                             marginStart: 10,
                                             marginEnd: 10
                                         }}/>
-                                        <Text style={{color: "#95A2B5", fontSize: 12}}>{item.price}</Text>
+                                        <Text style={{color: "#95A2B5", fontSize: 12}}>{" $" + item.total_price}</Text>
                                     </View>
                                 </View>
 
@@ -406,9 +499,9 @@ export default class Calendar extends Component {
                     </View>
                 </TouchableWithoutFeedback>;
             }
-            if (item.total_time === "60mins") {
+            if (timeofSlots === 60) {
                 console.log("calenderSlots-time > " + item.total_time);
-                return <TouchableOpacity onPress={() => this.itemSelect(bgc, item)}>
+                return <TouchableOpacity onPress={() => this.itemSelect(bgc, item, servicesSelected)}>
                     <View style={{height: 140, flexDirection: "row"}} cellKey={item.id}>
                         <View style={{flexDirection: "column"}}>
                             <Text
@@ -506,7 +599,7 @@ export default class Calendar extends Component {
 
                 </TouchableOpacity>;
             }
-            if (item.total_time === "break") {
+            if (timeofSlots === 0) {
                 console.log("calenderSlots-time > " + item.total_time);
                 return (<TouchableOpacity onPress={() => this.props.navigation.navigate("Appointments")}>
                     <View style={{height: 140, flexDirection: "row"}} cellKey={item.id}>
@@ -562,9 +655,9 @@ export default class Calendar extends Component {
                 </TouchableOpacity>);
 
             }
-            if (item.total_time === "45mins") {
+            if (timeofSlots === 45) {
                 console.log("calenderSlots-time > " + item.total_time);
-                return <TouchableOpacity onPress={() => this.itemSelect(bgc, item)}>
+                return <TouchableOpacity onPress={() => this.itemSelect(bgc, item, servicesSelected)}>
                     <View style={{height: 140, flexDirection: "row"}} cellKey={item.id}>
                         <View style={{flexDirection: "column"}}>
                             <Text
@@ -669,6 +762,9 @@ export default class Calendar extends Component {
     selectday(indx) {
         //alert("dayselected " + indx);
         let monthDaysData = this.state.monthDays;
+        console.log("ShowDateSelected", JSON.stringify(monthDaysData[indx].showdate));
+        this.setState({selectedDate: monthDaysData[indx].showdate})
+
         for (let s = 0; s < monthDaysData.length; s++) {
             console.log("slectDay-loop" + s);
             if (s === indx) {
@@ -685,6 +781,7 @@ export default class Calendar extends Component {
         this.setState({monthDays: monthDaysData}, () => {
             console.log("NEWMonthdata ", JSON.stringify(this.state.monthDays));
         });
+        this.getCalenderSlots(monthDaysData[indx].showdate);
     }
 
 
@@ -742,7 +839,7 @@ export default class Calendar extends Component {
                         color: Colors.red1
                     }}
                 >
-                    {monthNames[new Date().getMonth() + 1]} {new Date().getFullYear()}
+                    {monthNames[new Date().getMonth()]} {new Date().getFullYear()}
                 </Text>
                 {/*<View style={styles.calendar_weekly_header}>
                     {this.state.dataSource}
@@ -783,16 +880,35 @@ export default class Calendar extends Component {
                         backgroundColor: Colors.lightGrey
                     }}
                 />
-                <FlatList
-                    keyExtractor={(item, index) => index.toString()}
+                {(this.state.calenderSlots.length > 0) && <FlatList
                     //data={this.state.dayData}
                     data={this.state.calenderSlots}
                     extraData={this.state}
                     renderItem={({item}) => this.renderItem(item)}
                     numColumns={1}
                     keyExtractor={(item, index) => index}
-                />
+                />}
 
+                {!(this.state.calenderSlots.length > 0) && <View style={{
+                    width: "100%",
+                    height: 60,
+                    justifyContent: "center",
+                    alignItems: "center"
+                }}>
+                    <Text style={{fontSize: 16, color: "white"}}>{"There are no bookings on current date"}</Text>
+                </View>}
+                {this.state.showLoading && <View style={{
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor: "transparent",
+                    position: "absolute",
+                    opacity: 1,
+                    alignItems: "center",
+                    justifyContent: "center"
+                }}>
+                    <Image resizeMode={"contain"} source={require("../../../assets/images/loading.gif")}
+                           style={{width: 100, height: 100, opacity: 1,}}/>
+                </View>}
 
             </View>
         );

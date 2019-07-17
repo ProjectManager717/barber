@@ -199,19 +199,18 @@ export default class SurgePricing extends Component {
     }
 
     renderRowWithCheck(item) {
-        return <View style={{flex: 1, flexDirection: 'row', height: 22, marginLeft: 40}}>
-            <CheckBoxSquare onClick={() => this.checkBox(item.title)} isChecked={item.value}
-                            style={{alignSelf: 'center'}}/>
-            <Text style={[styles.row_title, {fontSize: item.fontSize}]}>{item.title}</Text>
+        return <TouchableOpacity onPress={()=>this.checkBox(item.title)} style={{flex: 1, flexDirection: 'row', height: 22, marginLeft: 40}}>
+            <CheckBoxSquare rightText={item.title} onClick={() => this.checkBox(item.title)} rightText={item.title} isChecked={item.value} style={{width:160}}/>
+           {/* <Text style={[styles.row_title, {fontSize: item.fontSize}]}>{item.title}</Text>*/}
             {(item.title === "Birthday") &&
-            <Text style={[styles.row_title, {fontSize: item.fontSize}]}>{"- " + Preference.get("userDOB")}</Text>}
+            <Text style={[styles.row_title, {fontSize: 14}]}>{"- " + Preference.get("userDOB")}</Text>}
 
             {item.infoIcon && <TouchableOpacity onPress={() => Alert.alert(
                 'Holidays', " New Years, Valentines Day, Easter, Cinco de Mayo, 4th of July, Memorial Day, Labor Day, Halloween, Thanksgiving, Christmas")}>
                 <Image style={{marginStart: 10, width: 16, height: 16, marginTop: 3}}
                        source={require("../../../assets/images/info.png")}/>
             </TouchableOpacity>}
-        </View>;
+        </TouchableOpacity>;
     }
 
     renderRowSurge(item) {

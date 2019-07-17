@@ -65,7 +65,7 @@ export default class CheckBox extends Component {
         if (this.props.rightTextView) return this.props.rightTextView;
         if (!this.props.rightText) return null;
         return (
-            <Text style={[styles.rightText, this.props.rightTextStyle]}>{this.props.rightText}</Text>
+            <Text style={[styles.rightText, this.props.rightTextStyle,{color:"white",fontFamily: "AvertaStd-Regular"}]}>{this.props.rightText}</Text>
         );
     }
 

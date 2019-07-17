@@ -22,17 +22,21 @@ var RNFS = require('react-native-fs');
 const {width, height} = Dimensions.get("window");
 
 const link = "www.clypr.co/pro/" + Preference.get("userName");
-const userName = Preference.get("userName");
-const shopName =Preference.get("userShopname");;
-const userAddress =Preference.get("userAddress");;
-
+let barberName="",barberImage="",barberShopName="",barberAddress="",barberInsta="";
 export default class Share extends Component {
 
     constructor(props) {
         super(props);
+        const {navigation} = this.props;
+        barberName = navigation.getParam('barberName');
+        barberImage = navigation.getParam('profile_image');
+        barberShopName = navigation.getParam('barberShopName');
+        barberAddress = navigation.getParam('barberAddress');
+        barberInsta = navigation.getParam('barberInsta');
+
         this.state = {
             text2: 'Your Message...',
-            clipboardContent: null
+            clipboardContent: null,
         };
 
     }
@@ -123,12 +127,12 @@ export default class Share extends Component {
                                     style={{marginStart: 5, color: "grey", fontFamily: "AvertaStd-Thin"}}
                                 >{"Copy & Paste the below link"}</Text></View>
                             <TouchableOpacity
-                                onPress={() => this.saveToClipboard("www.clypr.co/pro/" + Preference.get("userName"))}>
+                                onPress={() => this.saveToClipboard("www.clypr.co/pro/" + barberInsta)}>
                                 <Text style={{
                                     color: "white",
                                     fontSize: 15,
                                     fontFamily: "AvertaStd-Bold"
-                                }}>{link}</Text>
+                                }}>{"www.clypr.co/pro/" + barberInsta}</Text>
                             </TouchableOpacity>
 
                         </View>
@@ -145,29 +149,29 @@ export default class Share extends Component {
                             />
 
                             <View style={{position: "absolute", top: 5, left: 15, alignItems: "center"}}>
-                                <Image source={require("../../../assets/images/pic.png")} style={{
+                                <Image source={barberImage} style={{
                                     width: 70,
                                     height: 70,
-
+                                    borderRadius:35,
                                 }}/>
                                 <Text style={{
                                     fontWeight: "bold",
                                     color: "black",
                                     fontSize: 10,
                                 }}
-                                >{userName}</Text>
+                                >{barberName}</Text>
                                 <Text
                                     style={{
                                         color: "black",
                                         fontSize: 8,
                                     }}
-                                >{shopName}</Text>
+                                >{barberShopName}</Text>
                                 <Text
                                     style={{
                                         color: "black",
                                         fontSize: 8,
                                     }}
-                                >{"("+userAddress+")"}</Text>
+                                >{"("+barberAddress+")"}</Text>
                             </View>
                             <View style={{
                                 flexDirection: "row",
@@ -176,7 +180,7 @@ export default class Share extends Component {
                                 right: 10,
                                 top: 10
                             }}>
-                                <Text style={{color: "black", fontSize: 12}}>{link}</Text>
+                                <Text style={{color: "black", fontSize: 12}}>{"www.clypr.co/pro/" + barberInsta}</Text>
                                 <TouchableOpacity onPress={() => this.downloadImage()}>
                                     <Image
                                            style={{width: 40, height: 40, marginStart: 20}}
@@ -214,7 +218,6 @@ export default class Share extends Component {
                             </View>
                             <View style={{
                                 flexDirection: "row",
-
                                 position: "absolute",
                                 alignItems: "center",
                                 justifyContent: "center",
@@ -238,20 +241,14 @@ export default class Share extends Component {
                                 }}>
 
                                     <Text style={{
-
                                         color: "white",
-
                                         fontSize: 9,
-
                                         fontWeight: "bold",
-
-
                                     }}>{" Available on App Store "}</Text>
                                 </View>
                             </View>
                             <View style={{
                                 flexDirection: "row",
-
                                 position: "absolute",
                                 alignItems: "center",
                                 justifyContent: "center",
@@ -280,7 +277,6 @@ export default class Share extends Component {
                         </ViewShot>
                         <ViewShot style={{width: "100%", height: height / 2.1,}} ref="viewShot2"
                                   options={{format: "jpg", quality: 0.9}}>
-
                             <Image
                                 source={require("../../../assets/images/shareimgbg2.png")}
                                 style={{
@@ -291,26 +287,26 @@ export default class Share extends Component {
                             />
 
                             <View style={{position: "absolute", top: 5, left: 25, alignItems: "center"}}>
-                                <Image source={require("../../../assets/images/pic.png")} style={{
+                                <Image source={barberImage} style={{
                                     width: 70,
-                                    height: 70,
+                                    height: 70,borderRadius:35,
                                 }}/>
                                 <Text
                                     style={{
                                         fontWeight: "bold",
                                         color: "black",
                                         fontSize: 10,
-                                    }}>{userName}</Text>
+                                    }}>{barberName}</Text>
                                 <Text style={{
                                     color: "black",
                                     fontSize: 8,
 
-                                }}>{shopName}</Text>
+                                }}>{barberShopName}</Text>
                                 <Text style={{
                                     color: "black",
                                     fontSize: 8,
 
-                                }}>{"("+ userAddress+")"}</Text>
+                                }}>{"("+ barberAddress+")"}</Text>
                             </View>
                             <View style={{
                                 flexDirection: "row",
@@ -405,7 +401,7 @@ export default class Share extends Component {
                                         color: "black",
                                         fontSize: 11, marginTop: 10
                                     }}
-                                >{link}</Text>
+                                >{"www.clypr.co/pro/" + barberInsta}</Text>
                             </View>
                         </ViewShot>
                     </View>

@@ -7,7 +7,7 @@ import {Header} from "react-native-elements";
 import CheckBoxSquare from "../../../components/CheckBox";
 var moment = require("moment");
 
-let clr = "", clientName = "", createdAt = "", startTime = "", endTime = "", price = "", services = "",
+let clr = "", clientName = "", createdAt = "", startTime = "", endTime = "", price = "", services = "",client_image="",
     totalServices = "";
 export default class Appointments extends Component {
 
@@ -22,8 +22,10 @@ export default class Appointments extends Component {
         endTime = navigation.getParam('endtTime');
         price = navigation.getParam('price');
         var m = moment(new Date(createdAt));
+        client_image=navigation.getParam("client_Image")
         services = navigation.getParam('services');
-        totalServices = services.split("&");
+        console.log("Servicesss-->",services)
+        totalServices = services.split(",");
         createdAt=m.format("DD-MM-YYYY HH:MM:SS");
         console.log("gettingUSersignIn--->" +m.format("DD-MM-YYYY HH:MM:SS"));
     }
@@ -92,15 +94,13 @@ export default class Appointments extends Component {
     }
 
     renderRowButtons(item) {
-        return <View style={{flexDirection: 'row', height: "100%", marginStart: 30}}>
-            <TouchableOpacity
+        return <TouchableOpacity
                 style={{
-                    width: 100,
                     flexDirection: "row",
                     height: 28,
-                    marginTop: 8,
                     bottom: 20,
                     marginBottom: 70,
+                    marginStart:20,
                     alignItems: "center",
                     justifyContent: "center",
                     borderRadius: 12,
@@ -109,10 +109,10 @@ export default class Appointments extends Component {
                     backgroundColor: "#626371"
                 }}>
                 <Image source={require("../../../assets/images/tick.png")}
-                       style={{resizeMode: "contain", height: 15, width: 15}}/>
-                <Text style={[globalStyles.receiptButtonText, {marginStart: 5, fontWeight: "bold"}]}>{item.text}</Text>
+                       style={{resizeMode: "contain", height: 15, width: 15,marginStart:10}}/>
+                <Text style={[globalStyles.receiptButtonText, {marginStart: 5, fontWeight: "bold",marginEnd:10}]}>{item.text}</Text>
 
-            </TouchableOpacity></View>
+            </TouchableOpacity>
     }
 
     render() {
@@ -152,8 +152,8 @@ export default class Appointments extends Component {
                                 alignItems: "center",
                                 top: 120
                             }}>
-                                <Image resizeMode={"contain"} source={require("../../../assets/images/user_surge.png")}
-                                       style={[styles.profileImage, {position: "absolute", width: 150, height: 150}]}/>
+                                <Image resizeMode={"cover"} source={{uri:client_image}}
+                                       style={[styles.profileImage, {position: "absolute", width: 150, height: 150,borderRadius:75}]}/>
                                 <Text style={{
                                     marginTop: 155,
                                     fontSize: 16,

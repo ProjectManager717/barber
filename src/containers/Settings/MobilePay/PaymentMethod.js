@@ -90,17 +90,33 @@ export default class PaymentMethod extends Component {
             usertype = "client";
         try {
 
-           /* const source = await stripe.createSourceWithParams({
-                type: 'card',
-                number: '4242424242424242',
-                expMonth: 11,
-                expYear: 22,
-                cvc: '123',
-            })*/
+            /* const source = await stripe.createSourceWithParams({
+                 type: 'card',
+                 number: '4242424242424242',
+                 expMonth: 11,
+                 expYear: 22,
+                 cvc: '123',
+             })*/
 
-            const params = shouldPass ? this.state.params : this.state.errorParams
+            let cardData = this.state.params;
+            cardData.number = this.state.cardNumber;
+            cardData.expMonth = this.state.month;
+            cardData.expYear = this.state.year;
+            cardData.cvc = this.state.cvc;
+            cardData.name = this.state.cardHolderName;
+            cardData.currency = 'usd';
+            cardData.addressLine1 =  '123 Test Street';
+            cardData.addressLine2 ='Apt. 5';
+            cardData.addressCity = 'Test City';
+            cardData.addressState = 'Test State';
+            cardData.addressCountry = 'Test Country';
+            cardData.addressZip = '55555';
+            this.setState({params:cardData});
+
+
+            const params = shouldPass ? this.state.params : this.state.errorParams;
             const token = await stripe.createTokenWithCard(params)
-            console.log("CArdReponse",token);
+            console.log("CArdReponse", token);
         } catch (error) {
             this.setState({error, loading: false})
         }
@@ -224,10 +240,9 @@ export default class PaymentMethod extends Component {
                                     <Image style={[styles.right_arrow]}
                                            source={require("../../../assets/images/vcircle.png")}/>
                                     <TextInput style={{fontSize: 15, color: 'white', marginStarts: 5}}
-                                               value={this.state.cardNumber}
                                                placeholder={"4242-4242-4242-4242"}
                                                onChangeText={(text) => this.setState({cardNumber: text})}
-                                               placeholderTextColor={"white"}/>
+                                               placeholderTextColor={"grey"}/>
                                 </View>
                             </TouchableOpacity>
 
@@ -246,7 +261,7 @@ export default class PaymentMethod extends Component {
                                                   style={[styles.row_back, {width: "25%", marginStart: 10}]}>
                                     <Text style={{fontSize: 15, color: 'white', marginStart: 10, marginTop: 10}}
                                           placeholder={this.state.month}
-                                          placeholderTextColor={"white"}>{this.state.month}</Text>
+                                          placeholderTextColor={"grey"}>{this.state.month}</Text>
                                     <Image resizeMode={"contain"} style={[styles.dropDown]}
                                            source={require("../../../assets/images/dropdown.png")}/>
 
@@ -301,7 +316,7 @@ export default class PaymentMethod extends Component {
                                                   style={[styles.row_back, {width: "25%", marginStart: 5}]}>
                                     <Text style={{fontSize: 15, color: 'white', marginStart: 10, marginTop: 10}}
                                           placeholder={this.state.year}
-                                          placeholderTextColor={"white"}>{this.state.year}</Text>
+                                          placeholderTextColor={"grey"}>{this.state.year}</Text>
                                     <Image resizeMode={"contain"} style={[styles.dropDown]}
                                            source={require("../../../assets/images/dropdown.png")}/>
 
@@ -358,10 +373,9 @@ export default class PaymentMethod extends Component {
 
                                 <View style={[styles.row_back, {width: "25%"}]}>
                                     <TextInput style={{fontSize: 15, color: 'white', marginStart: 5}}
-                                               value={this.state.cvc}
                                                placeholder={"123"}
                                                onChangeText={(text) => this.setState({cvc: text})}
-                                               placeholderTextColor={"white"}/>
+                                               placeholderTextColor={"grey"}/>
                                 </View>
                             </View>
                             <Text style={styles.txtHeader}>CARD HOLDER NAME</Text>
@@ -370,9 +384,8 @@ export default class PaymentMethod extends Component {
                                     <TextInput
                                         style={{height: 40, color: "white", marginStart: 28}}
                                         placeholder={"Card holder name"}
-                                        value={this.state.cardHolderName}
                                         onChangeText={(text) => this.setState({cardHolderName: text})}
-                                        placeholderTextColor={"white"}
+                                        placeholderTextColor={"grey"}
                                     />
                                 </View>
                                 <View style={{height: 0.5, backgroundColor: "#52525D", marginStart: 10}}></View>

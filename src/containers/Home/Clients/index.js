@@ -164,9 +164,8 @@ export default class ClientHome extends Component {
                 borderWidth: 0.5,
                 borderColor: "white"
             }}>
-            <Image resizeMode={"contain"} source={{uri:item.barber_image}} style={{
-                marginStart: 10, height: 50, width: 50,borderRadius:25,
-            }}/>
+            <Image resizeMode={"cover"} source={{uri:item.barber_image}} style={{
+                marginStart: 10, height: 50, width: 50,borderRadius:25}}/>
             <View style={{flexDirection: "column", marginStart: 10}}>
                 <Text
                     style={{fontSize: 15, color: "white"}}
@@ -194,7 +193,7 @@ export default class ClientHome extends Component {
                         alignItems: 'center',
                         justifyContent: "center",
                         borderRadius: 12,
-                        borderWidth: 1, borderColor: item.btnClr,
+                        borderWidth: 1, borderColor:"green",
                         backgroundColor: "#626371"
                     }}>
 
@@ -214,7 +213,7 @@ export default class ClientHome extends Component {
                             alignItems: 'center',
                             justifyContent: "center",
                             borderRadius: 12,
-                            borderWidth: 1, borderColor: item.btnClr,
+                            borderWidth: 1, borderColor:"red",
                             backgroundColor: "#626371"
                         }}>
                         <Text style={{
@@ -236,12 +235,11 @@ export default class ClientHome extends Component {
                             alignItems: 'center',
                             justifyContent: "center",
                             borderRadius: 12,
-                            borderWidth: 1, borderColor: item.btnClr,
+                            borderWidth: 1, borderColor: "#30A4DC",
                             backgroundColor: "#626371"
                         }}>
 
                         <Text style={{
-                            marginTop: 3,
                             color: "white",
                             fontSize: 10,
                             fontWeight: "bold"

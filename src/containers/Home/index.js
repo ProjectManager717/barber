@@ -27,7 +27,13 @@ export default class Home extends Component {
     }
 
     rightAction() {
-        this.props.navigation.navigate('Share');
+        this.props.navigation.navigate('Share',{
+            profile_image: this.state.barberImage,
+            barberName: this.state.barberName,
+            barberShopName: this.state.barberShopName,
+            barberAddress: this.state.barberAddress,
+            barberInsta:this.state.barberInsta,
+        });
     }
 
     constructor(props) {
@@ -37,9 +43,11 @@ export default class Home extends Component {
             barberName: Preference.get("userName"),
             barberImage: "",
             barberExperiance: 0,
-            barberShopName: Preference.get("userShopname"),
+            barberShopName:"",
             barberRating: 5,
             barberReviews: 17,
+            barberInsta:"",
+            barberAddress:"",
         }
         this.getBarberDetails();
     }
@@ -59,12 +67,19 @@ export default class Home extends Component {
                     this.setState({showLoading: false})
                     let barberData = response.Data;
                     console.log("USerImage===>" + barberData.user_image);
+                    if (barberData.supreme_barber === 0)
+                        Preference.set("supremeBarber", false)
+                    else
+                        Preference.set("supremeBarber", true)
                     this.setState({
                         barberImage: {uri: barberData.user_image},
+                        barberShopName:barberData.shop_name,
                         barberName: barberData.firstname,
                         barberRating: barberData.rating,
                         barberReviews: barberData.reviews,
-                        barberExperiance: barberData.experience
+                        barberExperiance: barberData.experience,
+                        barberInsta:barberData.username,
+                        barberAddress:barberData.location
                     });
                     //this.setState({barberData: response.Data});
                 } else {
@@ -132,7 +147,7 @@ export default class Home extends Component {
                                     </Text>
                                 </View>
                                 <TouchableOpacity style={styles.button} onPress={() => {
-                                    this.props.navigation.navigate('Profile');
+                                    this.props.navigation.navigate('Profile', );
                                 }}>
                                     <Text style={styles.buttonText}>View Profile</Text>
                                 </TouchableOpacity>
@@ -179,7 +194,7 @@ const styles = StyleSheet.create({
         width: width / 3,
         justifyContent: "flex-end",
         alignItems: "flex-end",
-        borderRadius:(width/3)/2
+        borderRadius: (width / 3) / 2
     },
     infoContainer: {
         height: height / 5,

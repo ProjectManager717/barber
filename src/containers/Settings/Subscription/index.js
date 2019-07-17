@@ -32,6 +32,14 @@ export default class Subscription extends Component {
 
     }
 
+    componentDidMount(): void {
+        console.log("PackageBarber",Preference.get("supremeBarber"))
+        if (Preference.get("supremeBarber"))
+            this._selectedSupreme();
+        else
+            this._selectedBasic();
+    }
+
     _selectedBasic() {
         this.setState({
             basic: {
@@ -80,25 +88,23 @@ export default class Subscription extends Component {
     }
 
     Onsubmit() {
-        if(Preference.get("newUser")===true)
-        {
+        if (Preference.get("newUser") === true) {
             if (this.state.SelectedBasic === true) {
-                Preference.set("userPackage","basic")
+                Preference.set("userPackage", "basic")
                 this.props.navigation.navigate("BookingPreferences");
             } else if (this.state.SelectedSupreme === true) {
-                Preference.set("userPackage","supreme")
+                Preference.set("userPackage", "supreme")
                 this.props.navigation.navigate("SurgePricing")
             }
-        }else {
+        } else {
             if (this.state.SelectedBasic === true) {
-                Preference.set("userPackage","basic")
+                Preference.set("userPackage", "basic")
                 this.props.navigation.goBack()
             } else if (this.state.SelectedSupreme === true) {
-                Preference.set("userPackage","supreme")
+                Preference.set("userPackage", "supreme")
                 this.props.navigation.navigate("PaymentMethod")
             }
         }
-
 
 
     }
@@ -149,7 +155,7 @@ export default class Subscription extends Component {
                             <View style={{
                                 width: "30%",
                                 alignItems: "center",
-                                justifyContent:"center",
+                                justifyContent: "center",
                                 end: 85,
                                 backgroundColor: this.state.basic.basicBgColor,
                                 height: 25,
@@ -222,7 +228,7 @@ export default class Subscription extends Component {
                                 width: "30%",
                                 alignItems: "center",
                                 end: 85,
-                                justifyContent:"center",
+                                justifyContent: "center",
                                 backgroundColor: this.state.supreme.supremeBgColor,
                                 height: 27,
                                 marginTop: 20,
