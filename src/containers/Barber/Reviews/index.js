@@ -34,50 +34,48 @@ export default class Reviews extends Component {
     }
 
     getReviews() {
-        this.state.reviews = [];
-        fetch(constants.GetReviews + "?user_id=" + Preference.get("userId"), {
+        this.setState({showLoading: true})
+        fetch(constants.GetReviews + "?barber_id=" + Preference.get("userId"), {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
+            },
         }).then(response => response.json())
             .then(response => {
-                console.log("responseReviews-->", "-" + JSON.stringify(response));
+                console.log("ClientBarbersReviews-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
-                    let val = Math.round(response.Data.averageRating);
-                    this.setState({reviews: response.Data.ratings, AverageRating: val})
+                    this.setState({showLoading: false, reviews: response.Data});
+                    console.log("dataSource:::", JSON.stringify(response.Data))
+                    let ratingpoints=0;
+                    for(let w=0;w<response.Data.length;w++)
+                    {
+                        ratingpoints=ratingpoints+response.Data[w].rating;
+                    }
+                    let mian=ratingpoints/response.Data.length;
+                    this.setState({AverageRating:mian})
+
                 } else {
+                    this.setState({showLoading: false})
                     if (response.ResultType === 0) {
                         alert(response.Message);
                     }
                 }
             }).catch(error => {
+            this.setState({showLoading: false})
             //console.error('Errorr:', error);
             console.log('Error:', error);
             alert("Error: " + error);
         });
     }
 
-    renderSeparator = () => {
-        return (
-            <View
-                style={{
-                    height: 8,
-                    width: "86%",
-                    backgroundColor: "transparent",
-                    marginLeft: "14%"
-                }}
-            />
-        );
-    };
 
     renderItem(item) {
-        let ratings = Math.floor(Math.random() * 5 + 1);
+        let userImage="http://ec2-3-14-204-57.us-east-2.compute.amazonaws.com:5000/images/client/"+item.client_id.client_image;
+        console.log("Imageuser-->",userImage);
         return (
             <View style={styles.row_item}>
                 <View style={[globalStyles.rowBackground, {marginTop: 40}]}>
-                    <Text style={styles.client_name}>{item.name}</Text>
+                    <Text style={styles.client_name}>{item.client_id.firstname+" "+item.client_id.lastname}</Text>
                     <View style={styles.rating_container}>
                         <AirbnbRating
                             showRating={false}
@@ -92,27 +90,9 @@ export default class Reviews extends Component {
                     </Text>
                 </View>
                 <Image
-                    source={{uri: "https://loremflickr.com/240/240/student"}}
+                    source={{uri:userImage}}
                     style={styles.thumbnail}
                 />
-            </View>
-        );
-    }
-
-    renderListHeader() {
-
-        return (
-            <View style={{height: 90, justifyContent: "center"}}>
-                <View style={{flexDirection: "row", alignSelf: "center"}}>
-                    <AirbnbRating
-                        isDisabled={true}
-                        showRating={false}
-                        count={5}
-                        defaultRating={0}
-                        size={25}
-                    />
-                    <Text style={[styles.rating_text, {fontSize: 16}]}>({ratings} of 5.0)</Text>
-                </View>
             </View>
         );
     }
@@ -149,8 +129,7 @@ export default class Reviews extends Component {
                 </View>
                 {(this.state.reviews.length > 0) && <FlatList
                     data={this.state.reviews}
-                    renderItem={this.renderItem}
-                    ItemSeparatorComponent={this.renderSeparator}
+                    renderItem={({item}) => this.renderItem(item)}
                     numColumns={1}
                     keyExtractor={(item, index) => index}
                 />}

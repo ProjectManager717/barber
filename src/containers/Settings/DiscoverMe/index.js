@@ -20,7 +20,7 @@ export default class DiscoverMe extends Component {
             oneWeek: false,
             twoWeek: false,
             threeWeek: false,
-            previosItemPrice:0,
+            previosItemPrice: 0,
             price: 0,
         }
     }
@@ -76,36 +76,36 @@ export default class DiscoverMe extends Component {
     checkBox(val) {
         if (val === 1) {
             if (this.state.zipCode === true) {
-                 let pr = this.state.price;
-                 pr = pr - 5;
-                 this.setState({zipCode: false, price:pr})
+                let pr = this.state.price;
+                pr = pr - 5;
+                this.setState({zipCode: false, price: pr})
             } else {
                 let pr = this.state.price;
                 pr = pr + 5;
-                this.setState({zipCode: true, price:pr})
+                this.setState({zipCode: true, price: pr})
             }
 
         }
         if (val === 2) {
             if (this.state.city === true) {
-                 let pr = this.state.price;
-                 pr = pr - 15;
-                 this.setState({city: false, price:pr})
+                let pr = this.state.price;
+                pr = pr - 15;
+                this.setState({city: false, price: pr})
             } else {
                 let pr = this.state.price;
                 pr = pr + 15;
-                this.setState({city: true, price:pr })
+                this.setState({city: true, price: pr})
             }
         }
         if (val === 3) {
             if (this.state.stat === true) {
-                 let pr = this.state.price;
-                 pr = pr - 50;
-                 this.setState({stat: false, price:pr })
+                let pr = this.state.price;
+                pr = pr - 50;
+                this.setState({stat: false, price: pr})
             } else {
                 let pr = this.state.price;
                 pr = pr + 50;
-                this.setState({stat: true, price:pr })
+                this.setState({stat: true, price: pr})
             }
         }
         if (val === 4) {
@@ -115,8 +115,8 @@ export default class DiscoverMe extends Component {
                 this.setState({oneWeek: false, price: pr})*/
             } else {
                 let pr = this.state.price;
-                pr = pr + 5-this.state.previosItemPrice;
-                this.setState({oneWeek: true,twoWeek:false,threeWeek:false,previosItemPrice:5, price:pr})
+                pr = pr + 5 - this.state.previosItemPrice;
+                this.setState({oneWeek: true, twoWeek: false, threeWeek: false, previosItemPrice: 5, price: pr})
             }
         }
         if (val === 5) {
@@ -126,8 +126,8 @@ export default class DiscoverMe extends Component {
                  this.setState({twoWeek: false, price: pr})*/
             } else {
                 let pr = this.state.price;
-                pr = pr + 10-this.state.previosItemPrice;
-                this.setState({twoWeek: true,oneWeek:false,threeWeek:false,previosItemPrice:10, price:pr})
+                pr = pr + 10 - this.state.previosItemPrice;
+                this.setState({twoWeek: true, oneWeek: false, threeWeek: false, previosItemPrice: 10, price: pr})
             }
         }
         if (val === 6) {
@@ -137,17 +137,17 @@ export default class DiscoverMe extends Component {
                 this.setState({threeWeek: false, price: pr})*/
             } else {
                 let pr = this.state.price;
-                pr = pr + 15-this.state.previosItemPrice;
-                this.setState({threeWeek: true,oneWeek:false,twoWeek:false,previosItemPrice:15, price:pr})
+                pr = pr + 15 - this.state.previosItemPrice;
+                this.setState({threeWeek: true, oneWeek: false, twoWeek: false, previosItemPrice: 15, price: pr})
             }
         }
     }
 
     renderRow(item) {
-        return <View style={{flex: 1, flexDirection: 'row', height: 22, marginLeft: 40}}>
-            <CheckBox
-                onClick={() => this.checkBox(item.itemNu)} isChecked={item.value} style={{alignSelf: 'center'}}/>
-            <Text style={styles.row_title}>{item.title}</Text>
+        return <View style={{ flexDirection: 'row', height: 22, marginLeft: 40}}>
+            <CheckBox onClick={() => this.checkBox(item.itemNu)} rightText={item.title} isChecked={item.value}
+                      style={{width:160}}/>
+            {/*<Text style={styles.row_title}>{item.title}</Text>*/}
         </View>;
     }
 

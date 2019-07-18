@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import {View, Switch, Text, StyleSheet, Image, ScrollView, TouchableOpacity, Linking} from "react-native";
 import { Colors } from "../../themes";
 import { globalStyles } from "../../themes/globalStyles";
+
+import { NavigationActions, StackActions } from "react-navigation";
 //import { styles } from "./styles";
 import { Header } from "react-native-elements";
 import Preference from 'react-native-preference';
@@ -177,7 +179,11 @@ export default class Settings extends Component {
               Preference.clear();
               this._signOut();
               LoginManager.logOut();
-            this.props.navigation.navigate('SelectScreen');
+              const goToIntoScreen = StackActions.reset({
+                  index: 0,
+                  actions: [NavigationActions.navigate({ routeName: 'SelectScreen' })],
+              });
+            this.props.navigation.dispatch(goToIntoScreen);
           }}>
             <Text style={globalStyles.buttonText}>Logout</Text>
           </TouchableOpacity>

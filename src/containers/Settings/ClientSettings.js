@@ -5,6 +5,7 @@ import {globalStyles} from "../../themes/globalStyles";
 //import { styles } from "./styles";
 import {Header} from "react-native-elements";
 import Preference from 'react-native-preference';
+import { NavigationActions, StackActions } from "react-navigation";
 /*import {
     GoogleSignin,
     GoogleSigninButton,
@@ -206,7 +207,12 @@ export default class ClientSettings extends Component {
                             Preference.clear();
                             this._signOut();
                             LoginManager.logOut();
-                            this.props.navigation.navigate('SelectScreen');
+                            const goToIntoScreen = StackActions.reset({
+                                index: 0,
+                                actions: [NavigationActions.navigate({ routeName: 'SelectScreen' })],
+                            });
+                            this.props.navigation.dispatch(goToIntoScreen);
+                            //this.props.navigation.navigate('SelectScreen');
                         }}>
                         <Text style={globalStyles.buttonText}>Logout</Text>
                     </TouchableOpacity>

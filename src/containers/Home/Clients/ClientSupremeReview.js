@@ -7,63 +7,86 @@ import {Colors} from "../../../themes";
 
 //import { globalStyles } from "../../../themes/globalStyles";
 import {Dimensions} from "react-native";
+import {constants} from "../../../utils/constants";
 
 const {width} = Dimensions.get("window");
 let ratings = Math.floor(Math.random() * 5 + 1);
+let barberId = "";
 export default class ClientSupremeReview extends Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
+        const {navigation} = this.props;
+        barberId = navigation.getParam('barberId');
         this.state = {
-            dataSource: {},
-            supremeReviewBlock:false,
+            showLoading: false,
+            reviews: [],
+            supremeReviewBlock: false,
+            mainRatting: 0,
         };
     }
 
-    componentDidMount() {
-        var that = this;
-        let items = Array.apply(null, Array(6)).map((v, i) => {
-            return {id: i, title: "Title " + i};
-        });
-        that.setState({
-            dataSource: items
+    componentDidMount(): void {
+        this.getRattingofBarber()
+    }
+
+    getRattingofBarber() {
+        this.setState({showLoading: true})
+        fetch(constants.GetReviews + "?barber_id=" + barberId, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+            },
+        }).then(response => response.json())
+            .then(response => {
+                console.log("ClientBarbersReviews-->", "-" + JSON.stringify(response));
+                if (response.ResultType === 1) {
+                    this.setState({showLoading: false, reviews: response.Data});
+                    console.log("dataSource:::", JSON.stringify(response.Data))
+                    let ratingpoints = 0;
+                    for (let w = 0; w < response.Data.length; w++) {
+                        ratingpoints = ratingpoints + response.Data[w].rating;
+                    }
+                    let mian = ratingpoints / response.Data.length;
+                    this.setState({mainRatting: mian})
+
+                } else {
+                    this.setState({showLoading: false})
+                    if (response.ResultType === 0) {
+                        alert(response.Message);
+                    }
+                }
+            }).catch(error => {
+            this.setState({showLoading: false})
+            //console.error('Errorr:', error);
+            console.log('Error:', error);
+            alert("Error: " + error);
         });
     }
 
-    renderSeparator = () => {
-        return (
-            <View
-                style={{
-                    height: 8,
-                    width: "86%",
-                    backgroundColor: "transparent",
-                    marginLeft: "14%"
-                }}
-            />
-        );
-    };
 
     renderItem(item) {
         let ratings = Math.floor(Math.random() * 5 + 1);
+        let userImage = "http://ec2-3-14-204-57.us-east-2.compute.amazonaws.com:5000/images/client/" + item.client_id.client_image;
+        console.log("Imageuser-->", userImage);
         return (
             <View style={styles.row_item}>
                 <View style={[globalStyles.rowBackground, {marginTop: 40}]}>
-                    <Text style={styles.client_name}>Karim Banz</Text>
+                    <Text style={styles.client_name}>{item.client_id.firstname + " " + item.client_id.lastname}</Text>
                     <View style={styles.rating_container}>
                         <AirbnbRating
                             showRating={false}
                             count={5}
-                            defaultRating={ratings}
+                            defaultRating={item.rating}
                             size={10}
                         />
-                        <Text style={styles.rating_text}>{ratings} of 5.0</Text>
+                        <Text style={styles.rating_text}>{item.rating} of 5.0</Text>
                     </View>
                     <Text style={styles.comments}>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                        eiusmod tempor incididunt ut labore
+                        {item.review_text}
                     </Text>
                 </View>
                 <Image
-                    source={{uri: "https://loremflickr.com/240/240/student"}}
+                    source={{uri: userImage}}
                     style={styles.thumbnail}
                 />
             </View>
@@ -81,18 +104,18 @@ export default class ClientSupremeReview extends Component {
                     outerContainerStyles={{backgroundColor: "#1999CE"}}
                     leftComponent={
                         <TouchableOpacity
-                        onPress={() => {
-                            this.props.navigation.goBack();
-                        }}
+                            onPress={() => {
+                                this.props.navigation.goBack();
+                            }}
                         >
-                        <Image
-                        style={{
-                            tintColor: "white",
-                            height: 25,
-                            resizeMode: "contain"
-                        }}
-                        source={require("../../../assets/images/ic_back.png")}
-                        />
+                            <Image
+                                style={{
+                                    tintColor: "white",
+                                    height: 25,
+                                    resizeMode: "contain"
+                                }}
+                                source={require("../../../assets/images/ic_back.png")}
+                            />
                         </TouchableOpacity>
 
 
@@ -110,12 +133,12 @@ export default class ClientSupremeReview extends Component {
                 <View style={{justifyContent: "center", marginTop: 5, marginBottom: 20}}>
                     <View style={{flexDirection: "row", alignSelf: "center"}}>
                         <AirbnbRating
-                            showRating={true}
+                            showRating={false}
                             count={5}
-                            defaultRating={ratings}
+                            defaultRating={this.state.mainRatting}
                             size={18}
                         />
-                        <Text style={[styles.rating_text, {fontSize: 16}]}>({ratings} of 5.0)</Text>
+                        <Text style={[styles.rating_text, {fontSize: 16}]}>({this.state.mainRatting} of 5.0)</Text>
                     </View>
                 </View>
 
@@ -280,14 +303,26 @@ export default class ClientSupremeReview extends Component {
                     </View>
                 </View>}
 
-                <FlatList
-                    data={this.state.dataSource}
-                    renderItem={this.renderItem}
-                    ItemSeparatorComponent={this.renderSeparator}
-                    ListHeaderComponent={this.renderListHeader}
+                {(this.state.reviews.length > 0) && <FlatList
+                    data={this.state.reviews}
+                    extraData={this.state}
+                    renderItem={({item}) => this.renderItem(item)}
                     numColumns={1}
                     keyExtractor={(item, index) => index}
-                />
+                />}
+
+                {this.state.showLoading && <View style={{
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor: "transparent",
+                    position: "absolute",
+                    opacity: 1,
+                    alignItems: "center",
+                    justifyContent: "center"
+                }}>
+                    <Image resizeMode={"contain"} source={require("../../../assets/images/loading.gif")}
+                           style={{width: 100, height: 100, opacity: 1,}}/>
+                </View>}
             </View>
         );
     }
@@ -320,7 +355,8 @@ export const styles = {
         width: 60
     },
     row_item: {
-        height: 130
+        height: 130,
+        marginTop: 10
     },
     thumbnail: {
         position: "absolute",

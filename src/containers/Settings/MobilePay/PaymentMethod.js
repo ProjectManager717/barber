@@ -5,7 +5,7 @@ import {
     Text,
     StyleSheet,
     Image,
-    ScrollView,
+    ScrollView,Alert,
     TouchableOpacity,
     TextInput, Picker,
     ImageBackground
@@ -20,7 +20,7 @@ import PopupDialog from 'react-native-popup-dialog';
 import stripe from 'tipsi-stripe'
 
 stripe.setOptions({
-    publishableKey: 'pk_test_U4Ri0H7rP3PClZwTI5Z2r78J',
+    publishableKey: 'pk_test_5f4q3aLF1SgN7kQdEV6WBSnn',
     androidPayMode: 'test', // Android only
 })
 
@@ -30,6 +30,7 @@ export default class PaymentMethod extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            showLoading: false,
             cardNumber: "4242424242424242",
             month: "04",
             year: "20",
@@ -97,28 +98,39 @@ export default class PaymentMethod extends Component {
                  expYear: 22,
                  cvc: '123',
              })*/
+            this.setState({showLoading: true})
+            console.log("CardNumber:-->", this.state.cardNumber)
+            console.log("CardNumber:-->", this.state.month)
+            console.log("CardNumber:-->", this.state.year)
+            console.log("CardNumber:-->", this.state.cvc)
+            console.log("CardNumber:-->", this.state.cardHolderName);
 
-            let cardData = this.state.params;
+
+            const cardData = this.state.params;
             cardData.number = this.state.cardNumber;
-            cardData.expMonth = this.state.month;
-            cardData.expYear = this.state.year;
+            cardData.expMonth = parseInt(this.state.month);
+            cardData.expYear = parseInt(this.state.year);
             cardData.cvc = this.state.cvc;
             cardData.name = this.state.cardHolderName;
             cardData.currency = 'usd';
-            cardData.addressLine1 =  '123 Test Street';
-            cardData.addressLine2 ='Apt. 5';
+            cardData.addressLine1 = '123 Test Street';
+            cardData.addressLine2 = 'Apt. 5';
             cardData.addressCity = 'Test City';
             cardData.addressState = 'Test State';
             cardData.addressCountry = 'Test Country';
             cardData.addressZip = '55555';
-            this.setState({params:cardData});
+            this.setState({params: cardData});
 
 
-            const params = shouldPass ? this.state.params : this.state.errorParams;
+            const params = this.state.params;
             const token = await stripe.createTokenWithCard(params)
             console.log("CArdReponse", token);
+            this.setState({showLoading:false});
         } catch (error) {
-            this.setState({error, loading: false})
+            this.setState({showLoading:false});
+            Alert.alert("Error!","Your card details are invalid")
+            console.log("CArdReponse error", error);
+            //this.setState({error, loading: false})
         }
 
         /* if (this.state.isConnected) {
@@ -283,32 +295,42 @@ export default class PaymentMethod extends Component {
                                                 backgroundColor: "black",
                                                 flexDirection: "column",
                                             }}/>
-                                            <Text style={{fontSize: 16, marginTop: 5, color: "black"}}>Select
+                                            <Text style={{
+                                                fontSize: 20,
+                                                marginTop: 5,
+                                                color: "black",
+                                                fontWeight: "bold"
+                                            }}>Select
                                                 Month</Text>
                                             <Text onPress={() => this.setState({month: "01", DialogVisible: false})}
-                                                  style={{fontSize: 15, marginTop: 5, color: "black"}}>01</Text>
+                                                  style={{fontSize: 18, marginTop: 20, color: "black"}}>01</Text>
                                             <Text onPress={() => this.setState({month: "02", DialogVisible: false})}
-                                                  style={{fontSize: 15, marginTop: 5, color: "black"}}>02</Text>
+                                                  style={{fontSize: 18, marginTop: 20, color: "black"}}>02</Text>
                                             <Text onPress={() => this.setState({month: "03", DialogVisible: false})}
-                                                  style={{fontSize: 15, marginTop: 5, color: "black"}}>03</Text>
+                                                  style={{fontSize: 18, marginTop: 20, color: "black"}}>03</Text>
                                             <Text onPress={() => this.setState({month: "04", DialogVisible: false})}
-                                                  style={{fontSize: 15, marginTop: 5, color: "black"}}>04</Text>
+                                                  style={{fontSize: 18, marginTop: 20, color: "black"}}>04</Text>
                                             <Text onPress={() => this.setState({month: "05", DialogVisible: false})}
-                                                  style={{fontSize: 15, marginTop: 5, color: "black"}}>05</Text>
+                                                  style={{fontSize: 18, marginTop: 20, color: "black"}}>05</Text>
                                             <Text onPress={() => this.setState({month: "06", DialogVisible: false})}
-                                                  style={{fontSize: 15, marginTop: 5, color: "black"}}>06</Text>
+                                                  style={{fontSize: 18, marginTop: 20, color: "black"}}>06</Text>
                                             <Text onPress={() => this.setState({month: "07", DialogVisible: false})}
-                                                  style={{fontSize: 15, marginTop: 5, color: "black"}}>07</Text>
+                                                  style={{fontSize: 18, marginTop: 20, color: "black"}}>07</Text>
                                             <Text onPress={() => this.setState({month: "08", DialogVisible: false})}
-                                                  style={{fontSize: 15, marginTop: 5, color: "black"}}>08</Text>
+                                                  style={{fontSize: 18, marginTop: 20, color: "black"}}>08</Text>
                                             <Text onPress={() => this.setState({month: "09", DialogVisible: false})}
-                                                  style={{fontSize: 15, marginTop: 5, color: "black"}}>09</Text>
+                                                  style={{fontSize: 18, marginTop: 20, color: "black"}}>09</Text>
                                             <Text onPress={() => this.setState({month: "10", DialogVisible: false})}
-                                                  style={{fontSize: 15, marginTop: 5, color: "black"}}>10</Text>
+                                                  style={{fontSize: 18, marginTop: 20, color: "black"}}>10</Text>
                                             <Text onPress={() => this.setState({month: "11", DialogVisible: false})}
-                                                  style={{fontSize: 15, marginTop: 5, color: "black"}}>11</Text>
+                                                  style={{fontSize: 18, marginTop: 20, color: "black"}}>11</Text>
                                             <Text onPress={() => this.setState({month: "12", DialogVisible: false})}
-                                                  style={{fontSize: 15, marginTop: 5, color: "black"}}>12</Text>
+                                                  style={{
+                                                      fontSize: 18,
+                                                      marginTop: 20,
+                                                      color: "black",
+                                                      marginBottom: 20
+                                                  }}>12</Text>
                                         </View>
                                     </PopupDialog>
                                 </TouchableOpacity>
@@ -338,32 +360,42 @@ export default class PaymentMethod extends Component {
                                                 backgroundColor: "black",
                                                 flexDirection: "column",
                                             }}/>
-                                            <Text style={{fontSize: 16, marginTop: 5, color: "black"}}>Select
+                                            <Text style={{
+                                                fontSize: 20,
+                                                marginTop: 5,
+                                                color: "black",
+                                                fontWeight: "bold"
+                                            }}>Select
                                                 Year</Text>
                                             <Text onPress={() => this.setState({year: "19", DialogVisible1: false})}
-                                                  style={{fontSize: 15, marginTop: 5, color: "black"}}>2019</Text>
+                                                  style={{fontSize: 18, marginTop: 20, color: "black"}}>2019</Text>
                                             <Text onPress={() => this.setState({year: "20", DialogVisible1: false})}
-                                                  style={{fontSize: 15, marginTop: 5, color: "black"}}>2020</Text>
+                                                  style={{fontSize: 18, marginTop: 20, color: "black"}}>2020</Text>
                                             <Text onPress={() => this.setState({year: "21", DialogVisible1: false})}
-                                                  style={{fontSize: 15, marginTop: 5, color: "black"}}>2021</Text>
+                                                  style={{fontSize: 18, marginTop: 20, color: "black"}}>2021</Text>
                                             <Text onPress={() => this.setState({year: "22", DialogVisible1: false})}
-                                                  style={{fontSize: 15, marginTop: 5, color: "black"}}>2022</Text>
+                                                  style={{fontSize: 18, marginTop: 20, color: "black"}}>2022</Text>
                                             <Text onPress={() => this.setState({year: "23", DialogVisible1: false})}
-                                                  style={{fontSize: 15, marginTop: 5, color: "black"}}>2023</Text>
+                                                  style={{fontSize: 18, marginTop: 20, color: "black"}}>2023</Text>
                                             <Text onPress={() => this.setState({year: "24", DialogVisible1: false})}
-                                                  style={{fontSize: 15, marginTop: 5, color: "black"}}>2024</Text>
+                                                  style={{fontSize: 18, marginTop: 20, color: "black"}}>2024</Text>
                                             <Text onPress={() => this.setState({year: "25", DialogVisible1: false})}
-                                                  style={{fontSize: 15, marginTop: 5, color: "black"}}>2025</Text>
+                                                  style={{fontSize: 18, marginTop: 20, color: "black"}}>2025</Text>
                                             <Text onPress={() => this.setState({year: "26", DialogVisible1: false})}
-                                                  style={{fontSize: 15, marginTop: 5, color: "black"}}>2026</Text>
+                                                  style={{fontSize: 18, marginTop: 20, color: "black"}}>2026</Text>
                                             <Text onPress={() => this.setState({year: "27", DialogVisible1: false})}
-                                                  style={{fontSize: 15, marginTop: 5, color: "black"}}>2027</Text>
+                                                  style={{fontSize: 18, marginTop: 20, color: "black"}}>2027</Text>
                                             <Text onPress={() => this.setState({year: "28", DialogVisible1: false})}
-                                                  style={{fontSize: 15, marginTop: 5, color: "black"}}>2028</Text>
+                                                  style={{fontSize: 18, marginTop: 20, color: "black"}}>2028</Text>
                                             <Text onPress={() => this.setState({year: "29", DialogVisible1: false})}
-                                                  style={{fontSize: 15, marginTop: 5, color: "black"}}>2029</Text>
+                                                  style={{fontSize: 18, marginTop: 20, color: "black"}}>2029</Text>
                                             <Text onPress={() => this.setState({year: "30", DialogVisible1: false})}
-                                                  style={{fontSize: 15, marginTop: 5, color: "black"}}>2030</Text>
+                                                  style={{
+                                                      fontSize: 18,
+                                                      marginTop: 20,
+                                                      color: "black",
+                                                      marginBottom: 20
+                                                  }}>2030</Text>
                                         </View>
                                     </PopupDialog>
                                 </TouchableOpacity>
@@ -401,6 +433,18 @@ export default class PaymentMethod extends Component {
                         </TouchableOpacity>
                     </View>
                 </ScrollView>
+                {this.state.showLoading && <View style={{
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor: "transparent",
+                    position: "absolute",
+                    opacity: 1,
+                    alignItems: "center",
+                    justifyContent: "center"
+                }}>
+                    <Image resizeMode={"contain"} source={require("../../../assets/images/loading.gif")}
+                           style={{width: 100, height: 100, opacity: 1,}}/>
+                </View>}
             </View>
         )
     }

@@ -561,7 +561,13 @@ export default class ClientBarberProfile extends Component {
                 this.setState({showLoading: false})
                 if (response.ResultType === 1) {
                     Alert.alert("Success!", "Appointment is Booked");
-                    this.props.navigation.navigate('ClientLeaveReview');
+                    this.props.navigation.navigate('ClientLeaveReview',{
+                        barberId:barberId,
+                        barberImage:this.state.barberProfileImage,
+                        barberName:this.state.barberName,
+                        barberShopName:this.state.barberShopName,
+                        appointmentPrice:this.state.totalPriceService
+                    });
                 } else {
                     if (response.ResultType === 0) {
                         alert(response.Message);
@@ -587,40 +593,71 @@ export default class ClientBarberProfile extends Component {
     }
 
     renderItem(item, index) {
-        //var m = moment(new Date(2011, 2, 12, 0, 0, 0));
-        //m.add(item.id * 30, "minutes");
-        /*if (item.surgePrice === true) {
-            return (<View>
-                <TouchableOpacity onPress={() => this.itemSelect(index)}>
-                    <View style={{
-                        height: 20,
-                        flexDirection: "row",
-                        borderRadius: 10,
-                        borderWidth: 1,
-                        borderColor: item.selected,
-                        marginStart: 10,
-                    }} cellKey={item.id}>
-                        <Image resizeMode={"contain"} source={require("../../../assets/images/dollar_surge.png")}
-                               style={{width: 12, height: 12, marginStart: 5, marginTop: 2}}/>
-                        <Text style={{
-                            textAlignVertical: "top",
-                            height: 40,
-                            marginStart: 4,
-                            marginEnd: 7,
-                            fontFamily: "AvertaStd-Regular",
-                            color: "#01E8F1",
-                            fontSize: 12,
-                            fontWeight: "bold",
-                        }}>
-                            {item.time}
-                        </Text>
-                    </View>
-                </TouchableOpacity>
-            </View>)
-        } else */
+        if(item.slot_status===0)
+        {
+            //var m = moment(new Date(2011, 2, 12, 0, 0, 0));
+            //m.add(item.id * 30, "minutes");
+            /*if (item.surgePrice === true) {
+                return (<View>
+                    <TouchableOpacity onPress={() => this.itemSelect(index)}>
+                        <View style={{
+                            height: 20,
+                            flexDirection: "row",
+                            borderRadius: 10,
+                            borderWidth: 1,
+                            borderColor: item.selected,
+                            marginStart: 10,
+                        }} cellKey={item.id}>
+                            <Image resizeMode={"contain"} source={require("../../../assets/images/dollar_surge.png")}
+                                   style={{width: 12, height: 12, marginStart: 5, marginTop: 2}}/>
+                            <Text style={{
+                                textAlignVertical: "top",
+                                height: 40,
+                                marginStart: 4,
+                                marginEnd: 7,
+                                fontFamily: "AvertaStd-Regular",
+                                color: "#01E8F1",
+                                fontSize: 12,
+                                fontWeight: "bold",
+                            }}>
+                                {item.time}
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
+                </View>)
+            } else */
+            {
+                return (<View>
+                    <TouchableOpacity onPress={() => this.itemSelect(index)}>
+                        <View style={{
+                            height: 20,
+                            flexDirection: "row",
+                            borderRadius: 10,
+                            borderWidth: 1,
+                            alignItems: "center",
+                            borderColor: item.slot_detail.selected,
+                            marginStart: 3,
+                        }} cellKey={item.slot_detail._id}>
+                            <Text style={{
+                                textAlignVertical: "top",
+                                marginLeft: 10,
+                                marginRight: 10,
+                                width: 50,
+                                textAlign: "center",
+                                fontFamily: "AvertaStd-Regular",
+                                color: Colors.white,
+                                fontSize: 11,
+                                fontWeight: "bold",
+                            }}>
+                                {this.showTime(item.slot_detail.start_time)}
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
+                </View>)
+            }
+        }else
         {
             return (<View>
-                <TouchableOpacity onPress={() => this.itemSelect(index)}>
                     <View style={{
                         height: 20,
                         flexDirection: "row",
@@ -637,16 +674,16 @@ export default class ClientBarberProfile extends Component {
                             width: 50,
                             textAlign: "center",
                             fontFamily: "AvertaStd-Regular",
-                            color: Colors.white,
+                            color: "green",
                             fontSize: 11,
                             fontWeight: "bold",
                         }}>
-                            {this.showTime(item.slot_detail.start_time)}
+                            {"Booked"}
                         </Text>
                     </View>
-                </TouchableOpacity>
             </View>)
         }
+
     }
 
     showTime(time) {
@@ -803,7 +840,7 @@ export default class ClientBarberProfile extends Component {
 
                                     <View style={styles.review}>
                                         <TouchableOpacity onPress={() => {
-                                            this.props.navigation.navigate('ClientSupremeReview');
+                                            this.props.navigation.navigate('ClientSupremeReview',{ barberId:barberId});
                                         }}>
                                             <AirbnbRating
                                                 isDisabled={true}
@@ -931,7 +968,7 @@ export default class ClientBarberProfile extends Component {
                             {this.state.ListData2.length > 0 && <FlatList
                                 renderItem={({item, index}) =>
                                     <View style={{flexDirection: "column"}}>
-                                        <View style={[{flexDirection: "row", height: 30, backgroundColor: "#686975"}]}>
+                                        <TouchableOpacity onPress={()=> this.checkBoxClicked(index)} style={[{flexDirection: "row", height: 30, backgroundColor: "#686975"}]}>
                                             <View style={[{
                                                 flexDirection: "row",
                                                 width: "50%",
@@ -949,7 +986,7 @@ export default class ClientBarberProfile extends Component {
                                             <View style={[{flexDirection: "row", width: "25%", alignItems: "center"}]}>
                                                 <Text style={{color: "white", fontSize: 12}}>{"$" + item.price}</Text>
                                             </View>
-                                        </View>
+                                        </TouchableOpacity>
                                         <View style={{height: 0.5, backgroundColor: "#868791"}}/>
                                     </View>}
                                 data={this.state.ListData2}
@@ -1074,7 +1111,7 @@ export default class ClientBarberProfile extends Component {
                                         </Text>
                                     </View>
                                 </View>
-                                <TouchableOpacity onPress={() => this.showDialog()} style={{
+                                {(this.state.buttonPayText==="PAY") && <TouchableOpacity onPress={() => this.showDialog()} style={{
                                     flexDirection: "row",
                                     width: "40%",
                                     height: "100%",
@@ -1096,7 +1133,11 @@ export default class ClientBarberProfile extends Component {
                                             marginStart: 5,
                                         }} resizeMode={"contain"}
                                         source={require("../../../assets/images/arrow_down.png")}/>
-                                </TouchableOpacity>
+                                </TouchableOpacity>}
+                                <View style={{ width: "40%",height:"100%",justifyContent:"center",alignItems:"center"}}>
+                                    <Text style={{fontSize:18,color:"white",fontStyle: 'italic'}}>{" Pay in Store "}</Text>
+                                </View>
+
                                 <TouchableOpacity onPress={() => {
                                     this.checkSurgePriceSelected()
                                 }} style={{

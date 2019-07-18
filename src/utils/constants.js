@@ -26,7 +26,7 @@ export const constants = {
     BarbersProfile: Base_url + path2,
     BarberAddService: Base_url + path2 + "addservice",
     BarberUpdateService: Base_url + path2 + "updateService",
-    GetReviews: Base_url +"/api/reviews?",
+    GetReviews: Base_url + "/api/reviews/"+"get_review",
     BarberAddMobilePaySetting: Base_url + "/api/mobilePay/" + "add",
     BarbersProfileUpdate: Base_url + path2+"update",
     BarbersSendVerfication: Base_url + path2+"sendVerificationCode",
@@ -50,5 +50,7 @@ export const constants = {
     ClientAddFavoriteBarber: Base_url + clientPath1+"favoriteBarber",
     ClientRemoveFavoriteBarber: Base_url + clientPath1+"un_favoriteBarber",
     ClientSendVerfication: Base_url + clientPath1+"client_sendVerificationCode",
+    ClientAddReview: Base_url + "/api/reviews/"+"add_review",
+
 
 };
