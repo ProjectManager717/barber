@@ -27,13 +27,13 @@ export default class Home extends Component {
     }
 
     rightAction() {
-        this.props.navigation.navigate('Share',{
+        this.props.navigation.navigate('Share',/*{
             profile_image: this.state.barberImage,
             barberName: this.state.barberName,
             barberShopName: this.state.barberShopName,
             barberAddress: this.state.barberAddress,
             barberInsta:this.state.barberInsta,
-        });
+        }*/);
     }
 
     constructor(props) {

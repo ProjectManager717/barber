@@ -106,7 +106,7 @@ export default class PaymentMethod extends Component {
             console.log("CardNumber:-->", this.state.cardHolderName);
 
 
-            const cardData = this.state.params;
+            /*const cardData = this.state.params;
             cardData.number = this.state.cardNumber;
             cardData.expMonth = parseInt(this.state.month);
             cardData.expYear = parseInt(this.state.year);
@@ -120,7 +120,7 @@ export default class PaymentMethod extends Component {
             cardData.addressCountry = 'Test Country';
             cardData.addressZip = '55555';
             this.setState({params: cardData});
-
+*/
 
             const params = this.state.params;
             const token = await stripe.createTokenWithCard(params)
@@ -443,7 +443,7 @@ export default class PaymentMethod extends Component {
                     justifyContent: "center"
                 }}>
                     <Image resizeMode={"contain"} source={require("../../../assets/images/loading.gif")}
-                           style={{width: 100, height: 100, opacity: 1,}}/>
+                           style={{width: 60, height: 60, opacity: 1,}}/>
                 </View>}
             </View>
         )

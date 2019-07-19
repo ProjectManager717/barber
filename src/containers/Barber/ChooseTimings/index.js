@@ -44,9 +44,9 @@ export default class ChooseTimings extends Component {
             breakStart: "",
             breakEnd: "",
             showVacationDialog: false,
-            dec23:false,
-            dec24:false,
-            dec25:false,
+            dec23: false,
+            dec24: false,
+            dec25: false,
         };
         this.setDate = this.setDate.bind(this);
         console.log("Timimng:::" + this.state.date);
@@ -395,91 +395,95 @@ export default class ChooseTimings extends Component {
                         justifyContent: "space-around"
                     }}
                 />
-                <View style={[globalStyles.rowBackground, {height: 60, margin: 20}]}>
-                    {this.state.dataSource}
-                </View>
+                <ScrollView>
+                    <View>
+                        <View style={[globalStyles.rowBackground, {height: 60, margin: 20}]}>
+                            {this.state.dataSource}
+                        </View>
 
-                <View style={{flexDirection: "row", width: "100%", height: 100}}>
-                    <View style={{width: "50%"}}>
-                        <Text style={{
-                            color: "grey",
-                            fontWeight: "bold",
-                            fontSize: 13,
-                            marginBottom: 10,
-                            marginStart: 20
-                        }}>{"FROM"}</Text>
-                        <DatePicker
-                            date={this.state.startTime}
-                            style={{marginLeft: -50}}
-                            minuteInterval={15}
-                            onDateChange={date => this.setTimeStart(date)}
-                            mode={"time"}
-                            textColor={"#ffffff"}
-                        />
-
-
-                    </View>
-                    <View style={{width: "50%"}}>
-                        <Text style={{
-                            color: "grey",
-                            fontWeight: "bold",
-                            fontSize: 13,
-                            marginBottom: 10,
-                            marginStart: 20
-                        }}>{"TO"}</Text>
-
-                        <DatePicker
-                            date={this.state.endTime}
-                            onDateChange={date => this.setTimeEnd(date)}
-                            minuteInterval={15}
-                            mode={"time"}
-                            style={{marginLeft: -50}}
-                            textColor={"#ffffff"}
-                        />
-                    </View>
+                        <View style={{flexDirection: "row", width: "100%", height: 100}}>
+                            <View style={{width: "50%"}}>
+                                <Text style={{
+                                    color: "grey",
+                                    fontWeight: "bold",
+                                    fontSize: 13,
+                                    marginBottom: 10,
+                                    marginStart: 20
+                                }}>{"FROM"}</Text>
+                                <DatePicker
+                                    date={this.state.startTime}
+                                    style={{marginLeft: -50}}
+                                    minuteInterval={15}
+                                    onDateChange={date => this.setTimeStart(date)}
+                                    mode={"time"}
+                                    textColor={"#ffffff"}
+                                />
 
 
-                </View>
+                            </View>
+                            <View style={{width: "50%"}}>
+                                <Text style={{
+                                    color: "grey",
+                                    fontWeight: "bold",
+                                    fontSize: 13,
+                                    marginBottom: 10,
+                                    marginStart: 20
+                                }}>{"TO"}</Text>
+
+                                <DatePicker
+                                    date={this.state.endTime}
+                                    onDateChange={date => this.setTimeEnd(date)}
+                                    minuteInterval={15}
+                                    mode={"time"}
+                                    style={{marginLeft: -50}}
+                                    textColor={"#ffffff"}
+                                />
+                            </View>
 
 
-                <View style={{flexDirection: 'row', height: 40, marginLeft: 20, marginTop: 130}}>
-                    {/*<CheckBoxSquare onClick={() => {
+                        </View>
+
+
+                        <View style={{flexDirection: 'row', height: 40, marginLeft: 20, marginTop: 130}}>
+                            {/*<CheckBoxSquare onClick={() => {
                     }} isChecked={this.state.isOffToday} style={{alignSelf: 'center'}}/>
                     <Text style={{color: "white", textAlignVertical: "center", marginStart: 7}}>{"Off"}<Text style={
                         {color: "grey",}
                     }>{"  (Today Not Working)"}</Text></Text>*/}
-                </View>
+                        </View>
 
 
-                <TouchableOpacity style={[
-                    globalStyles.button,
-                    {marginTop: 10, marginBottom: 10, width: "80%"}]}
-                                  onPress={() => this.updateWorkingHours()}>
-                    <Text style={globalStyles.buttonText}>Update Now</Text>
-                </TouchableOpacity>
-                <ScrollView>
-                    {this.renderTimingView({
-                        title: "Add Break Time",
-                        src: require("../../../assets/images/ic_break_time.png")
-                    })}
-                    {this.renderTimingView({
-                        title: "Vacation Days",
-                        src: require("../../../assets/images/ic_vacation_days.png")
-                    })}
-                    <View style={{marginBottom: 50}}/>
+                        <TouchableOpacity style={[
+                            globalStyles.button,
+                            {marginTop: 10, marginBottom: 10, width: "80%"}]}
+                                          onPress={() => this.updateWorkingHours()}>
+                            <Text style={globalStyles.buttonText}>Update Now</Text>
+                        </TouchableOpacity>
+                        <ScrollView>
+                            {this.renderTimingView({
+                                title: "Add Break Time",
+                                src: require("../../../assets/images/ic_break_time.png")
+                            })}
+                            {this.renderTimingView({
+                                title: "Vacation Days",
+                                src: require("../../../assets/images/ic_vacation_days.png")
+                            })}
+                            <View style={{marginBottom: 50}}/>
+                        </ScrollView>
+                        {this.state.showLoading && <View style={{
+                            width: "100%",
+                            height: "100%",
+                            backgroundColor: "transparent",
+                            position: "absolute",
+                            opacity: 1,
+                            alignItems: "center",
+                            justifyContent: "center"
+                        }}>
+                            <Image resizeMode={"contain"} source={require("../../../assets/images/loading.gif")}
+                                   style={{width: 60, height: 60, opacity: 1,}}/>
+                        </View>}
+                    </View>
                 </ScrollView>
-                {this.state.showLoading && <View style={{
-                    width: "100%",
-                    height: "100%",
-                    backgroundColor: "transparent",
-                    position: "absolute",
-                    opacity: 1,
-                    alignItems: "center",
-                    justifyContent: "center"
-                }}>
-                    <Image resizeMode={"contain"} source={require("../../../assets/images/loading.gif")}
-                           style={{width: 100, height: 100, opacity: 1,}}/>
-                </View>}
 
                 <PopupDialog
                     visible={this.state.showBreakTimeDialog}
@@ -565,15 +569,15 @@ export default class ChooseTimings extends Component {
                             fontWeight: "bold",
                             textAlign: "center"
                         }}>Select Vacation Holidays</Text>
-                        <View style={{flexDirection: "column", }}>
-                            {this.renderRowWithCheck({title: "23 December", indx: 1,check:this.state.dec23})}
-                            <View style={{hieght:1,width:"100%",backgroundColor:"grey",margin:5}}/>
-                            {this.renderRowWithCheck({title: "24 December", indx: 2,check:this.state.dec24})}
-                            <View style={{hieght:1,width:"100%",backgroundColor:"grey",margin:5}}/>
-                            {this.renderRowWithCheck({title: "25 December", indx: 3,check:this.state.dec25})}
+                        <View style={{flexDirection: "column",}}>
+                            {this.renderRowWithCheck({title: "23 December", indx: 1, check: this.state.dec23})}
+                            <View style={{hieght: 1, width: "100%", backgroundColor: "grey", margin: 5}}/>
+                            {this.renderRowWithCheck({title: "24 December", indx: 2, check: this.state.dec24})}
+                            <View style={{hieght: 1, width: "100%", backgroundColor: "grey", margin: 5}}/>
+                            {this.renderRowWithCheck({title: "25 December", indx: 3, check: this.state.dec25})}
                         </View>
                         <TouchableOpacity
-                            onPress={() => this.setState({showVacationDialog:false})}
+                            onPress={() => this.setState({showVacationDialog: false})}
                             style={[globalStyles.button, {
                                 height: 35,
                                 width: "80%",
@@ -597,14 +601,16 @@ export default class ChooseTimings extends Component {
     }
 
     renderRowWithCheck(item) {
-        return <View style={{ flexDirection: 'row', height: 20, marginLeft: 40}}>
+        return <View style={{flexDirection: 'row', height: 20, marginLeft: 40}}>
             <CheckBoxSquare onClick={() => {
                 this.setCheckBox(item.indx)
             }} isChecked={item.check} style={{alignSelf: 'center'}}/>
-            <Text style={{color: "black",
+            <Text style={{
+                color: "black",
                 marginLeft: 10,
                 alignSelf: 'center',
-                fontFamily: "AvertaStd-Regular"}}>{item.title}</Text>
+                fontFamily: "AvertaStd-Regular"
+            }}>{item.title}</Text>
         </View>;
     }
 

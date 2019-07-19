@@ -33,6 +33,7 @@ export default class Calendar extends Component {
             dataSource: [],
             dayData: [],
             monthDays: [],
+            lastDaySelected: "",
             month: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
             listData: [
                 {
@@ -172,6 +173,8 @@ export default class Calendar extends Component {
     }
 
     componentDidMount() {
+
+
         let items = [];
         for (i = 0; i < 7; i++) {
             var weekDate = this.startOfWeek(new Date());
@@ -187,6 +190,7 @@ export default class Calendar extends Component {
             dayData: hours,
             dataSource: items
         });
+
         //
         //this.setState({calenderSlots:this.state.listData});
 
@@ -274,7 +278,15 @@ export default class Calendar extends Component {
         }
         let mon = this.state.month[getmonth];
         this.setState({monthDays: daysData});
-        this.getCalenderSlots(getYear + "-" + monthh + "-" + getDate);
+
+        const {navigation} = this.props;
+        this.focusListener = navigation.addListener("didFocus", payload => {
+            if (this.state.lastDaySelected === "")
+                this.getCalenderSlots(getYear + "-" + monthh + "-" + getDate);
+            else
+                this.getCalenderSlots(this.state.lastDaySelected);
+        });
+
         //console.log("Real_date-----> ",JSON.stringify(daysData));
         //console.log("Real_date-----> ",JSON.stringify(this.state.monthDays));
     }
@@ -283,6 +295,7 @@ export default class Calendar extends Component {
         let endSlot = item.selected_slot_id.length - 1;
         if (colorItem !== "#DF00FF" && colorItem !== "yellow") {
             this.props.navigation.navigate("Appointments", {
+                appointmentId: item._id,
                 bgc: colorItem,
                 client_Image: item.barber_image,
                 clientName: item.barber,
@@ -396,8 +409,8 @@ export default class Calendar extends Component {
             let numberOfSlotsSlected = item.selected_slot_id.length;
             console.log("Numberof slots------>", numberOfSlotsSlected)
             let timeofSlots = numberOfSlotsSlected * 15;
-            if(timeofSlots===15)
-                timeofSlots=30;
+            if (timeofSlots === 15)
+                timeofSlots = 30;
             let period = "";
             if (timeofSlots < 60) {
                 period = "mins";
@@ -406,7 +419,7 @@ export default class Calendar extends Component {
             }
             let servicesSelected = "";
             for (let f = 0; f < item.selected_services.length; f++) {
-                if (f === item.selected_slot_id.length) {
+                if (f === item.selected_services.length - 1) {
                     servicesSelected += item.selected_services[f].name;
                 } else {
                     servicesSelected += item.selected_services[f].name + ",";
@@ -414,7 +427,62 @@ export default class Calendar extends Component {
 
             }
 
+            if (timeofSlots === 0) {
+                console.log("calenderSlots-time > " + item.total_time);
+                return (<TouchableOpacity onPress={() => this.props.navigation.navigate("Appointments")}>
+                    <View style={{height: 140, flexDirection: "row"}} cellKey={item.id}>
+                        <View style={{flexDirection: "column"}}>
+                            <Text
+                                style={{
+                                    marginLeft: 10,
+                                    width: 50,
+                                    height: 70,
+                                    fontFamily: "AvertaStd-Regular",
+                                    color: Colors.white,
+                                    fontSize: 10
+                                }}
+                            >
+                                {m.format("HH:mm A")}
+                            </Text>
 
+                            <Text
+                                style={{
+                                    marginLeft: 10,
+                                    width: 50,
+                                    fontFamily: "AvertaStd-Regular",
+                                    color: Colors.white,
+                                    fontSize: 10
+                                }}
+                            >
+                                {n.format("HH:mm A")}
+                            </Text>
+                        </View>
+                        <View style={{
+                            backgroundColor: "grey",
+                            width: "76.5%",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            borderLeftWidth: 0.5,
+                            borderLeftColor: "grey"
+
+                        }}>
+                            <Image source={require("../../../assets/images/break.png")} resizeMode={"cover"}
+                                   style={{
+                                       width: "100%",
+                                       height: "100%",
+                                   }}/>
+                            <Text style={{
+                                color: "white",
+                                textAlign: "center",
+                                position: "absolute"
+                            }}>{"BREAK TIME"}</Text>
+                        </View>
+
+
+                    </View>
+                </TouchableOpacity>);
+
+            }
             if (timeofSlots === 15 || timeofSlots === 30) {
                 console.log("calenderSlots-time > " + timeofSlots);
                 return <TouchableWithoutFeedback onPress={() => this.itemSelect(bgc, item, servicesSelected)}>
@@ -429,7 +497,7 @@ export default class Calendar extends Component {
                             color: Colors.white,
                             fontSize: 10
                         }}>
-                            {m.format("hh:mm") + " " + AM}
+                            {item.selected_slot_id[0].start_time + " " + AM}
                         </Text>
                         <View style={{width: 6, backgroundColor: bgc}}/>
                         <View style={{
@@ -499,162 +567,6 @@ export default class Calendar extends Component {
                     </View>
                 </TouchableWithoutFeedback>;
             }
-            if (timeofSlots === 60) {
-                console.log("calenderSlots-time > " + item.total_time);
-                return <TouchableOpacity onPress={() => this.itemSelect(bgc, item, servicesSelected)}>
-                    <View style={{height: 140, flexDirection: "row"}} cellKey={item.id}>
-                        <View style={{flexDirection: "column"}}>
-                            <Text
-                                style={{
-                                    marginLeft: 10,
-                                    width: 50,
-                                    height: 70,
-                                    fontFamily: "AvertaStd-Regular",
-                                    color: Colors.white,
-                                    fontSize: 10
-                                }}
-                            >
-                                {m.format("HH:mm") + " " + AM}
-                            </Text>
-
-                            <Text
-                                style={{
-                                    marginLeft: 10,
-                                    width: 50,
-                                    fontFamily: "AvertaStd-Regular",
-                                    color: Colors.white,
-                                    fontSize: 10
-                                }}
-                            >
-                                {n.format("HH:mm") + " " + AM}
-                            </Text>
-                        </View>
-
-                        <View style={{width: 6, backgroundColor: bgc}}/>
-                        <View style={{
-                            backgroundColor: "#454656",
-                            width: "75%",
-                            flexDirection: "row",
-                            borderTopLeftRadius: 0,
-                            borderBottomLeftRadius: 0,
-                            borderRadius: 5,
-                            borderWidth: 0.5,
-                            borderColor: "white",
-                            borderBottomWidth: 0,
-                            borderLeftWidth: 0,
-
-                        }}>
-                            <View style={{flexDirection: "row", width: "100%"}}>
-                                <View style={{
-                                    flexDirection: "column", alignItems: "flex-start", justifyContent: "center",
-                                    width: "100%", marginStart: 20
-                                }}>
-                                    <View style={{flexDirection: "row",}}>
-                                        <Text style={{
-                                            fontWeight: "bold", color: "white",
-                                            fontSize: 11
-                                        }}>{item.booking_title}</Text>
-                                        <Text style={{marginStart: 8, marginTop: 1, color: "white", fontSize: 10}}>
-                                            {item.client}
-                                        </Text>
-                                    </View>
-                                    <View style={{flexDirection: "row", marginTop: 7}}>
-                                        <Image source={require("../../../assets/images/chair.png")}
-                                               resizeMode={"contain"}
-                                               style={{
-                                                   height: 12,
-                                                   width: 12,
-                                                   marginTop: 3
-
-                                               }}
-                                        />
-                                        <Text style={{color: "#95A2B5", fontSize: 12}}>{" 1hr"}</Text>
-                                        <View style={{
-                                            flexDirection: "column",
-                                            width: 1, height: 13,
-                                            marginTop: 3,
-                                            backgroundColor: "grey",
-                                            marginStart: 10,
-                                            marginEnd: 10
-                                        }}/>
-                                        <Text style={{color: "#95A2B5", fontSize: 12}}>{item.price}</Text>
-                                    </View>
-                                </View>
-
-                            </View>
-                            <Image resizeMode={"cover"}
-                                   style={{width: 60, height: "100%", position: "absolute", right: 0, top: 0}}
-                                   source={imagep}
-                            />
-                            <Text style={{
-                                color: [imgTextcolor],
-                                fontSize: 7,
-                                fontWeight: "bold",
-                                position: "absolute",
-                                right: 6,
-                                bottom: 37
-                            }}>{imgText}</Text>
-                        </View>
-                    </View>
-
-                </TouchableOpacity>;
-            }
-            if (timeofSlots === 0) {
-                console.log("calenderSlots-time > " + item.total_time);
-                return (<TouchableOpacity onPress={() => this.props.navigation.navigate("Appointments")}>
-                    <View style={{height: 140, flexDirection: "row"}} cellKey={item.id}>
-                        <View style={{flexDirection: "column"}}>
-                            <Text
-                                style={{
-                                    marginLeft: 10,
-                                    width: 50,
-                                    height: 70,
-                                    fontFamily: "AvertaStd-Regular",
-                                    color: Colors.white,
-                                    fontSize: 10
-                                }}
-                            >
-                                {m.format("HH:mm A")}
-                            </Text>
-
-                            <Text
-                                style={{
-                                    marginLeft: 10,
-                                    width: 50,
-                                    fontFamily: "AvertaStd-Regular",
-                                    color: Colors.white,
-                                    fontSize: 10
-                                }}
-                            >
-                                {n.format("HH:mm A")}
-                            </Text>
-                        </View>
-                        <View style={{
-                            backgroundColor: "grey",
-                            width: "76.5%",
-                            justifyContent: "center",
-                            alignItems: "center",
-                            borderLeftWidth: 0.5,
-                            borderLeftColor: "grey"
-
-                        }}>
-                            <Image source={require("../../../assets/images/break.png")} resizeMode={"cover"}
-                                   style={{
-                                       width: "100%",
-                                       height: "100%",
-                                   }}/>
-                            <Text style={{
-                                color: "white",
-                                textAlign: "center",
-                                position: "absolute"
-                            }}>{"BREAK TIME"}</Text>
-                        </View>
-
-
-                    </View>
-                </TouchableOpacity>);
-
-            }
             if (timeofSlots === 45) {
                 console.log("calenderSlots-time > " + item.total_time);
                 return <TouchableOpacity onPress={() => this.itemSelect(bgc, item, servicesSelected)}>
@@ -670,7 +582,7 @@ export default class Calendar extends Component {
                                     fontSize: 10
                                 }}
                             >
-                                {m.format("hh:mm") + " " + AM}
+                                {item.selected_slot_id[0].start_time + " " + AM}
                             </Text>
 
                             <Text
@@ -682,7 +594,7 @@ export default class Calendar extends Component {
                                     fontSize: 10
                                 }}
                             >
-                                {n.format("HH:mm") + " " + AM}
+                                {item.selected_slot_id[2].start_time + " " + AM}
                             </Text>
                         </View>
                         <View style={{height: 105, width: 6, backgroundColor: bgc}}/>
@@ -709,9 +621,9 @@ export default class Calendar extends Component {
                                         <Text style={{
                                             fontWeight: "bold", color: "white",
                                             fontSize: 11
-                                        }}>{item.booking_title}</Text>
+                                        }}>{servicesSelected}</Text>
                                         <Text style={{marginStart: 8, marginTop: 1, color: "white", fontSize: 10}}>
-                                            {item.client}
+                                            {item.barber}
                                         </Text>
                                     </View>
                                     <View style={{flexDirection: "row", marginTop: 7}}>
@@ -733,7 +645,7 @@ export default class Calendar extends Component {
                                             marginStart: 10,
                                             marginEnd: 10
                                         }}/>
-                                        <Text style={{color: "#95A2B5", fontSize: 12}}>{item.price}</Text>
+                                        <Text style={{color: "#95A2B5", fontSize: 12}}>{"$" + item.total_price}</Text>
                                     </View>
                                 </View>
 
@@ -750,6 +662,219 @@ export default class Calendar extends Component {
                                 right: 6,
                                 bottom: 37
                             }}>{imgText}</Text>
+                        </View>
+                    </View>
+
+                </TouchableOpacity>;
+            }
+            if (timeofSlots === 60) {
+                console.log("calenderSlots-time > " + item.total_time);
+                return <TouchableOpacity onPress={() => this.itemSelect(bgc, item, servicesSelected)}>
+                    <View style={{height: 140, flexDirection: "row"}} cellKey={item.id}>
+                        <View style={{flexDirection: "column"}}>
+                            <Text
+                                style={{
+                                    marginLeft: 10,
+                                    width: 50,
+                                    height: 70,
+                                    fontFamily: "AvertaStd-Regular",
+                                    color: Colors.white,
+                                    fontSize: 10
+                                }}
+                            >
+                                {item.selected_slot_id[0].start_time + " " + AM}
+                            </Text>
+
+                            <Text
+                                style={{
+                                    marginLeft: 10,
+                                    width: 50,
+                                    fontFamily: "AvertaStd-Regular",
+                                    color: Colors.white,
+                                    fontSize: 10
+                                }}
+                            >
+                                {item.selected_slot_id[2].start_time + " " + AM}
+                            </Text>
+                        </View>
+
+                        <View style={{width: 6, backgroundColor: bgc}}/>
+                        <View style={{
+                            backgroundColor: "#454656",
+                            width: "75%",
+                            flexDirection: "row",
+                            borderTopLeftRadius: 0,
+                            borderBottomLeftRadius: 0,
+                            borderRadius: 5,
+                            borderWidth: 0.5,
+                            borderColor: "white",
+                            borderBottomWidth: 0,
+                            borderLeftWidth: 0,
+
+                        }}>
+                            <View style={{flexDirection: "row", width: "100%"}}>
+                                <View style={{
+                                    flexDirection: "column", alignItems: "flex-start", justifyContent: "center",
+                                    width: "100%", marginStart: 20
+                                }}>
+                                    <View style={{flexDirection: "row",}}>
+                                        <Text style={{
+                                            fontWeight: "bold", color: "white",
+                                            fontSize: 11
+                                        }}>{servicesSelected}</Text>
+                                        <Text style={{marginStart: 8, marginTop: 1, color: "white", fontSize: 10}}>
+                                            {item.barber}
+                                        </Text>
+                                    </View>
+                                    <View style={{flexDirection: "row", marginTop: 7}}>
+                                        <Image source={require("../../../assets/images/chair.png")}
+                                               resizeMode={"contain"}
+                                               style={{
+                                                   height: 12,
+                                                   width: 12,
+                                                   marginTop: 3
+
+                                               }}
+                                        />
+                                        <Text style={{color: "#95A2B5", fontSize: 12}}>{" 1hr"}</Text>
+                                        <View style={{
+                                            flexDirection: "column",
+                                            width: 1, height: 13,
+                                            marginTop: 3,
+                                            backgroundColor: "grey",
+                                            marginStart: 10,
+                                            marginEnd: 10
+                                        }}/>
+                                        <Text style={{color: "#95A2B5", fontSize: 12}}>{"$" + item.total_price}</Text>
+                                    </View>
+                                </View>
+
+                            </View>
+                            <Image resizeMode={"cover"}
+                                   style={{width: 60, height: "100%", position: "absolute", right: 0, top: 0}}
+                                   source={imagep}
+                            />
+                            <Text style={{
+                                color: [imgTextcolor],
+                                fontSize: 7,
+                                fontWeight: "bold",
+                                position: "absolute",
+                                right: 6,
+                                bottom: 37
+                            }}>{imgText}</Text>
+                        </View>
+                    </View>
+
+                </TouchableOpacity>;
+            }
+            if (timeofSlots === 75) {
+                console.log("calenderSlots-time > " + item.total_time);
+                return <TouchableOpacity onPress={() => this.itemSelect(bgc, item, servicesSelected)}>
+                    <View style={{height: 175, flexDirection: "row"}} cellKey={item.id}>
+                        <View style={{flexDirection: "column"}}>
+                            <Text
+                                style={{
+                                    marginLeft: 10,
+                                    width: 50,
+                                    height: 70,
+                                    fontFamily: "AvertaStd-Regular",
+                                    color: Colors.white,
+                                    fontSize: 10
+                                }}
+                            >
+                                {item.selected_slot_id[0].start_time + " " + AM}
+                            </Text>
+
+                            <Text
+                                style={{
+                                    marginLeft: 10,
+                                    width: 50,
+                                    height: 70,
+                                    fontFamily: "AvertaStd-Regular",
+                                    color: Colors.white,
+                                    fontSize: 10
+                                }}
+                            >
+                                {item.selected_slot_id[2].start_time + " " + AM}
+                            </Text>
+                            <Text
+                                style={{
+                                    marginLeft: 10,
+                                    width: 50,
+                                    fontFamily: "AvertaStd-Regular",
+                                    color: Colors.white,
+                                    fontSize: 10
+                                }}
+                            >
+                                {item.selected_slot_id[4].start_time + " " + AM}
+                            </Text>
+                        </View>
+                        <View style={{height: 175, width: 6, backgroundColor: bgc}}/>
+                        <View style={{
+                            backgroundColor: "#454656",
+                            width: "75%",
+                            height: 175,
+                            flexDirection: "row",
+                            borderTopLeftRadius: 0,
+                            borderBottomLeftRadius: 0,
+                            borderRadius: 5,
+                            borderWidth: 0.5,
+                            borderColor: "white",
+                            borderBottomWidth: 0,
+                            borderLeftWidth: 0,
+                        }}>
+                            <View style={{flexDirection: "row", width: "100%"}}>
+                                <View style={{
+                                    flexDirection: "column", alignItems: "flex-start", justifyContent: "center",
+                                    width: "100%", marginStart: 20
+                                }}>
+                                    <View style={{flexDirection: "row",}}>
+                                        <Text style={{
+                                            fontWeight: "bold", color: "white",
+                                            fontSize: 11
+                                        }}>{servicesSelected}</Text>
+                                        <Text style={{marginStart: 8, marginTop: 1, color: "white", fontSize: 10}}>
+                                            {item.barber}
+                                        </Text>
+                                    </View>
+                                    <View style={{flexDirection: "row", marginTop: 7}}>
+                                        <Image source={require("../../../assets/images/chair.png")}
+                                               resizeMode={"contain"}
+                                               style={{
+                                                   height: 12,
+                                                   width: 12,
+                                                   marginTop: 3
+
+                                               }}
+                                        />
+                                        <Text style={{color: "#95A2B5", fontSize: 12}}>{" 75 mins"}</Text>
+                                        <View style={{
+                                            flexDirection: "column",
+                                            width: 1, height: 13,
+                                            marginTop: 3,
+                                            backgroundColor: "grey",
+                                            marginStart: 10,
+                                            marginEnd: 10
+                                        }}/>
+                                        <Text style={{color: "#95A2B5", fontSize: 12}}>{"$" + item.total_price}</Text>
+                                    </View>
+                                </View>
+
+                            </View>
+
+                            <Image resizeMode={"cover"}
+                                   style={{width: 60, height: "100%", position: "absolute", right: 0, top: 0}}
+                                   source={imagep}
+                            />
+                            <Text style={{
+                                color: [imgTextcolor],
+                                fontSize: 7,
+                                fontWeight: "bold",
+                                position: "absolute",
+                                top: 90,
+                                right: 8,
+                            }}>{imgText}</Text>
+
                         </View>
                     </View>
 
@@ -778,7 +903,7 @@ export default class Calendar extends Component {
             }
         }
         console.log("NEWMonthdata1 ", JSON.stringify(monthDaysData));
-        this.setState({monthDays: monthDaysData}, () => {
+        this.setState({monthDays: monthDaysData, lastDaySelected: monthDaysData[indx].showdate}, () => {
             console.log("NEWMonthdata ", JSON.stringify(this.state.monthDays));
         });
         this.getCalenderSlots(monthDaysData[indx].showdate);
@@ -907,7 +1032,7 @@ export default class Calendar extends Component {
                     justifyContent: "center"
                 }}>
                     <Image resizeMode={"contain"} source={require("../../../assets/images/loading.gif")}
-                           style={{width: 100, height: 100, opacity: 1,}}/>
+                           style={{width: 60, height: 60, opacity: 1,}}/>
                 </View>}
 
             </View>

@@ -8,7 +8,7 @@ import {
     ScrollView,
     TouchableOpacity,
     TouchableHighlight, Clipboard,
-    TextInput, Dimensions, ImageBackground,Alert
+    TextInput, Dimensions, ImageBackground, Alert
 } from "react-native";
 import LinearGradient from 'react-native-linear-gradient';
 import {Colors} from "../../../themes";
@@ -16,29 +16,70 @@ import {globalStyles} from "../../../themes/globalStyles";
 import {Header} from "react-native-elements";
 import Preference from 'react-native-preference';
 import ViewShot from "react-native-view-shot";
+import {constants} from "../../../utils/constants";
+import {SafeAreaView} from "react-navigation";
 
 var RNFS = require('react-native-fs');
 
 const {width, height} = Dimensions.get("window");
 
 const link = "www.clypr.co/pro/" + Preference.get("userName");
-let barberName="",barberImage="",barberShopName="",barberAddress="",barberInsta="";
 export default class Share extends Component {
 
     constructor(props) {
         super(props);
-        const {navigation} = this.props;
-        barberName = navigation.getParam('barberName');
-        barberImage = navigation.getParam('profile_image');
-        barberShopName = navigation.getParam('barberShopName');
-        barberAddress = navigation.getParam('barberAddress');
-        barberInsta = navigation.getParam('barberInsta');
 
         this.state = {
+            showLoading: false,
             text2: 'Your Message...',
             clipboardContent: null,
+            barberName: "",
+            barberImage: "",
+            barberShopName: "",
+            barberAddress: "",
+            barberInsta: ""
         };
 
+    }
+
+    componentDidMount(): void {
+        this.getBarberDetails()
+    }
+
+    getBarberDetails() {
+        this.setState({showLoading: true})
+        fetch(constants.ClientBarbersProfile + "/" + Preference.get("userId") + "/profile", {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        }).then(response => response.json())
+            .then(response => {
+                console.log("getBarberDetails-->", "-" + JSON.stringify(response));
+                if (response.ResultType === 1) {
+                    this.setState({showLoading: false})
+                    let barberData = response.Data;
+                    this.setState({
+                        barberName: barberData.firstname,
+                        barberImage: {uri: barberData.user_image},
+                        barberShopName: barberData.shop_name,
+                        barberAddress: barberData.location,
+                        barberInsta: barberData.username,
+                    })
+
+                } else {
+                    this.setState({showLoading: false})
+                    if (response.ResultType === 0) {
+                        alert(response.Message);
+                    }
+                }
+            }).catch(error => {
+            //console.error('Errorr:', error);
+            this.setState({showLoading: false})
+            console.log('Error:', error);
+            alert("Error: " + error);
+        });
     }
 
     saveToClipboard = async (val) => {
@@ -127,12 +168,12 @@ export default class Share extends Component {
                                     style={{marginStart: 5, color: "grey", fontFamily: "AvertaStd-Thin"}}
                                 >{"Copy & Paste the below link"}</Text></View>
                             <TouchableOpacity
-                                onPress={() => this.saveToClipboard("www.clypr.co/pro/" + barberInsta)}>
+                                onPress={() => this.saveToClipboard("www.clypr.co/pro/" + this.state.barberInsta)}>
                                 <Text style={{
                                     color: "white",
                                     fontSize: 15,
                                     fontFamily: "AvertaStd-Bold"
-                                }}>{"www.clypr.co/pro/" + barberInsta}</Text>
+                                }}>{"www.clypr.co/pro/" + this.state.barberInsta}</Text>
                             </TouchableOpacity>
 
                         </View>
@@ -149,29 +190,29 @@ export default class Share extends Component {
                             />
 
                             <View style={{position: "absolute", top: 5, left: 15, alignItems: "center"}}>
-                                <Image source={barberImage} style={{
+                                <Image source={this.state.barberImage} style={{
                                     width: 70,
                                     height: 70,
-                                    borderRadius:35,
+                                    borderRadius: 35,
                                 }}/>
                                 <Text style={{
                                     fontWeight: "bold",
                                     color: "black",
                                     fontSize: 10,
                                 }}
-                                >{barberName}</Text>
+                                >{this.state.barberName}</Text>
                                 <Text
                                     style={{
                                         color: "black",
                                         fontSize: 8,
                                     }}
-                                >{barberShopName}</Text>
+                                >{this.state.barberShopName}</Text>
                                 <Text
                                     style={{
                                         color: "black",
                                         fontSize: 8,
                                     }}
-                                >{"("+barberAddress+")"}</Text>
+                                >{"(" + this.state.barberAddress + ")"}</Text>
                             </View>
                             <View style={{
                                 flexDirection: "row",
@@ -180,11 +221,11 @@ export default class Share extends Component {
                                 right: 10,
                                 top: 10
                             }}>
-                                <Text style={{color: "black", fontSize: 12}}>{"www.clypr.co/pro/" + barberInsta}</Text>
+                                <Text style={{color: "black", fontSize: 12}}>{"www.clypr.co/pro/" + this.state.barberInsta}</Text>
                                 <TouchableOpacity onPress={() => this.downloadImage()}>
                                     <Image
-                                           style={{width: 40, height: 40, marginStart: 20}}
-                                           source={require("../../../assets/images/download.png")}/>
+                                        style={{width: 40, height: 40, marginStart: 20}}
+                                        source={require("../../../assets/images/download.png")}/>
                                 </TouchableOpacity>
                             </View>
                             <View style={{
@@ -202,7 +243,7 @@ export default class Share extends Component {
                                         margin: 5,
                                         marginStart: 7,
                                         marginEnd: 7,
-                                        color:"red",
+                                        color: "red",
                                         fontWeight: "bold"
                                     }}>{"Book your appointment"}</Text>
                                 </TouchableOpacity>
@@ -287,26 +328,26 @@ export default class Share extends Component {
                             />
 
                             <View style={{position: "absolute", top: 5, left: 25, alignItems: "center"}}>
-                                <Image source={barberImage} style={{
+                                <Image source={this.state.barberImage} style={{
                                     width: 70,
-                                    height: 70,borderRadius:35,
+                                    height: 70, borderRadius: 35,
                                 }}/>
                                 <Text
                                     style={{
                                         fontWeight: "bold",
                                         color: "black",
                                         fontSize: 10,
-                                    }}>{barberName}</Text>
+                                    }}>{this.state.barberName}</Text>
                                 <Text style={{
                                     color: "black",
                                     fontSize: 8,
 
-                                }}>{barberShopName}</Text>
+                                }}>{this.state.barberShopName}</Text>
                                 <Text style={{
                                     color: "black",
                                     fontSize: 8,
 
-                                }}>{"("+ barberAddress+")"}</Text>
+                                }}>{"(" + this.state.barberAddress + ")"}</Text>
                             </View>
                             <View style={{
                                 flexDirection: "row",
@@ -401,11 +442,23 @@ export default class Share extends Component {
                                         color: "black",
                                         fontSize: 11, marginTop: 10
                                     }}
-                                >{"www.clypr.co/pro/" + barberInsta}</Text>
+                                >{"www.clypr.co/pro/" + this.state.barberInsta}</Text>
                             </View>
                         </ViewShot>
                     </View>
                 </ScrollView>
+                {this.state.showLoading && <View style={{
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor: "transparent",
+                    position: "absolute",
+                    opacity: 1,
+                    alignItems: "center",
+                    justifyContent: "center"
+                }}>
+                    <Image resizeMode={"contain"} source={require("../../../assets/images/loading.gif")}
+                           style={{width: 60, height: 60, opacity: 1,}}/>
+                </View>}
             </View>
 
 

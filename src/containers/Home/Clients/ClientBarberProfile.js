@@ -91,8 +91,10 @@ export default class ClientBarberProfile extends Component {
             serviceTimeSelected: false,
             totalPriceService: 0,
             selectedServices: [],
+            totalServicesTime: 0,
             selectedDate: "",
             selectedSlotTime: "",
+            selectedSlotIds: [],
             buttonPayText: "Pay",
             dayData: [
                 {
@@ -220,6 +222,7 @@ export default class ClientBarberProfile extends Component {
         }
         console.log("SurgePriceSelected-" + this.state.surgePriceSelected)
         this.setState({dayData: dataDay, serviceTimeSelected: true});
+        this.checkSlotsAvailability(dataDay[indx].slot_detail._id);
     }
 
     renderWeekDay(item) {
@@ -503,6 +506,7 @@ export default class ClientBarberProfile extends Component {
                         barberRating: barberData.average_rating,
                         barberReviews: barberData.total_reviews,
                         barberTotalAmout: 0,
+                        totalPriceService:0,
                         barberMobilePay: barberData.payment_option,
                     });
 
@@ -541,7 +545,7 @@ export default class ClientBarberProfile extends Component {
             barber_id: barberId,
             selected_services: this.state.selectedServices,
             date: this.state.selectedDate,
-            selected_slot_id: this.state.selectedSlotTime,
+            selected_slot_id: this.state.selectedSlotIds,
             total_price: this.state.totalPriceService,
             service_fee: "1",
             selected_surge_price: false
@@ -561,12 +565,12 @@ export default class ClientBarberProfile extends Component {
                 this.setState({showLoading: false})
                 if (response.ResultType === 1) {
                     Alert.alert("Success!", "Appointment is Booked");
-                    this.props.navigation.navigate('ClientLeaveReview',{
-                        barberId:barberId,
-                        barberImage:this.state.barberProfileImage,
-                        barberName:this.state.barberName,
-                        barberShopName:this.state.barberShopName,
-                        appointmentPrice:this.state.totalPriceService
+                    this.props.navigation.navigate('ClientLeaveReview', {
+                        barberId: barberId,
+                        barberImage: this.state.barberProfileImage,
+                        barberName: this.state.barberName,
+                        barberShopName: this.state.barberShopName,
+                        appointmentPrice: this.state.totalPriceService
                     });
                 } else {
                     if (response.ResultType === 0) {
@@ -581,6 +585,48 @@ export default class ClientBarberProfile extends Component {
         });
     }
 
+    checkSlotsAvailability(id) {
+        console.log("checkSlots -Availability:","---inside")
+        //let selectedslot = this.state.selectedSlotTime;
+        let totalslots = this.state.barberTimeSlots;
+        console.log("checkSlots -Availability:","---selectedSlot-->"+id)
+        console.log("checkSlots -Availability:","---AllSlot-->"+JSON.stringify(totalslots))
+        let calculateTotalTimeforSlots = this.state.totalServicesTime;
+        console.log("checkSlots -Availability:","------calculateTotalTimeforSlots-"+calculateTotalTimeforSlots);
+        let totalSlotsNeeded = Math.ceil(calculateTotalTimeforSlots / 15);
+        console.log("checkSlots -Availability:","------totalSlotsNeeded-"+totalSlotsNeeded);
+        let availSlots = 0;
+        let totalSelectedSlotsIds = [];
+        for (let i = 0; i < totalslots.length; i++) {
+            console.log("checkSlots -Availability:",i+"------inside loop-"+id+"==="+totalslots[i].slot_detail._id);
+
+            if (id === totalslots[i].slot_detail._id) {
+                for (let j = 0; j < totalSlotsNeeded; j++) {
+                    console.log("checkSlots -Availability:",i+"--*********--"+j);
+                    if (totalslots[i + j].slot_status === 0) {
+                        console.log("checkSlots -Availability:",i+"----"+j+"--Acepted");
+                        availSlots++;
+                        totalSelectedSlotsIds.push(totalslots[i + j].slot_detail._id);
+                    }else
+                    {
+                        if(totalslots[i + j].slot_status === 1)
+                        {
+                            console.log("checkSlots -Availability:",i+"----"+j+"--rejected");
+                            Alert.alert("Warning!","Consective slots are not available for these services.");
+                            return false;
+                        }
+                    }
+                    if (availSlots === totalSlotsNeeded) {
+                        console.log("checkSlots -Availability:",i+"----"+j+"--allAvailable");
+                        this.setState({selectedSlotIds: totalSelectedSlotsIds});
+                        console.log("checkSlots -Availability:",i+"----"+j+"--allAvailable----->>>>>>"+totalSelectedSlotsIds);
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+
 
     setFavorite() {
         if (this.state.barberFav === true) {
@@ -593,8 +639,7 @@ export default class ClientBarberProfile extends Component {
     }
 
     renderItem(item, index) {
-        if(item.slot_status===0)
-        {
+        if (item.slot_status === 0) {
             //var m = moment(new Date(2011, 2, 12, 0, 0, 0));
             //m.add(item.id * 30, "minutes");
             /*if (item.surgePrice === true) {
@@ -655,32 +700,31 @@ export default class ClientBarberProfile extends Component {
                     </TouchableOpacity>
                 </View>)
             }
-        }else
-        {
+        } else {
             return (<View>
-                    <View style={{
-                        height: 20,
-                        flexDirection: "row",
-                        borderRadius: 10,
-                        borderWidth: 1,
-                        alignItems: "center",
-                        borderColor: item.slot_detail.selected,
-                        marginStart: 3,
-                    }} cellKey={item.slot_detail._id}>
-                        <Text style={{
-                            textAlignVertical: "top",
-                            marginLeft: 10,
-                            marginRight: 10,
-                            width: 50,
-                            textAlign: "center",
-                            fontFamily: "AvertaStd-Regular",
-                            color: "green",
-                            fontSize: 11,
-                            fontWeight: "bold",
-                        }}>
-                            {"Booked"}
-                        </Text>
-                    </View>
+                <View style={{
+                    height: 20,
+                    flexDirection: "row",
+                    borderRadius: 10,
+                    borderWidth: 1,
+                    alignItems: "center",
+                    borderColor: item.slot_detail.selected,
+                    marginStart: 3,
+                }} cellKey={item.slot_detail._id}>
+                    <Text style={{
+                        textAlignVertical: "top",
+                        marginLeft: 10,
+                        marginRight: 10,
+                        width: 50,
+                        textAlign: "center",
+                        fontFamily: "AvertaStd-Regular",
+                        color: "green",
+                        fontSize: 11,
+                        fontWeight: "bold",
+                    }}>
+                        {"Booked"}
+                    </Text>
+                </View>
             </View>)
         }
 
@@ -708,7 +752,6 @@ export default class ClientBarberProfile extends Component {
 
     cardSelected(card) {
         this.setState({DialogVisible: false})
-
     }
 
     checkSurgePriceSelected() {
@@ -726,7 +769,7 @@ export default class ClientBarberProfile extends Component {
     }
 
     checkBoxClicked(id) {
-        console.log("IDforService---->" + id);
+        //console.log("IDforService---->" + id);
         let mainData = this.state.ListData2;
         if (mainData[id].check === true) {
             //console.log("IDforService---->"+mainData[id].check);
@@ -747,18 +790,20 @@ export default class ClientBarberProfile extends Component {
 
         this.setState({serviceTypeSelected: false, selectedServices: []});
         let selectedservice = [];
+        let totalTime = 0;
         for (let j = 0; j < mainData.length; j++) {
             //console.log("IDforService---->"+j+"--"+ mainData[j].check);
             if (mainData[j].check === true) {
                 //console.log("IDforService---->"+j+"-true-"+ mainData[j].check);
                 selectedservice.push(mainData[j]._id);
+                totalTime += parseInt(mainData[j].duration);
                 this.setState({serviceTypeSelected: true});
-                console.log("IDforService---->" + JSON.stringify(selectedservice));
+                //console.log("IDforService---->" + JSON.stringify(selectedservice));
             }
         }
 
-        this.setState({ListData2: mainData, selectedServices: selectedservice});
-        //console.log("IDforService---->"+ JSON.stringify(this.state.selectedServices));
+        this.setState({ListData2: mainData, selectedServices: selectedservice, totalServicesTime: totalTime});
+        //console.log("IDforService--t-->"+ JSON.stringify(totalTime));
     }
 
     selectday(indx) {
@@ -840,7 +885,7 @@ export default class ClientBarberProfile extends Component {
 
                                     <View style={styles.review}>
                                         <TouchableOpacity onPress={() => {
-                                            this.props.navigation.navigate('ClientSupremeReview',{ barberId:barberId});
+                                            this.props.navigation.navigate('ClientSupremeReview', {barberId: barberId});
                                         }}>
                                             <AirbnbRating
                                                 isDisabled={true}
@@ -900,15 +945,15 @@ export default class ClientBarberProfile extends Component {
                                 keyExtractor={index => index}
                                 renderItem={({item}) =>
                                     <View>
-                                       <Image style={{
+                                        <Image style={{
                                             borderRadius: 10,
                                             marginStart: 8,
                                             height: 140,
                                             width: 160,
                                             backgroundColor: "grey"
                                         }}
-                                                                            resizeMode='cover'
-                                                                            source={{uri:item.portfolio_image}}/>
+                                               resizeMode='cover'
+                                               source={{uri: item.portfolio_image}}/>
                                     </View>}
                             />}
                             {(this.state.ListData.length < 1) &&
@@ -968,7 +1013,11 @@ export default class ClientBarberProfile extends Component {
                             {this.state.ListData2.length > 0 && <FlatList
                                 renderItem={({item, index}) =>
                                     <View style={{flexDirection: "column"}}>
-                                        <TouchableOpacity onPress={()=> this.checkBoxClicked(index)} style={[{flexDirection: "row", height: 30, backgroundColor: "#686975"}]}>
+                                        <TouchableOpacity onPress={() => this.checkBoxClicked(index)} style={[{
+                                            flexDirection: "row",
+                                            height: 30,
+                                            backgroundColor: "#686975"
+                                        }]}>
                                             <View style={[{
                                                 flexDirection: "row",
                                                 width: "50%",
@@ -1111,7 +1160,8 @@ export default class ClientBarberProfile extends Component {
                                         </Text>
                                     </View>
                                 </View>
-                                {(this.state.buttonPayText==="PAY") && <TouchableOpacity onPress={() => this.showDialog()} style={{
+                                {(this.state.buttonPayText === "PAY") &&
+                                <TouchableOpacity onPress={() => this.showDialog()} style={{
                                     flexDirection: "row",
                                     width: "40%",
                                     height: "100%",
@@ -1134,8 +1184,17 @@ export default class ClientBarberProfile extends Component {
                                         }} resizeMode={"contain"}
                                         source={require("../../../assets/images/arrow_down.png")}/>
                                 </TouchableOpacity>}
-                                <View style={{ width: "40%",height:"100%",justifyContent:"center",alignItems:"center"}}>
-                                    <Text style={{fontSize:18,color:"white",fontStyle: 'italic'}}>{" Pay in Store "}</Text>
+                                <View style={{
+                                    width: "40%",
+                                    height: "100%",
+                                    justifyContent: "center",
+                                    alignItems: "center"
+                                }}>
+                                    <Text style={{
+                                        fontSize: 18,
+                                        color: "white",
+                                        fontStyle: 'italic'
+                                    }}>{" Pay in Store "}</Text>
                                 </View>
 
                                 <TouchableOpacity onPress={() => {
@@ -1203,7 +1262,7 @@ export default class ClientBarberProfile extends Component {
                     justifyContent: "center"
                 }}>
                     <Image resizeMode={"contain"} source={require("../../../assets/images/loading.gif")}
-                           style={{width: 100, height: 100, opacity: 1,}}/>
+                           style={{width: 60, height: 60, opacity: 1,}}/>
                 </View>}
             </View>
         );

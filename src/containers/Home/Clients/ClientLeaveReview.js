@@ -107,8 +107,6 @@ export default class ClientLeaveReview extends Component {
     }
 
     addReview() {
-
-
         var details = {
             barber_id: barberId,
             client_id: Preference.get("userId"),
@@ -511,7 +509,7 @@ export default class ClientLeaveReview extends Component {
                     alignItems: "center",
                     justifyContent: "center"
                 }}>
-                    <Image resizeMode={"contain"} source={require("../../../assets/images/loading.gif")} style={{width:100,height:100, opacity: 1,}}/>
+                    <Image resizeMode={"contain"} source={require("../../../assets/images/loading.gif")} style={{width:60,height:60, opacity: 1,}}/>
                 </View>}
             </View>
         )

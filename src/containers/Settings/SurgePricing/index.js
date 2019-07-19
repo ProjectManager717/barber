@@ -445,7 +445,7 @@ export default class SurgePricing extends Component {
                     justifyContent: "center"
                 }}>
                     <Image resizeMode={"contain"} source={require("../../../assets/images/loading.gif")}
-                           style={{width: 100, height: 100, opacity: 1,}}/>
+                           style={{width: 60, height: 60, opacity: 1,}}/>
                 </View>}
                 <PopupDialog
                     visible={this.state.DialogSurgePrice}

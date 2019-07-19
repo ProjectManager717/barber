@@ -179,7 +179,7 @@ export default class ClientHome extends Component {
                     <Text style={{fontSize: 10, color: "#939FB1", marginStart: 4}}>{date[0]}</Text>
                 </View>
             </View>
-            {item.appointment_type === "Completed" ?
+            {item.appointment_type === "completed" ?
                 <TouchableOpacity
                     onPress={() => this.props.navigation.navigate("Receipt")}
                     style={{
@@ -197,9 +197,9 @@ export default class ClientHome extends Component {
                         backgroundColor: "#626371"
                     }}>
 
-                    <Text style={{marginTop: 3, color: "white", fontSize: 10, fontWeight: "bold"}}>{item.appointment_type}</Text>
+                    <Text style={{marginTop: 3, color: "white", fontSize: 10, fontWeight: "bold"}}>{"Completed"}</Text>
                 </TouchableOpacity>
-                : item.appointment_type === "Cancelled" ?
+                : item.appointment_type === "cancelled" ?
                     <TouchableOpacity
                         onPress={() => this.props.navigation.navigate("ReceiptCancelled")}
                         style={{
@@ -221,8 +221,9 @@ export default class ClientHome extends Component {
                             color: "white",
                             fontSize: 10,
                             fontWeight: "bold"
-                        }}>{item.appointment_type}</Text>
-                    </TouchableOpacity> :
+                        }}>{"Cancelled"}</Text>
+                    </TouchableOpacity>
+                    : item.appointment_type === "confirmed" ?
                     <TouchableOpacity
                         style={{
                             top: 0,
@@ -243,8 +244,29 @@ export default class ClientHome extends Component {
                             color: "white",
                             fontSize: 10,
                             fontWeight: "bold"
-                        }}>{item.appointment_type}</Text>
-                    </TouchableOpacity>
+                        }}>{"Confirmed"}</Text>
+                    </TouchableOpacity>:<TouchableOpacity
+                            style={{
+                                top: 0,
+                                right: 0,
+                                position: "absolute",
+                                height: 26,
+                                width: 75,
+                                marginTop: 10,
+                                marginEnd: 10,
+                                alignItems: 'center',
+                                justifyContent: "center",
+                                borderRadius: 12,
+                                borderWidth: 1, borderColor: "grey",
+                                backgroundColor: "#626371"
+                            }}>
+
+                            <Text style={{
+                                color: "white",
+                                fontSize: 10,
+                                fontWeight: "bold"
+                            }}>{"No-Show"}</Text>
+                        </TouchableOpacity>
             }
 
         </View>
@@ -465,7 +487,7 @@ export default class ClientHome extends Component {
                     alignItems: "center",
                     justifyContent: "center"
                 }}>
-                    <Image resizeMode={"contain"} source={require("../../../assets/images/loading.gif")} style={{width:100,height:100, opacity: 1,}}/>
+                    <Image resizeMode={"contain"} source={require("../../../assets/images/loading.gif")} style={{width:60,height:60, opacity: 1,}}/>
                 </View>}
 
             </View>

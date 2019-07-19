@@ -9,11 +9,13 @@ import {Colors} from "../../../themes";
 import {styles} from "./styles";
 import {constants} from "../../../utils/constants";
 import Preference from "react-native-preference";
+import {SafeAreaView} from "react-navigation";
 
 export default class Reviews extends Component {
     constructor() {
         super();
         this.state = {
+            showLoading:false,
             dataSource: {},
             reviews: [],
             AverageRating: "",
@@ -136,6 +138,18 @@ export default class Reviews extends Component {
                 {(this.state.reviews.length < 1) &&
                 <View style={{marginTop: 30, height: 30, marginStart: 20, marginEnd: 20,alignItems:"center"}}>
                     <Text style={{color:"white",fontSize:20,}}>{"You have no reviews yet!"}</Text>
+                </View>}
+
+                {this.state.showLoading && <View style={{
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor: "transparent",
+                    position: "absolute",
+                    opacity: 1,
+                    alignItems: "center",
+                    justifyContent: "center"
+                }}>
+                    <Image resizeMode={"contain"} source={require("../../../assets/images/loading.gif")} style={{width:60,height:60, opacity: 1,}}/>
                 </View>}
             </View>
         );

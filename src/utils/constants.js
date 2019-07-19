@@ -31,6 +31,7 @@ export const constants = {
     BarbersProfileUpdate: Base_url + path2+"update",
     BarbersSendVerfication: Base_url + path2+"sendVerificationCode",
     BarbersDeleteImage: Base_url + path2+"portfolio_ImageDelete",
+    BarberUpdateAppointmentStatus: Base_url + path2+"updateAppointmentStatus",
 
 
     ClientLogin: Base_url + clientPath + "login",

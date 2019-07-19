@@ -1,13 +1,16 @@
 import React, {Component} from "react";
-import {View, Switch, Text, StyleSheet, Image, ScrollView, TouchableOpacity, FlatList} from "react-native";
+import {View, Switch, Text, StyleSheet, Image, ScrollView, TouchableOpacity, FlatList, Alert} from "react-native";
 import {Colors} from "../../../themes";
 import {globalStyles} from "../../../themes/globalStyles";
 //import { styles } from "./styles";
 import {Header} from "react-native-elements";
 import CheckBoxSquare from "../../../components/CheckBox";
+import Preference from "react-native-preference";
+import {constants} from "../../../utils/constants";
+import {SafeAreaView} from "react-navigation";
 var moment = require("moment");
 
-let clr = "", clientName = "", createdAt = "", startTime = "", endTime = "", price = "", services = "",client_image="",
+let appointmentId="",clr = "", clientName = "", createdAt = "", startTime = "", endTime = "", price = "", services = "",client_image="",
     totalServices = "";
 export default class Appointments extends Component {
 
@@ -15,6 +18,7 @@ export default class Appointments extends Component {
         super(props);
 
         const {navigation} = this.props;
+        appointmentId = navigation.getParam('appointmentId');
         clr = navigation.getParam('bgc');
         clientName = navigation.getParam('clientName');
         createdAt = navigation.getParam('createdAt');
@@ -28,6 +32,9 @@ export default class Appointments extends Component {
         totalServices = services.split(",");
         createdAt=m.format("DD-MM-YYYY HH:MM:SS");
         console.log("gettingUSersignIn--->" +m.format("DD-MM-YYYY HH:MM:SS"));
+        this.state={
+            showLoading:false,
+        }
     }
 
 
@@ -79,7 +86,7 @@ export default class Appointments extends Component {
             alignItems: "center",
             justifyContent: "center"
         }}>
-            <TouchableOpacity style={{
+            <View style={{
                 height: "100%",
                 alignItems: "center",
                 justifyContent: "center"
@@ -88,7 +95,7 @@ export default class Appointments extends Component {
                 <Text style={{fontWeight: "bold", fontSize: 16, color: "white"}}>
                     {item.title}
                 </Text>
-            </TouchableOpacity>
+            </View>
             <View style={{width: 0.5, backgroundColor: "#52525D", marginStart: 50}}></View>
         </View>
     }
@@ -113,6 +120,65 @@ export default class Appointments extends Component {
                 <Text style={[globalStyles.receiptButtonText, {marginStart: 5, fontWeight: "bold",marginEnd:10}]}>{item.text}</Text>
 
             </TouchableOpacity>
+    }
+
+    updateAppointment(status)
+    {
+        let Appointmentstatus=0;
+        if(status==="complete")
+            Appointmentstatus=1;
+        if(status==="inprogress")
+            Appointmentstatus=2;
+        if(status==="confirm")
+            Appointmentstatus=3;
+        if(status==="pending")
+            Appointmentstatus=4;
+        if(status==="cancelled")
+            Appointmentstatus=5;
+        if(status==="noshow")
+            Appointmentstatus=6;
+        this.setState({showLoading:true})
+        var details = {
+            appointment_id: appointmentId,
+            appointment_type: Appointmentstatus,
+        };
+        console.log("Credentials",JSON.stringify(details));
+        var formBody = [];
+        for (var property in details) {
+            var encodedKey = encodeURIComponent(property);
+            var encodedValue = encodeURIComponent(details[property]);
+            formBody.push(encodedKey + "=" + encodedValue);
+        }
+        formBody = formBody.join("&");
+        fetch(constants.BarberUpdateAppointmentStatus, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: formBody
+        }).then(response => response.json())
+            .then(response => {
+                console.log("responseAddReviews-->", "-" + JSON.stringify(response));
+                if (response.ResultType === 1) {
+                    this.setState({showLoading:false})
+                    this.setState({showLoading: false});
+                    Alert.alert("Success!","Appointment Status changed successfully.")
+                    this.props.navigation.goBack();
+                } else {
+                    this.setState({showLoading:false})
+                    this.setState({showLoading: false});
+                    if (response.ResultType === 0) {
+                        alert(response.Message);
+                    }
+                }
+            })
+            .catch(error => {
+                this.setState({showLoading:false})
+                //console.error('Errorr:', error);
+                console.log('Error:', error);
+                alert("Error: " + error);
+            });
     }
 
     render() {
@@ -172,22 +238,28 @@ export default class Appointments extends Component {
                             marginTop: 15
                         }}>
                             <View style={{width: "33.3%", backgroundColor: "#5BD900", height: "100%"}}>
+                                <TouchableOpacity onPress={()=>this.updateAppointment("complete")}>
                                 {this.renderRowBox({
                                     img: require("../../../assets/images/tick-2.png"),
                                     title: "Complete"
                                 })}
+                                </TouchableOpacity>
                             </View>
                             <View style={{width: "33.3%", backgroundColor: "#A5AAAE", height: "100%"}}>
+                                <TouchableOpacity  onPress={()=>this.updateAppointment("noshow")}>
                                 {this.renderRowBox({
                                     img: require("../../../assets/images/-.png"),
                                     title: "No-Show"
                                 })}
+                                </TouchableOpacity>
                             </View>
                             <View style={{width: "33.3%", backgroundColor: "#F7001E", height: "100%"}}>
+                                <TouchableOpacity  onPress={()=>this.updateAppointment("cancelled")}>
                                 {this.renderRowBox({
                                     img: require("../../../assets/images/x.png"),
                                     title: "Cancel"
                                 })}
+                                </TouchableOpacity>
                             </View>
                         </View>
                         }
@@ -247,8 +319,8 @@ export default class Appointments extends Component {
                         <TouchableOpacity onPress={() => this.props.navigation.navigate("Receipt")}>
                             {this.renderRowapp({
                                 ic: require("../../../assets/images/surg_price.png"),
-                                text1: price,
-                                text2: "SURGE PRICE : " + price
+                                text1: "$"+price,
+                                text2: "SURGE PRICE : $0"
                             })}
                         </TouchableOpacity>
                         <View style={{height: 0.5, backgroundColor: "#52525D", marginStart: 90, marginTop: 10}}></View>
@@ -270,6 +342,17 @@ export default class Appointments extends Component {
                         </View>
                     </View>
                 </ScrollView>
+                {this.state.showLoading && <View style={{
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor: "transparent",
+                    position: "absolute",
+                    opacity: 1,
+                    alignItems: "center",
+                    justifyContent: "center"
+                }}>
+                    <Image resizeMode={"contain"} source={require("../../../assets/images/loading.gif")} style={{width:60,height:60, opacity: 1,}}/>
+                </View>}
             </View>);
     }
 }
