@@ -52,6 +52,8 @@ export const constants = {
     ClientRemoveFavoriteBarber: Base_url + clientPath1+"un_favoriteBarber",
     ClientSendVerfication: Base_url + clientPath1+"client_sendVerificationCode",
     ClientAddReview: Base_url + "/api/reviews/"+"add_review",
+    ClientRecieptCompleted: Base_url + "/api/user/"+"reciept_completed",
+    ClientRecieptCancelled: Base_url + "/api/user/"+"reciept_cancelled",
 
 
 };

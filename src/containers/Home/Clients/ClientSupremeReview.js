@@ -21,7 +21,7 @@ export default class ClientSupremeReview extends Component {
             showLoading: false,
             reviews: [],
             supremeReviewBlock: false,
-            mainRatting: 0,
+            mainRating: 0,
         };
     }
 
@@ -47,7 +47,7 @@ export default class ClientSupremeReview extends Component {
                         ratingpoints = ratingpoints + response.Data[w].rating;
                     }
                     let mian = ratingpoints / response.Data.length;
-                    this.setState({mainRatting: mian})
+                    this.setState({mainRating: mian})
 
                 } else {
                     this.setState({showLoading: false})
@@ -135,10 +135,10 @@ export default class ClientSupremeReview extends Component {
                         <AirbnbRating
                             showRating={false}
                             count={5}
-                            defaultRating={this.state.mainRatting}
+                            defaultRating={this.state.mainRating}
                             size={18}
                         />
-                        <Text style={[styles.rating_text, {fontSize: 16}]}>({this.state.mainRatting} of 5.0)</Text>
+                        <Text style={[styles.rating_text, {fontSize: 16}]}>({this.state.mainRating} of 5.0)</Text>
                     </View>
                 </View>
 

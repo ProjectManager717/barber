@@ -34,6 +34,8 @@ export default class Calendar extends Component {
             dayData: [],
             monthDays: [],
             lastDaySelected: "",
+            selectedMonth: "",
+            showMonth: "",
             month: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
             listData: [
                 {
@@ -173,8 +175,6 @@ export default class Calendar extends Component {
     }
 
     componentDidMount() {
-
-
         let items = [];
         for (i = 0; i < 7; i++) {
             var weekDate = this.startOfWeek(new Date());
@@ -190,99 +190,14 @@ export default class Calendar extends Component {
             dayData: hours,
             dataSource: items
         });
-
+        this.setMonth();
         //
         //this.setState({calenderSlots:this.state.listData});
-
-
-        const input = getmonth + 1 + "-19";
-        const output = moment(input, "MM-YY");
-        console.log("DateMonth--" + output);
-        let lastDay = output.endOf('month').format('DD');
-        console.log("DateMonth--" + lastDay);
-        let monthh = getmonth + 1;
-        if (monthh < 10)
-            monthh = "0" + monthh;
-        let daysData = [];
-        for (let i = getDate; i <= lastDay; i++) {
-
-            let realDate = getYear + "-" + monthh + "-" + i;
-            console.log("Real_date-----> ", realDate);
-            if (getDay == 1)
-                daysData.push({
-                    id: i,
-                    day: i,
-                    dayColor: "#ffffff",
-                    weekDay: "Mon",
-                    bottomColor: "transparent",
-                    showdate: realDate
-                })
-            if (getDay == 2)
-                daysData.push({
-                    id: i,
-                    day: i,
-                    dayColor: "#ffffff",
-                    weekDay: "Tue",
-                    bottomColor: "transparent",
-                    showdate: realDate
-                })
-            if (getDay == 3)
-                daysData.push({
-                    id: i,
-                    day: i,
-                    dayColor: "#ffffff",
-                    weekDay: "Wed",
-                    bottomColor: "transparent",
-                    showdate: realDate
-                })
-            if (getDay == 4)
-                daysData.push({
-                    id: i,
-                    day: i,
-                    dayColor: "#ffffff",
-                    weekDay: "Thur",
-                    bottomColor: "transparent",
-                    showdate: realDate
-                })
-            if (getDay == 5)
-                daysData.push({
-                    id: i,
-                    day: i,
-                    dayColor: "#ffffff",
-                    weekDay: "Fri",
-                    bottomColor: "transparent",
-                    showdate: realDate
-                })
-            if (getDay == 6)
-                daysData.push({
-                    id: i,
-                    day: i,
-                    dayColor: "#ffffff",
-                    weekDay: "Sat",
-                    bottomColor: "transparent",
-                    showdate: realDate
-                })
-            if (getDay == 7)
-                daysData.push({
-                    id: i,
-                    day: i,
-                    dayColor: "#ffffff",
-                    weekDay: "Sun",
-                    bottomColor: "transparent",
-                    showdate: realDate
-                })
-
-            if (getDay === 7)
-                getDay = 1;
-            getDay++;
-        }
-        let mon = this.state.month[getmonth];
-        this.setState({monthDays: daysData});
 
         const {navigation} = this.props;
         this.focusListener = navigation.addListener("didFocus", payload => {
             if (this.state.lastDaySelected === "")
-                this.getCalenderSlots(getYear + "-" + monthh + "-" + getDate);
+                this.getCalenderSlots(getYear + "-" + parseInt(getmonth + 1) + "-" + getDate);
             else
                 this.getCalenderSlots(this.state.lastDaySelected);
         });
@@ -372,37 +287,43 @@ export default class Calendar extends Component {
             /*1=1hour*/
             /*2=30minbreak*/
             /*3=45min*/
-            let imagep = "", imgText = "", imgTextcolor = "", bgc = "";
+            let imagep = "", imgText = "", imgTextcolor = "", bgc = "", bgcEnd = "";
             if (item.appointment_type === "completed") {
                 imagep = require("../../../assets/images/completed.png");
                 imgText = "COMPLETED";
                 imgTextcolor = Colors.green;
                 bgc = Colors.green;
+                bgcEnd = "#4C6546";
             } else if (item.appointment_type === "inprogress") {
                 imagep = require("../../../assets/images/progress.png");
                 imgText = "IN PROGRESS";
                 imgTextcolor = Colors.purple;
                 bgc = Colors.purple;
+                bgcEnd = "#653B79";
             } else if (item.appointment_type === "confirmed") {
                 imagep = require("../../../assets/images/confirmed.png");
                 imgText = "CONFIRMED";
                 imgTextcolor = Colors.magenta;
                 bgc = Colors.magenta;
+                bgcEnd = "#3A5F7A";
             } else if (item.appointment_type === "pending") {
                 imagep = require("../../../assets/images/pending.png");
                 imgText = "PENDING";
                 imgTextcolor = Colors.yellow;
                 bgc = Colors.yellow;
+                bgcEnd = "#6C6146";
             } else if (item.appointment_type === "cancelled") {
                 imagep = require("../../../assets/images/cancelled.png");
                 imgText = "CANCELLED";
                 imgTextcolor = Colors.red;
                 bgc = Colors.red;
+                bgcEnd = "#6B3945";
             } else if (item.appointment_type === "noshow") {
                 imagep = require("../../../assets/images/noShow.png");
                 imgText = "NO SHOW";
                 imgTextcolor = Colors.grey;
                 bgc = Colors.grey;
+                bgcEnd = "#5A5B68";
             } else {
 
             }
@@ -551,18 +472,28 @@ export default class Calendar extends Component {
                                 </View>
 
                             </View>
-                            <Image resizeMode={"cover"}
-                                   style={{width: 60, height: "100%", position: "absolute", right: 0, top: 0}}
-                                   source={imagep}
-                            />
-                            <Text style={{
-                                color: [imgTextcolor],
-                                fontSize: 7,
-                                fontWeight: "bold",
+                            <View style={{
+                                width: 60,
+                                height: "100%",
+                                alignItems: "center",
+                                justifyContent: "center",
                                 position: "absolute",
-                                right: 8,
-                                bottom: 15
-                            }}>{imgText}</Text>
+                                right: 0,
+                                backgroundColor: bgcEnd
+                            }}>
+                                <Image resizeMode={"cover"}
+                                       style={{width: 25, height: 25}}
+                                       source={imagep}
+                                />
+                                <Text style={{
+                                    color: [imgTextcolor],
+                                    fontSize: 7,
+                                    fontWeight: "bold",
+                                    marginTop: 5
+                                }}>{imgText}</Text>
+                            </View>
+
+
                         </View>
                     </View>
                 </TouchableWithoutFeedback>;
@@ -650,18 +581,26 @@ export default class Calendar extends Component {
                                 </View>
 
                             </View>
-                            <Image resizeMode={"cover"}
-                                   style={{width: 60, height: "100%", position: "absolute", right: 0, top: 0}}
-                                   source={imagep}
-                            />
-                            <Text style={{
-                                color: [imgTextcolor],
-                                fontSize: 7,
-                                fontWeight: "bold",
+                            <View style={{
+                                width: 60,
+                                height: "100%",
+                                alignItems: "center",
+                                justifyContent: "center",
                                 position: "absolute",
-                                right: 6,
-                                bottom: 37
-                            }}>{imgText}</Text>
+                                right: 0,
+                                backgroundColor: bgcEnd
+                            }}>
+                                <Image resizeMode={"cover"}
+                                       style={{width: 25, height: 25}}
+                                       source={imagep}
+                                />
+                                <Text style={{
+                                    color: [imgTextcolor],
+                                    fontSize: 7,
+                                    fontWeight: "bold",
+                                    marginTop: 5
+                                }}>{imgText}</Text>
+                            </View>
                         </View>
                     </View>
 
@@ -750,18 +689,26 @@ export default class Calendar extends Component {
                                 </View>
 
                             </View>
-                            <Image resizeMode={"cover"}
-                                   style={{width: 60, height: "100%", position: "absolute", right: 0, top: 0}}
-                                   source={imagep}
-                            />
-                            <Text style={{
-                                color: [imgTextcolor],
-                                fontSize: 7,
-                                fontWeight: "bold",
+                            <View style={{
+                                width: 60,
+                                height: "100%",
+                                alignItems: "center",
+                                justifyContent: "center",
                                 position: "absolute",
-                                right: 6,
-                                bottom: 37
-                            }}>{imgText}</Text>
+                                right: 0,
+                                backgroundColor: bgcEnd
+                            }}>
+                                <Image resizeMode={"cover"}
+                                       style={{width: 25, height: 25}}
+                                       source={imagep}
+                                />
+                                <Text style={{
+                                    color: [imgTextcolor],
+                                    fontSize: 7,
+                                    fontWeight: "bold",
+                                    marginTop: 5
+                                }}>{imgText}</Text>
+                            </View>
                         </View>
                     </View>
 
@@ -862,18 +809,26 @@ export default class Calendar extends Component {
 
                             </View>
 
-                            <Image resizeMode={"cover"}
-                                   style={{width: 60, height: "100%", position: "absolute", right: 0, top: 0}}
-                                   source={imagep}
-                            />
-                            <Text style={{
-                                color: [imgTextcolor],
-                                fontSize: 7,
-                                fontWeight: "bold",
+                            <View style={{
+                                width: 60,
+                                height: "100%",
+                                alignItems: "center",
+                                justifyContent: "center",
                                 position: "absolute",
-                                top: 90,
-                                right: 8,
-                            }}>{imgText}</Text>
+                                right: 0,
+                                backgroundColor: bgcEnd
+                            }}>
+                                <Image resizeMode={"cover"}
+                                       style={{width: 25, height: 25}}
+                                       source={imagep}
+                                />
+                                <Text style={{
+                                    color: [imgTextcolor],
+                                    fontSize: 7,
+                                    fontWeight: "bold",
+                                    marginTop: 5
+                                }}>{imgText}</Text>
+                            </View>
 
                         </View>
                     </View>
@@ -909,6 +864,172 @@ export default class Calendar extends Component {
         this.getCalenderSlots(monthDaysData[indx].showdate);
     }
 
+    setMonth() {
+        const input = getmonth + "-19";
+        console.log("SetMonth---->>>", input);
+        let outt = input.split("-");
+        let showmonth = monthNames[outt[0]] + "20" + outt[1];
+        this.setState({selectedMonth: input, showMonth: showmonth});
+        this.setMonthDays(input, true);
+    }
+
+    increaseMonth() {
+        //alert("increaseMonth");
+        const input = this.state.selectedMonth;
+        console.log("SetMonth---->>>", input);
+        let outt = input.split("-");
+        console.log("SetMonth---->>>--->", outt);
+        if (parseInt(outt[0]) === 11) {
+            outt[0] = 0;
+            outt[1] = parseInt(outt[1]) + 1;
+        } else {
+            outt[0] = parseInt(outt[0]) + 1;
+            console.log("SetMonth---->>>--->", parseInt(outt[0]) + 1);
+        }
+        console.log("SetMonth---->>>--->", outt[0]);
+        let showmonth = monthNames[outt[0]] + "20" + outt[1];
+        console.log("SetMonth---->>>", showmonth);
+        let selectedmonth = outt[0] + "-" + outt[1];
+        this.setState({selectedMonth: selectedmonth, showMonth: showmonth});
+        this.setMonthDays(selectedmonth, false);
+    }
+
+    decreaseMonth() {
+        // alert("decreaseMonth")
+        const input = this.state.selectedMonth;
+        console.log("SetMonth---->>>", input);
+        let outt = input.split("-");
+        if (parseInt(outt[0]) === 0) {
+            outt[0] = 11;
+            outt[1] = parseInt(outt[1]) - 1;
+        } else {
+            outt[0] = parseInt(outt[0]) - 1;
+        }
+        let showmonth = monthNames[outt[0]] + "20" + outt[1];
+        console.log("SetMonth---->>>", showmonth);
+        let selectedmonth = outt[0] + "-" + outt[1];
+        this.setState({selectedMonth: selectedmonth, showMonth: showmonth});
+        this.setMonthDays(selectedmonth, false);
+    }
+
+    setMonthDays(input, current) {
+        const inputt = input.split("-");
+        console.log("DateMonth--" + inputt);
+        const output = moment(parseInt(inputt[0]) + 1 + "-" + inputt[1], "MM-YY");
+        console.log("DateMonth--" + output);
+        let lastDay = output.endOf('month').format('DD');
+        console.log("DateMonth--" + lastDay);
+        let monthh = getmonth + 1;
+        if (monthh < 10)
+            monthh = "0" + monthh;
+        let daysData = [];
+        let loopstart = 0;
+        if (current) {
+            loopstart = getDate;
+        } else
+            loopstart = 1;
+        for (let i = loopstart; i <= lastDay; i++) {
+            let realDate = "";
+            let month = parseInt(inputt[0]) + 1;
+            if (i < 10) {
+                if (month < 10) {
+                    realDate = "20" + inputt[1] + "-0" + month + "-0" + i;
+                } else {
+                    realDate = "20" + inputt[1] + "-" + month + "-0" + i;
+                }
+            } else {
+                if (month < 10) {
+                    realDate = "20" + inputt[1] + "-0" + month + "-" + i;
+                } else {
+                    realDate = "20" + inputt[1] + "-" + month + "-" + i;
+                }
+            }
+
+            console.log("Real_date-----> ", realDate);
+            daysData.push({
+                id: i,
+                day: i,
+                dayColor: "#ffffff",
+                weekDay: this.getDayOfWeek(realDate),
+                bottomColor: "transparent",
+                showdate: realDate
+            })
+            /*if (getDay == 1)
+                daysData.push({
+                    id: i,
+                    day: i,
+                    dayColor: "#ffffff",
+                    weekDay: "Mon",
+                    bottomColor: "transparent",
+                    showdate: realDate
+                })
+            if (getDay == 2)
+                daysData.push({
+                    id: i,
+                    day: i,
+                    dayColor: "#ffffff",
+                    weekDay: "Tue",
+                    bottomColor: "transparent",
+                    showdate: realDate
+                })
+            if (getDay == 3)
+                daysData.push({
+                    id: i,
+                    day: i,
+                    dayColor: "#ffffff",
+                    weekDay: "Wed",
+                    bottomColor: "transparent",
+                    showdate: realDate
+                })
+            if (getDay == 4)
+                daysData.push({
+                    id: i,
+                    day: i,
+                    dayColor: "#ffffff",
+                    weekDay: "Thur",
+                    bottomColor: "transparent",
+                    showdate: realDate
+                })
+            if (getDay == 5)
+                daysData.push({
+                    id: i,
+                    day: i,
+                    dayColor: "#ffffff",
+                    weekDay: "Fri",
+                    bottomColor: "transparent",
+                    showdate: realDate
+                })
+            if (getDay == 6)
+                daysData.push({
+                    id: i,
+                    day: i,
+                    dayColor: "#ffffff",
+                    weekDay: "Sat",
+                    bottomColor: "transparent",
+                    showdate: realDate
+                })
+            if (getDay == 7)
+                daysData.push({
+                    id: i,
+                    day: i,
+                    dayColor: "#ffffff",
+                    weekDay: "Sun",
+                    bottomColor: "transparent",
+                    showdate: realDate
+                })*/
+
+            /*if (getDay === 7)
+                getDay = 1;
+            getDay++;*/
+        }
+        let mon = this.state.month[getmonth];
+        this.setState({monthDays: daysData});
+    }
+
+    getDayOfWeek(date) {
+        var dayOfWeek = new Date(date).getDay();
+        return isNaN(dayOfWeek) ? null : ['Sun', 'Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat'][dayOfWeek];
+    }
 
     render() {
         return (
@@ -956,16 +1077,31 @@ export default class Calendar extends Component {
                         justifyContent: "space-around"
                     }}
                 />
-                <Text
-                    style={{
-                        fontFamily: "AvertaStd-Semibold",
-                        alignSelf: "center",
-                        marginTop: 12,
-                        color: Colors.red1
-                    }}
-                >
-                    {monthNames[new Date().getMonth()]} {new Date().getFullYear()}
-                </Text>
+                <View style={{flexDirection: "row", width: "100%", height: 40}}>
+
+                    <Text
+                        style={{
+                            fontFamily: "AvertaStd-Semibold",
+                            alignSelf: "center",
+                            marginTop: 5,
+                            color: Colors.red1,
+                            textAlign: "center",
+                            width: "100%"
+                        }}>
+                        {this.state.showMonth}
+                    </Text>
+                    <TouchableOpacity onPress={() => this.decreaseMonth()}
+                                      style={{position: "absolute", top: 15, left: 20}}>
+                        <Image style={{height: 13, width: 13,}}
+                               source={require("../../../assets/images/left_calender.png")}/>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => this.increaseMonth()}
+                                      style={{position: "absolute", top: 15, right: 20}}>
+                        <Image style={{height: 13, width: 13,}}
+                               source={require("../../../assets/images/right_arrow_calender.png")}/>
+                    </TouchableOpacity>
+                </View>
+
                 {/*<View style={styles.calendar_weekly_header}>
                     {this.state.dataSource}
                 </View>*/}

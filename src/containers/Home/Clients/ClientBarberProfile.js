@@ -35,6 +35,9 @@ let getDate = new Date().getDate();
 let getDay = new Date().getDay();
 let getYear = new Date().getFullYear();
 console.log("todayDate::", getmonthh + 1 + "-" + getDate + "-" + getYear);
+const monthNames = ["January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+];
 getmonthh = 1 + getmonthh;
 console.log("todayDate::", getmonthh);
 if (getmonthh < 10)
@@ -69,6 +72,8 @@ export default class ClientBarberProfile extends Component {
         barberMobilePay = navigation.getParam('barberMobilePay');
         this.state = {
             showLoading: false,
+            selectedMonth: "",
+            showMonth: "",
             barberProfileImage: require("../../../assets/images/personface.png"),
             barberInsta: "",
             barberName: "",
@@ -289,95 +294,96 @@ export default class ClientBarberProfile extends Component {
             dataSource: items
         });
         ////////////////////////////////////////////////////////////////////Calender
-        this.setMonthDays(getmonthh, getYear);
+        //this.setMonthDays(getmonthh, getYear);
+        this.setMonth();
     }
 
-    setMonthDays(month, year) {
-        const input = month + "-" + year;
-        const output = moment(input, "MM-YYYY");
-        console.log("DateMonth--" + output);
-        let lastDay = output.endOf('month').format('DD');
-        let daysData = [];
-        for (let i = getDate; i <= lastDay; i++) {
-            let setDayDate = "";
-            if (i < 10) {
-                setDayDate = getYear + "-" + month + "-0" + i
-            } else {
-                setDayDate = getYear + "-" + month + "-" + i
-            }
-            console.log("Showdate--" + i, "--->" + setDayDate);
-            if (getDay == 1)
-                daysData.push({
-                    id: i,
-                    day: i,
-                    dayColor: "#ffffff",
-                    weekDay: "Mon",
-                    bottomColor: "transparent",
-                    dateOfDay: setDayDate
-                })
-            if (getDay == 2)
-                daysData.push({
-                    id: i,
-                    day: i,
-                    dayColor: "#ffffff",
-                    weekDay: "Tue",
-                    bottomColor: "transparent",
-                    dateOfDay: setDayDate
-                })
-            if (getDay == 3)
-                daysData.push({
-                    id: i,
-                    day: i,
-                    dayColor: "#ffffff",
-                    weekDay: "Wed",
-                    bottomColor: "transparent",
-                    dateOfDay: setDayDate
-                })
-            if (getDay == 4)
-                daysData.push({
-                    id: i,
-                    day: i,
-                    dayColor: "#ffffff",
-                    weekDay: "Thur",
-                    bottomColor: "transparent",
-                    dateOfDay: setDayDate
-                })
-            if (getDay == 5)
-                daysData.push({
-                    id: i,
-                    day: i,
-                    dayColor: "#ffffff",
-                    weekDay: "Fri",
-                    bottomColor: "transparent",
-                    dateOfDay: setDayDate
-                })
-            if (getDay == 6)
-                daysData.push({
-                    id: i,
-                    day: i,
-                    dayColor: "#ffffff",
-                    weekDay: "Sat",
-                    bottomColor: "transparent",
-                    dateOfDay: setDayDate
-                })
-            if (getDay == 7)
-                daysData.push({
-                    id: i,
-                    day: i,
-                    dayColor: "#ffffff",
-                    weekDay: "Sun",
-                    bottomColor: "transparent",
-                    dateOfDay: setDayDate
-                })
+    /* setMonthDays(month, year) {
+         const input = month + "-" + year;
+         const output = moment(input, "MM-YYYY");
+         console.log("DateMonth--" + output);
+         let lastDay = output.endOf('month').format('DD');
+         let daysData = [];
+         for (let i = getDate; i <= lastDay; i++) {
+             let setDayDate = "";
+             if (i < 10) {
+                 setDayDate = getYear + "-" + month + "-0" + i
+             } else {
+                 setDayDate = getYear + "-" + month + "-" + i
+             }
+             console.log("Showdate--" + i, "--->" + setDayDate);
+             if (getDay == 1)
+                 daysData.push({
+                     id: i,
+                     day: i,
+                     dayColor: "#ffffff",
+                     weekDay: "Mon",
+                     bottomColor: "transparent",
+                     dateOfDay: setDayDate
+                 })
+             if (getDay == 2)
+                 daysData.push({
+                     id: i,
+                     day: i,
+                     dayColor: "#ffffff",
+                     weekDay: "Tue",
+                     bottomColor: "transparent",
+                     dateOfDay: setDayDate
+                 })
+             if (getDay == 3)
+                 daysData.push({
+                     id: i,
+                     day: i,
+                     dayColor: "#ffffff",
+                     weekDay: "Wed",
+                     bottomColor: "transparent",
+                     dateOfDay: setDayDate
+                 })
+             if (getDay == 4)
+                 daysData.push({
+                     id: i,
+                     day: i,
+                     dayColor: "#ffffff",
+                     weekDay: "Thur",
+                     bottomColor: "transparent",
+                     dateOfDay: setDayDate
+                 })
+             if (getDay == 5)
+                 daysData.push({
+                     id: i,
+                     day: i,
+                     dayColor: "#ffffff",
+                     weekDay: "Fri",
+                     bottomColor: "transparent",
+                     dateOfDay: setDayDate
+                 })
+             if (getDay == 6)
+                 daysData.push({
+                     id: i,
+                     day: i,
+                     dayColor: "#ffffff",
+                     weekDay: "Sat",
+                     bottomColor: "transparent",
+                     dateOfDay: setDayDate
+                 })
+             if (getDay == 7)
+                 daysData.push({
+                     id: i,
+                     day: i,
+                     dayColor: "#ffffff",
+                     weekDay: "Sun",
+                     bottomColor: "transparent",
+                     dateOfDay: setDayDate
+                 })
 
-            if (getDay === 7)
-                getDay = 1;
-            getDay++;
-        }
-        let mon = this.state.month[getmonth + 1];
-        this.setState({monthSet: mon, monthDays: daysData});
-        this.getBarberDetails(daysData[0].dateOfDay);
-    }
+             if (getDay === 7)
+                 getDay = 1;
+             getDay++;
+         }
+         let mon = this.state.month[getmonth + 1];
+         this.setState({monthSet: mon, monthDays: daysData});
+         this.getBarberDetails(daysData[0].dateOfDay);
+     }*/
 
     addFavoriteBarber() {
         var details = {
@@ -506,7 +512,7 @@ export default class ClientBarberProfile extends Component {
                         barberRating: barberData.average_rating,
                         barberReviews: barberData.total_reviews,
                         barberTotalAmout: 0,
-                        totalPriceService:0,
+                        totalPriceService: 0,
                         barberMobilePay: barberData.payment_option,
                     });
 
@@ -523,7 +529,7 @@ export default class ClientBarberProfile extends Component {
                     } else {
                         this.setState({buttonPayText: "RESERVE"})
                     }
-                    //console.log("Slotsdata::", this.state.barberTimeSlots);
+                    console.log("Slotsdata::", this.state.barberTimeSlots);
                     //this.setState({barberData: response.Data});
                 } else {
                     this.setState({showLoading: false})
@@ -586,40 +592,38 @@ export default class ClientBarberProfile extends Component {
     }
 
     checkSlotsAvailability(id) {
-        console.log("checkSlots -Availability:","---inside")
+        console.log("checkSlots -Availability:", "---inside")
         //let selectedslot = this.state.selectedSlotTime;
         let totalslots = this.state.barberTimeSlots;
-        console.log("checkSlots -Availability:","---selectedSlot-->"+id)
-        console.log("checkSlots -Availability:","---AllSlot-->"+JSON.stringify(totalslots))
+        //console.log("checkSlots -Availability:", "---selectedSlot-->" + id)
+        //console.log("checkSlots -Availability:", "---AllSlot-->" + JSON.stringify(totalslots))
         let calculateTotalTimeforSlots = this.state.totalServicesTime;
-        console.log("checkSlots -Availability:","------calculateTotalTimeforSlots-"+calculateTotalTimeforSlots);
+        //console.log("checkSlots -Availability:", "------calculateTotalTimeforSlots-" + calculateTotalTimeforSlots);
         let totalSlotsNeeded = Math.ceil(calculateTotalTimeforSlots / 15);
-        console.log("checkSlots -Availability:","------totalSlotsNeeded-"+totalSlotsNeeded);
+        //console.log("checkSlots -Availability:", "------totalSlotsNeeded-" + totalSlotsNeeded);
         let availSlots = 0;
         let totalSelectedSlotsIds = [];
         for (let i = 0; i < totalslots.length; i++) {
-            console.log("checkSlots -Availability:",i+"------inside loop-"+id+"==="+totalslots[i].slot_detail._id);
+            //console.log("checkSlots -Availability:", i + "------inside loop-" + id + "===" + totalslots[i].slot_detail._id);
 
             if (id === totalslots[i].slot_detail._id) {
                 for (let j = 0; j < totalSlotsNeeded; j++) {
-                    console.log("checkSlots -Availability:",i+"--*********--"+j);
+                    //console.log("checkSlots -Availability:", i + "--*********--" + j);
                     if (totalslots[i + j].slot_status === 0) {
-                        console.log("checkSlots -Availability:",i+"----"+j+"--Acepted");
+                        //console.log("checkSlots -Availability:", i + "----" + j + "--");
                         availSlots++;
                         totalSelectedSlotsIds.push(totalslots[i + j].slot_detail._id);
-                    }else
-                    {
-                        if(totalslots[i + j].slot_status === 1)
-                        {
-                            console.log("checkSlots -Availability:",i+"----"+j+"--rejected");
-                            Alert.alert("Warning!","Consective slots are not available for these services.");
+                    } else {
+                        if (totalslots[i + j].slot_status === 1) {
+                            //console.log("checkSlots -Availability:", i + "----" + j + "--rejected");
+                            Alert.alert("Warning!", "Consective slots are not available for these services.");
                             return false;
                         }
                     }
                     if (availSlots === totalSlotsNeeded) {
-                        console.log("checkSlots -Availability:",i+"----"+j+"--allAvailable");
+                        //console.log("checkSlots -Availability:", i + "----" + j + "--allAvailable");
                         this.setState({selectedSlotIds: totalSelectedSlotsIds});
-                        console.log("checkSlots -Availability:",i+"----"+j+"--allAvailable----->>>>>>"+totalSelectedSlotsIds);
+                        //console.log("checkSlots -Availability:", i + "----" + j + "--allAvailable----->>>>>>" + totalSelectedSlotsIds);
                         return true;
                     }
                 }
@@ -827,8 +831,110 @@ export default class ClientBarberProfile extends Component {
         this.setState({monthDays: monthDaysData}, () => {
             console.log("NEWMonthdata ", JSON.stringify(this.state.monthDays));
         });
+
+        console.log("selectedDateIs", JSON.stringify(monthDaysData[indx].dateOfDay));
         this.getBarberDetails(monthDaysData[indx].dateOfDay)
         //alert("dayselected " + this.state.selectedDate);
+    }
+
+    setMonth() {
+        const input = getmonth + "-19";
+        let outt = input.split("-");
+        let showmonth = monthNames[outt[0]] + "20" + outt[1];
+        this.setState({selectedMonth: input, showMonth: showmonth});
+        this.setMonthDays(input, true);
+    }
+
+    increaseMonth() {
+        //alert("increaseMonth");
+        const input = this.state.selectedMonth;
+        console.log("SetMonth---->>>", input);
+        let outt = input.split("-");
+        console.log("SetMonth---->>>--->", outt);
+        if (parseInt(outt[0]) === 11) {
+            outt[0] = 0;
+            outt[1] = parseInt(outt[1]) + 1;
+        } else {
+            outt[0] = parseInt(outt[0]) + 1;
+            console.log("SetMonth---->>>--->", parseInt(outt[0]) + 1);
+        }
+        console.log("SetMonth---->>>--->", outt[0]);
+        let showmonth = monthNames[outt[0]] + "20" + outt[1];
+        console.log("SetMonth---->>>", showmonth);
+        let selectedmonth = outt[0] + "-" + outt[1];
+        this.setState({selectedMonth: selectedmonth, showMonth: showmonth});
+        this.setMonthDays(selectedmonth, false);
+    }
+
+    decreaseMonth() {
+        // alert("decreaseMonth")
+        const input = this.state.selectedMonth;
+        console.log("SetMonth---->>>", input);
+        let outt = input.split("-");
+        if (parseInt(outt[0]) === 0) {
+            outt[0] = 11;
+            outt[1] = parseInt(outt[1]) - 1;
+        } else {
+            outt[0] = parseInt(outt[0]) - 1;
+        }
+        let showmonth = monthNames[outt[0]] + "20" + outt[1];
+        console.log("SetMonth---->>>", showmonth);
+        let selectedmonth = outt[0] + "-" + outt[1];
+        this.setState({selectedMonth: selectedmonth, showMonth: showmonth});
+        this.setMonthDays(selectedmonth, false);
+    }
+
+    setMonthDays(input, current) {
+        const inputt = input.split("-");
+        console.log("DateMonth--" + inputt);
+        const output = moment(parseInt(inputt[0]) + 1 + "-" + inputt[1], "MM-YY");
+        console.log("DateMonth--" + output);
+        let lastDay = output.endOf('month').format('DD');
+        console.log("DateMonth--" + lastDay);
+        let monthh = getmonth + 1;
+        if (monthh < 10)
+            monthh = "0" + monthh;
+        let daysData = [];
+        let loopstart = 0;
+        if (current) {
+            loopstart = getDate;
+        } else
+            loopstart = 1;
+        for (let i = loopstart; i <= lastDay; i++) {
+            let realDate = "";
+            let month = parseInt(inputt[0]) + 1;
+            if (i < 10) {
+                if (month < 10) {
+                    realDate = "20" + inputt[1] + "-0" + month + "-0" + i;
+                } else {
+                    realDate = "20" + inputt[1] + "-" + month + "-0" + i;
+                }
+            } else {
+                if (month < 10) {
+                    realDate = "20" + inputt[1] + "-0" + month + "-" + i;
+                } else {
+                    realDate = "20" + inputt[1] + "-" + month + "-" + i;
+                }
+            }
+
+            console.log("Real_date-----> ", realDate);
+            daysData.push({
+                id: i,
+                day: i,
+                dayColor: "#ffffff",
+                weekDay: this.getDayOfWeek(realDate),
+                bottomColor: "transparent",
+                dateOfDay: realDate
+            })
+        }
+        let mon = this.state.month[getmonth];
+        this.setState({monthDays: daysData});
+        this.getBarberDetails(daysData[0].dateOfDay);
+    }
+
+    getDayOfWeek(date) {
+        var dayOfWeek = new Date(date).getDay();
+        return isNaN(dayOfWeek) ? null : ['Sun', 'Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat'][dayOfWeek];
     }
 
     render() {
@@ -1057,14 +1163,38 @@ export default class ClientBarberProfile extends Component {
 
                         </View>
                         {this.state.ListData2.length > 0 && <View Style={{flexDirection: "column"}}>
-                            <Text
+                            <View style={{flexDirection: "row", width: "100%", height: 40}}>
+
+                                <Text
+                                    style={{
+                                        fontFamily: "AvertaStd-Semibold",
+                                        alignSelf: "center",
+                                        marginTop: 5,
+                                        color: Colors.red1,
+                                        textAlign: "center",
+                                        width: "100%"
+                                    }}>
+                                    {this.state.showMonth}
+                                </Text>
+                                <TouchableOpacity onPress={() => this.decreaseMonth()}
+                                                  style={{position: "absolute", top: 15, left: 20}}>
+                                    <Image style={{height: 13, width: 13,}}
+                                           source={require("../../../assets/images/left_calender.png")}/>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => this.increaseMonth()}
+                                                  style={{position: "absolute", top: 15, right: 20}}>
+                                    <Image style={{height: 13, width: 13,}}
+                                           source={require("../../../assets/images/right_arrow_calender.png")}/>
+                                </TouchableOpacity>
+                            </View>
+                            {/*<Text
                                 style={{
                                     fontFamily: "AvertaStd-Semibold",
                                     alignSelf: "center",
                                     marginTop: 12,
                                     color: Colors.red1
                                 }}
-                            >{this.state.month[getmonth] + " " + getYear}</Text>
+                            >{this.state.month[getmonth] + " " + getYear}</Text>*/}
                             {/*<View style={styles.calendar_weekly_header}>
                             {this.state.dataSource}
                         </View>*/}

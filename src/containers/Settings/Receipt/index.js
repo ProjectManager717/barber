@@ -15,9 +15,49 @@ import {globalStyles} from "../../../themes/globalStyles";
 //import { styles } from "./styles";
 import {Header, AirbnbRating} from "react-native-elements";
 import CheckBoxSquare from "../../../components/CheckBox";
+import {constants} from "../../../utils/constants";
+import Preference from "react-native-preference";
 
 
 export default class Receipt extends Component {
+    constructor(props) {
+        super(props)
+        this.state={
+            showLoading:false,
+        }
+    }
+
+    componentDidMount(): void {
+        this.getRecieptDetails();
+    }
+
+    getRecieptDetails() {
+        this.setState({showLoading:true})
+        fetch(constants.ClientRecieptCompleted + "/" + Preference.get("userId"), {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        }).then(response => response.json())
+            .then(response => {
+                console.log("getBarberDetails-->", "-" + JSON.stringify(response));
+                if (response.ResultType === 1) {
+                    this.setState({showLoading:false})
+                    let barberData = response.Data;
+                } else {
+                    this.setState({showLoading:false})
+                    if (response.ResultType === 0) {
+                        alert(response.Message);
+                    }
+                }
+            }).catch(error => {
+            //console.error('Errorr:', error);
+            this.setState({showLoading:false})
+            console.log('Error:', error);
+            alert("Error: " + error);
+        });
+    }
 
     renderRow(item) {
         return <View style={{flex: 1, flexDirection: 'row', height: 30}}>
@@ -253,6 +293,19 @@ export default class Receipt extends Component {
                         </View>
                     </View>
                 </ScrollView>
+
+                {this.state.showLoading && <View style={{
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor: "transparent",
+                    position: "absolute",
+                    opacity: 1,
+                    alignItems: "center",
+                    justifyContent: "center"
+                }}>
+                    <Image resizeMode={"contain"} source={require("../../../assets/images/loading.gif")}
+                           style={{width: 60, height: 60, opacity: 1,}}/>
+                </View>}
 
             </View>
         );
