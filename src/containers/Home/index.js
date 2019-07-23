@@ -43,11 +43,11 @@ export default class Home extends Component {
             barberName: Preference.get("userName"),
             barberImage: "",
             barberExperiance: 0,
-            barberShopName:"",
+            barberShopName: "",
             barberRating: 5,
             barberReviews: 17,
-            barberInsta:"",
-            barberAddress:"",
+            barberInsta: "",
+            barberAddress: "",
         }
         this.getBarberDetails();
     }
@@ -73,13 +73,13 @@ export default class Home extends Component {
                         Preference.set("supremeBarber", true)
                     this.setState({
                         barberImage: {uri: barberData.user_image},
-                        barberShopName:barberData.shop_name,
+                        barberShopName: barberData.shop_name,
                         barberName: barberData.firstname,
                         barberRating: barberData.rating,
                         barberReviews: barberData.reviews,
                         barberExperiance: barberData.experience,
-                        barberInsta:barberData.username,
-                        barberAddress:barberData.location
+                        barberInsta: barberData.username,
+                        barberAddress: barberData.location
                     });
                     //this.setState({barberData: response.Data});
                 } else {
@@ -97,72 +97,74 @@ export default class Home extends Component {
     }
 
     render() {
-        return (
-            <ScrollView>
-                <View style={styles.container}>
-                    <Header
-                        leftAction={this.leftAction.bind(this)}
-                        rightAction={this.rightAction.bind(this)}
-                        bgIcon={require("../../assets/images/header.png")}
-                        rightIcon={require("../../assets/images/share.png")}
-                        leftIcon={require("../../assets/images/qr.png")}/>
-                    <View style={styles.detailsContainer}>
-                        <View style={styles.profileImageContainer}>
-                            <Image
-                                source={this.state.barberImage}
-                                style={styles.profileImage}
-                            >
-                            </Image>
-                        </View>
-                        <TouchableOpacity style={{position: 'absolute', top: 10, right: width / 2 - width / 2.7 / 2}}
-                                          onPress={() => Linking.openURL('https://www.instagram.com/' + Preference.get("userInsta"))}>
-                            <Image
-                                source={require("../../assets/images/insta.png")}
-                                style={styles.icon}
-                            />
-                        </TouchableOpacity>
-                        <View>
-                            <View style={styles.infoContainer}>
-                                <Text style={[styles.allFontStyle, styles.name]}>
-                                    {this.state.barberName}
-                                </Text>
-                                <Text style={{color: colors.white, fontSize: 12}}>
-                                    Barber with {this.state.barberExperiance} years of experience
-                                </Text>
-                                <View style={styles.review}>
-                                    {/*<Image
+        return (<View>
+                <ScrollView>
+                    <View style={styles.container}>
+                        <Header
+                            leftAction={this.leftAction.bind(this)}
+                            rightAction={this.rightAction.bind(this)}
+                            bgIcon={require("../../assets/images/header.png")}
+                            rightIcon={require("../../assets/images/share.png")}
+                            leftIcon={require("../../assets/images/qr.png")}/>
+                        <View style={styles.detailsContainer}>
+                            <View style={styles.profileImageContainer}>
+                                <Image
+                                    source={this.state.barberImage}
+                                    style={styles.profileImage}
+                                >
+                                </Image>
+                            </View>
+                            <TouchableOpacity
+                                style={{position: 'absolute', top: 10, right: width / 2 - width / 2.7 / 2}}
+                                onPress={() => Linking.openURL('https://www.instagram.com/' + Preference.get("userInsta"))}>
+                                <Image
+                                    source={require("../../assets/images/insta.png")}
+                                    style={styles.icon}
+                                />
+                            </TouchableOpacity>
+                            <View>
+                                <View style={styles.infoContainer}>
+                                    <Text style={[styles.allFontStyle, styles.name]}>
+                                        {this.state.barberName}
+                                    </Text>
+                                    <Text style={{color: colors.white, fontSize: 12}}>
+                                        Barber with {this.state.barberExperiance} years of experience
+                                    </Text>
+                                    <View style={styles.review}>
+                                        {/*<Image
                                         resizeMode="contain"
                                         source={require("../../assets/images/start.png")}
                                         style={styles.rating}
                                     />*/}
-                                    <AirbnbRating
-                                        showRating={false}
-                                        count={6}
-                                        defaultRating={this.state.barberRating}
-                                        size={10}
-                                        style={{marginStart: 10, height: 30}}
-                                    />
-                                    <Text style={[styles.allFontStyle, styles.reviewText]}>
-                                        {"(" + this.state.barberReviews + " Reviews)"}
-                                    </Text>
+                                        <AirbnbRating
+                                            showRating={false}
+                                            count={6}
+                                            defaultRating={this.state.barberRating}
+                                            size={10}
+                                            style={{marginStart: 10, height: 30}}
+                                        />
+                                        <Text style={[styles.allFontStyle, styles.reviewText]}>
+                                            {"(" + this.state.barberReviews + " Reviews)"}
+                                        </Text>
+                                    </View>
+                                    <TouchableOpacity style={styles.button} onPress={() => {
+                                        this.props.navigation.navigate('Profile',);
+                                    }}>
+                                        <Text style={styles.buttonText}>View Profile</Text>
+                                    </TouchableOpacity>
                                 </View>
-                                <TouchableOpacity style={styles.button} onPress={() => {
-                                    this.props.navigation.navigate('Profile', );
-                                }}>
-                                    <Text style={styles.buttonText}>View Profile</Text>
-                                </TouchableOpacity>
                             </View>
                         </View>
+                        <TopTabs
+                            data={[
+                                () => <GraphComp/>,
+                                () => <Clients/>,
+                                () => <Notifications/>
+                            ]}
+                        />
                     </View>
-                    <TopTabs
-                        data={[
-                            () => <GraphComp/>,
-                            () => <Clients/>,
-                            () => <Notifications/>
-                        ]}
-                    />
-                </View>
-            </ScrollView>
+                </ScrollView>
+            </View>
         );
     }
 }

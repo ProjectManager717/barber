@@ -132,23 +132,32 @@ export default class MobilePaySettings extends Component {
 
     SaveMobilePay() {
         if (this.checkAllFields()) {
+
+            let dob=this.state.DOB;
+            let dobSplit=dob.split("/");
+            if(dobSplit.length<3)
+            {
+                Alert.alert("Error!","Please enter correct date of birth by given format.")
+                return false;
+            }
             this.setState({showLoading: true})
             var details = {
-                user_id: Preference.get("userId"),
-                firstname: this.state.firstName,
-                lastname: this.state.lastName,
-                dob: this.state.DOB,
-                personal_id_number: this.state.personIdNumber,
-                address: this.state.streetAddress,
+                barberEmail: Preference.get("userEmail"),
+                firstName: this.state.firstName,
+                lastName: this.state.lastName,
+                accountHolderName: this.state.bankAccountHolderName,
+                accountNumber: this.state.bankAccountNumber,
+                routingNumber: this.state.bankRoutingNumber,
+                dateOfBirthDay:dobSplit[1],
+                dateOfBirthMonth: dobSplit[0],
+                dateOfBirthYear: dobSplit[2],
+                streetAddress: this.state.streetAddress,
                 city: this.state.city,
-                country: this.state.country,
+                country: "US",
                 state: this.state.region,
                 zipcode: this.state.zipCode,
-                bank_account_type: this.state.bankAccountType,
-                bank_account_holder_name: this.state.bankAccountHolderName,
-                bank_account_number: this.state.bankAccountNumber,
-                bank_account_routing_number: this.state.bankRoutingNumber,
             };
+            console.log("Credentials::",JSON.stringify(details));
             var formBody = [];
             for (var property in details) {
                 var encodedKey = encodeURIComponent(property);

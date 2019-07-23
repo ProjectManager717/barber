@@ -54,8 +54,7 @@ export default class Reviews extends Component {
                         ratingpoints=ratingpoints+response.Data[w].rating;
                     }
                     let mian=ratingpoints/response.Data.length;
-                    this.setState({AverageRating:mian})
-
+                    this.setState({AverageRating:parseInt(mian)})
                 } else {
                     this.setState({showLoading: false})
                     if (response.ResultType === 0) {

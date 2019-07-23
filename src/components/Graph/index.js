@@ -60,7 +60,7 @@ export default class lGraphComp extends Component {
                                     width: "100%",
                                     height: 0,
                                     marginTop: 3,
-                                
+
                                     backgroundColor: "black"
                                 }}/>
 
@@ -280,7 +280,7 @@ const styles = StyleSheet.create({
     container: {
         width,
         alignItems: "center",
-        height: height / 1.5
+        height: height / 1.45
     },
     graphContainer: {width, height: height / 3.5},
     graph: {height: "100%", width: "100%"},

@@ -35,6 +35,7 @@ import MobilePaySettings from "./containers/Settings/MobilePay/MobilePaySettings
 import Appointments from "./containers/Barber/Appointments"
 import SurgePricingRate from "./containers/Settings/SurgePricing/SurgePricingRate"
 import PaymentMethod from "./containers/Settings/MobilePay/PaymentMethod"
+import PaymentMethodClient from "./containers/Settings/MobilePay/PaymentMethodClient"
 import BarberEditProfile from "./containers/Barber/Profile/BarberEditProfile"
 import Subscription from "./containers/Settings/Subscription"
 import ClientBlast from "./containers/Settings/ClientBlast"
@@ -221,6 +222,7 @@ const AuthStack = createStackNavigator({
     Appointments: Appointments,
     SurgePricingRate: SurgePricingRate,
     PaymentMethod: PaymentMethod,
+    PaymentMethodClient: PaymentMethodClient,
     BarberEditProfile: BarberEditProfile,
     Subscription: Subscription,
     ClientBlast: ClientBlast,

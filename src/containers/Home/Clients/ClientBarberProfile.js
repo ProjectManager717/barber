@@ -298,93 +298,6 @@ export default class ClientBarberProfile extends Component {
         this.setMonth();
     }
 
-    /* setMonthDays(month, year) {
-         const input = month + "-" + year;
-         const output = moment(input, "MM-YYYY");
-         console.log("DateMonth--" + output);
-         let lastDay = output.endOf('month').format('DD');
-         let daysData = [];
-         for (let i = getDate; i <= lastDay; i++) {
-             let setDayDate = "";
-             if (i < 10) {
-                 setDayDate = getYear + "-" + month + "-0" + i
-             } else {
-                 setDayDate = getYear + "-" + month + "-" + i
-             }
-             console.log("Showdate--" + i, "--->" + setDayDate);
-             if (getDay == 1)
-                 daysData.push({
-                     id: i,
-                     day: i,
-                     dayColor: "#ffffff",
-                     weekDay: "Mon",
-                     bottomColor: "transparent",
-                     dateOfDay: setDayDate
-                 })
-             if (getDay == 2)
-                 daysData.push({
-                     id: i,
-                     day: i,
-                     dayColor: "#ffffff",
-                     weekDay: "Tue",
-                     bottomColor: "transparent",
-                     dateOfDay: setDayDate
-                 })
-             if (getDay == 3)
-                 daysData.push({
-                     id: i,
-                     day: i,
-                     dayColor: "#ffffff",
-                     weekDay: "Wed",
-                     bottomColor: "transparent",
-                     dateOfDay: setDayDate
-                 })
-             if (getDay == 4)
-                 daysData.push({
-                     id: i,
-                     day: i,
-                     dayColor: "#ffffff",
-                     weekDay: "Thur",
-                     bottomColor: "transparent",
-                     dateOfDay: setDayDate
-                 })
-             if (getDay == 5)
-                 daysData.push({
-                     id: i,
-                     day: i,
-                     dayColor: "#ffffff",
-                     weekDay: "Fri",
-                     bottomColor: "transparent",
-                     dateOfDay: setDayDate
-                 })
-             if (getDay == 6)
-                 daysData.push({
-                     id: i,
-                     day: i,
-                     dayColor: "#ffffff",
-                     weekDay: "Sat",
-                     bottomColor: "transparent",
-                     dateOfDay: setDayDate
-                 })
-             if (getDay == 7)
-                 daysData.push({
-                     id: i,
-                     day: i,
-                     dayColor: "#ffffff",
-                     weekDay: "Sun",
-                     bottomColor: "transparent",
-                     dateOfDay: setDayDate
-                 })
-
-             if (getDay === 7)
-                 getDay = 1;
-             getDay++;
-         }
-         let mon = this.state.month[getmonth + 1];
-         this.setState({monthSet: mon, monthDays: daysData});
-         this.getBarberDetails(daysData[0].dateOfDay);
-     }*/
-
     addFavoriteBarber() {
         var details = {
             user_id: barberId,
@@ -763,10 +676,29 @@ export default class ClientBarberProfile extends Component {
             if (this.state.surgePriceSelected === true)
                 this.props.navigation.navigate('SurgePricingRate');
             else {
-                this.bookApointment();
+                if (this.state.barberMobilePay === "mobilePay")
+                {
+                    this.props.navigation.navigate("PaymentMethodClient",{
+                        client_id: Preference.get("userId"),
+                        barber_id: barberId,
+                        barberImage: this.state.barberProfileImage,
+                        barberName: this.state.barberName,
+                        barberShopName: this.state.barberShopName,
+                        appointmentPrice: this.state.totalPriceService,
+                        selected_services: this.state.selectedServices,
+                        date: this.state.selectedDate,
+                        selected_slot_id: this.state.selectedSlotIds,
+                        total_price: this.state.totalPriceService,
+                        service_fee: "1",
+                        selected_surge_price: false
+                    })
+
+                }else
+                {
+                    this.bookApointment();
+                }
+
             }
-
-
         } else {
             alert("Please select Service,Time and Day for further procedure.");
         }
@@ -1314,7 +1246,7 @@ export default class ClientBarberProfile extends Component {
                                         }} resizeMode={"contain"}
                                         source={require("../../../assets/images/arrow_down.png")}/>
                                 </TouchableOpacity>}
-                                <View style={{
+                                {!(this.state.buttonPayText === "PAY") &&<View style={{
                                     width: "40%",
                                     height: "100%",
                                     justifyContent: "center",
@@ -1325,7 +1257,7 @@ export default class ClientBarberProfile extends Component {
                                         color: "white",
                                         fontStyle: 'italic'
                                     }}>{" Pay in Store "}</Text>
-                                </View>
+                                </View>}
 
                                 <TouchableOpacity onPress={() => {
                                     this.checkSurgePriceSelected()

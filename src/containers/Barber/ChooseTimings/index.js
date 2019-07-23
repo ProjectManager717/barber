@@ -100,7 +100,6 @@ export default class ChooseTimings extends Component {
     };
 
     updateWorkingHours() {
-
         let details = {
             barber_id: Preference.get("userId"),
             working_days: this.state.workingDays
@@ -186,6 +185,7 @@ export default class ChooseTimings extends Component {
                 this.setState({endTime: endtimeDay})
                 console.log("SetTime:::-->" + this.state.endTime);
                 workingdayz[j].selected = true;
+                this.setState({breakStart:workingdayz[j].break_from,breakEnd:workingdayz[j].break_to})
             } else {
                 workingdayz[j].selected = false;
             }
@@ -570,11 +570,25 @@ export default class ChooseTimings extends Component {
                             textAlign: "center"
                         }}>Select Vacation Holidays</Text>
                         <View style={{flexDirection: "column",}}>
-                            {this.renderRowWithCheck({title: "23 December", indx: 1, check: this.state.dec23})}
+                            {this.renderRowWithCheck({title: "New Years - 1/1", indx: 1, check: this.state.dec23})}
                             <View style={{hieght: 1, width: "100%", backgroundColor: "grey", margin: 5}}/>
-                            {this.renderRowWithCheck({title: "24 December", indx: 2, check: this.state.dec24})}
+                            {this.renderRowWithCheck({title: "Valentines Day - 2/14", indx: 2, check: this.state.dec24})}
                             <View style={{hieght: 1, width: "100%", backgroundColor: "grey", margin: 5}}/>
-                            {this.renderRowWithCheck({title: "25 December", indx: 3, check: this.state.dec25})}
+                            {this.renderRowWithCheck({title: "Easter - 4/12", indx: 3, check: this.state.dec25})}
+                            <View style={{hieght: 1, width: "100%", backgroundColor: "grey", margin: 5}}/>
+                            {this.renderRowWithCheck({title: "Cinco de Mayo - 5/5", indx: 4, check: this.state.dec25})}
+                            <View style={{hieght: 1, width: "100%", backgroundColor: "grey", margin: 5}}/>
+                            {this.renderRowWithCheck({title: "4th of July - 7/4", indx: 5, check: this.state.dec25})}
+                            <View style={{hieght: 1, width: "100%", backgroundColor: "grey", margin: 5}}/>
+                            {this.renderRowWithCheck({title: "Memorial Day - 5/25", indx: 6, check: this.state.dec25})}
+                            <View style={{hieght: 1, width: "100%", backgroundColor: "grey", margin: 5}}/>
+                            {this.renderRowWithCheck({title: "Labor Day - 9/7", indx: 7, check: this.state.dec25})}
+                            <View style={{hieght: 1, width: "100%", backgroundColor: "grey", margin: 5}}/>
+                            {this.renderRowWithCheck({title: "Halloween - 10/31", indx: 8, check: this.state.dec25})}
+                            <View style={{hieght: 1, width: "100%", backgroundColor: "grey", margin: 5}}/>
+                            {this.renderRowWithCheck({title: "Thanksgiving - 11/24", indx: 9, check: this.state.dec25})}
+                            <View style={{hieght: 1, width: "100%", backgroundColor: "grey", margin: 5}}/>
+                            {this.renderRowWithCheck({title: "Christmas - 12/25", indx: 10, check: this.state.dec25})}
                         </View>
                         <TouchableOpacity
                             onPress={() => this.setState({showVacationDialog: false})}
@@ -615,7 +629,7 @@ export default class ChooseTimings extends Component {
     }
 
     setCheckBox(idx) {
-        if (idx === 1) {
+        /*if (idx === 1) {
             if (this.state.dec23 === false)
                 this.setState({dec23: true})
             else
@@ -632,7 +646,7 @@ export default class ChooseTimings extends Component {
                 this.setState({dec25: true})
             else
                 this.setState({dec25: false})
-        }
+        }*/
     }
 
     renderTimingView(item) {

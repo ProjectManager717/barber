@@ -141,67 +141,49 @@ export default class ClientHome extends Component {
 
 
     renderRecentBookings(item) {
-        var date=item.date;
-        date=date.split("T");
-        var time=item.selected_slot_id[0].start_time;
-        time=time.split(":");
-        var timeShow="";
-        if(time[0]<12)
+        if (item.selected_slot_id.length>0)
         {
-            timeShow=time[0]+":"+time[1]+" AM";
-        }else {
-            timeShow=time[0]+":"+time[1]+" PM";
-        }
-        return <View
-            style={{
-                flexDirection: 'row',
-                marginTop: 10,
-                width: "100%",
-                alignItems: "center",
-                height: 70,
-                backgroundColor: "#474857",
-                borderRadius: 5,
-                borderWidth: 0.5,
-                borderColor: "white"
-            }}>
-            <Image resizeMode={"cover"} source={{uri:item.barber_image}} style={{
-                marginStart: 10, height: 50, width: 50,borderRadius:25}}/>
-            <View style={{flexDirection: "column", marginStart: 10}}>
-                <Text
-                    style={{fontSize: 15, color: "white"}}
-                >{item.barber}</Text>
-                <View style={{flexDirection: "row", marginTop: 5}}>
-                    <Image resizeMode={"contain"} source={require("../../../assets/images/time.png")}
-                           style={{height: 12, width: 12}}/>
-                    <Text style={{fontSize: 10, color: "#939FB1", marginStart: 4}}>{timeShow}</Text>
-                    <Image resizeMode={"contain"} source={require("../../../assets/images/date.png")}
-                           style={{height: 12, width: 12, marginStart: 12}}/>
-                    <Text style={{fontSize: 10, color: "#939FB1", marginStart: 4}}>{date[0]}</Text>
+            var date=item.date;
+            date=date.split("T");
+            var time=item.selected_slot_id[0].start_time;
+            time=time.split(":");
+            var timeShow="";
+            if(time[0]<12)
+            {
+                timeShow=time[0]+":"+time[1]+" AM";
+            }else {
+                timeShow=time[0]+":"+time[1]+" PM";
+            }
+            return <View
+                style={{
+                    flexDirection: 'row',
+                    marginTop: 10,
+                    width: "100%",
+                    alignItems: "center",
+                    height: 70,
+                    backgroundColor: "#474857",
+                    borderRadius: 5,
+                    borderWidth: 0.5,
+                    borderColor: "white"
+                }}>
+                <Image resizeMode={"cover"} source={{uri:item.barber_image}} style={{
+                    marginStart: 10, height: 50, width: 50,borderRadius:25}}/>
+                <View style={{flexDirection: "column", marginStart: 10}}>
+                    <Text
+                        style={{fontSize: 15, color: "white"}}
+                    >{item.barber}</Text>
+                    <View style={{flexDirection: "row", marginTop: 5}}>
+                        <Image resizeMode={"contain"} source={require("../../../assets/images/time.png")}
+                               style={{height: 12, width: 12}}/>
+                        <Text style={{fontSize: 10, color: "#939FB1", marginStart: 4}}>{timeShow}</Text>
+                        <Image resizeMode={"contain"} source={require("../../../assets/images/date.png")}
+                               style={{height: 12, width: 12, marginStart: 12}}/>
+                        <Text style={{fontSize: 10, color: "#939FB1", marginStart: 4}}>{date[0]}</Text>
+                    </View>
                 </View>
-            </View>
-            {item.appointment_type === "completed" ?
-                <TouchableOpacity
-                    onPress={() => this.props.navigation.navigate("Receipt")}
-                    style={{
-                        top: 0,
-                        right: 0,
-                        position: "absolute",
-                        height: 26,
-                        width: 75,
-                        marginTop: 10,
-                        marginEnd: 10,
-                        alignItems: 'center',
-                        justifyContent: "center",
-                        borderRadius: 12,
-                        borderWidth: 1, borderColor:"green",
-                        backgroundColor: "#626371"
-                    }}>
-
-                    <Text style={{marginTop: 3, color: "white", fontSize: 10, fontWeight: "bold"}}>{"Completed"}</Text>
-                </TouchableOpacity>
-                : item.appointment_type === "cancelled" ?
+                {item.appointment_type === "completed" ?
                     <TouchableOpacity
-                        onPress={() => this.props.navigation.navigate("ReceiptCancelled")}
+                        onPress={() => this.props.navigation.navigate("Receipt")}
                         style={{
                             top: 0,
                             right: 0,
@@ -213,39 +195,15 @@ export default class ClientHome extends Component {
                             alignItems: 'center',
                             justifyContent: "center",
                             borderRadius: 12,
-                            borderWidth: 1, borderColor:"red",
+                            borderWidth: 1, borderColor:"green",
                             backgroundColor: "#626371"
                         }}>
-                        <Text style={{
-                            marginTop: 3,
-                            color: "white",
-                            fontSize: 10,
-                            fontWeight: "bold"
-                        }}>{"Cancelled"}</Text>
+
+                        <Text style={{marginTop: 3, color: "white", fontSize: 10, fontWeight: "bold"}}>{"Completed"}</Text>
                     </TouchableOpacity>
-                    : item.appointment_type === "confirmed" ?
-                    <TouchableOpacity
-                        style={{
-                            top: 0,
-                            right: 0,
-                            position: "absolute",
-                            height: 26,
-                            width: 75,
-                            marginTop: 10,
-                            marginEnd: 10,
-                            alignItems: 'center',
-                            justifyContent: "center",
-                            borderRadius: 12,
-                            borderWidth: 1, borderColor: "#30A4DC",
-                            backgroundColor: "#626371"
-                        }}>
-
-                        <Text style={{
-                            color: "white",
-                            fontSize: 10,
-                            fontWeight: "bold"
-                        }}>{"Confirmed"}</Text>
-                    </TouchableOpacity>:<TouchableOpacity
+                    : item.appointment_type === "cancelled" ?
+                        <TouchableOpacity
+                            onPress={() => this.props.navigation.navigate("ReceiptCancelled")}
                             style={{
                                 top: 0,
                                 right: 0,
@@ -257,19 +215,64 @@ export default class ClientHome extends Component {
                                 alignItems: 'center',
                                 justifyContent: "center",
                                 borderRadius: 12,
-                                borderWidth: 1, borderColor: "grey",
+                                borderWidth: 1, borderColor:"red",
                                 backgroundColor: "#626371"
                             }}>
-
                             <Text style={{
+                                marginTop: 3,
                                 color: "white",
                                 fontSize: 10,
                                 fontWeight: "bold"
-                            }}>{"No-Show"}</Text>
+                            }}>{"Cancelled"}</Text>
                         </TouchableOpacity>
-            }
+                        : item.appointment_type === "confirmed" ?
+                            <TouchableOpacity
+                                style={{
+                                    top: 0,
+                                    right: 0,
+                                    position: "absolute",
+                                    height: 26,
+                                    width: 75,
+                                    marginTop: 10,
+                                    marginEnd: 10,
+                                    alignItems: 'center',
+                                    justifyContent: "center",
+                                    borderRadius: 12,
+                                    borderWidth: 1, borderColor: "#30A4DC",
+                                    backgroundColor: "#626371"
+                                }}>
 
-        </View>
+                                <Text style={{
+                                    color: "white",
+                                    fontSize: 10,
+                                    fontWeight: "bold"
+                                }}>{"Confirmed"}</Text>
+                            </TouchableOpacity>:<TouchableOpacity
+                                style={{
+                                    top: 0,
+                                    right: 0,
+                                    position: "absolute",
+                                    height: 26,
+                                    width: 75,
+                                    marginTop: 10,
+                                    marginEnd: 10,
+                                    alignItems: 'center',
+                                    justifyContent: "center",
+                                    borderRadius: 12,
+                                    borderWidth: 1, borderColor: "grey",
+                                    backgroundColor: "#626371"
+                                }}>
+
+                                <Text style={{
+                                    color: "white",
+                                    fontSize: 10,
+                                    fontWeight: "bold"
+                                }}>{"No-Show"}</Text>
+                            </TouchableOpacity>
+                }
+            </View>
+        }
+
     }
 
     renderFavBarbers(item) {

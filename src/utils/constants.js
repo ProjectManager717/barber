@@ -27,7 +27,7 @@ export const constants = {
     BarberAddService: Base_url + path2 + "addservice",
     BarberUpdateService: Base_url + path2 + "updateService",
     GetReviews: Base_url + "/api/reviews/"+"get_review",
-    BarberAddMobilePaySetting: Base_url + "/api/mobilePay/" + "add",
+    BarberAddMobilePaySetting: Base_url + "/api/stripes/" + "CreateAccount_barber",
     BarbersProfileUpdate: Base_url + path2+"update",
     BarbersSendVerfication: Base_url + path2+"sendVerificationCode",
     BarbersDeleteImage: Base_url + path2+"portfolio_ImageDelete",
@@ -54,6 +54,8 @@ export const constants = {
     ClientAddReview: Base_url + "/api/reviews/"+"add_review",
     ClientRecieptCompleted: Base_url + "/api/user/"+"reciept_completed",
     ClientRecieptCancelled: Base_url + "/api/user/"+"reciept_cancelled",
+    ClientNewStripeUser:Base_url+"/api/stripes/"+"stripe_CreateCustomer",
+    ClientStripePaymentFlow:Base_url+"/api/stripes/"+"payment_flow",
 
 
 };
