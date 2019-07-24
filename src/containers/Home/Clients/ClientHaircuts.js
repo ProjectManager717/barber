@@ -11,20 +11,26 @@ import {
     TouchableHighlight,
     TextInput, Dimensions,
 } from "react-native";
+import Preference from "react-native-preference";
 import {Calendar, CalendarList, Agenda} from 'react-native-calendars';
 import {Colors} from "../../../themes";
 import {globalStyles} from "../../../themes/globalStyles";
 import {Header} from "react-native-elements";
 import CalendarHeader from "react-native-calendars/src/calendar/header";
+import {constants} from "../../../utils/constants";
 
 const {width, height} = Dimensions.get("window");
 const today = moment().format("YYYY-MM-DD");
-console.log("todaydate:"+today);
+console.log("todaydate:" + today);
+let getmonthh = new Date().getMonth();
+let getyear = new Date().getFullYear();
+
 export default class ClientHaircuts extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
+            showLoading: false,
             text2: 'Your Message...',
             upcomingBack: "transparent",
             completeBack: "transparent",
@@ -33,57 +39,189 @@ export default class ClientHaircuts extends Component {
             upcomingtext: "grey",
             completetext: "grey",
             cancelledtext: "grey",
+            allAppointments: [],
+            selectedMonth:"",
+            allAppointmentsCalender: "",
             alltext: "grey",
-            blue:"transparent",
-            red:"transparent",
-            green:"transparent",
+            blue: "transparent",
+            red: "transparent",
+            green: "transparent",
         };
-        this.calenderDayClicked=this.calenderDayClicked.bind(this);
+        this.calenderDayClicked = this.calenderDayClicked.bind(this);
     }
 
     componentDidMount(): void {
-        this.optionSelected("all");
+        const {navigation} = this.props;
+        this.focusListener = navigation.addListener("didFocus", payload => {
+            let mon = getmonthh + 1;
+            if (parseInt(mon) < 10) {
+                mon = "0" + mon;
+            }
+            let mn=getyear + "-" + mon;
+            this.setState({selectedMonth:mn})
+            this.getAllAppointments(mn);
+        });
+        //this.getAllAppointments(getyear+"-"+getmonthh);
+        //this.optionSelected("all",);
+    }
+
+    getAllAppointments(monthYear) {
+        this.setState({showLoading: true})
+        console.log("URLgetAllAppointments-->", constants.ClientGetAllAppointments + "?client_id=" + Preference.get("userId") + "&month=" + monthYear);
+        fetch(constants.ClientGetAllAppointments + "?client_id=" + Preference.get("userId") + "&month=" + monthYear, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+            },
+        }).then(response => response.json())
+            .then(response => {
+                console.log("responsegetAllAppointments-->", "-" + JSON.stringify(response));
+                if (response.ResultType === 1) {
+                    this.setState({showLoading: false});
+                    let allAppointment = response.Data;
+                    this.setState({allAppointments:allAppointment})
+                    this.optionSelected("all",allAppointment)
+                } else {
+                    this.setState({showLoading: false})
+                    if (response.ResultType === 0) {
+                        alert(response.Message);
+                    }
+                }
+            }).catch(error => {
+            this.setState({showLoading: false})
+            //console.error('Errorr:', error);
+            console.log('Error:', error);
+            alert("Error: " + error);
+        });
+    }
+
+    decreaseMonth()
+    {
+        let selectmonth=this.state.selectedMonth;
+        console.log("Monthis",selectmonth);
+        selectmonth=selectmonth.split("-");
+        if(selectmonth[1]==="1")
+        {
+            selectmonth[1]="12";
+            selectmonth[0]=parseInt(selectmonth[0])-1;
+        }else{
+            selectmonth[1]=parseInt(selectmonth[1])-1;
+        }
+        let mainMonth=selectmonth[0]+"-"+selectmonth[1];
+        this.setState({selectedMonth:mainMonth});
+        this.getAllAppointments(mainMonth);
+    }
+
+    increaseMonth()
+    {
+        let selectmonth=this.state.selectedMonth;
+        selectmonth=selectmonth.split("-")
+        if(selectmonth[1]==="12")
+        {
+            selectmonth[1]="1";
+            selectmonth[0]=parseInt(selectmonth[0])+1;
+        }else{
+            selectmonth[1]=parseInt(selectmonth[1])+1;
+        }
+        let mainMonth=selectmonth[0]+"-"+selectmonth[1];
+        this.setState({selectedMonth:mainMonth});
+        this.getAllAppointments(mainMonth);
     }
 
 
-    optionSelected(item) {
+    optionSelected(item,Data) {
         if (item === "upcoming") {
             this.setState({upcomingBack: "#1999CE", upcomingtext: "white"});
             this.setState({completeBack: "transparent", completetext: "grey"});
             this.setState({cancelledBack: "transparent", cancelledtext: "grey"});
             this.setState({allBack: "transparent", alltext: "grey"});
-            this.setState({blue:"#1999CE",});
-            this.setState({green:"transparent"});
-            this.setState({red:"transparent"});
+            this.setState({blue: "#1999CE",});
+            this.setState({green: "transparent"});
+            this.setState({red: "transparent"});
+            let details=new Object();
+            for (let i = 0; i < Data.length; i++) {
+                let data = Data[i].date;
+                data = data.split("T");
+                let appointdate = data[0];
+                console.log("calenderAppointments11-->", Data[i].appointment_type);
+                if (Data[i].appointment_type === "confirmed") {
+                    details[`${appointdate}`]={selected: true, selectedColor: "#389CFE"}
+                }
+            }
+            console.log("calenderAppointmentsArray-->", JSON.stringify(details));
+            this.setState({allAppointmentsCalender: details});
         }
         if (item === "complete") {
             this.setState({completeBack: "#00D200", completetext: "white"});
             this.setState({upcomingBack: "transparent", upcomingtext: "grey"});
             this.setState({cancelledBack: "transparent", cancelledtext: "grey"});
             this.setState({allBack: "transparent", alltext: "grey"});
-            this.setState({green:"#00D200"});
-            this.setState({blue:"transparent",});
-            this.setState({red:"transparent"});
+            this.setState({green: "#00D200"});
+            this.setState({blue: "transparent",});
+            this.setState({red: "transparent"});
+            let details=new Object();
+            for (let i = 0; i < Data.length; i++) {
+                let data = Data[i].date;
+                data = data.split("T");
+                let appointdate = data[0];
+                console.log("calenderAppointments11-->", Data[i].appointment_type);
+                if (Data[i].appointment_type === "completed") {
+                    details[`${appointdate}`]={selected: true, selectedColor: "#2DD010"}
+                }
+            }
+            console.log("calenderAppointmentsArray-->", JSON.stringify(details));
+            this.setState({allAppointmentsCalender: details});
         }
         if (item === "cancelled") {
             this.setState({cancelledBack: "red", cancelledtext: "white"});
             this.setState({completeBack: "transparent", completetext: "grey"});
             this.setState({upcomingBack: "transparent", upcomingtext: "grey"});
             this.setState({allBack: "transparent", alltext: "grey"});
-            this.setState({red:"red"});
-            this.setState({green:"transparent"});
-            this.setState({blue:"transparent",});
+            this.setState({red: "red"});
+            this.setState({green: "transparent"});
+            this.setState({blue: "transparent",});
+            let details=new Object();
+            for (let i = 0; i < Data.length; i++) {
+                let data = Data[i].date;
+                data = data.split("T");
+                let appointdate = data[0];
+                console.log("calenderAppointments11-->", Data[i].appointment_type);
+                if (Data[i].appointment_type === "cancelled") {
+                    details[`${appointdate}`]={selected: true, selectedColor: "#F50000"}
+                }
+            }
+            console.log("calenderAppointmentsArray-->", JSON.stringify(details));
+            this.setState({allAppointmentsCalender: details});
         }
         if (item === "all") {
             this.setState({allBack: "#7131FD", alltext: "white"});
             this.setState({cancelledBack: "transparent", cancelledtext: "grey"});
             this.setState({completeBack: "transparent", completetext: "grey"});
             this.setState({upcomingBack: "transparent", upcomingtext: "grey"});
-            this.setState({red:"red",green:"#00D200",blue:"#1999CE"})
+            this.setState({red: "red", green: "#00D200", blue: "#1999CE"})
+            let details=new Object();
+            for (let i = 0; i < Data.length; i++) {
+                let data = Data[i].date;
+                data = data.split("T");
+                let appointdate = data[0];
+                console.log("calenderAppointments11-->", Data[i].appointment_type);
+                if (Data[i].appointment_type === "confirmed") {
+                    details[`${appointdate}`]={selected: true, selectedColor: "#389CFE"}
+                }
+                if (Data[i].appointment_type === "cancelled") {
+                    details[`${appointdate}`]={selected: true, selectedColor: "#F50000"}
+                }
+                if (Data[i].appointment_type === "completed") {
+                    details[`${appointdate}`]={selected: true, selectedColor: "#2DD010"}
+                }
+            }
+            console.log("calenderAppointmentsArray-->", JSON.stringify(details));
+            this.setState({allAppointmentsCalender: details});
         }
     }
-    calenderDayClicked()
-    {}
+
+    calenderDayClicked() {
+    }
 
     render() {
         return (<View style={styles.container}>
@@ -124,23 +262,26 @@ export default class ClientHaircuts extends Component {
                             minDate={'1970-1-1'}
                             maxDate={'2050-12-31'}
                             firstDay={1}
-                            onDayPress={(day) => {console.log("hello"+day)}}
+                            onDayPress={(day) => {
+                                console.log("hello" + day)
+                            }}
                             onDayLongPress={(val) => {
                                 console.log('selectedday')
                             }}
-                            /*markedDates={{
-                                '2019-05-09': {
-                                    selected: true, selectedColor:this.state.red,
+                            markedDates={this.state.allAppointmentsCalender}
+                           /* markedDates={{
+                                '2019-07-09': {
+                                    selected: true, selectedColor: "red",
                                 },
-                                '2019-05-13': {
-                                    selected: true, selectedColor:this.state.green,
+                                '2019-07-13': {
+                                    selected: true, selectedColor: this.state.green,
                                 },
-                                '2019-05-22': {selected: true,selectedColor:this.state.blue},
+                                '2019-07-22': {selected: true, selectedColor: this.state.blue},
                                 today: {marked: true, dotColor: "red"},
                             }}*/
                             hideDayNames={true}
-                            onPressArrowLeft={substractMonth => substractMonth()}
-                            onPressArrowRight={addMonth => addMonth()}
+                            onPressArrowLeft={substractMonth => this.decreaseMonth()}
+                            onPressArrowRight={addMonth =>  this.increaseMonth()}
                             theme={{
                                 monthTextColor: 'red',
                                 calendarBackground: Colors.themeBackground,
@@ -160,7 +301,7 @@ export default class ClientHaircuts extends Component {
                             borderRadius: 20,
                             borderWidth: 0.5,
                         }}>
-                            <TouchableOpacity onPress={() => this.optionSelected("upcoming")}
+                            <TouchableOpacity onPress={() => this.optionSelected("upcoming",this.state.allAppointments)}
                                               style={{
                                                   marginStart: 10,
                                                   backgroundColor: this.state.upcomingBack,
@@ -168,32 +309,32 @@ export default class ClientHaircuts extends Component {
                                                   alignItems: "center"
                                               }}>
                                 <Text style={{
-                                        color: this.state.upcomingtext,
-                                        fontSize: 10,
-                                        height: 20,
-                                        marginTop: 5,
-                                        marginStart: 5, marginEnd: 5
-                                    }}
+                                    color: this.state.upcomingtext,
+                                    fontSize: 10,
+                                    height: 20,
+                                    marginTop: 5,
+                                    marginStart: 5, marginEnd: 5
+                                }}
                                 >{"UPCOMING"}</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => this.optionSelected("complete")}
+                            <TouchableOpacity onPress={() => this.optionSelected("complete",this.state.allAppointments)}
                                               style={{
                                                   backgroundColor: this.state.completeBack,
                                                   borderRadius: 15,
                                                   width: "20%",
                                                   marginStart: 10,
                                                   alignItems: "center"
-                                         }}>
+                                              }}>
                                 <Text style={{
-                                        color: this.state.completetext,
-                                        fontSize: 10,
-                                        height: 20,
-                                        marginTop: 5,
-                                        textAlign: "center",
-                                        marginStart: 5, marginEnd: 5
-                                    }}>{"COMPLETE"}</Text>
+                                    color: this.state.completetext,
+                                    fontSize: 10,
+                                    height: 20,
+                                    marginTop: 5,
+                                    textAlign: "center",
+                                    marginStart: 5, marginEnd: 5
+                                }}>{"COMPLETE"}</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => this.optionSelected("cancelled")}
+                            <TouchableOpacity onPress={() => this.optionSelected("cancelled",this.state.allAppointments)}
                                               style={{
 
                                                   backgroundColor: this.state.cancelledBack,
@@ -203,13 +344,13 @@ export default class ClientHaircuts extends Component {
                                                   marginStart: 10,
                                               }}>
                                 <Text style={{
-                                        color: this.state.cancelledtext,
-                                        fontSize: 10,
-                                        height: 20,
-                                        marginTop: 5, marginStart: 5, marginEnd: 5
-                                    }}>{"CANCELLED"}</Text>
+                                    color: this.state.cancelledtext,
+                                    fontSize: 10,
+                                    height: 20,
+                                    marginTop: 5, marginStart: 5, marginEnd: 5
+                                }}>{"CANCELLED"}</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => this.optionSelected("all")}
+                            <TouchableOpacity onPress={() => this.optionSelected("all",this.state.allAppointments)}
                                               style={{
                                                   borderRadius: 15,
                                                   backgroundColor: this.state.allBack,
@@ -218,16 +359,28 @@ export default class ClientHaircuts extends Component {
                                                   alignItems: "center"
                                               }}>
                                 <Text style={{
-                                        color: this.state.alltext,
-                                        fontSize: 10,
-                                        marginEnd: 5,
-                                        marginTop: 5,
-                                        height: 20, marginStart: 5
-                                    }}>{"ALL"}</Text>
+                                    color: this.state.alltext,
+                                    fontSize: 10,
+                                    marginEnd: 5,
+                                    marginTop: 5,
+                                    height: 20, marginStart: 5
+                                }}>{"ALL"}</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
                 </ScrollView>
+                {this.state.showLoading && <View style={{
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor: "transparent",
+                    position: "absolute",
+                    opacity: 1,
+                    alignItems: "center",
+                    justifyContent: "center"
+                }}>
+                    <Image resizeMode={"contain"} source={require("../../../assets/images/loading.gif")}
+                           style={{width: 60, height: 60, opacity: 1,}}/>
+                </View>}
             </View>
         )
     }

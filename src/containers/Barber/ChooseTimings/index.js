@@ -44,12 +44,85 @@ export default class ChooseTimings extends Component {
             breakStart: "",
             breakEnd: "",
             showVacationDialog: false,
-            dec23: false,
-            dec24: false,
-            dec25: false,
+
+            newYear: false,
+            valentineDay: false,
+            easterDay: false,
+            cincoDay: false,
+            july4: false,
+            memorialDay: false,
+            labourDay: false,
+            halloweenDay: false,
+            thankDay: false,
+            chrismasDay: false,
+
         };
         this.setDate = this.setDate.bind(this);
         console.log("Timimng:::" + this.state.date);
+
+    }
+
+    setCheckBox(idx) {
+        if (idx === 1) {
+            if (this.state.newYear === false)
+                this.setState({newYear: true})
+            else
+                this.setState({newYear: false})
+        }
+        if (idx === 2) {
+            if (this.state.valentineDay === false)
+                this.setState({valentineDay: true,})
+            else
+                this.setState({valentineDay: false})
+        }
+        if (idx === 3) {
+            if (this.state.easterDay === false)
+                this.setState({easterDay: true})
+            else
+                this.setState({easterDay: false})
+        }
+        if (idx === 4) {
+            if (this.state.cincoDay === false)
+                this.setState({cincoDay: true})
+            else
+                this.setState({cincoDay: false})
+        }
+        if (idx === 5) {
+            if (this.state.july4 === false)
+                this.setState({july4: true})
+            else
+                this.setState({july4: false})
+        }
+        if (idx === 6) {
+            if (this.state.memorialDay === false)
+                this.setState({memorialDay: true})
+            else
+                this.setState({memorialDay: false})
+        }
+        if (idx === 7) {
+            if (this.state.labourDay === false)
+                this.setState({labourDay: true})
+            else
+                this.setState({labourDay: false})
+        }
+        if (idx === 8) {
+            if (this.state.halloweenDay === false)
+                this.setState({halloweenDay: true})
+            else
+                this.setState({halloweenDay: false})
+        }
+        if (idx === 9) {
+            if (this.state.thankDay === false)
+                this.setState({thankDay: true})
+            else
+                this.setState({thankDay: false})
+        }
+        if (idx === 10) {
+            if (this.state.chrismasDay === false)
+                this.setState({chrismasDay: true})
+            else
+                this.setState({chrismasDay: false})
+        }
 
     }
 
@@ -104,6 +177,7 @@ export default class ChooseTimings extends Component {
             barber_id: Preference.get("userId"),
             working_days: this.state.workingDays
         };
+        console.log("OutPutData::", details);
         this.setState({showLoading: true});
         fetch(constants.UpdateWorkingHours, {
             method: 'POST',
@@ -135,7 +209,7 @@ export default class ChooseTimings extends Component {
             console.log('Error:', error);
             alert("Error: " + error);
         });
-        console.log("OutPutData::", details);
+
     }
 
     setNotWorkingDay(val) {
@@ -185,7 +259,7 @@ export default class ChooseTimings extends Component {
                 this.setState({endTime: endtimeDay})
                 console.log("SetTime:::-->" + this.state.endTime);
                 workingdayz[j].selected = true;
-                this.setState({breakStart:workingdayz[j].break_from,breakEnd:workingdayz[j].break_to})
+                this.setState({breakStart: workingdayz[j].break_from, breakEnd: workingdayz[j].break_to})
             } else {
                 workingdayz[j].selected = false;
             }
@@ -203,7 +277,11 @@ export default class ChooseTimings extends Component {
 
     setWorkingDay(val) {
         let workdays = this.state.workingDays;
-        workdays[val].is_off = false;
+        if (workdays[val].is_off)
+            workdays[val].is_off = false;
+        else {
+            workdays[val].is_off = true;
+        }
         this.setState({workingDays: workdays})
         let items = [];
         for (i = 0; i < 7; i++) {
@@ -236,7 +314,6 @@ export default class ChooseTimings extends Component {
         if (index === 6) {
             this.setTimeofDay("Sun");
         }
-
     }
 
     renderWeekDay(item) {
@@ -279,8 +356,7 @@ export default class ChooseTimings extends Component {
                     flex: 1,
                     backgroundColor: item.bg
                 }}>
-                    <TouchableOpacity key={item.k}
-                                      onPress={() => this.setWorkingDay(item.k)}>
+                    <TouchableOpacity key={item.k} onPress={() => this.setWorkingDay(item.k)}>
                         <Image
                             style={{
                                 height: 16,
@@ -359,7 +435,7 @@ export default class ChooseTimings extends Component {
             workdays[0].break_from = this.state.breakStart;
             workdays[0].break_to = this.state.breakEnd;
         }
-        this.setState({workingDays: workdays});
+        this.setState({workingDays: workdays, showBreakTimeDialog: false});
     }
 
 
@@ -402,7 +478,7 @@ export default class ChooseTimings extends Component {
                         </View>
 
                         <View style={{flexDirection: "row", width: "100%", height: 100}}>
-                            <View style={{width: "50%"}}>
+                            <View style={{flexDirection: "column", width: "40%", marginStart: 10}}>
                                 <Text style={{
                                     color: "grey",
                                     fontWeight: "bold",
@@ -412,8 +488,9 @@ export default class ChooseTimings extends Component {
                                 }}>{"FROM"}</Text>
                                 <DatePicker
                                     date={this.state.startTime}
-                                    style={{marginLeft: -50}}
+                                    style={{width: 200, backgroundColor: Colors.themeBackground, height: 150}}
                                     minuteInterval={15}
+                                    fadeToColor={"none"}
                                     onDateChange={date => this.setTimeStart(date)}
                                     mode={"time"}
                                     textColor={"#ffffff"}
@@ -421,7 +498,7 @@ export default class ChooseTimings extends Component {
 
 
                             </View>
-                            <View style={{width: "50%"}}>
+                            <View style={{width: "40%", marginStart: 10}}>
                                 <Text style={{
                                     color: "grey",
                                     fontWeight: "bold",
@@ -435,7 +512,8 @@ export default class ChooseTimings extends Component {
                                     onDateChange={date => this.setTimeEnd(date)}
                                     minuteInterval={15}
                                     mode={"time"}
-                                    style={{marginLeft: -50}}
+                                    style={{width: 200, backgroundColor: Colors.themeBackground, height: 150}}
+                                    fadeToColor={"none"}
                                     textColor={"#ffffff"}
                                 />
                             </View>
@@ -470,20 +548,21 @@ export default class ChooseTimings extends Component {
                             })}
                             <View style={{marginBottom: 50}}/>
                         </ScrollView>
-                        {this.state.showLoading && <View style={{
-                            width: "100%",
-                            height: "100%",
-                            backgroundColor: "transparent",
-                            position: "absolute",
-                            opacity: 1,
-                            alignItems: "center",
-                            justifyContent: "center"
-                        }}>
-                            <Image resizeMode={"contain"} source={require("../../../assets/images/loading.gif")}
-                                   style={{width: 60, height: 60, opacity: 1,}}/>
-                        </View>}
+
                     </View>
                 </ScrollView>
+                {this.state.showLoading && <View style={{
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor: "transparent",
+                    position: "absolute",
+                    opacity: 1,
+                    alignItems: "center",
+                    justifyContent: "center"
+                }}>
+                    <Image resizeMode={"contain"} source={require("../../../assets/images/loading.gif")}
+                           style={{width: 60, height: 60, opacity: 1,}}/>
+                </View>}
 
                 <PopupDialog
                     visible={this.state.showBreakTimeDialog}
@@ -511,7 +590,7 @@ export default class ChooseTimings extends Component {
                         <TextInput Color={"white"}
                                    placeholder={"Enter start time"}
                                    placeholderTextColor={"grey"}
-                                   value={this.state.serviceName}
+                                   value={this.state.breakStart}
                                    onChangeText={(text) => this.setState({breakStart: text})}
                                    style={{
                                        fontSize: 14,
@@ -521,7 +600,7 @@ export default class ChooseTimings extends Component {
 
                         <TextInput Color={"white"} placeholder={"Enter end time"}
                                    placeholderTextColor={"grey"}
-                                   value={this.state.serviceDuration}
+                                   value={this.state.breakEnd}
                                    onChangeText={(text) => this.setState({breakEnd: text})}
                                    keyboardType={'number-pad'}
                                    style={{
@@ -552,7 +631,7 @@ export default class ChooseTimings extends Component {
                     onTouchOutside={() => {
                         this.setState({showVacationDialog: false});
                     }}>
-                    <View style={{flexDirection: "column"}}>
+                    <View style={{flexDirection: "column", backgroundColor: Colors.themeBackground}}>
                         <View style={{
                             width: "100%",
                             height: 0,
@@ -567,28 +646,55 @@ export default class ChooseTimings extends Component {
                             marginTop: 5,
                             marginBottom: 20,
                             fontWeight: "bold",
-                            textAlign: "center"
+                            textAlign: "center",
+                            color: "white"
                         }}>Select Vacation Holidays</Text>
+
+
                         <View style={{flexDirection: "column",}}>
-                            {this.renderRowWithCheck({title: "New Years - 1/1", indx: 1, check: this.state.dec23})}
-                            <View style={{hieght: 1, width: "100%", backgroundColor: "grey", margin: 5}}/>
-                            {this.renderRowWithCheck({title: "Valentines Day - 2/14", indx: 2, check: this.state.dec24})}
-                            <View style={{hieght: 1, width: "100%", backgroundColor: "grey", margin: 5}}/>
-                            {this.renderRowWithCheck({title: "Easter - 4/12", indx: 3, check: this.state.dec25})}
-                            <View style={{hieght: 1, width: "100%", backgroundColor: "grey", margin: 5}}/>
-                            {this.renderRowWithCheck({title: "Cinco de Mayo - 5/5", indx: 4, check: this.state.dec25})}
-                            <View style={{hieght: 1, width: "100%", backgroundColor: "grey", margin: 5}}/>
-                            {this.renderRowWithCheck({title: "4th of July - 7/4", indx: 5, check: this.state.dec25})}
-                            <View style={{hieght: 1, width: "100%", backgroundColor: "grey", margin: 5}}/>
-                            {this.renderRowWithCheck({title: "Memorial Day - 5/25", indx: 6, check: this.state.dec25})}
-                            <View style={{hieght: 1, width: "100%", backgroundColor: "grey", margin: 5}}/>
-                            {this.renderRowWithCheck({title: "Labor Day - 9/7", indx: 7, check: this.state.dec25})}
-                            <View style={{hieght: 1, width: "100%", backgroundColor: "grey", margin: 5}}/>
-                            {this.renderRowWithCheck({title: "Halloween - 10/31", indx: 8, check: this.state.dec25})}
-                            <View style={{hieght: 1, width: "100%", backgroundColor: "grey", margin: 5}}/>
-                            {this.renderRowWithCheck({title: "Thanksgiving - 11/24", indx: 9, check: this.state.dec25})}
-                            <View style={{hieght: 1, width: "100%", backgroundColor: "grey", margin: 5}}/>
-                            {this.renderRowWithCheck({title: "Christmas - 12/25", indx: 10, check: this.state.dec25})}
+                            {this.renderRowWithCheck({title: "New Years - 1/1", indx: 1, check: this.state.newYear})}
+                            <View style={{height: 0, width: "100%", backgroundColor: "grey", margin: 5}}/>
+                            {this.renderRowWithCheck({
+                                title: "Valentines Day - 2/14",
+                                indx: 2,
+                                check: this.state.valentineDay
+                            })}
+                            <View style={{height: 0, width: "100%", backgroundColor: "grey", margin: 5}}/>
+                            {this.renderRowWithCheck({title: "Easter - 4/12", indx: 3, check: this.state.easterDay})}
+                            <View style={{height: 0, width: "100%", backgroundColor: "grey", margin: 5}}/>
+                            {this.renderRowWithCheck({
+                                title: "Cinco de Mayo - 5/5",
+                                indx: 4,
+                                check: this.state.cincoDay
+                            })}
+                            <View style={{height: 0, width: "100%", backgroundColor: "grey", margin: 5}}/>
+                            {this.renderRowWithCheck({title: "4th of July - 7/4", indx: 5, check: this.state.july4})}
+                            <View style={{height: 0, width: "100%", backgroundColor: "grey", margin: 5}}/>
+                            {this.renderRowWithCheck({
+                                title: "Memorial Day - 5/25",
+                                indx: 6,
+                                check: this.state.memorialDay
+                            })}
+                            <View style={{height: 0, width: "100%", backgroundColor: "grey", margin: 5}}/>
+                            {this.renderRowWithCheck({title: "Labor Day - 9/7", indx: 7, check: this.state.labourDay})}
+                            <View style={{height: 0, width: "100%", backgroundColor: "grey", margin: 5}}/>
+                            {this.renderRowWithCheck({
+                                title: "Halloween - 10/31",
+                                indx: 8,
+                                check: this.state.halloweenDay
+                            })}
+                            <View style={{height: 0, width: "100%", backgroundColor: "grey", margin: 5}}/>
+                            {this.renderRowWithCheck({
+                                title: "Thanksgiving - 11/24",
+                                indx: 9,
+                                check: this.state.thankDay
+                            })}
+                            <View style={{height: 0, width: "100%", backgroundColor: "grey", margin: 5}}/>
+                            {this.renderRowWithCheck({
+                                title: "Christmas - 12/25",
+                                indx: 10,
+                                check: this.state.chrismasDay
+                            })}
                         </View>
                         <TouchableOpacity
                             onPress={() => this.setState({showVacationDialog: false})}
@@ -618,36 +724,16 @@ export default class ChooseTimings extends Component {
         return <View style={{flexDirection: 'row', height: 20, marginLeft: 40}}>
             <CheckBoxSquare onClick={() => {
                 this.setCheckBox(item.indx)
-            }} isChecked={item.check} style={{alignSelf: 'center'}}/>
-            <Text style={{
+            }} isChecked={item.check} rightText={item.title} style={{width: 200}}/>
+            {/*<Text style={{
                 color: "black",
                 marginLeft: 10,
                 alignSelf: 'center',
                 fontFamily: "AvertaStd-Regular"
-            }}>{item.title}</Text>
+            }}>{}</Text>*/}
         </View>;
     }
 
-    setCheckBox(idx) {
-        /*if (idx === 1) {
-            if (this.state.dec23 === false)
-                this.setState({dec23: true})
-            else
-                this.setState({dec23: false})
-        }
-        if (idx === 2) {
-            if (this.state.dec24 === false)
-                this.setState({dec24: true,})
-            else
-                this.setState({dec24: false})
-        }
-        if (idx === 3) {
-            if (this.state.dec25 === false)
-                this.setState({dec25: true})
-            else
-                this.setState({dec25: false})
-        }*/
-    }
 
     renderTimingView(item) {
         if (item.title === "Add Break Time") {

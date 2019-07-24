@@ -10,14 +10,21 @@ import {
     ProgressChart,
     ContributionGraph
 } from 'react-native-chart-kit'
+import {constants} from "../../utils/constants";
+import Preference from "react-native-preference";
 
 const {height, width} = Dimensions.get("window");
+
+let getmonth = new Date().getMonth();
+let getDate = new Date().getDate();
+let getYear = new Date().getFullYear();
 
 export default class lGraphComp extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
+            showLoading:false,
             DialogVisible: false,
             DialogVisible1: false,
             monthSelect: "Jan",
@@ -26,7 +33,59 @@ export default class lGraphComp extends Component {
             totalCancellations: 0,
             totalTips: 0,
             totalRevenue: 0,
+            chartData:[0,0,0,0,0,0,0],
+            chartLabels:["Mon","Tue","Wed","Thur","Fri","Sat","Sun"],
         }
+    }
+    componentDidMount(): void {
+        let mon=parseInt(getmonth)+1;
+        let startDate=getYear+"-"+mon+"-20";
+        let endDate=getYear+"-"+mon+"-26";
+        this.getRevenueofBarber(startDate,endDate);
+    }
+
+    getRevenueofBarber(startDate,endDate) {
+        this.setState({showLoading: true})
+        console.log("URLgetAllAppointments-->", constants.BarberGetRevenue + "?barber_id=" + Preference.get("userId") + "&start_date_week=" + startDate+ "&end_date_week=" + endDate);
+        fetch(constants.BarberGetRevenue + "?barber_id=" + Preference.get("userId") + "&start_date_week=" + startDate+ "&end_date_week=" + endDate, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+            },
+        }).then(response => response.json())
+            .then(response => {
+                console.log("responseBarberGetRevenue-->", "-" + JSON.stringify(response));
+                if (response.ResultType === 1) {
+                    this.setState({showLoading: false});
+                    let Data=response.Data;
+                    this.setState({
+                        totalClients:Data.weekly_clients,
+                        totalCancellations: Data.weekly_cancellations,
+                        totalTips: Data.weekly_tips,
+                        totalRevenue: Data.weekly_revenue,
+                    });
+                    //this.setState({chartData:[],chartLabels:[]});
+                    let chartdata=[];
+                    let chartlabels=[];
+                    for(let i=0;i<Data.per_day_revenue.length;i++)
+                    {
+                        chartlabels.push(Data.per_day_revenue[i].Day_name);
+                        chartdata.push(Data.per_day_revenue[i].total_price);
+                    }
+
+                    this.setState({chartData:chartdata,chartLabels:chartlabels});
+                } else {
+                    this.setState({showLoading: false})
+                    if (response.ResultType === 0) {
+                        alert(response.Message);
+                    }
+                }
+            }).catch(error => {
+            this.setState({showLoading: false})
+            //console.error('Errorr:', error);
+            console.log('Error:', error);
+            alert("Error: " + error);
+        });
     }
 
     render() {
@@ -188,8 +247,8 @@ export default class lGraphComp extends Component {
             />*/}
                     <LineChart
                         data={{
-                            labels: ['Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun'],
-                            datasets: [{data: [0, 0, 0, 0, 0, 0, 0]}]
+                            labels: this.state.chartLabels,
+                            datasets: [{data: this.state.chartData}]
                         }}
                         width={Dimensions.get('window').width - 40} // from react-native
                         height={200}
@@ -271,6 +330,18 @@ export default class lGraphComp extends Component {
                         </View>
                     </View>
                 </View>
+                {this.state.showLoading && <View style={{
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor: "transparent",
+                    position: "absolute",
+                    opacity: 1,
+                    alignItems: "center",
+                    justifyContent: "center"
+                }}>
+                    <Image resizeMode={"contain"} source={require("../../assets/images/loading.gif")}
+                           style={{width: 60, height: 60, opacity: 1,}}/>
+                </View>}
             </View>
         )
             ;

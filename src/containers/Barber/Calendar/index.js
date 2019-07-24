@@ -265,577 +265,581 @@ export default class Calendar extends Component {
 
     renderItem(item) {
         console.log("renderItem--->", item.length)
-        if (this.state.calenderSlots.length > 0) {
-            console.log("calenderSlotslength- > 0");
-            let time = item.selected_slot_id[0].start_time;
-            let AM = "";
-            let vtime = time.split(":");
-            if (vtime[0] < 12) {
-                AM = "AM";
-            } else {
-                AM = "PM";
-            }
-
-            var m = moment(new Date(2011, 2, 12, vtime[0], vtime[1], 0));
-            var n = moment(new Date(2011, 2, 12, vtime[0], vtime[1], 0));
-            var o = moment(new Date(2011, 2, 12, vtime[0], vtime[1], 0));
-            //m.add(item.id * 30, "minutes");
-            n.add(30, "minutes");
-            o.add(item.id * 30 + 15, "minutes");
-            /*bit set for */
-            /*0=30mins*/
-            /*1=1hour*/
-            /*2=30minbreak*/
-            /*3=45min*/
-            let imagep = "", imgText = "", imgTextcolor = "", bgc = "", bgcEnd = "";
-            if (item.appointment_type === "completed") {
-                imagep = require("../../../assets/images/completed.png");
-                imgText = "COMPLETED";
-                imgTextcolor = Colors.green;
-                bgc = Colors.green;
-                bgcEnd = "#4C6546";
-            } else if (item.appointment_type === "inprogress") {
-                imagep = require("../../../assets/images/progress.png");
-                imgText = "IN PROGRESS";
-                imgTextcolor = Colors.purple;
-                bgc = Colors.purple;
-                bgcEnd = "#653B79";
-            } else if (item.appointment_type === "confirmed") {
-                imagep = require("../../../assets/images/confirmed.png");
-                imgText = "CONFIRMED";
-                imgTextcolor = Colors.magenta;
-                bgc = Colors.magenta;
-                bgcEnd = "#3A5F7A";
-            } else if (item.appointment_type === "pending") {
-                imagep = require("../../../assets/images/pending.png");
-                imgText = "PENDING";
-                imgTextcolor = Colors.yellow;
-                bgc = Colors.yellow;
-                bgcEnd = "#6C6146";
-            } else if (item.appointment_type === "cancelled") {
-                imagep = require("../../../assets/images/cancelled.png");
-                imgText = "CANCELLED";
-                imgTextcolor = Colors.red;
-                bgc = Colors.red;
-                bgcEnd = "#6B3945";
-            } else if (item.appointment_type === "noshow") {
-                imagep = require("../../../assets/images/noShow.png");
-                imgText = "NO SHOW";
-                imgTextcolor = Colors.grey;
-                bgc = Colors.grey;
-                bgcEnd = "#5A5B68";
-            } else {
-
-            }
-            let numberOfSlotsSlected = item.selected_slot_id.length;
-            console.log("Numberof slots------>", numberOfSlotsSlected)
-            let timeofSlots = numberOfSlotsSlected * 15;
-            if (timeofSlots === 15)
-                timeofSlots = 30;
-            let period = "";
-            if (timeofSlots < 60) {
-                period = "mins";
-            } else {
-                period = "hr";
-            }
-            let servicesSelected = "";
-            for (let f = 0; f < item.selected_services.length; f++) {
-                if (f === item.selected_services.length - 1) {
-                    servicesSelected += item.selected_services[f].name;
+        if(item.selected_slot_id.length>0)
+        {
+            if (this.state.calenderSlots.length > 0) {
+                console.log("calenderSlotslength- > 0");
+                let time = item.selected_slot_id[0].start_time;
+                let AM = "";
+                let vtime = time.split(":");
+                if (vtime[0] < 12) {
+                    AM = "AM";
                 } else {
-                    servicesSelected += item.selected_services[f].name + ",";
+                    AM = "PM";
                 }
 
-            }
+                var m = moment(new Date(2011, 2, 12, vtime[0], vtime[1], 0));
+                var n = moment(new Date(2011, 2, 12, vtime[0], vtime[1], 0));
+                var o = moment(new Date(2011, 2, 12, vtime[0], vtime[1], 0));
+                //m.add(item.id * 30, "minutes");
+                n.add(30, "minutes");
+                o.add(item.id * 30 + 15, "minutes");
+                /*bit set for */
+                /*0=30mins*/
+                /*1=1hour*/
+                /*2=30minbreak*/
+                /*3=45min*/
+                let imagep = "", imgText = "", imgTextcolor = "", bgc = "", bgcEnd = "";
+                if (item.appointment_type === "completed") {
+                    imagep = require("../../../assets/images/completed.png");
+                    imgText = "COMPLETED";
+                    imgTextcolor = Colors.green;
+                    bgc = Colors.green;
+                    bgcEnd = "#4C6546";
+                } else if (item.appointment_type === "inprogress") {
+                    imagep = require("../../../assets/images/progress.png");
+                    imgText = "IN PROGRESS";
+                    imgTextcolor = Colors.purple;
+                    bgc = Colors.purple;
+                    bgcEnd = "#653B79";
+                } else if (item.appointment_type === "confirmed") {
+                    imagep = require("../../../assets/images/confirmed.png");
+                    imgText = "CONFIRMED";
+                    imgTextcolor = Colors.magenta;
+                    bgc = Colors.magenta;
+                    bgcEnd = "#3A5F7A";
+                } else if (item.appointment_type === "pending") {
+                    imagep = require("../../../assets/images/pending.png");
+                    imgText = "PENDING";
+                    imgTextcolor = Colors.yellow;
+                    bgc = Colors.yellow;
+                    bgcEnd = "#6C6146";
+                } else if (item.appointment_type === "cancelled") {
+                    imagep = require("../../../assets/images/cancelled.png");
+                    imgText = "CANCELLED";
+                    imgTextcolor = Colors.red;
+                    bgc = Colors.red;
+                    bgcEnd = "#6B3945";
+                } else if (item.appointment_type === "noshow") {
+                    imagep = require("../../../assets/images/noShow.png");
+                    imgText = "NO SHOW";
+                    imgTextcolor = Colors.grey;
+                    bgc = Colors.grey;
+                    bgcEnd = "#5A5B68";
+                } else {
 
-            if (timeofSlots === 0) {
-                console.log("calenderSlots-time > " + item.total_time);
-                return (<TouchableOpacity onPress={() => this.props.navigation.navigate("Appointments")}>
-                    <View style={{height: 140, flexDirection: "row"}} cellKey={item.id}>
-                        <View style={{flexDirection: "column"}}>
-                            <Text
-                                style={{
-                                    marginLeft: 10,
-                                    width: 50,
-                                    height: 70,
-                                    fontFamily: "AvertaStd-Regular",
-                                    color: Colors.white,
-                                    fontSize: 10
-                                }}
-                            >
-                                {m.format("HH:mm A")}
-                            </Text>
+                }
+                let numberOfSlotsSlected = item.selected_slot_id.length;
+                console.log("Numberof slots------>", numberOfSlotsSlected)
+                let timeofSlots = numberOfSlotsSlected * 15;
+                if (timeofSlots === 15)
+                    timeofSlots = 30;
+                let period = "";
+                if (timeofSlots < 60) {
+                    period = "mins";
+                } else {
+                    period = "hr";
+                }
+                let servicesSelected = "";
+                for (let f = 0; f < item.selected_services.length; f++) {
+                    if (f === item.selected_services.length - 1) {
+                        servicesSelected += item.selected_services[f].name;
+                    } else {
+                        servicesSelected += item.selected_services[f].name + ",";
+                    }
 
-                            <Text
-                                style={{
-                                    marginLeft: 10,
-                                    width: 50,
-                                    fontFamily: "AvertaStd-Regular",
-                                    color: Colors.white,
-                                    fontSize: 10
-                                }}
-                            >
-                                {n.format("HH:mm A")}
-                            </Text>
+                }
+
+                if (timeofSlots === 0) {
+                    console.log("calenderSlots-time > " + item.total_time);
+                    return (<TouchableOpacity onPress={() => this.props.navigation.navigate("Appointments")}>
+                        <View style={{height: 140, flexDirection: "row"}} cellKey={item.id}>
+                            <View style={{flexDirection: "column"}}>
+                                <Text
+                                    style={{
+                                        marginLeft: 10,
+                                        width: 50,
+                                        height: 70,
+                                        fontFamily: "AvertaStd-Regular",
+                                        color: Colors.white,
+                                        fontSize: 10
+                                    }}
+                                >
+                                    {m.format("HH:mm A")}
+                                </Text>
+
+                                <Text
+                                    style={{
+                                        marginLeft: 10,
+                                        width: 50,
+                                        fontFamily: "AvertaStd-Regular",
+                                        color: Colors.white,
+                                        fontSize: 10
+                                    }}
+                                >
+                                    {n.format("HH:mm A")}
+                                </Text>
+                            </View>
+                            <View style={{
+                                backgroundColor: "grey",
+                                width: "76.5%",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                borderLeftWidth: 0.5,
+                                borderLeftColor: "grey"
+
+                            }}>
+                                <Image source={require("../../../assets/images/break.png")} resizeMode={"cover"}
+                                       style={{
+                                           width: "100%",
+                                           height: "100%",
+                                       }}/>
+                                <Text style={{
+                                    color: "white",
+                                    textAlign: "center",
+                                    position: "absolute"
+                                }}>{"BREAK TIME"}</Text>
+                            </View>
+
+
                         </View>
-                        <View style={{
-                            backgroundColor: "grey",
-                            width: "76.5%",
-                            justifyContent: "center",
-                            alignItems: "center",
-                            borderLeftWidth: 0.5,
-                            borderLeftColor: "grey"
+                    </TouchableOpacity>);
 
-                        }}>
-                            <Image source={require("../../../assets/images/break.png")} resizeMode={"cover"}
-                                   style={{
-                                       width: "100%",
-                                       height: "100%",
-                                   }}/>
+                }
+                if (timeofSlots === 15 || timeofSlots === 30) {
+                    console.log("calenderSlots-time > " + timeofSlots);
+                    return <TouchableWithoutFeedback onPress={() => this.itemSelect(bgc, item, servicesSelected)}>
+                        <View style={{height: 70, flexDirection: "row"}} cellKey={item.id}>
                             <Text style={{
-                                color: "white",
-                                textAlign: "center",
-                                position: "absolute"
-                            }}>{"BREAK TIME"}</Text>
-                        </View>
-
-
-                    </View>
-                </TouchableOpacity>);
-
-            }
-            if (timeofSlots === 15 || timeofSlots === 30) {
-                console.log("calenderSlots-time > " + timeofSlots);
-                return <TouchableWithoutFeedback onPress={() => this.itemSelect(bgc, item, servicesSelected)}>
-                    <View style={{height: 70, flexDirection: "row"}} cellKey={item.id}>
-                        <Text style={{
-                            textAlignVertical: "top",
-                            height: 40,
-                            marginLeft: 10,
-                            marginBottom: 30,
-                            width: 50,
-                            fontFamily: "AvertaStd-Regular",
-                            color: Colors.white,
-                            fontSize: 10
-                        }}>
-                            {item.selected_slot_id[0].start_time + " " + AM}
-                        </Text>
-                        <View style={{width: 6, backgroundColor: bgc}}/>
-                        <View style={{
-                            backgroundColor: "#454656",
-                            width: "75%",
-                            flexDirection: "row",
-                            borderTopLeftRadius: 0,
-                            borderBottomLeftRadius: 0,
-                            borderRadius: 5,
-                            borderWidth: 0.5,
-                            borderColor: "white",
-                            borderBottomWidth: 0,
-                            borderLeftWidth: 0,
-                        }}>
-                            <View style={{flexDirection: "row", width: "100%"}}>
-                                <View style={{
-                                    flexDirection: "column", alignItems: "flex-start", justifyContent: "center",
-                                    width: "100%", marginStart: 20
-                                }}>
-                                    <View style={{flexDirection: "row",}}>
-                                        <Text style={{
-                                            fontWeight: "bold", color: "white",
-                                            fontSize: 11
-                                        }}>{servicesSelected}</Text>
-                                        <Text style={{marginStart: 8, marginTop: 1, color: "white", fontSize: 10}}>
-                                            {item.barber}
-                                        </Text>
-                                    </View>
-                                    <View style={{flexDirection: "row", marginTop: 7}}>
-                                        <Image source={require("../../../assets/images/chair.png")}
-                                               resizeMode={"contain"}
-                                               style={{
-                                                   height: 12,
-                                                   width: 12,
-                                                   marginTop: 3
-
-                                               }}
-                                        />
-                                        <Text
-                                            style={{color: "#95A2B5", fontSize: 12}}>{" " + timeofSlots + period}</Text>
-                                        <View style={{
-                                            flexDirection: "column",
-                                            width: 1, height: 13,
-                                            marginTop: 3,
-                                            backgroundColor: "grey",
-                                            marginStart: 10,
-                                            marginEnd: 10
-                                        }}/>
-                                        <Text style={{color: "#95A2B5", fontSize: 12}}>{" $" + item.total_price}</Text>
-                                    </View>
-                                </View>
-
-                            </View>
-                            <View style={{
-                                width: 60,
-                                height: "100%",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                position: "absolute",
-                                right: 0,
-                                backgroundColor: bgcEnd
+                                textAlignVertical: "top",
+                                height: 40,
+                                marginLeft: 10,
+                                marginBottom: 30,
+                                width: 50,
+                                fontFamily: "AvertaStd-Regular",
+                                color: Colors.white,
+                                fontSize: 10
                             }}>
-                                <Image resizeMode={"cover"}
-                                       style={{width: 25, height: 25}}
-                                       source={imagep}
-                                />
-                                <Text style={{
-                                    color: [imgTextcolor],
-                                    fontSize: 7,
-                                    fontWeight: "bold",
-                                    marginTop: 5
-                                }}>{imgText}</Text>
-                            </View>
-
-
-                        </View>
-                    </View>
-                </TouchableWithoutFeedback>;
-            }
-            if (timeofSlots === 45) {
-                console.log("calenderSlots-time > " + item.total_time);
-                return <TouchableOpacity onPress={() => this.itemSelect(bgc, item, servicesSelected)}>
-                    <View style={{height: 140, flexDirection: "row"}} cellKey={item.id}>
-                        <View style={{flexDirection: "column"}}>
-                            <Text
-                                style={{
-                                    marginLeft: 10,
-                                    width: 50,
-                                    height: 70,
-                                    fontFamily: "AvertaStd-Regular",
-                                    color: Colors.white,
-                                    fontSize: 10
-                                }}
-                            >
                                 {item.selected_slot_id[0].start_time + " " + AM}
                             </Text>
+                            <View style={{width: 6, backgroundColor: bgc}}/>
+                            <View style={{
+                                backgroundColor: "#454656",
+                                width: "75%",
+                                flexDirection: "row",
+                                borderTopLeftRadius: 0,
+                                borderBottomLeftRadius: 0,
+                                borderRadius: 5,
+                                borderWidth: 0.5,
+                                borderColor: "white",
+                                borderBottomWidth: 0,
+                                borderLeftWidth: 0,
+                            }}>
+                                <View style={{flexDirection: "row", width: "100%"}}>
+                                    <View style={{
+                                        flexDirection: "column", alignItems: "flex-start", justifyContent: "center",
+                                        width: "100%", marginStart: 20
+                                    }}>
+                                        <View style={{flexDirection: "row",}}>
+                                            <Text style={{
+                                                fontWeight: "bold", color: "white",
+                                                fontSize: 11
+                                            }}>{servicesSelected}</Text>
+                                            <Text style={{marginStart: 8, marginTop: 1, color: "white", fontSize: 10}}>
+                                                {item.barber}
+                                            </Text>
+                                        </View>
+                                        <View style={{flexDirection: "row", marginTop: 7}}>
+                                            <Image source={require("../../../assets/images/chair.png")}
+                                                   resizeMode={"contain"}
+                                                   style={{
+                                                       height: 12,
+                                                       width: 12,
+                                                       marginTop: 3
 
-                            <Text
-                                style={{
-                                    marginLeft: 10,
-                                    width: 50,
-                                    fontFamily: "AvertaStd-Regular",
-                                    color: Colors.white,
-                                    fontSize: 10
-                                }}
-                            >
-                                {item.selected_slot_id[2].start_time + " " + AM}
-                            </Text>
-                        </View>
-                        <View style={{height: 105, width: 6, backgroundColor: bgc}}/>
-                        <View style={{
-                            backgroundColor: "#454656",
-                            width: "75%",
-                            height: 105,
-                            flexDirection: "row",
-                            borderTopLeftRadius: 0,
-                            borderBottomLeftRadius: 0,
-                            borderRadius: 5,
-                            borderWidth: 0.5,
-                            borderColor: "white",
-                            borderBottomWidth: 0,
-                            borderLeftWidth: 0,
+                                                   }}
+                                            />
+                                            <Text
+                                                style={{color: "#95A2B5", fontSize: 12}}>{" " + timeofSlots + period}</Text>
+                                            <View style={{
+                                                flexDirection: "column",
+                                                width: 1, height: 13,
+                                                marginTop: 3,
+                                                backgroundColor: "grey",
+                                                marginStart: 10,
+                                                marginEnd: 10
+                                            }}/>
+                                            <Text style={{color: "#95A2B5", fontSize: 12}}>{" $" + item.total_price}</Text>
+                                        </View>
+                                    </View>
 
-                        }}>
-                            <View style={{flexDirection: "row", width: "100%"}}>
+                                </View>
                                 <View style={{
-                                    flexDirection: "column", alignItems: "flex-start", justifyContent: "center",
-                                    width: "100%", marginStart: 20
+                                    width: 60,
+                                    height: "100%",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    position: "absolute",
+                                    right: 0,
+                                    backgroundColor: bgcEnd
                                 }}>
-                                    <View style={{flexDirection: "row",}}>
-                                        <Text style={{
-                                            fontWeight: "bold", color: "white",
-                                            fontSize: 11
-                                        }}>{servicesSelected}</Text>
-                                        <Text style={{marginStart: 8, marginTop: 1, color: "white", fontSize: 10}}>
-                                            {item.barber}
-                                        </Text>
-                                    </View>
-                                    <View style={{flexDirection: "row", marginTop: 7}}>
-                                        <Image source={require("../../../assets/images/chair.png")}
-                                               resizeMode={"contain"}
-                                               style={{
-                                                   height: 12,
-                                                   width: 12,
-                                                   marginTop: 3
+                                    <Image resizeMode={"cover"}
+                                           style={{width: 25, height: 25}}
+                                           source={imagep}
+                                    />
+                                    <Text style={{
+                                        color: [imgTextcolor],
+                                        fontSize: 7,
+                                        fontWeight: "bold",
+                                        marginTop: 5
+                                    }}>{imgText}</Text>
+                                </View>
 
-                                               }}
-                                        />
-                                        <Text style={{color: "#95A2B5", fontSize: 12}}>{" 45 mins"}</Text>
-                                        <View style={{
-                                            flexDirection: "column",
-                                            width: 1, height: 13,
-                                            marginTop: 3,
-                                            backgroundColor: "grey",
-                                            marginStart: 10,
-                                            marginEnd: 10
-                                        }}/>
-                                        <Text style={{color: "#95A2B5", fontSize: 12}}>{"$" + item.total_price}</Text>
+
+                            </View>
+                        </View>
+                    </TouchableWithoutFeedback>;
+                }
+                if (timeofSlots === 45) {
+                    console.log("calenderSlots-time > " + item.total_time);
+                    return <TouchableOpacity onPress={() => this.itemSelect(bgc, item, servicesSelected)}>
+                        <View style={{height: 140, flexDirection: "row"}} cellKey={item.id}>
+                            <View style={{flexDirection: "column"}}>
+                                <Text
+                                    style={{
+                                        marginLeft: 10,
+                                        width: 50,
+                                        height: 70,
+                                        fontFamily: "AvertaStd-Regular",
+                                        color: Colors.white,
+                                        fontSize: 10
+                                    }}
+                                >
+                                    {item.selected_slot_id[0].start_time + " " + AM}
+                                </Text>
+
+                                <Text
+                                    style={{
+                                        marginLeft: 10,
+                                        width: 50,
+                                        fontFamily: "AvertaStd-Regular",
+                                        color: Colors.white,
+                                        fontSize: 10
+                                    }}
+                                >
+                                    {item.selected_slot_id[2].start_time + " " + AM}
+                                </Text>
+                            </View>
+                            <View style={{height: 105, width: 6, backgroundColor: bgc}}/>
+                            <View style={{
+                                backgroundColor: "#454656",
+                                width: "75%",
+                                height: 105,
+                                flexDirection: "row",
+                                borderTopLeftRadius: 0,
+                                borderBottomLeftRadius: 0,
+                                borderRadius: 5,
+                                borderWidth: 0.5,
+                                borderColor: "white",
+                                borderBottomWidth: 0,
+                                borderLeftWidth: 0,
+
+                            }}>
+                                <View style={{flexDirection: "row", width: "100%"}}>
+                                    <View style={{
+                                        flexDirection: "column", alignItems: "flex-start", justifyContent: "center",
+                                        width: "100%", marginStart: 20
+                                    }}>
+                                        <View style={{flexDirection: "row",}}>
+                                            <Text style={{
+                                                fontWeight: "bold", color: "white",
+                                                fontSize: 11
+                                            }}>{servicesSelected}</Text>
+                                            <Text style={{marginStart: 8, marginTop: 1, color: "white", fontSize: 10}}>
+                                                {item.barber}
+                                            </Text>
+                                        </View>
+                                        <View style={{flexDirection: "row", marginTop: 7}}>
+                                            <Image source={require("../../../assets/images/chair.png")}
+                                                   resizeMode={"contain"}
+                                                   style={{
+                                                       height: 12,
+                                                       width: 12,
+                                                       marginTop: 3
+
+                                                   }}
+                                            />
+                                            <Text style={{color: "#95A2B5", fontSize: 12}}>{" 45 mins"}</Text>
+                                            <View style={{
+                                                flexDirection: "column",
+                                                width: 1, height: 13,
+                                                marginTop: 3,
+                                                backgroundColor: "grey",
+                                                marginStart: 10,
+                                                marginEnd: 10
+                                            }}/>
+                                            <Text style={{color: "#95A2B5", fontSize: 12}}>{"$" + item.total_price}</Text>
+                                        </View>
                                     </View>
+
+                                </View>
+                                <View style={{
+                                    width: 60,
+                                    height: "100%",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    position: "absolute",
+                                    right: 0,
+                                    backgroundColor: bgcEnd
+                                }}>
+                                    <Image resizeMode={"cover"}
+                                           style={{width: 25, height: 25}}
+                                           source={imagep}
+                                    />
+                                    <Text style={{
+                                        color: [imgTextcolor],
+                                        fontSize: 7,
+                                        fontWeight: "bold",
+                                        marginTop: 5
+                                    }}>{imgText}</Text>
+                                </View>
+                            </View>
+                        </View>
+
+                    </TouchableOpacity>;
+                }
+                if (timeofSlots === 60) {
+                    console.log("calenderSlots-time > " + item.total_time);
+                    return <TouchableOpacity onPress={() => this.itemSelect(bgc, item, servicesSelected)}>
+                        <View style={{height: 140, flexDirection: "row"}} cellKey={item.id}>
+                            <View style={{flexDirection: "column"}}>
+                                <Text
+                                    style={{
+                                        marginLeft: 10,
+                                        width: 50,
+                                        height: 70,
+                                        fontFamily: "AvertaStd-Regular",
+                                        color: Colors.white,
+                                        fontSize: 10
+                                    }}
+                                >
+                                    {item.selected_slot_id[0].start_time + " " + AM}
+                                </Text>
+
+                                <Text
+                                    style={{
+                                        marginLeft: 10,
+                                        width: 50,
+                                        fontFamily: "AvertaStd-Regular",
+                                        color: Colors.white,
+                                        fontSize: 10
+                                    }}
+                                >
+                                    {item.selected_slot_id[2].start_time + " " + AM}
+                                </Text>
+                            </View>
+
+                            <View style={{width: 6, backgroundColor: bgc}}/>
+                            <View style={{
+                                backgroundColor: "#454656",
+                                width: "75%",
+                                flexDirection: "row",
+                                borderTopLeftRadius: 0,
+                                borderBottomLeftRadius: 0,
+                                borderRadius: 5,
+                                borderWidth: 0.5,
+                                borderColor: "white",
+                                borderBottomWidth: 0,
+                                borderLeftWidth: 0,
+
+                            }}>
+                                <View style={{flexDirection: "row", width: "100%"}}>
+                                    <View style={{
+                                        flexDirection: "column", alignItems: "flex-start", justifyContent: "center",
+                                        width: "100%", marginStart: 20
+                                    }}>
+                                        <View style={{flexDirection: "row",}}>
+                                            <Text style={{
+                                                fontWeight: "bold", color: "white",
+                                                fontSize: 11
+                                            }}>{servicesSelected}</Text>
+                                            <Text style={{marginStart: 8, marginTop: 1, color: "white", fontSize: 10}}>
+                                                {item.barber}
+                                            </Text>
+                                        </View>
+                                        <View style={{flexDirection: "row", marginTop: 7}}>
+                                            <Image source={require("../../../assets/images/chair.png")}
+                                                   resizeMode={"contain"}
+                                                   style={{
+                                                       height: 12,
+                                                       width: 12,
+                                                       marginTop: 3
+
+                                                   }}
+                                            />
+                                            <Text style={{color: "#95A2B5", fontSize: 12}}>{" 1hr"}</Text>
+                                            <View style={{
+                                                flexDirection: "column",
+                                                width: 1, height: 13,
+                                                marginTop: 3,
+                                                backgroundColor: "grey",
+                                                marginStart: 10,
+                                                marginEnd: 10
+                                            }}/>
+                                            <Text style={{color: "#95A2B5", fontSize: 12}}>{"$" + item.total_price}</Text>
+                                        </View>
+                                    </View>
+
+                                </View>
+                                <View style={{
+                                    width: 60,
+                                    height: "100%",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    position: "absolute",
+                                    right: 0,
+                                    backgroundColor: bgcEnd
+                                }}>
+                                    <Image resizeMode={"cover"}
+                                           style={{width: 25, height: 25}}
+                                           source={imagep}
+                                    />
+                                    <Text style={{
+                                        color: [imgTextcolor],
+                                        fontSize: 7,
+                                        fontWeight: "bold",
+                                        marginTop: 5
+                                    }}>{imgText}</Text>
+                                </View>
+                            </View>
+                        </View>
+
+                    </TouchableOpacity>;
+                }
+                if (timeofSlots === 75) {
+                    console.log("calenderSlots-time > " + item.total_time);
+                    return <TouchableOpacity onPress={() => this.itemSelect(bgc, item, servicesSelected)}>
+                        <View style={{height: 175, flexDirection: "row"}} cellKey={item.id}>
+                            <View style={{flexDirection: "column"}}>
+                                <Text
+                                    style={{
+                                        marginLeft: 10,
+                                        width: 50,
+                                        height: 70,
+                                        fontFamily: "AvertaStd-Regular",
+                                        color: Colors.white,
+                                        fontSize: 10
+                                    }}
+                                >
+                                    {item.selected_slot_id[0].start_time + " " + AM}
+                                </Text>
+
+                                <Text
+                                    style={{
+                                        marginLeft: 10,
+                                        width: 50,
+                                        height: 70,
+                                        fontFamily: "AvertaStd-Regular",
+                                        color: Colors.white,
+                                        fontSize: 10
+                                    }}
+                                >
+                                    {item.selected_slot_id[2].start_time + " " + AM}
+                                </Text>
+                                <Text
+                                    style={{
+                                        marginLeft: 10,
+                                        width: 50,
+                                        fontFamily: "AvertaStd-Regular",
+                                        color: Colors.white,
+                                        fontSize: 10
+                                    }}
+                                >
+                                    {item.selected_slot_id[4].start_time + " " + AM}
+                                </Text>
+                            </View>
+                            <View style={{height: 175, width: 6, backgroundColor: bgc}}/>
+                            <View style={{
+                                backgroundColor: "#454656",
+                                width: "75%",
+                                height: 175,
+                                flexDirection: "row",
+                                borderTopLeftRadius: 0,
+                                borderBottomLeftRadius: 0,
+                                borderRadius: 5,
+                                borderWidth: 0.5,
+                                borderColor: "white",
+                                borderBottomWidth: 0,
+                                borderLeftWidth: 0,
+                            }}>
+                                <View style={{flexDirection: "row", width: "100%"}}>
+                                    <View style={{
+                                        flexDirection: "column", alignItems: "flex-start", justifyContent: "center",
+                                        width: "100%", marginStart: 20
+                                    }}>
+                                        <View style={{flexDirection: "row",}}>
+                                            <Text style={{
+                                                fontWeight: "bold", color: "white",
+                                                fontSize: 11
+                                            }}>{servicesSelected}</Text>
+                                            <Text style={{marginStart: 8, marginTop: 1, color: "white", fontSize: 10}}>
+                                                {item.barber}
+                                            </Text>
+                                        </View>
+                                        <View style={{flexDirection: "row", marginTop: 7}}>
+                                            <Image source={require("../../../assets/images/chair.png")}
+                                                   resizeMode={"contain"}
+                                                   style={{
+                                                       height: 12,
+                                                       width: 12,
+                                                       marginTop: 3
+
+                                                   }}
+                                            />
+                                            <Text style={{color: "#95A2B5", fontSize: 12}}>{" 75 mins"}</Text>
+                                            <View style={{
+                                                flexDirection: "column",
+                                                width: 1, height: 13,
+                                                marginTop: 3,
+                                                backgroundColor: "grey",
+                                                marginStart: 10,
+                                                marginEnd: 10
+                                            }}/>
+                                            <Text style={{color: "#95A2B5", fontSize: 12}}>{"$" + item.total_price}</Text>
+                                        </View>
+                                    </View>
+
+                                </View>
+
+                                <View style={{
+                                    width: 60,
+                                    height: "100%",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    position: "absolute",
+                                    right: 0,
+                                    backgroundColor: bgcEnd
+                                }}>
+                                    <Image resizeMode={"cover"}
+                                           style={{width: 25, height: 25}}
+                                           source={imagep}
+                                    />
+                                    <Text style={{
+                                        color: [imgTextcolor],
+                                        fontSize: 7,
+                                        fontWeight: "bold",
+                                        marginTop: 5
+                                    }}>{imgText}</Text>
                                 </View>
 
                             </View>
-                            <View style={{
-                                width: 60,
-                                height: "100%",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                position: "absolute",
-                                right: 0,
-                                backgroundColor: bgcEnd
-                            }}>
-                                <Image resizeMode={"cover"}
-                                       style={{width: 25, height: 25}}
-                                       source={imagep}
-                                />
-                                <Text style={{
-                                    color: [imgTextcolor],
-                                    fontSize: 7,
-                                    fontWeight: "bold",
-                                    marginTop: 5
-                                }}>{imgText}</Text>
-                            </View>
-                        </View>
-                    </View>
-
-                </TouchableOpacity>;
-            }
-            if (timeofSlots === 60) {
-                console.log("calenderSlots-time > " + item.total_time);
-                return <TouchableOpacity onPress={() => this.itemSelect(bgc, item, servicesSelected)}>
-                    <View style={{height: 140, flexDirection: "row"}} cellKey={item.id}>
-                        <View style={{flexDirection: "column"}}>
-                            <Text
-                                style={{
-                                    marginLeft: 10,
-                                    width: 50,
-                                    height: 70,
-                                    fontFamily: "AvertaStd-Regular",
-                                    color: Colors.white,
-                                    fontSize: 10
-                                }}
-                            >
-                                {item.selected_slot_id[0].start_time + " " + AM}
-                            </Text>
-
-                            <Text
-                                style={{
-                                    marginLeft: 10,
-                                    width: 50,
-                                    fontFamily: "AvertaStd-Regular",
-                                    color: Colors.white,
-                                    fontSize: 10
-                                }}
-                            >
-                                {item.selected_slot_id[2].start_time + " " + AM}
-                            </Text>
                         </View>
 
-                        <View style={{width: 6, backgroundColor: bgc}}/>
-                        <View style={{
-                            backgroundColor: "#454656",
-                            width: "75%",
-                            flexDirection: "row",
-                            borderTopLeftRadius: 0,
-                            borderBottomLeftRadius: 0,
-                            borderRadius: 5,
-                            borderWidth: 0.5,
-                            borderColor: "white",
-                            borderBottomWidth: 0,
-                            borderLeftWidth: 0,
-
-                        }}>
-                            <View style={{flexDirection: "row", width: "100%"}}>
-                                <View style={{
-                                    flexDirection: "column", alignItems: "flex-start", justifyContent: "center",
-                                    width: "100%", marginStart: 20
-                                }}>
-                                    <View style={{flexDirection: "row",}}>
-                                        <Text style={{
-                                            fontWeight: "bold", color: "white",
-                                            fontSize: 11
-                                        }}>{servicesSelected}</Text>
-                                        <Text style={{marginStart: 8, marginTop: 1, color: "white", fontSize: 10}}>
-                                            {item.barber}
-                                        </Text>
-                                    </View>
-                                    <View style={{flexDirection: "row", marginTop: 7}}>
-                                        <Image source={require("../../../assets/images/chair.png")}
-                                               resizeMode={"contain"}
-                                               style={{
-                                                   height: 12,
-                                                   width: 12,
-                                                   marginTop: 3
-
-                                               }}
-                                        />
-                                        <Text style={{color: "#95A2B5", fontSize: 12}}>{" 1hr"}</Text>
-                                        <View style={{
-                                            flexDirection: "column",
-                                            width: 1, height: 13,
-                                            marginTop: 3,
-                                            backgroundColor: "grey",
-                                            marginStart: 10,
-                                            marginEnd: 10
-                                        }}/>
-                                        <Text style={{color: "#95A2B5", fontSize: 12}}>{"$" + item.total_price}</Text>
-                                    </View>
-                                </View>
-
-                            </View>
-                            <View style={{
-                                width: 60,
-                                height: "100%",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                position: "absolute",
-                                right: 0,
-                                backgroundColor: bgcEnd
-                            }}>
-                                <Image resizeMode={"cover"}
-                                       style={{width: 25, height: 25}}
-                                       source={imagep}
-                                />
-                                <Text style={{
-                                    color: [imgTextcolor],
-                                    fontSize: 7,
-                                    fontWeight: "bold",
-                                    marginTop: 5
-                                }}>{imgText}</Text>
-                            </View>
-                        </View>
-                    </View>
-
-                </TouchableOpacity>;
-            }
-            if (timeofSlots === 75) {
-                console.log("calenderSlots-time > " + item.total_time);
-                return <TouchableOpacity onPress={() => this.itemSelect(bgc, item, servicesSelected)}>
-                    <View style={{height: 175, flexDirection: "row"}} cellKey={item.id}>
-                        <View style={{flexDirection: "column"}}>
-                            <Text
-                                style={{
-                                    marginLeft: 10,
-                                    width: 50,
-                                    height: 70,
-                                    fontFamily: "AvertaStd-Regular",
-                                    color: Colors.white,
-                                    fontSize: 10
-                                }}
-                            >
-                                {item.selected_slot_id[0].start_time + " " + AM}
-                            </Text>
-
-                            <Text
-                                style={{
-                                    marginLeft: 10,
-                                    width: 50,
-                                    height: 70,
-                                    fontFamily: "AvertaStd-Regular",
-                                    color: Colors.white,
-                                    fontSize: 10
-                                }}
-                            >
-                                {item.selected_slot_id[2].start_time + " " + AM}
-                            </Text>
-                            <Text
-                                style={{
-                                    marginLeft: 10,
-                                    width: 50,
-                                    fontFamily: "AvertaStd-Regular",
-                                    color: Colors.white,
-                                    fontSize: 10
-                                }}
-                            >
-                                {item.selected_slot_id[4].start_time + " " + AM}
-                            </Text>
-                        </View>
-                        <View style={{height: 175, width: 6, backgroundColor: bgc}}/>
-                        <View style={{
-                            backgroundColor: "#454656",
-                            width: "75%",
-                            height: 175,
-                            flexDirection: "row",
-                            borderTopLeftRadius: 0,
-                            borderBottomLeftRadius: 0,
-                            borderRadius: 5,
-                            borderWidth: 0.5,
-                            borderColor: "white",
-                            borderBottomWidth: 0,
-                            borderLeftWidth: 0,
-                        }}>
-                            <View style={{flexDirection: "row", width: "100%"}}>
-                                <View style={{
-                                    flexDirection: "column", alignItems: "flex-start", justifyContent: "center",
-                                    width: "100%", marginStart: 20
-                                }}>
-                                    <View style={{flexDirection: "row",}}>
-                                        <Text style={{
-                                            fontWeight: "bold", color: "white",
-                                            fontSize: 11
-                                        }}>{servicesSelected}</Text>
-                                        <Text style={{marginStart: 8, marginTop: 1, color: "white", fontSize: 10}}>
-                                            {item.barber}
-                                        </Text>
-                                    </View>
-                                    <View style={{flexDirection: "row", marginTop: 7}}>
-                                        <Image source={require("../../../assets/images/chair.png")}
-                                               resizeMode={"contain"}
-                                               style={{
-                                                   height: 12,
-                                                   width: 12,
-                                                   marginTop: 3
-
-                                               }}
-                                        />
-                                        <Text style={{color: "#95A2B5", fontSize: 12}}>{" 75 mins"}</Text>
-                                        <View style={{
-                                            flexDirection: "column",
-                                            width: 1, height: 13,
-                                            marginTop: 3,
-                                            backgroundColor: "grey",
-                                            marginStart: 10,
-                                            marginEnd: 10
-                                        }}/>
-                                        <Text style={{color: "#95A2B5", fontSize: 12}}>{"$" + item.total_price}</Text>
-                                    </View>
-                                </View>
-
-                            </View>
-
-                            <View style={{
-                                width: 60,
-                                height: "100%",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                position: "absolute",
-                                right: 0,
-                                backgroundColor: bgcEnd
-                            }}>
-                                <Image resizeMode={"cover"}
-                                       style={{width: 25, height: 25}}
-                                       source={imagep}
-                                />
-                                <Text style={{
-                                    color: [imgTextcolor],
-                                    fontSize: 7,
-                                    fontWeight: "bold",
-                                    marginTop: 5
-                                }}>{imgText}</Text>
-                            </View>
-
-                        </View>
-                    </View>
-
-                </TouchableOpacity>;
+                    </TouchableOpacity>;
+                }
             }
         }
+
 
     }
 

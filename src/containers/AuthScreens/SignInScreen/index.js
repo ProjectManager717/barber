@@ -284,6 +284,7 @@ class SignInScreen extends Component {
                             }
                         })
                         .catch(error => {
+                            this.setState({showLoading: false});
                             //console.error('Errorr:', error);
                             console.log('Error:', error);
                             alert("Error: "+error);

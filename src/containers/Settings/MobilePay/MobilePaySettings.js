@@ -182,11 +182,7 @@ export default class MobilePaySettings extends Component {
                         //this.props.navigation.navigate("Settings");
                         if (Preference.get("newUser") === true) {
                             Preference.set("newUser", false);
-                            if (Preference.get("paymentOption") === "mobilepay") {
-                                this.props.navigation.push("PaymentMethod");
-                            } else {
-                                this.props.navigation.navigate("TabNavigator");
-                            }
+                            this.props.navigation.navigate("TabNavigator");
                         } else {
                             this.props.navigation.navigate("Settings");
                             //this.props.navigation.goBack();

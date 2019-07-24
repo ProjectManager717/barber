@@ -32,6 +32,7 @@ export const constants = {
     BarbersSendVerfication: Base_url + path2+"sendVerificationCode",
     BarbersDeleteImage: Base_url + path2+"portfolio_ImageDelete",
     BarberUpdateAppointmentStatus: Base_url + path2+"updateAppointmentStatus",
+    BarberGetRevenue: Base_url + path2+"revenue_perWeek",
 
 
     ClientLogin: Base_url + clientPath + "login",
@@ -56,6 +57,7 @@ export const constants = {
     ClientRecieptCancelled: Base_url + "/api/user/"+"reciept_cancelled",
     ClientNewStripeUser:Base_url+"/api/stripes/"+"stripe_CreateCustomer",
     ClientStripePaymentFlow:Base_url+"/api/stripes/"+"payment_flow",
+    ClientGetAllAppointments:Base_url+clientPath1+"montly_client_booking",
 
 
 };
