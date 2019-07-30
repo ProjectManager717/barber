@@ -8,7 +8,7 @@ import {
     ScrollView,
     TouchableOpacity,
     ImageBackground,
-    Linking
+    Linking, FlatList
 } from "react-native";
 import {Colors} from "../../../themes";
 import {globalStyles} from "../../../themes/globalStyles";
@@ -18,13 +18,33 @@ import CheckBoxSquare from "../../../components/CheckBox";
 import {constants} from "../../../utils/constants";
 import Preference from "react-native-preference";
 
-
+let appointmentId = "";
+let Subtotal=0;
 export default class Receipt extends Component {
     constructor(props) {
         super(props)
-        this.state={
-            showLoading:false,
+        this.state = {
+            showLoading: false,
+            invoiceNo: "",
+            invoiceDate: "",
+            invoiceTime: "",
+            barberName: "",
+            barberShopName: "",
+            barberLocation: "",
+            barberServices: "",
+            subTotal: "",
+            ServiceFee: "",
+            tipLeft: "",
+            surgePrice: "",
+            totalMain: "",
+            rating: "",
+            goodQuality: false,
+            cleanliness: false,
+            punctuality: false,
+            professional: false,
         }
+        const {navigation} = this.props;
+        appointmentId = navigation.getParam('appointmentId');
     }
 
     componentDidMount(): void {
@@ -32,28 +52,59 @@ export default class Receipt extends Component {
     }
 
     getRecieptDetails() {
-        this.setState({showLoading:true})
-        fetch(constants.ClientRecieptCompleted + "/" + Preference.get("userId"), {
+        this.setState({showLoading: true})
+        fetch(constants.ClientReciept + "?appointment_id=" + appointmentId, {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
             }
         }).then(response => response.json())
             .then(response => {
-                console.log("getBarberDetails-->", "-" + JSON.stringify(response));
+                console.log("getRecieptDetails-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
-                    this.setState({showLoading:false})
-                    let barberData = response.Data;
+                    this.setState({showLoading: false})
+                    let recieptData = response.Data;
+                    let receptDate=recieptData.date;
+                    receptDate=receptDate.split("T");
+                    this.setState({
+                        invoiceNo: recieptData.invoice_no,
+                        invoiceDate: receptDate[0],
+                        invoiceTime: "12:00am",
+                        barberName: recieptData.barber_firstname +" "+recieptData.barber_lastname ,
+                        barberShopName: recieptData.barber_shop_name,
+                        barberLocation:recieptData.location,
+                        barberServices: recieptData.selected_services,
+                        subTotal: recieptData.total_price,
+                        ServiceFee: recieptData.service_fee,
+                        tipLeft: recieptData.tip_price,
+                        surgePrice: "",
+                        totalMain: "",
+                        rating: recieptData.rating,
+                        goodQuality: recieptData.good_quality,
+                        cleanliness: recieptData.cleanliness,
+                        punctuality: recieptData.punctuality,
+                        professional: recieptData.professionol,
+                    })
+                    if(recieptData.selected_surge_price===true)
+                    {
+                        let surgePricee=recieptData.total_price/2
+                        let TotalMain=(parseInt(recieptData.total_price)+1)+(parseInt(surgePricee)+parseInt(recieptData.tip_price));
+                        this.setState({surgePrice:surgePricee,totalMain:TotalMain});
+                    }else
+                    {
+                        let surgePricee=0;
+                        let TotalMain=(parseInt(recieptData.total_price)+1)+(parseInt(surgePricee)+parseInt(recieptData.tip_price));
+                        this.setState({surgePrice:surgePricee,totalMain:TotalMain});
+                    }
                 } else {
-                    this.setState({showLoading:false})
+                    this.setState({showLoading: false})
                     if (response.ResultType === 0) {
                         alert(response.Message);
                     }
                 }
             }).catch(error => {
             //console.error('Errorr:', error);
-            this.setState({showLoading:false})
+            this.setState({showLoading: false})
             console.log('Error:', error);
             alert("Error: " + error);
         });
@@ -67,6 +118,7 @@ export default class Receipt extends Component {
     }
 
     renderRow2(item) {
+        Subtotal=Subtotal+item.price;
         return <View style={{width: "100%", flexDirection: 'row', height: 30}}>
             <Text style={[styles.row_title, {
                 width: "75%",
@@ -78,19 +130,23 @@ export default class Receipt extends Component {
     }
 
     renderRowButtons(item) {
-        return <View
-            style={{
-                width: "90%",
-                height: 26,
-                marginTop: 8,
-                justifyContent: "center",
-                borderRadius: 12,
-                borderWidth: 1, borderColor: item.clor,
-                backgroundColor: "#626371"
-            }}>
-            <Text style={[globalStyles.receiptButtonText,{marginTop:3}]}>{item.text}</Text>
+        if(item.value)
+        {
+            return <View
+                style={{
+                    width: "90%",
+                    height: 26,
+                    marginTop: 8,
+                    justifyContent: "center",
+                    borderRadius: 12,
+                    borderWidth: 1, borderColor: item.clor,
+                    backgroundColor: "#626371"
+                }}>
+                <Text style={[globalStyles.receiptButtonText, {marginTop: 3}]}>{item.text}</Text>
 
-        </View>;
+            </View>;
+        }
+
     }
 
     renderSeperator() {
@@ -128,23 +184,22 @@ export default class Receipt extends Component {
 
                     <View
                         style={{flex: 1, flexDirection: "column"}}>
-                        <View style={{width:"100%",alignItems:"center"}}>
+                        <View style={{width: "100%", alignItems: "center"}}>
                             <Image
                                 source={require("../../../assets/images/logo.png")}
                                 style={{marginTop: 20, resizeMode: 'contain', width: 200}}/>
                         </View>
                         <Text style={styles.txtHeader}>BILLING DETAILS</Text>
-                        <View style={{width: "100%", flexDirection: "row", marginStart: 30}}>
+                        <View style={{width: "85%", flexDirection: "row", marginStart: 30,marginEnd:30}}>
                             <Text
-                                style={{width: "40%", color: "white", justifyContent: "flex-start", fontSize: 12}}>Invoice
-                                No.2652</Text>
+                                style={{ color: "white", justifyContent: "flex-start", fontSize: 12}}>Invoice
+                                No.{this.state.invoiceNo}</Text>
                             <Text style={{
-                                width: "60%",
                                 color: "white",
-                                justifyContent: "flex-end",
+                                position:"absolute",
+                                right:0,
                                 fontSize: 12
-                            }}>12th September
-                                2019 - 9:30am</Text>
+                            }}>{this.state.invoiceDate} - {this.state.invoiceTime}</Text>
                         </View>
                         <View style={[globalStyles.rowBackground, styles.row]}>
                             <Text style={{
@@ -156,42 +211,51 @@ export default class Receipt extends Component {
                                 marginTop: 10
                             }}>To be paid to:</Text>
                             {this.renderRow({
-                                title: "Anthony Matrial (CYLPR Barbershop)",
+                                title: this.state.barberName + " (" + this.state.barberShopName + ")",
                                 ic: require("../../../assets/images/ic_barbershop.png"),
                             })}
                             {this.renderRow({
-                                title: "305 Biscayne Blvd,Miami,FL 33132",
+                                title: this.state.barberLocation,
                                 ic: require("../../../assets/images/location.png"),
                             })}
                             {this.renderSeperator()}
-                            {this.renderRow2({
+
+                            <FlatList renderItem={({item}) => this.renderRow2({
+                                title: item.name,
+                                value: "$"+item.price,
+                            })}
+                                      data={this.state.barberServices}
+                                      keyExtractor={(item, index) => index}
+                                      numColumns={1}
+                            />
+                            {/*{this.renderRow2({
                                 title: "Haircut",
                                 value: "$20.00",
                             })}
                             {this.renderRow2({
                                 title: "Beard Trim",
                                 value: "$15.00",
-                            })}
+                            })}*/}
                             {this.renderSeperator()}
                             <View style={{width: "100%", flexDirection: 'row', height: 36}}>
                                 <Text style={{
                                     color: "white",
                                     alignItems: "flex-start",
                                     fontSize: 16,
-                                    width:"75%",
+                                    width: "75%",
                                     fontWeight: "bold",
                                     marginStart: 10,
                                     marginTop: 10
                                 }}>{"Subtotal:"}</Text>
                                 <Text style={{
                                     color: "white",
-                                    width:"25%",
+                                    width: "25%",
                                     alignItems: "flex-end",
                                     fontSize: 16,
                                     fontWeight: "bold",
                                     marginStart: 10,
                                     marginTop: 10
-                                }}>{"$35.00"}</Text>
+                                }}>{"$"+this.state.subTotal+".00"}</Text>
                             </View>
                             {this.renderRow2({
                                 title: "Service Fee",
@@ -199,31 +263,31 @@ export default class Receipt extends Component {
                             })}
                             {this.renderRow2({
                                 title: "Tip Left",
-                                value: "$8.00",
+                                value: "$"+this.state.tipLeft,
                             })}
                             {this.renderRow2({
                                 title: "Surge Price",
-                                value: "$17.50",
+                                value:"$"+this.state.surgePrice,
                             })}
                             <View style={{width: "100%", flexDirection: 'row', height: 36}}>
                                 <Text style={{
                                     color: "white",
                                     alignItems: "flex-start",
                                     fontSize: 16,
-                                    width:"75%",
+                                    width: "75%",
                                     fontWeight: "bold",
                                     marginStart: 10,
-                                    marginTop:5
+                                    marginTop: 5
                                 }}>{"Total:"}</Text>
                                 <Text style={{
                                     color: "white",
-                                    width:"25%",
+                                    width: "25%",
                                     alignItems: "flex-end",
                                     fontSize: 16,
                                     fontWeight: "bold",
                                     marginStart: 10,
-                                    marginTop:5
-                                }}>{"$61.75"}</Text>
+                                    marginTop: 5
+                                }}>{"$"+this.state.totalMain}</Text>
                             </View>
 
                         </View>
@@ -235,26 +299,29 @@ export default class Receipt extends Component {
                                     width: "27%",
                                     height: "100%",
                                     marginStart: 10,
-                                    marginTop: 10
+                                    marginTop: 10,
+                                    marginBottom:10
                                 }}>
                                     <AirbnbRating
                                         showRating={false}
                                         count={5}
-                                        defaultRating={ratings}
+                                        defaultRating={this.state.rating}
                                         size={12}
                                         style={{marginStart: 10, height: 30}}
                                     />
-                                    <Text style={{marginStart: 10, color: Colors.white}}>{"("}{ratings}{"/5)"}</Text>
+                                    <Text style={{marginStart: 10, color: Colors.white}}>{"("}{this.state.rating}{"/5)"}</Text>
                                 </View>
                                 <View style={{flexDirection: "column", width: "32%", marginStart: 15}}>
                                     {this.renderRowButtons({
                                         text: "Good Quality",
-                                        clor: "#D05916"
+                                        clor: "#D05916",
+                                        value:this.state.goodQuality
 
                                     })}
                                     {this.renderRowButtons({
                                         text: " Cleanliness",
-                                        clor: "#47EF00"
+                                        clor: "#47EF00",
+                                        value:this.state.cleanliness
 
                                     })}
 
@@ -267,13 +334,15 @@ export default class Receipt extends Component {
                                 }}>
                                     {this.renderRowButtons({
                                         text: "Punctuality",
-                                        clor: "#1358CA"
+                                        clor: "#1358CA",
+                                        value:this.state.punctuality
 
                                     })}
 
                                     {this.renderRowButtons({
                                         text: "Professional",
-                                        clor: "#FF39F4"
+                                        clor: "#FF39F4",
+                                        value:this.state.professional
 
                                     })}
                                 </View>
@@ -286,7 +355,9 @@ export default class Receipt extends Component {
                             marginBottom: 20
                         }}>
                             <Text style={{fontSize: 16, color: "white"}}>{"Does something look wrong?"}</Text>
-                            <TouchableOpacity onPress={()=>Linking.openURL('mailto:cbanks@clypr.co?subject=Receipt%201234')} style={{flexDirection: "row"}}>
+                            <TouchableOpacity
+                                onPress={() => Linking.openURL('mailto:cbanks@clypr.co?subject=Receipt%201234')}
+                                style={{flexDirection: "row"}}>
                                 <Text style={{fontSize: 16, color: "red"}}>{"Contact us "}</Text>
                                 <Text style={{fontSize: 16, color: "white"}}>{"if you have any disputes"}</Text>
                             </TouchableOpacity>

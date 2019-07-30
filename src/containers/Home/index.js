@@ -5,8 +5,8 @@ import {
     Text,
     StyleSheet,
     ImageBackground,
-    Image,
-    TouchableOpacity, Linking
+    Image,Alert,
+    TouchableOpacity, Linking, AsyncStorage
 } from "react-native";
 import Header from "../../components/Header/";
 import {ScrollView} from "react-native-gesture-handler";
@@ -41,14 +41,17 @@ export default class Home extends Component {
         this.state = {
             showLoading: false,
             barberName: Preference.get("userName"),
-            barberImage: "",
+            barberImage: require("../../assets/images/personImage.jpg"),
             barberExperiance: 0,
             barberShopName: "",
-            barberRating: 5,
-            barberReviews: 17,
+            barberRating: 0,
+            barberReviews: "",
             barberInsta: "",
             barberAddress: "",
         }
+    }
+
+    componentDidMount(): void {
         this.getBarberDetails();
     }
 
@@ -82,6 +85,16 @@ export default class Home extends Component {
                         barberAddress: barberData.location
                     });
                     //this.setState({barberData: response.Data});
+                    if (barberData.reviews === undefined) {
+                        this.setState({barberReviews: "You don’t have any reviews yet"})
+                    } else {
+                        this.setState({barberReviews: barberData.reviews + " Reviews"})
+                    }
+                    if (barberData.experience === "0") {
+                        this.setState({barberExperiance: "Set your years of experience"})
+                    } else {
+                        this.setState({barberExperiance: "Barber with " + this.state.barberExperiance + " years of experience"})
+                    }
                 } else {
                     this.setState({showLoading: false})
                     if (response.ResultType === 0) {
@@ -128,7 +141,7 @@ export default class Home extends Component {
                                         {this.state.barberName}
                                     </Text>
                                     <Text style={{color: colors.white, fontSize: 12}}>
-                                        Barber with {this.state.barberExperiance} years of experience
+                                        {this.state.barberExperiance}
                                     </Text>
                                     <View style={styles.review}>
                                         {/*<Image
@@ -138,13 +151,14 @@ export default class Home extends Component {
                                     />*/}
                                         <AirbnbRating
                                             showRating={false}
-                                            count={6}
+                                            count={5}
+                                            isDisabled={true}
                                             defaultRating={this.state.barberRating}
                                             size={10}
                                             style={{marginStart: 10, height: 30}}
                                         />
                                         <Text style={[styles.allFontStyle, styles.reviewText]}>
-                                            {"(" + this.state.barberReviews + " Reviews)"}
+                                            {"(" + this.state.barberReviews + ")"}
                                         </Text>
                                     </View>
                                     <TouchableOpacity style={styles.button} onPress={() => {

@@ -119,7 +119,7 @@ class SMSScreen extends Component {
                 console.log("responsesendVerifyCodeToServer-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
                     Alert.alert("Success!","Your message is successfully sent on Number Provided.");
-                    this.props.navigation.navigate('ConfirmSMSScreen',{Code:code});
+                    this.props.navigation.navigate('ConfirmSMSScreen',{Code:code,number:"+1"+this.state.formattedNumber});
                 } else {
                     if (response.ResultType === 0) {
                         alert(response.Message);

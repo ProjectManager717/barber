@@ -5,7 +5,7 @@ export const styles = StyleSheet.create({
   inputContainer: {
     width: Metric.width - Metric.marginHorizontal * 4,
     flexDirection: 'row',
-    height: Metric.textInputHeight + 2,
+    height: Metric.textInputHeight + 3,
     borderRadius: Metric.textInputHeight / 2 + 1,
     backgroundColor: Colors.gray,
     borderWidth: 1,

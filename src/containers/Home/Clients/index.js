@@ -9,7 +9,9 @@ import {
     ImageBackground,
     ScrollView,
     Switch,
+    AsyncStorage,
 } from "react-native";
+
 
 import {Header, AirbnbRating} from "react-native-elements";
 
@@ -21,73 +23,34 @@ import Preference from "react-native-preference";
 import {constants} from "../../../utils/constants";
 import {SafeAreaView} from "react-navigation";
 
+let getmonth = new Date().getMonth();
+getmonth = parseInt(getmonth) + 1;
+if (parseInt(getmonth) < 10)
+    getmonth = "0" + getmonth;
+let getDate = new Date().getDate();
+if (parseInt(getDate) < 10)
+    getDate = "0" + getDate;
 
+let getYear = new Date().getFullYear();
 export default class ClientHome extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            showLoading:false,
-            dataSource:[],
-           /* dataSource: [{
-                id: 0,
-                imgPathh: require("../../../assets/images/anthony.png"),
-                title: "Anthony Martial",
-                duration: "10:00 AM",
-                date: "September 4th",
-                btnTxt: "Confirmed",
-                btnClr: "#0CACF0",
-            }, {
-                id: 1,
-                imgPathh: require("../../../assets/images/stefan.png"),
-                title: "Stefan Danillo",
-                duration: "10:00 AM",
-                date: "September 4th",
-                btnTxt: "Completed",
-                btnClr: "#5BD701",
-            }, {
-                id: 2,
-                imgPathh: require("../../../assets/images/stefan.png"),
-                title: "Stefan Danillo",
-                duration: "10:30 AM",
-                date: "April 15th",
-                btnTxt: "Cancelled",
-                btnClr: "#EF0525",
-            }
-            ],*/
-           dataSource2:[],
-
-           /* dataSource2: [{
-                id: 0,
-                imgPathh2: require("../../../assets/images/imgbck1.png"),
-                title2: "RENATO SANCHEZ",
-                address: "Anfield Barbershop",
-                time: "10:00 AM",
-                surgeImg: require("../../../assets/images/price.png")
-
-            }, {
-                id: 1,
-                imgPathh2: require("../../../assets/images/imgbck2.png"),
-                title2: "ROBERT LEWANDOWSKI",
-                time: "10:00 AM",
-                address: "Santiago Bernabeu Barbershop",
-                surgeImg: require("../../../assets/images/price.png")
-
-            },
-            ]*/
-
+            showLoading: false,
+            dataSource: [],
+            dataSource2: [],
         }
-
-
     }
 
-    componentDidMount(): void {
+    async componentDidMount(): void {
         this.getRecentBookings();
     }
 
-    getRecentBookings()
-    {
-        this.setState({showLoading:true});
-        fetch(constants.ClientRecentBookings + "?client_id=" +Preference.get("userId"), {
+
+
+    getRecentBookings() {
+        this.setState({showLoading: true});
+        fetch(constants.ClientRecentBookings + "?client_id=" + Preference.get("userId"), {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
@@ -97,26 +60,25 @@ export default class ClientHome extends Component {
             .then(response => {
                 console.log("getRecentBookings-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
-                    this.setState({showLoading:false});
-                    this.setState({dataSource:response.Data});
+                    //this.setState({showLoading: false});
+                    this.setState({dataSource: response.Data});
                     this.getFavoriteBarbers();
                 } else {
-                    this.setState({showLoading:false});
+                    this.setState({showLoading: false});
                     if (response.ResultType === 0) {
                         alert(response.Message);
                     }
                 }
             }).catch(error => {
-            this.setState({showLoading:false});
+            this.setState({showLoading: false});
             //console.error('Errorr:', error);
             console.log('Error:', error);
-            alert("Error: "+error);
+            alert("Error: " + error);
         });
     }
 
-    getFavoriteBarbers()
-    {
-        fetch(constants.ClientFavoritBarbers + "?client_id=" +Preference.get("userId"), {
+    getFavoriteBarbers() {
+        fetch(constants.ClientFavoritBarbers + "?client_id=" + Preference.get("userId"), {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
@@ -125,35 +87,52 @@ export default class ClientHome extends Component {
         }).then(response => response.json())
             .then(response => {
                 console.log("getFavoriteBarbers-->", "-" + JSON.stringify(response));
+                this.setState({showLoading: false});
                 if (response.ResultType === 1) {
-                    this.setState({dataSource2:response.Data}) ;
+                    this.setState({dataSource2: response.Data});
                 } else {
                     if (response.ResultType === 0) {
                         alert(response.Message);
                     }
                 }
             }).catch(error => {
+            this.setState({showLoading: false});
             //console.error('Errorr:', error);
             console.log('Error:', error);
-            alert("Error: "+error);
+            alert("Error: " + error);
         });
+    }
+
+    checkTodayAppointment() {
+        //getmonth = parseInt(getmonth) + 1;
+        let todayDate = getYear + "-" + getmonth + "-" + getDate;
+        console.log("DateComparison:::" + "===" + todayDate);
+        let allbookings = this.state.dataSource;
+        for (let k = 0; k < allbookings.length; k++) {
+            let AppointDate = allbookings[k].date;
+            AppointDate = AppointDate.split("T");
+            console.log("DateComparison:::" + AppointDate[0] + "===" + todayDate);
+            if (AppointDate[0] === todayDate) {
+                this.props.navigation.navigate("ClientQR", {qr_code: allbookings[k].qr_code});
+            }
+        }
+
     }
 
 
     renderRecentBookings(item) {
-        if (item.selected_slot_id.length>0)
-        {
-            var date=item.date;
-            date=date.split("T");
-            var time=item.selected_slot_id[0].start_time;
-            time=time.split(":");
-            var timeShow="";
-            if(time[0]<12)
-            {
-                timeShow=time[0]+":"+time[1]+" AM";
-            }else {
-                timeShow=time[0]+":"+time[1]+" PM";
+        if (item.selected_slot_id.length > 0) {
+            var date = item.date;
+            date = date.split("T");
+            var time = item.selected_slot_id[0].start_time;
+            time = time.split(":");
+            var timeShow = "";
+            if (time[0] < 12) {
+                timeShow = time[0] + ":" + time[1] + " AM";
+            } else {
+                timeShow = time[0] + ":" + time[1] + " PM";
             }
+            console.log("AppointmentType-->", item.appointment_type);
             return <View
                 style={{
                     flexDirection: 'row',
@@ -166,8 +145,9 @@ export default class ClientHome extends Component {
                     borderWidth: 0.5,
                     borderColor: "white"
                 }}>
-                <Image resizeMode={"cover"} source={{uri:item.barber_image}} style={{
-                    marginStart: 10, height: 50, width: 50,borderRadius:25}}/>
+                <Image resizeMode={"cover"} source={{uri: item.barber_image}} style={{
+                    marginStart: 10, height: 50, width: 50, borderRadius: 25
+                }}/>
                 <View style={{flexDirection: "column", marginStart: 10}}>
                     <Text
                         style={{fontSize: 15, color: "white"}}
@@ -183,7 +163,7 @@ export default class ClientHome extends Component {
                 </View>
                 {item.appointment_type === "completed" ?
                     <TouchableOpacity
-                        onPress={() => this.props.navigation.navigate("Receipt")}
+                        onPress={() => this.props.navigation.navigate("Receipt", {appointmentId: item._id})}
                         style={{
                             top: 0,
                             right: 0,
@@ -195,15 +175,20 @@ export default class ClientHome extends Component {
                             alignItems: 'center',
                             justifyContent: "center",
                             borderRadius: 12,
-                            borderWidth: 1, borderColor:"green",
+                            borderWidth: 1, borderColor: "green",
                             backgroundColor: "#626371"
                         }}>
 
-                        <Text style={{marginTop: 3, color: "white", fontSize: 10, fontWeight: "bold"}}>{"Completed"}</Text>
+                        <Text style={{
+                            marginTop: 3,
+                            color: "white",
+                            fontSize: 10,
+                            fontWeight: "bold"
+                        }}>{"Completed"}</Text>
                     </TouchableOpacity>
                     : item.appointment_type === "cancelled" ?
                         <TouchableOpacity
-                            onPress={() => this.props.navigation.navigate("ReceiptCancelled")}
+                            onPress={() => this.props.navigation.navigate("ReceiptCancelled", {appointmentId: item._id})}
                             style={{
                                 top: 0,
                                 right: 0,
@@ -215,7 +200,7 @@ export default class ClientHome extends Component {
                                 alignItems: 'center',
                                 justifyContent: "center",
                                 borderRadius: 12,
-                                borderWidth: 1, borderColor:"red",
+                                borderWidth: 1, borderColor: "red",
                                 backgroundColor: "#626371"
                             }}>
                             <Text style={{
@@ -227,6 +212,7 @@ export default class ClientHome extends Component {
                         </TouchableOpacity>
                         : item.appointment_type === "confirmed" ?
                             <TouchableOpacity
+                                onPress={() => this.props.navigation.navigate("ClientQR", {qr_code: item.qr_code})}
                                 style={{
                                     top: 0,
                                     right: 0,
@@ -247,28 +233,49 @@ export default class ClientHome extends Component {
                                     fontSize: 10,
                                     fontWeight: "bold"
                                 }}>{"Confirmed"}</Text>
-                            </TouchableOpacity>:<TouchableOpacity
-                                style={{
-                                    top: 0,
-                                    right: 0,
-                                    position: "absolute",
-                                    height: 26,
-                                    width: 75,
-                                    marginTop: 10,
-                                    marginEnd: 10,
-                                    alignItems: 'center',
-                                    justifyContent: "center",
-                                    borderRadius: 12,
-                                    borderWidth: 1, borderColor: "grey",
-                                    backgroundColor: "#626371"
-                                }}>
-
-                                <Text style={{
-                                    color: "white",
-                                    fontSize: 10,
-                                    fontWeight: "bold"
-                                }}>{"No-Show"}</Text>
                             </TouchableOpacity>
+                            : item.appointment_type === "inprogress" ?
+                                <TouchableOpacity
+                                    style={{
+                                        top: 0,
+                                        right: 0,
+                                        position: "absolute",
+                                        height: 26,
+                                        width: 75,
+                                        marginTop: 10,
+                                        marginEnd: 10,
+                                        alignItems: 'center',
+                                        justifyContent: "center",
+                                        borderRadius: 12,
+                                        borderWidth: 1, borderColor: "purple",
+                                        backgroundColor: "#626371"
+                                    }}>
+                                    <Text style={{
+                                        color: "white",
+                                        fontSize: 10,
+                                        fontWeight: "bold"
+                                    }}>{"In-Progress"}</Text>
+                                </TouchableOpacity> : <TouchableOpacity
+                                    style={{
+                                        top: 0,
+                                        right: 0,
+                                        position: "absolute",
+                                        height: 26,
+                                        width: 75,
+                                        marginTop: 10,
+                                        marginEnd: 10,
+                                        alignItems: 'center',
+                                        justifyContent: "center",
+                                        borderRadius: 12,
+                                        borderWidth: 1, borderColor: "grey",
+                                        backgroundColor: "#626371"
+                                    }}>
+                                    <Text style={{
+                                        color: "white",
+                                        fontSize: 10,
+                                        fontWeight: "bold"
+                                    }}>{"No-Show"}</Text>
+                                </TouchableOpacity>
                 }
             </View>
         }
@@ -352,23 +359,25 @@ export default class ClientHome extends Component {
                                 textShadowColor: "black",
                                 textShadowOffset: {width: -2, height: 1},
                                 textShadowRadius: 3,
-                            }}>{"("+item.total_reviews+" Reviews)"}</Text>
+                            }}>{"(" + item.total_reviews + " Reviews)"}</Text>
                         </View>
                     </View>
                     <View style={{flexDirection: "column", width: "40%", height: "100%"}}>
                         <View style={{alignItems: "flex-end", marginEnd: 20}}>
 
-                                <Image resizeMode={"contain"} source={require("../../../assets/images/star.png")}
-                                       style={{width: 20, height: 20, marginTop: 10}}/>
-                            {item.mobilePayEnabled &&<Image resizeMode={"contain"} source={require("../../../assets/images/price.png")}
-                                       style={{width: 20, height: 20, marginTop: 10}}/>}
-                            {!item.mobilePayEnabled &&<Image resizeMode={"contain"} style={{width: 20, height: 20, marginTop: 10}}/>}
+                            <Image resizeMode={"contain"} source={require("../../../assets/images/star.png")}
+                                   style={{width: 20, height: 20, marginTop: 10}}/>
+                            {item.mobilePayEnabled &&
+                            <Image resizeMode={"contain"} source={require("../../../assets/images/price.png")}
+                                   style={{width: 20, height: 20, marginTop: 10}}/>}
+                            {!item.mobilePayEnabled &&
+                            <Image resizeMode={"contain"} style={{width: 20, height: 20, marginTop: 10}}/>}
                             <TouchableOpacity
-                                onPress={() => this.props.navigation.push("ClientBarberProfile",{
-                                    barberId:item.barber_id,
-                                    barberRating:item.average_rating,
-                                    barberReviews:item.total_reviews,
-                                    barberMobilePay:item.mobilePayEnabled
+                                onPress={() => this.props.navigation.push("ClientBarberProfile", {
+                                    barberId: item.barber_id,
+                                    barberRating: item.average_rating,
+                                    barberReviews: item.total_reviews,
+                                    barberMobilePay: item.mobilePayEnabled
                                 })}
                                 style={{width: "100%", alignItems: "flex-end"}}>
                                 <View style={{
@@ -417,9 +426,9 @@ export default class ClientHome extends Component {
                     outerContainerStyles={{backgroundColor: "#1999CE"}}
                     leftComponent={
                         <TouchableOpacity
-                            onPress={() => {
-                                this.props.navigation.navigate("ClientQR");
-                            }}
+                            onPress={() =>
+                                this.checkTodayAppointment()
+                            }
                         >
                             <Image
                                 style={{
@@ -448,14 +457,16 @@ export default class ClientHome extends Component {
                         }}>{"Recent Bookings"} </Text>
                     </View>
                     <View style={{marginTop: 0, marginStart: 20, marginEnd: 20}}>
-                        {(this.state.dataSource.length>0) &&<FlatList renderItem={({item}) => this.renderRecentBookings(item)}
+                        {(this.state.dataSource.length > 0) &&
+                        <FlatList renderItem={({item}) => this.renderRecentBookings(item)}
                                   data={this.state.dataSource}
                                   keyExtractor={(item, index) => index}
                                   numColumns={1}
                         />}
 
-                        {!(this.state.dataSource.length>0) &&<View style={{width:"100%",height:80,alignItems:"center",justifyContent:"center"}}>
-                            <Text style={{fontSize:15,color:"white"}}>{"You don't have any recent Bookings"}</Text>
+                        {!(this.state.dataSource.length > 0) &&
+                        <View style={{width: "100%", height: 80, alignItems: "center", justifyContent: "center"}}>
+                            <Text style={{fontSize: 15, color: "white"}}>{"You don't have any recent Bookings"}</Text>
                         </View>}
 
                     </View>
@@ -470,14 +481,20 @@ export default class ClientHome extends Component {
                     </View>
 
                     <View style={{marginTop: 0, marginStart: 20, marginEnd: 20, marginBottom: 20}}>
-                        {(this.state.dataSource2.length>0) &&<FlatList renderItem={({item}) => this.renderFavBarbers(item)}
+                        {(this.state.dataSource2.length > 0) &&
+                        <FlatList renderItem={({item}) => this.renderFavBarbers(item)}
                                   data={this.state.dataSource2}
                                   keyExtractor={(item, index) => index}
                                   numColumns={1}
                         />}
 
-                        {!(this.state.dataSource2.length>0) &&<View style={{width:"100%",height:80,alignItems:"center",justifyContent:"center"}}>
-                            <Text style={{fontSize:15,color:"white",textAlign:"center"}}>{"You don't have any Favorite Barbers \n Please make search for making favorites"}</Text>
+                        {!(this.state.dataSource2.length > 0) &&
+                        <View style={{width: "100%", height: 80, alignItems: "center", justifyContent: "center"}}>
+                            <Text style={{
+                                fontSize: 15,
+                                color: "white",
+                                textAlign: "center"
+                            }}>{"You don't have any Favorite Barbers \n Please make search for making favorites"}</Text>
                         </View>}
                     </View>
                 </ScrollView>
@@ -490,9 +507,9 @@ export default class ClientHome extends Component {
                     alignItems: "center",
                     justifyContent: "center"
                 }}>
-                    <Image resizeMode={"contain"} source={require("../../../assets/images/loading.gif")} style={{width:60,height:60, opacity: 1,}}/>
+                    <Image resizeMode={"contain"} source={require("../../../assets/images/loading.gif")}
+                           style={{width: 60, height: 60, opacity: 1,}}/>
                 </View>}
-
             </View>
 
         )

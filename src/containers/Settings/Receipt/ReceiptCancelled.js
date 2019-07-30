@@ -1,5 +1,15 @@
 import React, {Component} from "react";
-import {View, Switch, Text, StyleSheet, Image, ScrollView, TouchableOpacity, ImageBackground} from "react-native";
+import {
+    View,
+    Switch,
+    Text,
+    StyleSheet,
+    Image,
+    ScrollView,
+    TouchableOpacity,
+    ImageBackground,
+    FlatList
+} from "react-native";
 import {Colors} from "../../../themes";
 import {globalStyles} from "../../../themes/globalStyles";
 //import { styles } from "./styles";
@@ -8,14 +18,33 @@ import CheckBoxSquare from "../../../components/CheckBox";
 import {constants} from "../../../utils/constants";
 import Preference from "react-native-preference";
 
-
+let appointmentId = "";
 export default class ReceiptCancelled extends Component {
 
     constructor(props) {
         super(props)
-        this.state={
-            showLoading:false,
+        this.state = {
+            showLoading: false,
+            invoiceNo: "",
+            invoiceDate: "",
+            invoiceTime: "",
+            barberName: "",
+            barberShopName: "",
+            barberLocation: "",
+            barberServices: "",
+            subTotal: "",
+            ServiceFee: "",
+            tipLeft: "",
+            surgePrice: "",
+            totalMain: "",
+            rating: "",
+            goodQuality: false,
+            cleanliness: false,
+            punctuality: false,
+            professional: false,
         }
+        const {navigation} = this.props;
+        appointmentId = navigation.getParam('appointmentId');
     }
 
     componentDidMount(): void {
@@ -23,28 +52,59 @@ export default class ReceiptCancelled extends Component {
     }
 
     getRecieptDetails() {
-        this.setState({showLoading:true})
-        fetch(constants.ClientRecieptCancelled + "/" + Preference.get("userId"), {
+        this.setState({showLoading: true})
+        fetch(constants.ClientReciept + "?appointment_id=" + appointmentId, {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
             }
         }).then(response => response.json())
             .then(response => {
-                console.log("getBarberDetails-->", "-" + JSON.stringify(response));
+                console.log("getRecieptDetails-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
-                    this.setState({showLoading:false})
-                    let barberData = response.Data;
+                    this.setState({showLoading: false})
+                    let recieptData = response.Data;
+                    let receptDate=recieptData.date;
+                    receptDate=receptDate.split("T");
+                    this.setState({
+                        invoiceNo: recieptData.invoice_no,
+                        invoiceDate: receptDate[0],
+                        invoiceTime: "12:00am",
+                        barberName: recieptData.barber_firstname +" "+recieptData.barber_lastname ,
+                        barberShopName: recieptData.barber_shop_name,
+                        barberLocation:recieptData.location,
+                        barberServices: recieptData.selected_services,
+                        subTotal: recieptData.total_price,
+                        ServiceFee: recieptData.service_fee,
+                        tipLeft: recieptData.tip_price,
+                        surgePrice: "",
+                        totalMain: "",
+                        rating: recieptData.rating,
+                        goodQuality: recieptData.good_quality,
+                        cleanliness: recieptData.cleanliness,
+                        punctuality: recieptData.punctuality,
+                        professional: recieptData.professionol,
+                    })
+                    if(recieptData.selected_surge_price===true)
+                    {
+                        let surgePricee=recieptData.total_price/2
+                        let TotalMain=(parseInt(recieptData.total_price)+1)+(parseInt(surgePricee)+parseInt(recieptData.tip_price));
+                        this.setState({surgePrice:surgePricee,totalMain:TotalMain});
+                    }else
+                    {
+                        let surgePricee=0;
+                        let TotalMain=(parseInt(recieptData.total_price)+1)+(parseInt(surgePricee)+parseInt(recieptData.tip_price));
+                        this.setState({surgePrice:surgePricee,totalMain:TotalMain});
+                    }
                 } else {
-                    this.setState({showLoading:false})
+                    this.setState({showLoading: false})
                     if (response.ResultType === 0) {
                         alert(response.Message);
                     }
                 }
             }).catch(error => {
             //console.error('Errorr:', error);
-            this.setState({showLoading:false})
+            this.setState({showLoading: false})
             console.log('Error:', error);
             alert("Error: " + error);
         });
@@ -110,15 +170,16 @@ export default class ReceiptCancelled extends Component {
                                 style={{marginTop: 20, resizeMode: 'contain', width: 200}}/>
                         </View>
                         <Text style={styles.txtHeader}>CANCELLED</Text>
-                        <View style={{width: "100%", flexDirection: "row", marginStart: 30}}>
-                            <Text style={{width: "40%", color: "white", justifyContent: "flex-start", fontSize: 12}}>Invoice
-                                No.00305</Text>
+                        <View style={{width: "85%", flexDirection: "row", marginStart: 30,marginEnd:30}}>
+                            <Text
+                                style={{ color: "white", justifyContent: "flex-start", fontSize: 12}}>Invoice
+                                No.{this.state.invoiceNo}</Text>
                             <Text style={{
-                                justifyContent: "flex-end",
-                                fontSize: 12,
-                                color: "#71747A"
-                            }}>{"13th September 2019"}</Text>
-                            <Text style={{color: "white"}}>{" - 9:30am"}</Text>
+                                color: "white",
+                                position:"absolute",
+                                right:0,
+                                fontSize: 12
+                            }}>{this.state.invoiceDate} - {this.state.invoiceTime}</Text>
                         </View>
                         <View style={[globalStyles.rowBackground, styles.row]}>
                             <Text style={{
@@ -130,22 +191,21 @@ export default class ReceiptCancelled extends Component {
                                 marginTop: 10
                             }}>To be paid to:</Text>
                             {this.renderRow({
-                                title: "Anthony Matrial (CYLPR Barbershop)",
+                                title: this.state.barberName + " (" + this.state.barberShopName + ")",
                                 ic: require("../../../assets/images/ic_barbershop.png"),
                             })}
                             {this.renderRow({
-                                title: "305 Biscayne Blvd, Miami, FL 33132",
+                                title: this.state.barberLocation,
                                 ic: require("../../../assets/images/location.png"),
                             })}
-                            {this.renderSeperator()}
-                            {this.renderRow2({
-                                title: "Haircut",
-                                value: "$20.00",
+                            <FlatList renderItem={({item}) => this.renderRow2({
+                                title: item.name,
+                                value: "$"+item.price,
                             })}
-                            {this.renderRow2({
-                                title: "Beard Trim",
-                                value: "$15.00",
-                            })}
+                                      data={this.state.barberServices}
+                                      keyExtractor={(item, index) => index}
+                                      numColumns={1}
+                            />
                             {this.renderSeperator()}
                             <View style={{width: "100%", flexDirection: 'row', height: 36}}>
                                 <Text style={{
@@ -165,16 +225,16 @@ export default class ReceiptCancelled extends Component {
                                     fontWeight: "bold",
                                     marginStart: 10,
                                     marginTop: 10
-                                }}>{"$35.00"}</Text>
+                                }}>{"$"+this.state.subTotal+".00"}</Text>
                             </View>
                             {this.renderRow2({
                                 title: "Service Fee",
-                                value: "$1.25",
+                                value: "$1.00",
                             })}
 
                             {this.renderRow2({
                                 title: "Surge Price",
-                                value: "$17.50",
+                                value:"$"+this.state.surgePrice,
                             })}
                             <View style={{width: "100%", flexDirection: 'row', height: 36}}>
                                 <Text style={{
@@ -194,7 +254,7 @@ export default class ReceiptCancelled extends Component {
                                     fontWeight: "bold",
                                     marginStart: 10,
                                     marginTop: 5
-                                }}>{"$61.75"}</Text>
+                                }}>{"$"+this.state.totalMain}</Text>
 
                             </View>
                             {this.renderSeperator()}

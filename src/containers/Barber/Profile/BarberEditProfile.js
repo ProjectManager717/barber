@@ -68,7 +68,7 @@ export default class BarberEditProfile extends Component {
             serviceIndex: undefined,
             InstaUsername: Preference.get("userInsta"),
             places: [],
-            avatarSource: require("../../../assets/images/personface.png"),
+            avatarSource: require("../../../assets/images/personImage.jpg"),
             avatarForServer: "",
             /* ListData: [
                  {

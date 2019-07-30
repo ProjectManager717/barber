@@ -22,6 +22,7 @@ import {constants} from "../../../utils/constants";
 const {width, height} = Dimensions.get("window");
 const today = moment().format("YYYY-MM-DD");
 console.log("todaydate:" + today);
+let getDay = new Date().getDate();
 let getmonthh = new Date().getMonth();
 let getyear = new Date().getFullYear();
 
@@ -40,14 +41,14 @@ export default class ClientHaircuts extends Component {
             completetext: "grey",
             cancelledtext: "grey",
             allAppointments: [],
-            selectedMonth:"",
+            selectedMonth: "",
             allAppointmentsCalender: "",
             alltext: "grey",
             blue: "transparent",
             red: "transparent",
             green: "transparent",
         };
-        this.calenderDayClicked = this.calenderDayClicked.bind(this);
+        this.checkDayReciept = this.checkDayReciept.bind(this);
     }
 
     componentDidMount(): void {
@@ -57,8 +58,8 @@ export default class ClientHaircuts extends Component {
             if (parseInt(mon) < 10) {
                 mon = "0" + mon;
             }
-            let mn=getyear + "-" + mon;
-            this.setState({selectedMonth:mn})
+            let mn = getyear + "-" + mon;
+            this.setState({selectedMonth: mn})
             this.getAllAppointments(mn);
         });
         //this.getAllAppointments(getyear+"-"+getmonthh);
@@ -79,8 +80,8 @@ export default class ClientHaircuts extends Component {
                 if (response.ResultType === 1) {
                     this.setState({showLoading: false});
                     let allAppointment = response.Data;
-                    this.setState({allAppointments:allAppointment})
-                    this.optionSelected("all",allAppointment)
+                    this.setState({allAppointments: allAppointment})
+                    this.optionSelected("all", allAppointment)
                 } else {
                     this.setState({showLoading: false})
                     if (response.ResultType === 0) {
@@ -95,41 +96,39 @@ export default class ClientHaircuts extends Component {
         });
     }
 
-    decreaseMonth()
-    {
-        let selectmonth=this.state.selectedMonth;
-        console.log("Monthis",selectmonth);
-        selectmonth=selectmonth.split("-");
-        if(selectmonth[1]==="1")
-        {
-            selectmonth[1]="12";
-            selectmonth[0]=parseInt(selectmonth[0])-1;
-        }else{
-            selectmonth[1]=parseInt(selectmonth[1])-1;
+    decreaseMonth() {
+
+        let selectmonth = this.state.selectedMonth;
+        console.log("Monthis", selectmonth);
+        selectmonth = selectmonth.split("-");
+        if (selectmonth[1] === "1") {
+            selectmonth[1] = "12";
+            selectmonth[0] = parseInt(selectmonth[0]) - 1;
+        } else {
+            selectmonth[1] = parseInt(selectmonth[1]) - 1;
         }
-        let mainMonth=selectmonth[0]+"-"+selectmonth[1];
-        this.setState({selectedMonth:mainMonth});
+        let mainMonth = selectmonth[0] + "-" + selectmonth[1];
+        this.setState({selectedMonth: mainMonth});
         this.getAllAppointments(mainMonth);
     }
 
-    increaseMonth()
-    {
-        let selectmonth=this.state.selectedMonth;
-        selectmonth=selectmonth.split("-")
-        if(selectmonth[1]==="12")
-        {
-            selectmonth[1]="1";
-            selectmonth[0]=parseInt(selectmonth[0])+1;
-        }else{
-            selectmonth[1]=parseInt(selectmonth[1])+1;
+    increaseMonth() {
+        let selectmonth = this.state.selectedMonth;
+        selectmonth = selectmonth.split("-")
+        if (selectmonth[1] === "12") {
+            selectmonth[1] = "1";
+            selectmonth[0] = parseInt(selectmonth[0]) + 1;
+        } else {
+            selectmonth[1] = parseInt(selectmonth[1]) + 1;
         }
-        let mainMonth=selectmonth[0]+"-"+selectmonth[1];
-        this.setState({selectedMonth:mainMonth});
+        let mainMonth = selectmonth[0] + "-" + selectmonth[1];
+        this.setState({selectedMonth: mainMonth});
         this.getAllAppointments(mainMonth);
+        this.checkDayReciept = this.checkDayReciept.bind(this);
     }
 
 
-    optionSelected(item,Data) {
+    optionSelected(item, Data) {
         if (item === "upcoming") {
             this.setState({upcomingBack: "#1999CE", upcomingtext: "white"});
             this.setState({completeBack: "transparent", completetext: "grey"});
@@ -138,14 +137,14 @@ export default class ClientHaircuts extends Component {
             this.setState({blue: "#1999CE",});
             this.setState({green: "transparent"});
             this.setState({red: "transparent"});
-            let details=new Object();
+            let details = new Object();
             for (let i = 0; i < Data.length; i++) {
                 let data = Data[i].date;
                 data = data.split("T");
                 let appointdate = data[0];
                 console.log("calenderAppointments11-->", Data[i].appointment_type);
                 if (Data[i].appointment_type === "confirmed") {
-                    details[`${appointdate}`]={selected: true, selectedColor: "#389CFE"}
+                    details[`${appointdate}`] = {selected: true, selectedColor: "#389CFE"}
                 }
             }
             console.log("calenderAppointmentsArray-->", JSON.stringify(details));
@@ -159,14 +158,14 @@ export default class ClientHaircuts extends Component {
             this.setState({green: "#00D200"});
             this.setState({blue: "transparent",});
             this.setState({red: "transparent"});
-            let details=new Object();
+            let details = new Object();
             for (let i = 0; i < Data.length; i++) {
                 let data = Data[i].date;
                 data = data.split("T");
                 let appointdate = data[0];
                 console.log("calenderAppointments11-->", Data[i].appointment_type);
                 if (Data[i].appointment_type === "completed") {
-                    details[`${appointdate}`]={selected: true, selectedColor: "#2DD010"}
+                    details[`${appointdate}`] = {selected: true, selectedColor: "#2DD010"}
                 }
             }
             console.log("calenderAppointmentsArray-->", JSON.stringify(details));
@@ -180,14 +179,14 @@ export default class ClientHaircuts extends Component {
             this.setState({red: "red"});
             this.setState({green: "transparent"});
             this.setState({blue: "transparent",});
-            let details=new Object();
+            let details = new Object();
             for (let i = 0; i < Data.length; i++) {
                 let data = Data[i].date;
                 data = data.split("T");
                 let appointdate = data[0];
                 console.log("calenderAppointments11-->", Data[i].appointment_type);
                 if (Data[i].appointment_type === "cancelled") {
-                    details[`${appointdate}`]={selected: true, selectedColor: "#F50000"}
+                    details[`${appointdate}`] = {selected: true, selectedColor: "#F50000"}
                 }
             }
             console.log("calenderAppointmentsArray-->", JSON.stringify(details));
@@ -199,20 +198,20 @@ export default class ClientHaircuts extends Component {
             this.setState({completeBack: "transparent", completetext: "grey"});
             this.setState({upcomingBack: "transparent", upcomingtext: "grey"});
             this.setState({red: "red", green: "#00D200", blue: "#1999CE"})
-            let details=new Object();
+            let details = new Object();
             for (let i = 0; i < Data.length; i++) {
                 let data = Data[i].date;
                 data = data.split("T");
                 let appointdate = data[0];
                 console.log("calenderAppointments11-->", Data[i].appointment_type);
                 if (Data[i].appointment_type === "confirmed") {
-                    details[`${appointdate}`]={selected: true, selectedColor: "#389CFE"}
+                    details[`${appointdate}`] = {selected: true, selectedColor: "#389CFE"}
                 }
                 if (Data[i].appointment_type === "cancelled") {
-                    details[`${appointdate}`]={selected: true, selectedColor: "#F50000"}
+                    details[`${appointdate}`] = {selected: true, selectedColor: "#F50000"}
                 }
                 if (Data[i].appointment_type === "completed") {
-                    details[`${appointdate}`]={selected: true, selectedColor: "#2DD010"}
+                    details[`${appointdate}`] = {selected: true, selectedColor: "#2DD010"}
                 }
             }
             console.log("calenderAppointmentsArray-->", JSON.stringify(details));
@@ -220,7 +219,25 @@ export default class ClientHaircuts extends Component {
         }
     }
 
-    calenderDayClicked() {
+    checkDayReciept(day) {
+        console.log("Dayis" + day.dateString);
+        let allbookings = this.state.allAppointments;
+        for (let j = 0; j < allbookings.length; j++) {
+            let data = allbookings[j].date;
+            data = data.split("T");
+            let appointdate = data[0];
+            if (appointdate === day.dateString) {
+                if (allbookings[j].appointment_type==="completed") {
+                    this.props.navigation.navigate("Receipt",{appointmentId:allbookings[j]._id});
+                    break;
+                }else {
+                    if (allbookings[j].appointment_type==="cancelled") {
+                        this.props.navigation.navigate("ReceiptCancelled",{appointmentId:allbookings[j]._id});
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     render() {
@@ -250,38 +267,32 @@ export default class ClientHaircuts extends Component {
                         </TouchableOpacity>}/>
                 <ScrollView>
                     <View style={{
-                        flex: 1,
+                        flexDirection: "column",
                         marginStart: 5,
                         marginEnd: 5,
                         height: height - 110,
                         marginTop: 20
                     }}>
                         <Calendar
-                            style={styles.calendar}
-                            current={""}
-                            minDate={'1970-1-1'}
-                            maxDate={'2050-12-31'}
+                            /* current={getyear+"-"+getmonthh+1+"-"+getDay}*/
+                            /* minDate={'1970-1-1'}
+                             maxDate={'2050-12-31'}*/
+                            minDate={'2010-01-01'}
+                            // Maximum date that can be selected, dates after maxDate will be grayed out. Default = undefined
+                            maxDate={'2025-12-31'}
                             firstDay={1}
-                            onDayPress={(day) => {
-                                console.log("hello" + day)
-                            }}
-                            onDayLongPress={(val) => {
-                                console.log('selectedday')
-                            }}
+                            onDayPress={this.checkDayReciept}
+                            //onDayPress={(day) => {console.log('selected day', day)}}
                             markedDates={this.state.allAppointmentsCalender}
-                           /* markedDates={{
-                                '2019-07-09': {
-                                    selected: true, selectedColor: "red",
-                                },
-                                '2019-07-13': {
-                                    selected: true, selectedColor: this.state.green,
-                                },
-                                '2019-07-22': {selected: true, selectedColor: this.state.blue},
-                                today: {marked: true, dotColor: "red"},
-                            }}*/
                             hideDayNames={true}
-                            onPressArrowLeft={substractMonth => this.decreaseMonth()}
-                            onPressArrowRight={addMonth =>  this.increaseMonth()}
+                            onPressArrowLeft={substractMonth => {
+                                this.decreaseMonth();
+                                substractMonth();
+                            }}
+                            onPressArrowRight={addMonth => {
+                                this.increaseMonth();
+                                addMonth();
+                            }}
                             theme={{
                                 monthTextColor: 'red',
                                 calendarBackground: Colors.themeBackground,
@@ -290,6 +301,7 @@ export default class ClientHaircuts extends Component {
                             hideExtraDays={true}
                             disabledByDefault={true}
                         />
+
                         <View style={{
                             flexDirection: "row",
                             borderColor: "grey",
@@ -301,13 +313,14 @@ export default class ClientHaircuts extends Component {
                             borderRadius: 20,
                             borderWidth: 0.5,
                         }}>
-                            <TouchableOpacity onPress={() => this.optionSelected("upcoming",this.state.allAppointments)}
-                                              style={{
-                                                  marginStart: 10,
-                                                  backgroundColor: this.state.upcomingBack,
-                                                  borderRadius: 15,
-                                                  alignItems: "center"
-                                              }}>
+                            <TouchableOpacity
+                                onPress={() => this.optionSelected("upcoming", this.state.allAppointments)}
+                                style={{
+                                    marginStart: 10,
+                                    backgroundColor: this.state.upcomingBack,
+                                    borderRadius: 15,
+                                    alignItems: "center"
+                                }}>
                                 <Text style={{
                                     color: this.state.upcomingtext,
                                     fontSize: 10,
@@ -317,14 +330,15 @@ export default class ClientHaircuts extends Component {
                                 }}
                                 >{"UPCOMING"}</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => this.optionSelected("complete",this.state.allAppointments)}
-                                              style={{
-                                                  backgroundColor: this.state.completeBack,
-                                                  borderRadius: 15,
-                                                  width: "20%",
-                                                  marginStart: 10,
-                                                  alignItems: "center"
-                                              }}>
+                            <TouchableOpacity
+                                onPress={() => this.optionSelected("complete", this.state.allAppointments)}
+                                style={{
+                                    backgroundColor: this.state.completeBack,
+                                    borderRadius: 15,
+                                    width: "20%",
+                                    marginStart: 10,
+                                    alignItems: "center"
+                                }}>
                                 <Text style={{
                                     color: this.state.completetext,
                                     fontSize: 10,
@@ -334,15 +348,16 @@ export default class ClientHaircuts extends Component {
                                     marginStart: 5, marginEnd: 5
                                 }}>{"COMPLETE"}</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => this.optionSelected("cancelled",this.state.allAppointments)}
-                                              style={{
+                            <TouchableOpacity
+                                onPress={() => this.optionSelected("cancelled", this.state.allAppointments)}
+                                style={{
 
-                                                  backgroundColor: this.state.cancelledBack,
-                                                  borderRadius: 15,
-                                                  width: "25%",
-                                                  alignItems: "center",
-                                                  marginStart: 10,
-                                              }}>
+                                    backgroundColor: this.state.cancelledBack,
+                                    borderRadius: 15,
+                                    width: "25%",
+                                    alignItems: "center",
+                                    marginStart: 10,
+                                }}>
                                 <Text style={{
                                     color: this.state.cancelledtext,
                                     fontSize: 10,
@@ -350,7 +365,7 @@ export default class ClientHaircuts extends Component {
                                     marginTop: 5, marginStart: 5, marginEnd: 5
                                 }}>{"CANCELLED"}</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => this.optionSelected("all",this.state.allAppointments)}
+                            <TouchableOpacity onPress={() => this.optionSelected("all", this.state.allAppointments)}
                                               style={{
                                                   borderRadius: 15,
                                                   backgroundColor: this.state.allBack,

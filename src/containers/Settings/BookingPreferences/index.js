@@ -151,8 +151,10 @@ export default class BookingPreferences extends Component {
     renderRowWithCheck(item) {
         return <View style={{flexDirection: 'row', height: 22, marginLeft: 40}}>
             <TouchableOpacity style={{alignSelf: 'center'}} onPress={() => this.setCheckBox(item.indx)}>
-                <CheckBoxSquare onClick={() => {this.setCheckBox(item.indx)}} rightText={item.title} isChecked={item.value} style={{width:200}}  />
-               {/* <Text style={{marginStart:10,color:"white"}}>{item.title}</Text>*/}
+                <CheckBoxSquare onClick={() => {
+                    this.setCheckBox(item.indx)
+                }} rightText={item.title} isChecked={item.value} style={{width: 200}}/>
+                {/* <Text style={{marginStart:10,color:"white"}}>{item.title}</Text>*/}
             </TouchableOpacity>
         </View>;
     }
@@ -292,6 +294,7 @@ export default class BookingPreferences extends Component {
                             this.props.navigation.push("MobilePay");
                         } else {
                             this.props.navigation.navigate("TabNavigator");
+                            Preference.set("newUser", false);
                         }
                     } else {
                         this.props.navigation.goBack();

@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {View, Text, Image, TouchableOpacity,Linking} from "react-native";
+import {View, Text, Image, TouchableOpacity,Linking,Alert} from "react-native";
 
 import {Header} from "react-native-elements";
 import {globalStyles} from "../../../themes/globalStyles";
@@ -7,6 +7,8 @@ import {Colors} from "../../../themes";
 
 import {CameraKitCamera} from 'react-native-camera-kit';
 import {styles} from "./styles";
+import {constants} from "../../../utils/constants";
+import Preference from "react-native-preference";
 
 export default class QRCheckIn extends Component {
     constructor() {
@@ -31,15 +33,42 @@ export default class QRCheckIn extends Component {
 
     onOpenlink() {
         //Function to open URL, If scanned
-        Linking.openURL(this.state.QR_Code_Value);
+        //Linking.openURL(this.state.QR_Code_Value);
         //Linking used to open the URL in any browser that you have installed
+    }
+
+    updateappointmentStatus(code)
+    {
+        fetch(constants.BarberUpdateAppointmentByQR + "?qr_code=" +code, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        }).then(response => response.json())
+            .then(response => {
+                console.log("getFavoriteBarbers-->", "-" + JSON.stringify(response));
+                if (response.ResultType === 1) {
+                   Alert.alert("Success!","Your appointment is in progress now.");
+                   this.props.navigation.goBack();
+                } else {
+                    if (response.ResultType === 0) {
+                        alert(response.Message);
+                    }
+                }
+            }).catch(error => {
+            //console.error('Errorr:', error);
+            console.log('Error:', error);
+            alert("Error: "+error);
+        });
     }
 
     onQR_Code_Scan_Done = (QR_Code) => {
         console.log("QR_Code--->>",QR_Code);
         this.setState({QR_Code_Value: QR_Code});
         this.setState({Start_Scanner: false});
-        this.onOpenlink();
+        //this.onOpenlink();
+        this.updateappointmentStatus(QR_Code);
     }
 
 

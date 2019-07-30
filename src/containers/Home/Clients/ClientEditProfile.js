@@ -41,7 +41,7 @@ export default class ClientEditProfile extends Component {
         super(props);
         this.state = {
             showLoading: false,
-            avatarSource: null,
+            avatarSource: require("../../../assets/images/personImage.jpg"),
             userName: "",
             userAddress: "",
             editLocation: false,

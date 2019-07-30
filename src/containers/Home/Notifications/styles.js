@@ -25,7 +25,6 @@ export const styles = {
     marginTop: 6,
     width: 120,
     height: 28,
-    borderWidth: 0.5,
     borderColor: Colors.border,
     borderRadius: 14
   },
@@ -33,7 +32,8 @@ export const styles = {
     marginTop: 8,
     color: "#fff",
     fontSize: 10,
-    alignSelf: "flex-end"
+    alignSelf: "flex-end",
+    marginRight:20
   },
   client_name: {
     color: "#fff",

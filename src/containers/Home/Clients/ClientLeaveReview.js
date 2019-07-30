@@ -26,7 +26,7 @@ import {SafeAreaView} from "react-navigation";
 const {height, width} = Dimensions.get("window");
 let ratings = Math.floor(Math.random() * 5 + 1);
 
-let barberId = "", barberImage = "", barberName = "", barberShopName = "",appointmentPrice=0;
+let barberId = "", barberImage = "", barberName = "", barberShopName = "",appointmentPrice=0,appointmentId;
 export default class ClientLeaveReview extends Component {
     rightAction() {
         this.props.navigation.goBack();
@@ -73,12 +73,14 @@ export default class ClientLeaveReview extends Component {
     constructor(props) {
         super(props)
         const {navigation} = this.props;
-        barberId = navigation.getParam('barberId');
+        barberId = navigation.getParam('barber_id');
         barberImage = navigation.getParam('barberImage');
         barberName = navigation.getParam('barberName');
         barberShopName = navigation.getParam('barberShopName');
         appointmentPrice = parseInt(navigation.getParam('appointmentPrice'));
+        appointmentId= navigation.getParam('appointmentId');
         this.state = {
+            showLoading: false,
             addTip: false,
             DialogVisible: false,
             percentage: "0%",
@@ -107,6 +109,7 @@ export default class ClientLeaveReview extends Component {
     }
 
     addReview() {
+        this.setState({showLoading:true});
         var details = {
             barber_id: barberId,
             client_id: Preference.get("userId"),
@@ -118,6 +121,7 @@ export default class ClientLeaveReview extends Component {
             review_text: this.state.addComment,
             add_a_tip: this.state.addTip,
             tip_price: this.state.percentPrice,
+            appointment_id:appointmentId,
         };
         console.log("Credentials",JSON.stringify(details));
         var formBody = [];
@@ -136,7 +140,9 @@ export default class ClientLeaveReview extends Component {
             body: formBody
         }).then(response => response.json())
             .then(response => {
-                console.log("responseAddReviews-->", "-" + JSON.stringify(response));
+                console.log("responseAddReviews-->", "-" + JSON.stringify(response))
+
+                this.setState({showLoading:false});
                 if (response.ResultType === 1) {
                     this.setState({showLoading: false});
                     Alert.alert("Success!","You review saved successfully")
@@ -149,6 +155,8 @@ export default class ClientLeaveReview extends Component {
                 }
             })
             .catch(error => {
+
+                this.setState({showLoading:false});
                 //console.error('Errorr:', error);
                 console.log('Error:', error);
                 alert("Error: " + error);

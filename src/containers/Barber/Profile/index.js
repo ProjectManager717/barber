@@ -37,7 +37,7 @@ export default class BarberProfile extends Component {
             barberInsta:"",
             showLoading:false,
             barberName: Preference.get("userName"),
-            barberImage: "",
+            barberImage: require("../../../assets/images/personImage.jpg"),
             barberShopName: Preference.get("userShopname"),
             barberRating: 5,
             barberReviews: 17,

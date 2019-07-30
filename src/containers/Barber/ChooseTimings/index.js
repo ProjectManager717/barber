@@ -55,6 +55,7 @@ export default class ChooseTimings extends Component {
             halloweenDay: false,
             thankDay: false,
             chrismasDay: false,
+            yearlyHolidays: [],
 
         };
         this.setDate = this.setDate.bind(this);
@@ -123,7 +124,6 @@ export default class ChooseTimings extends Component {
             else
                 this.setState({chrismasDay: false})
         }
-
     }
 
     componentDidMount() {
@@ -155,9 +155,11 @@ export default class ChooseTimings extends Component {
                 console.log("responseworkinghours-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
                     this.setState({showLoading: false});
-                    this.setState({workingDays: response.Data.working_days});
+                    this.setState({workingDays: response.Data.working_days, yearlyHolidays: response.Data.holidays});
                     //this.setWorkingDay();
                     this.setDays();
+                    console.log("yearlyHolidays-1->",response.Data.holidays);
+                    this.setHolidays(response.Data.holidays);
                 } else {
                     this.setState({showLoading: false});
                     if (response.ResultType === 0) {
@@ -172,10 +174,100 @@ export default class ChooseTimings extends Component {
         });
     };
 
+    setHolidays(holidays) {
+        console.log("yearlyHolidays-->",holidays);
+        for (let n = 0; n < holidays.length; n++) {
+            if (holidays[n].yearly_holiday === "New Year") {
+                this.setState({newYear: holidays[n].status})
+            } else if (holidays[n].yearly_holiday === "Valentines Day") {
+                this.setState({valentineDay: holidays[n].status})
+            } else if (holidays[n].yearly_holiday === "Easter") {
+                this.setState({easterDay: holidays[n].status})
+            } else if (holidays[n].yearly_holiday === "Cinco de Mayo ") {
+                this.setState({cincoDay: holidays[n].status})
+            } else if (holidays[n].yearly_holiday === "4th of July") {
+                this.setState({july4: holidays[n].status})
+            } else if (holidays[n].yearly_holiday === "Memorial Day") {
+                this.setState({memorialDay: holidays[n].status})
+            } else if (holidays[n].yearly_holiday === "Labor Day") {
+                this.setState({labourDay: holidays[n].status})
+            } else if (holidays[n].yearly_holiday === "Halloween") {
+                this.setState({halloweenDay: holidays[n].status})
+            } else if (holidays[n].yearly_holiday === "Thanksgiving") {
+                this.setState({thankDay: holidays[n].status})
+            } else if (holidays[n].yearly_holiday === "Christmas") {
+                this.setState({chrismasDay: holidays[n].status})
+            }
+        }
+    }
+
+    setHolidaysData() {
+        this.setState({showVacationDialog: false});
+        let holiday = this.state.yearlyHolidays;
+        console.log("yearlyHolidays-->",holiday);
+        if (this.state.newYear) {
+            holiday[0].status = true;
+        } else {
+            holiday[0].status = false;
+        }
+
+        if (this.state.valentineDay) {
+            holiday[1].status = true;
+        } else {
+            holiday[1].status = false;
+        }
+        if (this.state.easterDay) {
+            holiday[2].status = true;
+        } else {
+            holiday[2].status = false;
+        }
+        if (this.state.cincoDay) {
+            holiday[3].status = true;
+        } else {
+            holiday[3].status = false;
+        }
+        if (this.state.july4) {
+            holiday[4].status = true;
+        } else {
+            holiday[4].status = false;
+        }
+        if (this.state.memorialDay) {
+            holiday[5].status = true;
+        } else {
+            holiday[5].status = false;
+        }
+        if (this.state.labourDay) {
+            holiday[6].status = true;
+        } else {
+            holiday[6].status = false;
+        }
+        if (this.state.halloweenDay) {
+            holiday[7].status = true;
+        } else {
+            holiday[7].status = false;
+        }
+        if (this.state.thankDay) {
+            holiday[8].status = true;
+        } else {
+            holiday[8].status = false;
+        }
+        if (this.state.chrismasDay) {
+            holiday[9].status = true;
+        } else {
+            holiday[9].status = false;
+        }
+
+        console.log("yearlyHolidays-->",holiday);
+
+        this.setState({yearlyHolidays:holiday});
+
+    }
+
     updateWorkingHours() {
         let details = {
             barber_id: Preference.get("userId"),
-            working_days: this.state.workingDays
+            working_days: this.state.workingDays,
+            holidays: this.state.yearlyHolidays
         };
         console.log("OutPutData::", details);
         this.setState({showLoading: true});
@@ -439,6 +531,7 @@ export default class ChooseTimings extends Component {
     }
 
 
+
     render() {
         return (
             <View style={styles.container}>
@@ -697,7 +790,7 @@ export default class ChooseTimings extends Component {
                             })}
                         </View>
                         <TouchableOpacity
-                            onPress={() => this.setState({showVacationDialog: false})}
+                            onPress={() => this.setHolidaysData()}
                             style={[globalStyles.button, {
                                 height: 35,
                                 width: "80%",

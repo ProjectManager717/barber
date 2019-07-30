@@ -7,20 +7,22 @@ import {CloseButton, RedButton} from '../../../components';
 import {Colors} from '../../../themes';
 import Preference from "react-native-preference";
 
-let Code = "";
+let Code = "",number="";
+
 
 class ConfirmSMSScreen extends Component {
     constructor(props) {
         super(props);
         const {navigation} = this.props;
         Code = navigation.getParam('Code');
+        number=navigation.getParam("number");
         console.log("gettingUSersignIn--->" + Code);
 
         this.state = {
             No: undefined,
             codeVerified:false,
         };
-        this.state.No = Code;
+        this.state.No = number+"-"+Code;
     }
 
     onClose = () => {

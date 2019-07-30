@@ -7,10 +7,17 @@ import {Header} from "react-native-elements";
 import CheckBoxSquare from "../../../components/CheckBox";
 import QRCode from 'react-native-qrcode';
 
+let qrCode;
 export default class ClientQR extends Component {
 
+    constructor(props) {
+        super(props);
+        const {navigation} = this.props;
+        qrCode = navigation.getParam('qr_code');
+    }
+
     state = {
-        text: 'http://facebook.github.io/react-native/',
+        text: qrCode,
     };
 
     render() {
@@ -38,22 +45,19 @@ export default class ClientQR extends Component {
                         </TouchableOpacity>
                     }
                 />
-                <ScrollView>
-                    <View style={{flex: 1, flexDirection: "column", alignItems: "center"}}>
-                        <Text style={{color: "white", fontSize: 16, fontWeight: "bold", marginTop: 20}}>Your Barber Scan
-                            Your Code</Text>
-                            <View style={{margin:30}}>
-                                <Image source={require("../../../assets/images/QR_code.png")}
-                                style={{width:250,height:250}}/>
-                                {/*<QRCode
-                                    value={this.state.text}
-                                    size={250}
-                                    bgColor='black'
-                                    fgColor='white'/>*/}
-                            </View>
+                <View style={{flex: 1, flexDirection: "column", alignItems: "center"}}>
+                    <Text style={{color: "white", fontSize: 16, fontWeight: "bold", marginTop: 20}}>Your Barber Scan
+                        Your Code</Text>
+                    <View style={{margin: 30}}>
+                        {/*<Image source={require("../../../assets/images/QR_code.png")}
+                                style={{width:250,height:250}}/>*/}
+                        <QRCode
+                            value={this.state.text}
+                            size={180}
+                            bgColor='black'
+                            fgColor='#fffff0'/>
                     </View>
-                </ScrollView>
-
+                </View>
             </View>
         );
     }

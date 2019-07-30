@@ -74,7 +74,7 @@ export default class ClientBarberProfile extends Component {
             showLoading: false,
             selectedMonth: "",
             showMonth: "",
-            barberProfileImage: require("../../../assets/images/personface.png"),
+            barberProfileImage: require("../../../assets/images/personImage.jpg"),
             barberInsta: "",
             barberName: "",
             barberShopName: "",
@@ -216,7 +216,7 @@ export default class ClientBarberProfile extends Component {
             if (i === indx) {
                 dataDay[indx].slot_detail.selected = "green";
                 this.setState({selectedSlotTime: dataDay[indx].slot_detail._id})
-                if (dataDay[indx].surgePrice === true) {
+                if (dataDay[indx].surge_price === true) {
                     this.setState({surgePriceSelected: true})
                 } else {
                     this.setState({surgePriceSelected: false})
@@ -459,17 +459,25 @@ export default class ClientBarberProfile extends Component {
     }
 
     bookApointment() {
+        this.setState({showLoading:true});
         var details = {
             client_id: Preference.get("userId"),
             barber_id: barberId,
-            selected_services: this.state.selectedServices,
+            selected_services:this.state.selected_services,
             date: this.state.selectedDate,
             selected_slot_id: this.state.selectedSlotIds,
             total_price: this.state.totalPriceService,
             service_fee: "1",
-            selected_surge_price: false
+            selected_surge_price: false,
+            cus_stripe_id: "",
+            transaction_id:"",
+            balance_transaction: "" ,
+            destination: "" ,
+            destination_payment: "" ,
+            source_transaction: "",
+            payment_date: "",
+            payment_created : ""
         };
-        this.setState({showLoading: true});
         console.log("Outputdata::::" + JSON.stringify(details));
         fetch(constants.ClientBookAppointment, {
             method: 'POST',
@@ -483,13 +491,21 @@ export default class ClientBarberProfile extends Component {
                 console.log("ClientBookAppointment-->", "-" + JSON.stringify(response));
                 this.setState({showLoading: false})
                 if (response.ResultType === 1) {
-                    Alert.alert("Success!", "Appointment is Booked");
-                    this.props.navigation.navigate('ClientLeaveReview', {
-                        barberId: barberId,
+                    Alert.alert("Success!", "Appointment is Booked successfully.");
+                    this.props.navigation.navigate('ClientLeaveReview',{
+                        client_id: Preference.get("userId"),
+                        barber_id: barberId,
                         barberImage: this.state.barberProfileImage,
                         barberName: this.state.barberName,
                         barberShopName: this.state.barberShopName,
-                        appointmentPrice: this.state.totalPriceService
+                        appointmentPrice: this.state.totalPriceService,
+                        selected_services: this.state.selectedServices,
+                        date: this.state.selectedDate,
+                        selected_slot_id: this.state.selectedSlotIds,
+                        total_price: this.state.totalPriceService,
+                        service_fee: "1",
+                        selected_surge_price: true,
+                        appointmentId:response.Data._id
                     });
                 } else {
                     if (response.ResultType === 0) {
@@ -559,7 +575,7 @@ export default class ClientBarberProfile extends Component {
         if (item.slot_status === 0) {
             //var m = moment(new Date(2011, 2, 12, 0, 0, 0));
             //m.add(item.id * 30, "minutes");
-            /*if (item.surgePrice === true) {
+            if (item.surge_price === true) {
                 return (<View>
                     <TouchableOpacity onPress={() => this.itemSelect(index)}>
                         <View style={{
@@ -567,7 +583,7 @@ export default class ClientBarberProfile extends Component {
                             flexDirection: "row",
                             borderRadius: 10,
                             borderWidth: 1,
-                            borderColor: item.selected,
+                            borderColor: item.slot_detail.selected,
                             marginStart: 10,
                         }} cellKey={item.id}>
                             <Image resizeMode={"contain"} source={require("../../../assets/images/dollar_surge.png")}
@@ -582,12 +598,12 @@ export default class ClientBarberProfile extends Component {
                                 fontSize: 12,
                                 fontWeight: "bold",
                             }}>
-                                {item.time}
+                                {this.showTime(item.slot_detail.start_time)}
                             </Text>
                         </View>
                     </TouchableOpacity>
                 </View>)
-            } else */
+            } else
             {
                 return (<View>
                     <TouchableOpacity onPress={() => this.itemSelect(index)}>
@@ -674,7 +690,21 @@ export default class ClientBarberProfile extends Component {
     checkSurgePriceSelected() {
         if (this.state.serviceTypeSelected === true && this.state.serviceDaySelected === true && this.state.serviceTimeSelected === true) {
             if (this.state.surgePriceSelected === true)
-                this.props.navigation.navigate('SurgePricingRate');
+                this.props.navigation.navigate('SurgePricingRate',{
+                    client_id: Preference.get("userId"),
+                    barber_id: barberId,
+                    barberImage: this.state.barberProfileImage,
+                    barberName: this.state.barberName,
+                    barberShopName: this.state.barberShopName,
+                    appointmentPrice: this.state.totalPriceService,
+                    selected_services: this.state.selectedServices,
+                    date: this.state.selectedDate,
+                    selected_slot_id: this.state.selectedSlotIds,
+                    total_price: this.state.totalPriceService,
+                    service_fee: "1",
+                    selected_surge_price: true,
+                    barberMobilePay:this.state.barberMobilePay
+                });
             else {
                 if (this.state.barberMobilePay === "mobilePay")
                 {
@@ -690,7 +720,7 @@ export default class ClientBarberProfile extends Component {
                         selected_slot_id: this.state.selectedSlotIds,
                         total_price: this.state.totalPriceService,
                         service_fee: "1",
-                        selected_surge_price: false
+                        selected_surge_price: false,
                     })
 
                 }else

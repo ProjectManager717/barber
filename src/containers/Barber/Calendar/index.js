@@ -297,7 +297,7 @@ export default class Calendar extends Component {
                     bgc = Colors.green;
                     bgcEnd = "#4C6546";
                 } else if (item.appointment_type === "inprogress") {
-                    imagep = require("../../../assets/images/progress.png");
+                    imagep = require("../../../assets/images/loading_purple.gif");
                     imgText = "IN PROGRESS";
                     imgTextcolor = Colors.purple;
                     bgc = Colors.purple;

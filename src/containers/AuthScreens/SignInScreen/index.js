@@ -1,5 +1,15 @@
 import React, {Component} from 'react';
-import {ImageBackground, Text, View, TouchableOpacity, NetInfo, ActivityIndicator,Image} from 'react-native';
+import {
+    ImageBackground,
+    Text,
+    View,
+    TouchableOpacity,
+    NetInfo,
+    ActivityIndicator,
+    Image,
+    Alert,
+    AsyncStorage
+} from 'react-native';
 import {SafeAreaView} from 'react-navigation';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {styles} from './styles';
@@ -7,6 +17,7 @@ import {CloseButton, ImageButton, Input, RedButton} from '../../../components';
 import {checkEmail} from '../../../utils';
 import Preference from 'react-native-preference';
 import {constants} from "../../../utils/constants";
+import firebase from 'react-native-firebase';
 
 //import * as constants from "../../../utils/constants";
 import {LoginButton, AccessToken, GraphRequest, GraphRequestManager} from 'react-native-fbsdk';
@@ -16,6 +27,8 @@ const {
     LoginManager,
 } = FBSDK;
 
+
+
 import {
     GoogleSignin,
     GoogleSigninButton,
@@ -24,7 +37,7 @@ import {
 
 
 let itemId = "";
-
+let fcmToken="";
 class SignInScreen extends Component {
     constructor(props) {
         super(props);
@@ -63,6 +76,95 @@ class SignInScreen extends Component {
             webClientId:
                 '1006799815583-9p41g2vs13dn03lp4j7bkvuiku3gcrtk.apps.googleusercontent.com',
         });
+        this.checkPermission();
+        this.createNotificationListeners();
+    }
+
+    ////////////////////// Add these methods //////////////////////
+
+    //Remove listeners allocated in createNotificationListeners()
+    componentWillUnmount() {
+        this.notificationListener();
+        this.notificationOpenedListener();
+    }
+
+    async createNotificationListeners() {
+        /*
+        * Triggered when a particular notification has been received in foreground
+        * */
+        this.notificationListener = firebase.notifications().onNotification((notification) => {
+            const { title, body } = notification;
+            this.showAlert(title, body);
+        });
+
+        /*
+        * If your app is in background, you can listen for when a notification is clicked / tapped / opened as follows:
+        * */
+        this.notificationOpenedListener = firebase.notifications().onNotificationOpened((notificationOpen) => {
+            const { title, body } = notificationOpen.notification;
+            this.showAlert(title, body);
+        });
+
+        /*
+        * If your app is closed, you can check if it was opened by a notification being clicked / tapped / opened as follows:
+        * */
+        const notificationOpen = await firebase.notifications().getInitialNotification();
+        if (notificationOpen) {
+            const { title, body } = notificationOpen.notification;
+            this.showAlert(title, body);
+        }
+        /*
+        * Triggered for data only payload in foreground
+        * */
+        this.messageListener = firebase.messaging().onMessage((message) => {
+            //process data message
+            console.log(JSON.stringify(message));
+        });
+    }
+
+    showAlert(title, body) {
+        Alert.alert(
+            title, body,
+            [
+                { text: 'OK', onPress: () => console.log('OK Pressed') },
+            ],
+            { cancelable: false },
+        );
+    }
+
+    async checkPermission() {
+        const enabled = await firebase.messaging().hasPermission();
+        if (enabled) {
+            this.getToken();
+        } else {
+            this.requestPermission();
+        }
+    }
+
+    //3
+    async getToken() {
+        fcmToken = await AsyncStorage.getItem('fcmToken');
+        if (!fcmToken) {
+            fcmToken = await firebase.messaging().getToken();
+            if (fcmToken) {
+                // user has a device token
+                console.log("fcmToken: ",fcmToken);
+                Preference.set('fcmToken', fcmToken);
+            }
+        }
+    }
+
+    //2
+    async requestPermission() {
+        try {
+            await firebase.messaging().requestPermission();
+            // User has authorised
+            this.getToken();
+        } catch (error) {
+            // User has rejected permissions
+            //Alert.alert("Warning!","")
+            console.log('permission rejected');
+        }
     }
 
     _signIn = async () => {
@@ -243,6 +345,7 @@ class SignInScreen extends Component {
                     var details = {
                         email: email,
                         password: password,
+                        device_token:fcmToken
                     };
                     var formBody = [];
                     for (var property in details) {
@@ -306,6 +409,7 @@ class SignInScreen extends Component {
                     var details = {
                         email: email,
                         password: password,
+                        device_token:fcmToken
                     };
                     var formBody = [];
                     for (var property in details) {
