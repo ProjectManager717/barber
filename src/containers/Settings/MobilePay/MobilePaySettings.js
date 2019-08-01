@@ -84,7 +84,7 @@ export default class MobilePaySettings extends Component {
         return <View style={{flex: 1, flexDirection: 'column', width: "100%"}}>
             <View style={{flexDirection: "row", alignItems: "center"}}>
                 <TextInput
-                    style={{height: 40, color: "#ffffff", marginStart: 50}}
+                    style={{width:"80%",height: 40, color: "#ffffff", marginStart: 50}}
                     onChangeText={(text) => this.setText(item, text)}
                     placeholder={item.hintText}
                     placeholderTextColor={"#52525D"}
@@ -108,14 +108,14 @@ export default class MobilePaySettings extends Component {
             if (this.state.checking === true) {
                 this.setState({checking: false, bankAccountType: 0})
             } else
-                this.setState({checking: true})
+                this.setState({checking: true,saving:false})
 
         }
         if (item.title === "Savings") {
             if (this.state.saving === true)
                 this.setState({saving: false, bankAccountType: 1})
             else
-                this.setState({saving: true})
+                this.setState({saving: true,checking:false})
 
         }
 
@@ -123,10 +123,10 @@ export default class MobilePaySettings extends Component {
 
     renderRowWithChecks(item) {
         return <View style={{flexDirection: 'row', height: 22, marginStart: 50}}>
-            <CheckBoxSquare onClick={() => {
+            <CheckBoxSquare rightText={item.title} onClick={() => {
                 this.checkBoxChecked(item)
-            }} isChecked={item.value} style={{alignSelf: 'center'}}/>
-            <Text style={styles.row_title}>{item.title}</Text>
+            }} isChecked={item.value} style={{width:120}}/>
+            {/*<Text style={styles.row_title}>{item.title}</Text>*/}
         </View>;
     }
 

@@ -44,7 +44,7 @@ export default class Settings extends Component {
         } catch (error) {
             //console.error('Errorr:', error);
             console.log('Error:', error);
-            alert("Error: "+error);
+            //alert("Error: "+error);
         }
     };
 
@@ -86,6 +86,7 @@ export default class Settings extends Component {
               <Image style={styles.leftIcon} source={require("../../assets/images/ic_setting_alert.png")} />
               <Text style={styles.row_title} >Alert</Text>
               <Switch value={true} style={{
+                  transform: [{ scaleX: .8 }, { scaleY: .8 }],
                 position:'absolute',
                 right:14,
                 alignSelf:'center',
@@ -115,7 +116,7 @@ export default class Settings extends Component {
           }}>
             {this.renderRow({title:"Cancellations & No-Shows",ic:require("../../assets/images/ic_settings_cancellation.png")})}
           </TouchableOpacity   >
-          
+
           {this.renderSeperator()}
               <TouchableOpacity onPress={()=>{
                   this.props.navigation.navigate('SurgePricing');
@@ -131,7 +132,7 @@ export default class Settings extends Component {
             }}>
               {this.renderRow({title:"Discover Me",ic:require("../../assets/images/ic_siren.png")})}
             </TouchableOpacity>
-          
+
           </View>
           <Text style={styles.txtHeader}>SHARE</Text>
             <View style={[globalStyles.rowBackground, styles.row]}>

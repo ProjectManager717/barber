@@ -19,6 +19,7 @@ import Preference from "react-native-preference";
 import {AirbnbRating} from "react-native-elements";
 import {constants} from "../../utils/constants";
 
+
 const {height, width} = Dimensions.get("window");
 
 export default class Home extends Component {
@@ -52,12 +53,16 @@ export default class Home extends Component {
     }
 
     componentDidMount(): void {
-        this.getBarberDetails();
+        const {navigation} = this.props;
+        this.focusListener = navigation.addListener("didFocus", payload => {
+            this.getBarberDetails();
+        });
+        //this.getBarberDetails();
     }
 
     getBarberDetails() {
         this.setState({showLoading: true})
-        fetch(constants.ClientBarbersProfile + "/" + Preference.get("userId") + "/profile", {
+        fetch(constants.BarbersProfile + "/" + Preference.get("userId") + "/profile", {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
@@ -65,7 +70,7 @@ export default class Home extends Component {
             }
         }).then(response => response.json())
             .then(response => {
-                console.log("getBarberDetails-->", "-" + JSON.stringify(response));
+                console.log("responseBarbersProfileMain-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
                     this.setState({showLoading: false})
                     let barberData = response.Data;
@@ -178,6 +183,18 @@ export default class Home extends Component {
                         />
                     </View>
                 </ScrollView>
+                {this.state.showLoading && <View style={{
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor: "transparent",
+                    position: "absolute",
+                    opacity: 1,
+                    alignItems: "center",
+                    justifyContent: "center"
+                }}>
+                    <Image resizeMode={"contain"} source={require("../../assets/images/loading.gif")}
+                           style={{width: 60, height: 60, opacity: 1,}}/>
+                </View>}
             </View>
         );
     }

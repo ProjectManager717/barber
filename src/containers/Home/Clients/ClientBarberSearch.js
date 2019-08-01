@@ -28,48 +28,21 @@ export default class ClientBarberSearch extends Component {
             showLoading: false,
             setLocationToggle: false,
             LocationToggle: require("../../../assets/images/LocationOff.png"),
-            dataSource2:[],
-            /*dataSource2: [{
-                id: 0,
-                imgPathh2: require("../../../assets/images/imgbck1.png"),
-                title2: "RENATO SANCHEZ",
-                address: "Anfield Barbershop",
-                time: "10:00 AM",
-                surgeImg: require("../../../assets/images/price.png"),
-                starimg: require("../../../assets/images/star.png")
-
-            }, {
-                id: 1,
-                imgPathh2: require("../../../assets/images/imgbck2.png"),
-                title2: "ROBERT LEWANDOWSKI",
-                time: "10:00 AM",
-                address: "Santiago Bernabeu Barbershop",
-                surgeImg: require("../../../assets/images/price.png"),
-                starimg: require("../../../assets/images/star.png")
-            },
-            ],*/
+            dataSource2: [],
+            searchText: "",
+            filterLocation: "",
+            filterDistance: 10,
+            filterCost: "5",
+            blendQuality: 0,
+            shapeUpAbility: 0,
+            scissorTechnique: 0,
+            comboverSkill: 0,
+            latitude: "",
+            longitude: "",
             dataSource3: [],
-           /* dataSource3: [{
-                id: 0,
-                imgPathh2: require("../../../assets/images/imgbck-3.png"),
-                title2: "PAUL POGBA",
-                address: "Santiago Bernabeu Barbershop",
-                time: "10:00 AM",
-                surgeImg: require("../../../assets/images/price.png"),
-                starimg: require("../../../assets/images/star-unselected.png")
-
-            }, {
-                id: 1,
-                imgPathh2: require("../../../assets/images/imgbck-4.png"),
-                title2: "NEMANJA GIGGS",
-                time: "10:00 AM",
-                address: "Old Trafford Barbershop",
-                surgeImg: require("../../../assets/images/price.png"),
-                starimg: require("../../../assets/images/star-unselected.png")
-
-            },
-            ]*/
+            Address:"",
         }
+        this.setFilters = this.setFilters.bind(this);
     }
 
     componentDidMount(): void {
@@ -77,20 +50,37 @@ export default class ClientBarberSearch extends Component {
     }
 
     searchBarber(txt) {
-        console.log("getSearchDetails-txt->", "-" + txt);
-        this.setState({showLoading: true})
-        fetch(constants.ClientBarbersSearch + "?search_barber=" + txt, {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
-        }).then(response => response.json())
+        console.log("getSearchDetails-txt->", "-" + constants.ClientBarbersSearch + "?search_barber=" + txt
+            + "&bliend_quality=" + this.state.blendQuality
+            + "&shape_up_ability=" + this.state.shapeUpAbility
+            + "&scissor_technique=" + this.state.scissorTechnique
+            + "&combover_skills=" + this.state.comboverSkill
+            + "&lat=" + this.state.latitude
+            + "&long=" + this.state.longitude
+            + "&distance=" + this.state.filterDistance
+            + "&price=" + this.state.filterCost
+        );
+        this.setState({showLoading: true, searchText: txt})
+        fetch(constants.ClientBarbersSearch + "?search_barber=" + txt
+            + "&bliend_quality=" + this.state.blendQuality
+            + "&shape_up_ability=" + this.state.shapeUpAbility
+            + "&scissor_technique=" + this.state.scissorTechnique
+            + "&combover_skills=" + this.state.comboverSkill
+            + "&lat=" + this.state.latitude
+            + "&long=" + this.state.longitude
+            + "&distance=" + this.state.filterDistance
+            + "&price=" + this.state.filterCost
+            , {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => response.json())
             .then(response => {
-                this.setState({searchBarbers:[]});
+                this.setState({searchBarbers: []});
                 console.log("getSearchDetails-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
-
                     this.setState({
                         showLoading: false,
                         searchBarbers: response.Data
@@ -110,9 +100,8 @@ export default class ClientBarberSearch extends Component {
         });
     }
 
-    getFavoriteBarbers()
-    {
-        fetch(constants.ClientFavoritBarbers + "?client_id=" +Preference.get("userId"), {
+    getFavoriteBarbers() {
+        fetch(constants.ClientFavoritBarbers + "?client_id=" + Preference.get("userId"), {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
@@ -122,7 +111,7 @@ export default class ClientBarberSearch extends Component {
             .then(response => {
                 console.log("getFavoriteBarbers-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
-                    this.setState({dataSource2:response.Data}) ;
+                    this.setState({dataSource2: response.Data});
                 } else {
                     if (response.ResultType === 0) {
                         alert(response.Message);
@@ -131,13 +120,13 @@ export default class ClientBarberSearch extends Component {
             }).catch(error => {
             //console.error('Errorr:', error);
             console.log('Error:', error);
-            alert("Error: "+error);
+            alert("Error: " + error);
         });
     }
 
     renderRowInput() {
         return <View style={{width: "100%"}}>
-            <View style={{height:50,flexDirection: "row", alignItems: "center", justifyContent: "center"}}>
+            <View style={{height: 50, flexDirection: "row", alignItems: "center", justifyContent: "center"}}>
                 <Image resizeMode={"contain"} source={require("../../../assets/images/searchicon.png")}
                        style={{
                            width: 16,
@@ -303,15 +292,53 @@ export default class ClientBarberSearch extends Component {
 
     }
 
-    setLocationImage() {
+    getCurrentLocation() {
+        console.log("GeoLocation-->1");
+        navigator.geolocation.getCurrentPosition((position) => {
+            console.log("GeoLocation-->2");
+            // Create the object to update this.state.mapRegion through the onRegionChange function
+            let region = {
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude,
+                latitudeDelta: 0.00922 * 1.5,
+                longitudeDelta: 0.00421 * 1.5
+            };
+            console.log("GeoLocation-->", region);
+            this.setState({latitude: region.latitude, longitude: region.longitude})
+            //this.onRegionChange(region, region.latitude, region.longitude);
+        }, (error) => console.log("error--->", error));
+    }
+
+    async setLocationImage() {
         if (this.state.setLocationToggle === false) {
             this.setState({LocationToggle: require("../../../assets/images/location1.png"), setLocationToggle: true});
+            await this.getCurrentLocation();
         } else {
             this.setState({
                 LocationToggle: require("../../../assets/images/LocationOff.png"),
-                setLocationToggle: false
+                setLocationToggle: false,
+                latitude: "", longitude: ""
             });
         }
+    }
+
+    setFilters(filterlocation, filterdistance, filtercost, blendquality, shapeupability, scissortecnique, comboverskill, lat, long,address) {
+        this.setState({
+            filterLocation: filterlocation,
+            filterDistance: filterdistance,
+            filterCost: filtercost,
+            blendQuality: blendquality,
+            shapeUpAbility: shapeupability,
+            ScissorTecnique: scissortecnique,
+            comboverSkills: comboverskill,
+            latitude: lat,
+            longitude: long,
+            Address:address
+        }, () => {
+            this.searchBarber(this.state.searchText)
+        })
+
+
     }
 
     render() {
@@ -335,7 +362,21 @@ export default class ClientBarberSearch extends Component {
                     }
                     rightComponent={<TouchableOpacity
                         onPress={() => {
-                            this.props.navigation.navigate("ClientFilter");
+                            this.props.navigation.push("ClientFilter", {
+                                onFilter: (filter1, filter2, filter3, filter4, filter5, filter6, filter7, filter8, filter9,filter10) => {
+                                    this.setFilters(filter1, filter2, filter3, filter4, filter5, filter6, filter7, filter8, filter9,filter10)
+                                },
+                                filterLocation: this.state.filterLocation,
+                                filterDistance: this.state.filterDistance,
+                                filterCost: this.state.filterCost,
+                                blendQuality: this.state.blendQuality,
+                                shapeUpAbility: this.state.shapeUpAbility,
+                                scissorTecnique: this.state.scissorTecnique,
+                                comboverSkill: this.state.comboverSkill,
+                                latitude: this.state.latitude,
+                                longitude: this.state.longitude,
+                                address: this.state.Address
+                            });
                         }}>
                         <Image
                             style={{
@@ -465,13 +506,16 @@ export default class ClientBarberSearch extends Component {
                             </View>
 
                             <View style={{marginTop: 0, marginStart: 20, marginEnd: 20, marginBottom: 20}}>
-                                {(this.state.dataSource2.length>0) && <FlatList renderItem={({item}) => this.renderRowSurge2(item)}
+                                {(this.state.dataSource2.length > 0) &&
+                                <FlatList renderItem={({item}) => this.renderRowSurge2(item)}
                                           data={this.state.dataSource2}
                                           keyExtractor={(item, index) => index}
                                           numColumns={1}
                                 />}
-                                {!(this.state.dataSource2.length>0) &&<View style={{width:"100%",height:80,alignItems:"center",justifyContent:"center"}}>
-                                    <Text style={{fontSize:15,color:"white"}}>{"You don't have Nearby Barber"}</Text>
+                                {!(this.state.dataSource2.length > 0) && <View
+                                    style={{width: "100%", height: 80, alignItems: "center", justifyContent: "center"}}>
+                                    <Text
+                                        style={{fontSize: 15, color: "white"}}>{"You don't have favorite Barber"}</Text>
                                 </View>}
                             </View>
 
@@ -485,13 +529,15 @@ export default class ClientBarberSearch extends Component {
                                 }}>{"Nearby Barbers"} </Text>
                             </View>
                             <View style={{marginTop: 0, marginStart: 20, marginEnd: 20, marginBottom: 30}}>
-                                {(this.state.dataSource3.length>0) &&<FlatList renderItem={({item}) => this.renderRowSurge2(item)}
+                                {(this.state.dataSource3.length > 0) &&
+                                <FlatList renderItem={({item}) => this.renderRowSurge2(item)}
                                           data={this.state.dataSource3}
                                           keyExtractor={(item, index) => index}
                                           numColumns={1}
                                 />}
-                                {!(this.state.dataSource3.length>0) &&<View style={{width:"100%",height:80,alignItems:"center",justifyContent:"center"}}>
-                                    <Text style={{fontSize:15,color:"white"}}>{"You don't have Nearby Barber"}</Text>
+                                {!(this.state.dataSource3.length > 0) && <View
+                                    style={{width: "100%", height: 80, alignItems: "center", justifyContent: "center"}}>
+                                    <Text style={{fontSize: 15, color: "white"}}>{"You don't have Nearby Barber"}</Text>
                                 </View>}
                             </View>
                         </View>}

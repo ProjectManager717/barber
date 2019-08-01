@@ -17,12 +17,26 @@ import hello from "../../../assets/images/arrow_down.png"
 import {Colors} from "../../../themes";
 import {styles} from "./styles";
 import {globalStyles} from "../../../themes/globalStyles";
+import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
+import Preference from "react-native-preference";
+import colors from "../../../themes/colors";
 
 
 export default class ClientBarberSearch extends Component {
 
     constructor(props) {
         super(props);
+        const {navigation} = this.props;
+        let val_latitude = navigation.getParam('latitude');
+        let val_longitude = navigation.getParam('longitude');
+        let val_filterLocation = navigation.getParam('filterLocation');
+        let val_filterDistance= navigation.getParam('filterDistance');
+        let val_filterCost = navigation.getParam('filterCost');
+        let val_blendQuality = navigation.getParam('blendQuality');
+        let val_shapeUpAbility = navigation.getParam('shapeUpAbility');
+        let val_scissorTechnique= navigation.getParam('scissorTecnique');
+        let val_comboverSkill = navigation.getParam('comboverSkill');
+        let val_address = navigation.getParam('address');
         this.state = {
             optionOne: "white",
             optionTwo: "white",
@@ -35,42 +49,74 @@ export default class ClientBarberSearch extends Component {
             unselected2: require("../../../assets/images/greentick.png"),
             unselected3: require("../../../assets/images/greentick.png"),
             unselected4: require("../../../assets/images/greentick.png"),
+
+            Address:val_address,
+            latitude:val_latitude,
+            longitude:val_longitude,
+
+            filterLocation:val_filterLocation,
+            filterDistance:val_filterDistance,
+            filterCost:val_filterCost,
+            blendQuality:val_blendQuality,
+            shapeUpAbility:val_shapeUpAbility,
+            scissorTechnique:val_scissorTechnique,
+            comboverSkill:val_comboverSkill,
         };
 
+        if(val_blendQuality===0)
+            this.setState({unselected: require("../../../assets/images/greentick.png")})
+        else
+            this.setState({unselected: require("../../../assets/images/greenticked.png")})
+
+        if(val_shapeUpAbility===0)
+            this.setState({unselected2: require("../../../assets/images/greentick.png")})
+        else
+            this.setState({unselected2: require("../../../assets/images/greenticked.png")})
+
+
+        if(val_scissorTechnique===0)
+            this.setState({unselected3: require("../../../assets/images/greentick.png")})
+        else
+            this.setState({unselected3: require("../../../assets/images/greenticked.png")})
+
+        if(val_comboverSkill===0)
+            this.setState({unselected3: require("../../../assets/images/greentick.png")})
+        else
+            this.setState({unselected3: require("../../../assets/images/greenticked.png")})
     }
 
     Selected() {
         if (this.state.unselected === require("../../../assets/images/greenticked.png")) {
-            this.setState({unselected: require("../../../assets/images/greentick.png")})
+            this.setState({unselected: require("../../../assets/images/greentick.png"),blendQuality:0})
         } else {
-            this.setState({unselected: require("../../../assets/images/greenticked.png")})
+            this.setState({unselected: require("../../../assets/images/greenticked.png"),blendQuality:1})
         }
     }
 
     Selected2() {
         if (this.state.unselected2 === require("../../../assets/images/greenticked.png")) {
-            this.setState({unselected2: require("../../../assets/images/greentick.png")})
+            this.setState({unselected2: require("../../../assets/images/greentick.png"),shapeUpAbility:0})
         } else {
 
-            this.setState({unselected2: require("../../../assets/images/greenticked.png")})
+            this.setState({unselected2: require("../../../assets/images/greenticked.png"),shapeUpAbility:1})
         }
     }
 
     Selected3() {
         if (this.state.unselected3 === require("../../../assets/images/greenticked.png")) {
-            this.setState({unselected3: require("../../../assets/images/greentick.png")})
+            this.setState({unselected3: require("../../../assets/images/greentick.png"),scissorTechnique:0})
         } else {
 
-            this.setState({unselected3: require("../../../assets/images/greenticked.png")})
+            this.setState({unselected3: require("../../../assets/images/greenticked.png"),scissorTechnique:1})
         }
     }
 
     Selected4() {
         if (this.state.unselected4 === require("../../../assets/images/greenticked.png")) {
-            this.setState({unselected4: require("../../../assets/images/greentick.png")})
+            this.setState({unselected4: require("../../../assets/images/greentick.png"),comboverSkill:0})
         } else {
 
-            this.setState({unselected4: require("../../../assets/images/greenticked.png")})
+            this.setState({unselected4: require("../../../assets/images/greenticked.png"),comboverSkill:1})
         }
     }
 
@@ -79,7 +125,7 @@ export default class ClientBarberSearch extends Component {
         if (this.state.CheckBox1 === require("../../../assets/images/tic_green.png")) {
             this.setState({CheckBox1: require("../../../assets/images/tic_grey.png"), optionOne: "white"})
         } else {
-            this.setState({CheckBox1: require("../../../assets/images/tic_green.png"), optionOne: "green"});
+            this.setState({CheckBox1: require("../../../assets/images/tic_green.png"), optionOne: "green",filterCost:"5"});
             this.setState({CheckBox2: require("../../../assets/images/tic_grey.png"), optionTwo: "white"});
             this.setState({CheckBox3: require("../../../assets/images/tic_grey.png"), optionThree: "white"});
 
@@ -90,7 +136,7 @@ export default class ClientBarberSearch extends Component {
         if (this.state.CheckBox2 === require("../../../assets/images/tic_green.png")) {
             this.setState({CheckBox2: require("../../../assets/images/tic_grey.png"), optionTwo: "white"})
         } else {
-            this.setState({CheckBox2: require("../../../assets/images/tic_green.png"), optionTwo: "green"});
+            this.setState({CheckBox2: require("../../../assets/images/tic_green.png"), optionTwo: "green",filterCost:"12.1"});
             this.setState({CheckBox1: require("../../../assets/images/tic_grey.png"), optionOne: "white"});
             this.setState({CheckBox3: require("../../../assets/images/tic_grey.png"), optionThree: "white"});
         }
@@ -100,7 +146,7 @@ export default class ClientBarberSearch extends Component {
         if (this.state.CheckBox23 === require("../../../assets/images/tic_green.png")) {
             this.setState({CheckBox3: require("../../../assets/images/tic_grey.png"), optionThree: "white"})
         } else {
-            this.setState({CheckBox3: require("../../../assets/images/tic_green.png"), optionThree: "green"});
+            this.setState({CheckBox3: require("../../../assets/images/tic_green.png"), optionThree: "green",filterCost:"20.1"});
             this.setState({CheckBox1: require("../../../assets/images/tic_grey.png"), optionOne: "white"});
             this.setState({CheckBox2: require("../../../assets/images/tic_grey.png"), optionTwo: "white"});
         }
@@ -132,6 +178,111 @@ export default class ClientBarberSearch extends Component {
         </View>
     }
 
+
+    renderGooglePlacesInput = () => {
+        return (
+            <GooglePlacesAutocomplete
+                placeholder="Enter City,State or Zip Code"
+                minLength={2} // minimum length of text to search
+                autoFocus={false}
+                returnKeyType={'search'} // Can be left out for default return key https://facebook.github.io/react-native/docs/textinput.html#returnkeytype
+                listViewDisplayed='false'    // true/false/undefined
+                fetchDetails={true}
+                renderDescription={row => row.description} // custom description render
+                onPress={(data, details = null,) => { // 'details' is provided when fetchDetails = true
+                    console.log("GooglePlacesAutocomplete" + JSON.stringify(data));
+                    console.log("GooglePlacesAutocomplete" + JSON.stringify(details));
+                    this.setState({places: []});
+                    this.state.places.push(details);
+                    this.setState({places: this.state.places});
+                    if (this.state.places.length > 0) {
+                        this.setState({Address: this.state.places[0].formatted_address,
+                            latitude: this.state.places[0].geometry.location.lat,
+                            longitude: this.state.places[0].geometry.location.lng});
+                        console.log("GooglePlacesAutocomplete lat ", JSON.stringify(this.state.places[0].geometry.location.lng));
+                        console.log("GooglePlacesAutocomplete lng ",  this.state.places[0].geometry.location.lng);
+                        //Preference.set("userAddress", this.state.places[0].formatted_address);
+                    } else {
+                        Preference.set("userAddress", "");
+                    }
+                    //console.log("hello2" + JSON.stringify(this.state.places[0].formatted_address));
+                }}
+                getDefaultValue={() => this.state.Address}
+                query={{
+                    // available options: https://developers.google.com/places/web-service/autocomplete
+                    key: 'AIzaSyD5YuagFFL0m0IcjCIvbThN25l0m2jMm2w',
+                    language: 'en', // language of the results
+                    types: '(cities)' // default: 'geocode'
+                }}
+
+                styles={{
+                    textInput: {
+                        backgroundColor: colors.gray,
+                        color: 'white'
+                    },
+
+                    textInputContainer: {
+                        backgroundColor: Colors.gray,
+                        borderWidth: 0.5,
+                        borderColor: Colors.border,
+                        borderRadius: 5,
+                        flexDirection: "row",
+                        margin: 1
+                    },
+                    description: {
+                        color: "white",
+                        backgroundColor: "transparent"
+                    },
+                    predefinedPlacesDescription: {
+                        color: 'red'
+                    },
+                    poweredContainer: {color: "red"},
+
+                }}
+                currentLocation={true} // Will add a 'Current location' button at the top of the predefined places list
+                currentLocationLabel="Current location"
+                nearbyPlacesAPI='GooglePlacesSearch' // Which API to use: GoogleReverseGeocoding or GooglePlacesSearch
+                GoogleReverseGeocodingQuery={{
+                    // available options for GoogleReverseGeocoding API : https://developers.google.com/maps/documentation/geocoding/intro
+                }}
+                GooglePlacesSearchQuery={{
+                    // available options for GooglePlacesSearch API : https://developers.google.com/places/web-service/search
+                    rankby: 'distance',
+                    types: 'food'
+                }}
+                GooglePlacesDetailsQuery={{
+                    // available options for GooglePlacesDetails API : https://developers.google.com/places/web-service/details
+                    fields: ["name", 'formatted_address']
+                }}
+                filterReverseGeocodingByTypes={['locality', 'administrative_area_level_3']} // filter the reverse geocoding results by types - ['locality', 'administrative_area_level_3'] if you want to display only cities
+                debounce={200} // debounce the requests in ms. Set to 0 to remove debounce. By default 0ms.
+                renderLeftButton={() =>
+                    <View style={{justifyContent: "center", alignItems: "center",marginStart:10}}>
+                        <Image source={require('../../../assets/images/searchicon.png')}
+                               style={{resizeMode: "contain", width: 20, height: 20, marginEnd: 15}}/>
+                    </View>
+                }
+                enablePoweredByContainer={false}
+            />
+        );
+    };
+
+    gotoSearchResult()
+    {
+        this.props.navigation.state.params.onFilter(
+            this.state.filterLocation,
+            this.state.filterDistance,
+            this.state.filterCost,
+            this.state.blendQuality,
+            this.state.shapeUpAbility,
+            this.state.scissorTecnique,
+            this.state.comboverSkill,
+            this.state.latitude,
+            this.state.longitude,
+            this.state.Address);
+        this.props.navigation.goBack();
+    }
+
     render() {
         return (
             <View style={styles.container}>
@@ -143,7 +294,7 @@ export default class ClientBarberSearch extends Component {
                     leftComponent={
                         <TouchableOpacity
                             onPress={() => {
-                                this.props.navigation.goBack();
+                                this.gotoSearchResult()
                             }}>
                             <Image
                                 style={{
@@ -171,7 +322,8 @@ export default class ClientBarberSearch extends Component {
                             borderColor: "grey",
                             borderRadius: 6,
                         }}>
-                            {this.renderRowInput({})}
+                           {/* {this.renderRowInput({})}*/}
+                            {this.renderGooglePlacesInput()}
                         </View>
                         <View>
                             <Text style={{
@@ -180,7 +332,6 @@ export default class ClientBarberSearch extends Component {
                                 marginStart: 20,
                                 marginTop: 20,
                                 fontSize: 17
-
                             }}>{"Distance"} </Text>
                         </View>
                         <View style={{
@@ -192,18 +343,18 @@ export default class ClientBarberSearch extends Component {
                             justifyContent: 'center'
                         }}>
                             <Slider
-                                value={this.state.value}
-                                onValueChange={value => this.setState({value})}
+                                value={this.state.filterDistance}
+                                onValueChange={value => this.setState({filterDistance:value})}
                                 minimumTrackTintColor='red'
                                 maximumTrackTintColor="#3D3E4D"
+                                minimumValue={1}
+                                maximumValue={100000}
                                 trackStyle={{height: 2}}
                                 thumbStyle={{borderWidth: 0.5, borderColor: "white"}}
                             />
                             <View style={{
                                 alignItems: 'stretch',
-
                                 flexDirection: "row"
-
                             }}>
                                 <Text style={{color: "#686F77", fontSize: 10}}>10 MILES</Text>
                                 <Text style={{color: "#686F77", marginStart: 45, fontSize: 10}}>25 MILES</Text>
@@ -393,7 +544,7 @@ export default class ClientBarberSearch extends Component {
                             </View>
                         </View>
                     </View>
-                    <TouchableOpacity onPress={() => this.props.navigation.goBack()} style={[globalStyles.button, {
+                    <TouchableOpacity onPress={() => this.gotoSearchResult() } style={[globalStyles.button, {
                         marginTop: 70,
                         height: 40,
                         width: 260,

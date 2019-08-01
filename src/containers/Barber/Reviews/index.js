@@ -116,7 +116,7 @@ export default class Reviews extends Component {
                     }}
                 />
 
-                <View style={{height: 90, justifyContent: "center"}}>
+                {(this.state.reviews.length > 0) && <View style={{height: 90, justifyContent: "center"}}>
                     <View style={{flexDirection: "row", alignSelf: "center"}}>
                         <AirbnbRating
                             isDisabled={true}
@@ -127,7 +127,7 @@ export default class Reviews extends Component {
                         />
                         <Text style={[styles.rating_text, {fontSize: 16}]}>({this.state.AverageRating} of 5.0)</Text>
                     </View>
-                </View>
+                </View>}
                 {(this.state.reviews.length > 0) && <FlatList
                     data={this.state.reviews}
                     renderItem={({item}) => this.renderItem(item)}

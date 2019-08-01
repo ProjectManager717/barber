@@ -185,6 +185,7 @@ export default class BookingPreferences extends Component {
                 thumbColor="#fff"
                 onChange={() => this.setAutoConfirm()}
                 value={item.value} style={{
+                transform: [{ scaleX: .8 }, { scaleY: .8 }],
                 position: 'absolute',
                 right: 14,
                 alignSelf: 'center',
@@ -195,12 +196,14 @@ export default class BookingPreferences extends Component {
                 trackColor="#00D200"
                 thumbColor="#fff"
                 onChange={() => this.setMultipleServices()}
-                value={item.value} style={{
-                position: 'absolute',
-                right: 14,
-                alignSelf: 'center',
-                tintColor: 'white'
-            }}/>
+                value={item.value}
+                style={{
+                    transform: [{ scaleX: .8 }, { scaleY: .8 }],
+                    position: 'absolute',
+                    right: 14,
+                    alignSelf: 'center',
+                    tintColor: 'white'
+                }}/>
             }
         </View>;
     }
@@ -288,7 +291,7 @@ export default class BookingPreferences extends Component {
                 console.log("updateBookingPrefrence-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
                     this.setState({showLoading: false})
-                    alert("Booking preferences updated successfully");
+                    //alert("Booking preferences updated successfully");
                     if (Preference.get("newUser") === true) {
                         if (this.state.MP.StateMP === true) {
                             this.props.navigation.push("MobilePay");
@@ -382,7 +385,7 @@ export default class BookingPreferences extends Component {
                     <View style={[globalStyles.rowBackground, styles.row]}>
                         {this.renderRowTimer({
                             /*title: "30 Minutes",*/
-                            title: "Minimum time needed for a client to book an appointment",
+                            title: "Minimum time needed for a client to book an \n appointment",
                             ic: require("../../../assets/images/mins_30.png")
                         })}
                         {/*<Text style={{

@@ -99,13 +99,14 @@ export default class ClientBlast extends Component {
                         }}>
                             <View style={{
                                 width: "100%",
-                                height: 200,
+                                height: 180,
                                 borderRadius: 10,
                                 borderWidth: 0.3,
                                 borderColor: "white",
                                 backgroundColor: "#2F3041"
                             }}>
                                 <TextInput style={{
+                                    height:"100%",
                                     fontFamily: "AvertaStd-RegularItalic", width: "100%",
                                     color: "white", fontSize: 14,marginStart:10
                                 }}

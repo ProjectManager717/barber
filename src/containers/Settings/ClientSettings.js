@@ -101,6 +101,7 @@ export default class ClientSettings extends Component {
                                    source={require("../../assets/images/ic_setting_alert.png")}/>
                             <Text style={styles.row_title}>Alert</Text>
                             <Switch value={this.state.alertcheck} style={{
+                                transform: [{ scaleX: .8 }, { scaleY: .8 }],
                                 position: 'absolute',
                                 right: 14,
                                 alignSelf: 'center',

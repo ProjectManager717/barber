@@ -81,6 +81,12 @@ export default class ClientEditProfile extends Component {
                     this.locationRef.setAddressText(this.state.userAddress);
                     console.log("DataUSER:--->"+this.state.userAddress);
                     console.log("DataUSER:--->"+this.state.userName);
+                    if(clientData.client_image==="")
+                    {
+                        this.setState({
+                            avatarSource:require("../../../assets/images/personImage.jpg")
+                        });
+                    }
                     //this.setState({barberData: response.Data});
                 } else {
                     this.setState({showLoading:false})
@@ -296,8 +302,8 @@ export default class ClientEditProfile extends Component {
                 <ScrollView>
                     <View style={styles.detailsContainer}>
                         <View style={styles.profileImageContainer}>
-                            {this.state.avatarSource === null && <Image
-                                source={require("../../../assets/images/clientedit.png")}
+                            {(this.state.avatarSource === null ||this.state.avatarSource === "") && <Image
+                                source={require("../../../assets/images/personImage.jpg")}
                                 style={styles.profileImage}/>}
                             {this.state.avatarSource != null && <Image
                                 source={this.state.avatarSource}
@@ -327,14 +333,22 @@ export default class ClientEditProfile extends Component {
                                     justifyContent: "center",
                                     alignItems: "center"
                                 }}>
-                                    <Text style={{
+                                    {/*<Text style={{
                                         fontWeight: "bold",
                                         marginTop: 15,
                                         marginBottom: 15,
                                         fontSize: 16,
                                         color: "white"
-                                    }}>{this.state.userName}</Text>
-                                    <TouchableOpacity onPress={() => this.setState({DialogVisible: true})}>
+                                    }}>{this.state.userName}</Text>*/}
+
+                                    <TextInput
+                                        style={{height: 40, color: "#ffffff", marginStart: 30,textAlign:"center",width:150,fontWeight:"bold",fontSize:16}}
+                                        onChangeText={(text) => this.setState({userName:text})}
+                                        placeholder={"Enter your name"}
+                                        placeholderTextColor={"#52525D"}
+                                        value={this.state.userName}
+                                    />
+                                    <TouchableOpacity onPress={() => this.setState({DialogVisible: false})}>
                                         <Image style={{
                                             height: 15,
                                             width: 15,

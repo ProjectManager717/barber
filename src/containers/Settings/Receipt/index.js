@@ -66,10 +66,12 @@ export default class Receipt extends Component {
                     let recieptData = response.Data;
                     let receptDate=recieptData.date;
                     receptDate=receptDate.split("T");
+                    let timeReciept =receptDate[1];
+                    timeReciept=timeReciept.split(":")
                     this.setState({
                         invoiceNo: recieptData.invoice_no,
                         invoiceDate: receptDate[0],
-                        invoiceTime: "12:00am",
+                        invoiceTime: timeReciept[0]+":"+timeReciept[1],
                         barberName: recieptData.barber_firstname +" "+recieptData.barber_lastname ,
                         barberShopName: recieptData.barber_shop_name,
                         barberLocation:recieptData.location,

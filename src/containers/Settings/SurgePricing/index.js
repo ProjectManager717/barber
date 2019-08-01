@@ -167,7 +167,7 @@ export default class SurgePricing extends Component {
             this.setState({DialogSurgePrice: true})
         } else {
             if (this.state.surgePrice === true)
-                this.setState({surgePrice: false})
+                this.setState({surgePrice: false,holidays:false,birthday:false,anyDayAfter10:false,houseCall:false})
             else
                 this.setState({surgePrice: true})
         }
@@ -175,27 +175,31 @@ export default class SurgePricing extends Component {
     }
 
     checkBox(val) {
-        if (val === "Holidays") {
-            if (this.state.holidays === false)
-                this.setState({holidays: true})
-            else
-                this.setState({holidays: false})
-        } else if (val === "Birthday") {
-            if (this.state.birthday === false)
-                this.setState({birthday: true})
-            else
-                this.setState({birthday: false})
-        } else if (val === "Any Day After 10 PM") {
-            if (this.state.anyDayAfter10 === false)
-                this.setState({anyDayAfter10: true})
-            else
-                this.setState({anyDayAfter10: false})
-        } else if (val === "HouseCall") {
-            if (this.state.houseCall === false)
-                this.setState({houseCall: true})
-            else
-                this.setState({houseCall: false})
+        if(this.state.surgePrice)
+        {
+            if (val === "Holidays") {
+                if (this.state.holidays === false)
+                    this.setState({holidays: true})
+                else
+                    this.setState({holidays: false})
+            } else if (val === "Birthday") {
+                if (this.state.birthday === false)
+                    this.setState({birthday: true})
+                else
+                    this.setState({birthday: false})
+            } else if (val === "Any Day After 10 PM") {
+                if (this.state.anyDayAfter10 === false)
+                    this.setState({anyDayAfter10: true})
+                else
+                    this.setState({anyDayAfter10: false})
+            } else if (val === "HouseCall") {
+                if (this.state.houseCall === false)
+                    this.setState({houseCall: true})
+                else
+                    this.setState({houseCall: false})
+            }
         }
+
     }
 
     renderRowWithCheck(item) {
@@ -223,6 +227,7 @@ export default class SurgePricing extends Component {
                     thumbColor="#fff"
                     onChange={() => this.setSurgePrice()}
                     value={this.state.surgePrice} style={{
+                    transform: [{ scaleX: .8 }, { scaleY: .8 }],
                     position: 'absolute',
                     top: 8,
                     right: 14,

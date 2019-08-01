@@ -171,7 +171,7 @@ export default class BarberEditProfile extends Component {
 
     saveData() {
         let requestBody = new FormData();
-        requestBody.append("user_id",Preference.get("userId"));
+        requestBody.append("user_id", Preference.get("userId"));
         requestBody.append("firstname", this.state.barberName);
         requestBody.append("lastname", "");
         requestBody.append("shop_name", this.state.barberShopName);
@@ -179,6 +179,8 @@ export default class BarberEditProfile extends Component {
         requestBody.append("location", this.state.barberAddress)
         requestBody.append("house_call", 0)
         requestBody.append("username", this.state.barberInsta)
+        requestBody.append("lat", this.state.latitude)
+        requestBody.append("long", this.state.longitude)
         for (let i = 0; i < this.state.imagesDataServer.length; i++) {
             requestBody.append("portfolio_image", {
                 uri: this.state.imagesDataServer[i],
@@ -257,15 +259,20 @@ export default class BarberEditProfile extends Component {
                 fetchDetails={true}
                 renderDescription={row => row.description} // custom description render
                 onPress={(data, details = null,) => { // 'details' is provided when fetchDetails = true
-                    console.log("hello" + data, details);
+                    console.log("GooglePlacesAutocomplete" + JSON.stringify(data));
+                    console.log("GooglePlacesAutocomplete" + JSON.stringify(details));
 
                     this.setState({places: []});
 
                     this.state.places.push(details);
                     this.setState({places: this.state.places});
                     if (this.state.places.length > 0) {
-                        this.setState({barberAddress: this.state.places[0].formatted_address})
-                        Preference.set("userAddress", this.state.places[0].formatted_address);
+                        this.setState({barberAddress: this.state.places[0].formatted_address,
+                        latitude: this.state.places[0].geometry.location.lat,
+                            longitude: this.state.places[0].geometry.location.lng});
+                        console.log("GooglePlacesAutocomplete lat ", JSON.stringify(this.state.places[0].geometry.location.lng))
+                        console.log("GooglePlacesAutocomplete lng ",  this.state.places[0].geometry.location.lng)
+                        //Preference.set("userAddress", this.state.places[0].formatted_address);
                     } else {
                         Preference.set("userAddress", "");
                     }
@@ -342,6 +349,7 @@ export default class BarberEditProfile extends Component {
                     value={this.state.houseCall}
                     onValueChange={() => this.changeHouseCall()}
                     style={{
+                        transform: [{ scaleX: .8 }, { scaleY: .8 }],
                         position: 'absolute',
                         top: 5,
                         right: 14,
@@ -419,7 +427,7 @@ export default class BarberEditProfile extends Component {
                 imgDataServer.push(response.uri)
                 imageDta.push({portfolio_image: source});
                 this.setState({imagesData: imageDta, imagesDataServer: imgDataServer});
-                console.log("imageData::::",JSON.stringify(this.state.imagesData))
+                console.log("imageData::::", JSON.stringify(this.state.imagesData))
             }
         });
     }
@@ -429,7 +437,7 @@ export default class BarberEditProfile extends Component {
         let imageDta = this.state.imagesData;
         var details = {
             barber_id: Preference.get("userId"),
-            portfolio_image_id:imageDta[indx]._id,
+            portfolio_image_id: imageDta[indx]._id,
         };
         var formBody = [];
         for (var property in details) {
@@ -449,7 +457,7 @@ export default class BarberEditProfile extends Component {
             .then(response => {
                 console.log("responseClientlogin-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
-                    Alert.alert("Success!","Image Deleted Successfully.")
+                    Alert.alert("Success!", "Image Deleted Successfully.")
                     imageDta.splice(indx, 1);
                     this.setState({imagesData: imageDta});
                     console.log("imagesData+ " + JSON.stringify(this.state.imagesData));
@@ -462,7 +470,7 @@ export default class BarberEditProfile extends Component {
             .catch(error => {
                 //console.error('Errorr:', error);
                 console.log('Error:', error);
-                alert("Error: "+error);
+                alert("Error: " + error);
             });
 
     }
@@ -529,7 +537,7 @@ export default class BarberEditProfile extends Component {
             DialogVisible: false
         })} style={{
             width: "100%", borderWidth: 1, height: 50,
-            borderColor: "red", backgroundColor: colors.themeBackground, justifyContent: "center", alignItems: "center"
+            borderColor: "grey", backgroundColor: colors.themeBackground, justifyContent: "center", alignItems: "center"
         }}>
             <Text
                 style={{
@@ -587,8 +595,8 @@ export default class BarberEditProfile extends Component {
                 .then(response => {
                     console.log("responseClientlogin-->", "-" + JSON.stringify(response));
                     if (response.ResultType === 1) {
-                        this.setState({showLoading: false});
-                        alert("Service Added");
+                        this.setState({showLoading: false, serviceName: "", serviceDuration: "", servicePrice: ""});
+                        //alert("Service Added");
                     } else {
                         this.setState({showLoading: false});
                         if (response.ResultType === 0) {
@@ -604,6 +612,17 @@ export default class BarberEditProfile extends Component {
                 });
         } else {
             alert("Minimum duration should be 15 minutes and Minimum price should be $5")
+        }
+    }
+
+    setPriceService(txt) {
+        if (!txt.contain("$")) {
+            //txt=txt.replace("$","");
+            this.setState({servicePrice: "$" + txt})
+        } else {
+            txt = txt.replace("$", "");
+            this.setState({servicePrice: "$" + txt})
+
         }
     }
 
@@ -665,7 +684,6 @@ export default class BarberEditProfile extends Component {
                                         onTouchOutside={() => {
                                             this.setState({DialogBarberName: false});
                                         }}
-                                        dialogStyle={{backgroundColor: colors.themeBackground}}
 
                                         dialog
                                         ref={(popupDialog) => {
@@ -681,7 +699,7 @@ export default class BarberEditProfile extends Component {
                                                     backgroundColor: "white",
                                                     flexDirection: "column",
                                                 }}/>
-                                                <Text style={{fontSize: 16, marginTop: 5, color: "white"}}>Barber
+                                                <Text style={{fontSize: 16, marginTop: 5, color: "black"}}>Barber
                                                     Name</Text>
                                                 <TextInput Color={"white"} placeholder={"Enter Name"}
                                                            placeholderTextColor={"grey"}
@@ -692,7 +710,8 @@ export default class BarberEditProfile extends Component {
                                                            style={{
                                                                fontWeight: "bold",
                                                                fontSize: 16,
-                                                               color: "white"
+                                                               marginTop: 10,
+                                                               color: "black"
                                                            }}/>
 
                                                 <TouchableOpacity
@@ -730,7 +749,6 @@ export default class BarberEditProfile extends Component {
                                         onTouchOutside={() => {
                                             this.setState({DialogBarberShop: false});
                                         }}
-                                        dialogStyle={{backgroundColor: colors.themeBackground}}
 
                                         ref={(popupDialog) => {
                                             this.popupDialog = popupDialog;
@@ -745,7 +763,7 @@ export default class BarberEditProfile extends Component {
                                                     backgroundColor: "white",
                                                     flexDirection: "column",
                                                 }}/>
-                                                <Text style={{fontSize: 16, marginTop: 5, color: "white"}}>Barber Shop
+                                                <Text style={{fontSize: 16, marginTop: 5, color: "black"}}>Barber Shop
                                                     Name</Text>
                                                 <TextInput Color={"white"} placeholder={"Enter Shop Name"}
                                                            placeholderTextColor={"grey"}
@@ -756,7 +774,7 @@ export default class BarberEditProfile extends Component {
                                                            style={{
                                                                fontWeight: "bold",
                                                                fontSize: 16,
-                                                               color: "white"
+                                                               color: "black"
                                                            }}/>
 
                                                 <TouchableOpacity
@@ -795,6 +813,7 @@ export default class BarberEditProfile extends Component {
                                         <PopupDialog
                                             visible={this.state.DialogVisible}
                                             width={0.6}
+                                            height={0.6}
                                             onTouchOutside={() => {
                                                 this.setState({DialogVisible: false});
                                             }}
@@ -803,126 +822,129 @@ export default class BarberEditProfile extends Component {
                                             ref={(popupDialog) => {
                                                 this.popupDialog = popupDialog;
                                             }}>
-                                            <ScrollView>
-                                                <View style={{flexDirection: "column", alignItems: "center"}}>
-                                                    <View style={{
-                                                        width: "100%",
-                                                        height: 0,
-                                                        marginTop: 3,
-                                                        marginBottom: 3,
-                                                        backgroundColor: "black",
-                                                        flexDirection: "column",
-                                                    }}/>
-                                                    <Text style={{fontSize: 18, marginBottom: 20, color: "white"}}>Select
-                                                        Years of Experience</Text>
-                                                    {this.renderYearsRow({
-                                                        exp: "01",
-                                                        exptext: '01'
 
-                                                    })}
-                                                    {this.renderYearsRow({
-                                                        exp: "02",
-                                                        exptext: '02'
+                                            <View style={{flexDirection: "column", alignItems: "center"}}>
+                                                <View style={{
+                                                    width: "100%",
+                                                    height: 0,
+                                                    marginTop: 3,
+                                                    marginBottom: 3,
+                                                    backgroundColor: "black",
+                                                    flexDirection: "column",
+                                                }}/>
+                                                <Text style={{fontSize: 18, marginBottom: 20, color: "white"}}>Select
+                                                    Years of Experience</Text>
+                                                <ScrollView style={{width: "90%",}}>
+                                                    <View style={{width: "100%",marginBottom:60}}>
+                                                        {this.renderYearsRow({
+                                                            exp: "01",
+                                                            exptext: '01'
 
-                                                    })}
-                                                    {this.renderYearsRow({
-                                                        exp: "02",
-                                                        exptext: '02'
+                                                        })}
+                                                        {this.renderYearsRow({
+                                                            exp: "02",
+                                                            exptext: '02'
 
-                                                    })}
-                                                    {this.renderYearsRow({
-                                                        exp: "03",
-                                                        exptext: '03'
+                                                        })}
+                                                        {this.renderYearsRow({
+                                                            exp: "02",
+                                                            exptext: '02'
 
-                                                    })}
-                                                    {this.renderYearsRow({
-                                                        exp: "04",
-                                                        exptext: '04'
+                                                        })}
+                                                        {this.renderYearsRow({
+                                                            exp: "03",
+                                                            exptext: '03'
 
-                                                    })}
-                                                    {this.renderYearsRow({
-                                                        exp: "05",
-                                                        exptext: '05'
+                                                        })}
+                                                        {this.renderYearsRow({
+                                                            exp: "04",
+                                                            exptext: '04'
 
-                                                    })}
-                                                    {this.renderYearsRow({
-                                                        exp: "06",
-                                                        exptext: '06'
+                                                        })}
+                                                        {this.renderYearsRow({
+                                                            exp: "05",
+                                                            exptext: '05'
 
-                                                    })}
-                                                    {this.renderYearsRow({
-                                                        exp: "07",
-                                                        exptext: '07'
+                                                        })}
+                                                        {this.renderYearsRow({
+                                                            exp: "06",
+                                                            exptext: '06'
 
-                                                    })}
-                                                    {this.renderYearsRow({
-                                                        exp: "08",
-                                                        exptext: '08'
+                                                        })}
+                                                        {this.renderYearsRow({
+                                                            exp: "07",
+                                                            exptext: '07'
 
-                                                    })}
-                                                    {this.renderYearsRow({
-                                                        exp: "09",
-                                                        exptext: '09'
+                                                        })}
+                                                        {this.renderYearsRow({
+                                                            exp: "08",
+                                                            exptext: '08'
 
-                                                    })}
-                                                    {this.renderYearsRow({
-                                                        exp: "10",
-                                                        exptext: '10'
+                                                        })}
+                                                        {this.renderYearsRow({
+                                                            exp: "09",
+                                                            exptext: '09'
 
-                                                    })}
-                                                    {this.renderYearsRow({
-                                                        exp: "11",
-                                                        exptext: '11'
+                                                        })}
+                                                        {this.renderYearsRow({
+                                                            exp: "10",
+                                                            exptext: '10'
 
-                                                    })}
-                                                    {this.renderYearsRow({
-                                                        exp: "12",
-                                                        exptext: '12'
+                                                        })}
+                                                        {this.renderYearsRow({
+                                                            exp: "11",
+                                                            exptext: '11'
 
-                                                    })}
-                                                    {this.renderYearsRow({
-                                                        exp: "13",
-                                                        exptext: '13'
+                                                        })}
+                                                        {this.renderYearsRow({
+                                                            exp: "12",
+                                                            exptext: '12'
 
-                                                    })}
-                                                    {this.renderYearsRow({
-                                                        exp: "14",
-                                                        exptext: '14'
+                                                        })}
+                                                        {this.renderYearsRow({
+                                                            exp: "13",
+                                                            exptext: '13'
 
-                                                    })}
-                                                    {this.renderYearsRow({
-                                                        exp: "15",
-                                                        exptext: '15'
+                                                        })}
+                                                        {this.renderYearsRow({
+                                                            exp: "14",
+                                                            exptext: '14'
 
-                                                    })}
-                                                    {this.renderYearsRow({
-                                                        exp: "16",
-                                                        exptext: '16'
+                                                        })}
+                                                        {this.renderYearsRow({
+                                                            exp: "15",
+                                                            exptext: '15'
 
-                                                    })}
-                                                    {this.renderYearsRow({
-                                                        exp: "17",
-                                                        exptext: '17'
+                                                        })}
+                                                        {this.renderYearsRow({
+                                                            exp: "16",
+                                                            exptext: '16'
 
-                                                    })}
-                                                    {this.renderYearsRow({
-                                                        exp: "18",
-                                                        exptext: '18'
+                                                        })}
+                                                        {this.renderYearsRow({
+                                                            exp: "17",
+                                                            exptext: '17'
 
-                                                    })}
-                                                    {this.renderYearsRow({
-                                                        exp: "19",
-                                                        exptext: '19'
+                                                        })}
+                                                        {this.renderYearsRow({
+                                                            exp: "18",
+                                                            exptext: '18'
 
-                                                    })}
-                                                    {this.renderYearsRow({
-                                                        exp: "20",
-                                                        exptext: '20'
+                                                        })}
+                                                        {this.renderYearsRow({
+                                                            exp: "19",
+                                                            exptext: '19'
 
-                                                    })}
+                                                        })}
+                                                        {this.renderYearsRow({
+                                                            exp: "20",
+                                                            exptext: '20'
 
-                                                </View>
-                                            </ScrollView>
+                                                        })}
+                                                    </View>
+                                                </ScrollView>
+                                            </View>
+
                                         </PopupDialog>
                                     </TouchableOpacity>
                                 </View>
@@ -941,39 +963,36 @@ export default class BarberEditProfile extends Component {
                             onTouchOutside={() => {
                                 this.setState({DialogInstaUsername: false});
                             }}>
-                            <ScrollView>
-                                <View style={{flexDirection: "column", alignItems: "center"}}>
-                                    <View style={{
-                                        width: "100%",
-                                        height: 0,
-                                        marginTop: 3,
-                                        marginBottom: 3,
-                                        backgroundColor: "white",
-                                        flexDirection: "column",
-                                    }}/>
-                                    <Text style={{fontSize: 16, marginTop: 5}}>Instagram User
-                                        Name</Text>
-                                    <TextInput Color={"white"} placeholder={"Enter Instagram username"}
-                                               placeholderTextColor={"grey"}
-                                               onChangeText={(text) => this.setState({barberInsta: text})}
-                                               style={{
-                                                   fontWeight: "bold",
-                                                   fontSize: 16,
-                                               }}/>
+                            <View style={{flexDirection: "column", alignItems: "center"}}>
+                                <View style={{
+                                    width: "100%",
+                                    height: 0,
+                                    marginTop: 3,
+                                    marginBottom: 3,
+                                    backgroundColor: "white",
+                                    flexDirection: "column",
+                                }}/>
+                                <Text style={{fontSize: 16, marginTop: 5}}>Instagram Username</Text>
+                                <TextInput Color={"white"} placeholder={"Enter Instagram username"}
+                                           placeholderTextColor={"grey"}
+                                           onChangeText={(text) => this.setState({barberInsta: text})}
+                                           style={{
+                                               fontWeight: "bold",
+                                               fontSize: 16, marginTop: 10
+                                           }}/>
 
-                                    <TouchableOpacity onPress={() => this.setInstagramID()}
-                                                      style={[globalStyles.button, {
-                                                          height: 35,
-                                                          width: "80%",
-                                                          backgroundColor: "red",
-                                                          marginTop: 20,
-                                                          marginBottom: 20,
-                                                      }]}>
-                                        <Text style={{fontSize: 15, fontWeight: "bold", color: "white"}}>{"Save"}</Text>
-                                    </TouchableOpacity>
+                                <TouchableOpacity onPress={() => this.setInstagramID()}
+                                                  style={[globalStyles.button, {
+                                                      height: 35,
+                                                      width: "80%",
+                                                      backgroundColor: "red",
+                                                      marginTop: 20,
+                                                      marginBottom: 20,
+                                                  }]}>
+                                    <Text style={{fontSize: 15, fontWeight: "bold", color: "white"}}>{"Save"}</Text>
+                                </TouchableOpacity>
 
-                                </View>
-                            </ScrollView>
+                            </View>
                         </PopupDialog>
                         <View style={{marginStart: 30, height: 15, marginBottom: 3}}>
                         </View>
@@ -1012,7 +1031,7 @@ export default class BarberEditProfile extends Component {
                                         <Text style={{
                                             fontSize: 11,
                                             marginStart: 3, color: "white"
-                                        }}>{item.duration +" min"}</Text>
+                                        }}>{item.duration + " min"}</Text>
                                     </View>
                                     <View style={{width: "40%", flexDirection: "row", marginTop: 10}}>
                                         <Text style={{
@@ -1023,20 +1042,22 @@ export default class BarberEditProfile extends Component {
                                             fontSize: 11,
                                             marginStart: 3, color: "white"
                                         }}>{"$" + item.price}</Text>
-                                        <TouchableOpacity style={{position:"absolute",right:20}} onPress={() => this.setState({
-                                            DialogEditService: true,
-                                            serviceEditId: item._id,
-                                            serviceName: item.name,
-                                            serviceDuration: item.duration,
-                                            servicePrice: item.price,
-                                            serviceIndex: index,
-                                        })}>
+                                        <TouchableOpacity style={{position: "absolute", right: 20}}
+                                                          onPress={() => this.setState({
+                                                              DialogEditService: true,
+                                                              serviceEditId: item._id,
+                                                              serviceName: item.name,
+                                                              serviceDuration: item.duration,
+                                                              servicePrice: item.price,
+                                                              serviceIndex: index,
+                                                          })}>
                                             <Image style={{
                                                 width: 14,
                                                 height: 14, resizeMode: 'contain'
                                             }} source={require('../../../assets/images/edit.png')}/>
                                         </TouchableOpacity>
-                                        <TouchableOpacity style={{position:"absolute",right:40}} onPress={() => this.deleteService(index)}>
+                                        <TouchableOpacity style={{position: "absolute", right: 40}}
+                                                          onPress={() => this.deleteService(index)}>
                                             <Image style={{
                                                 width: 14, resizeMode: 'contain',
                                                 height: 14,
@@ -1085,6 +1106,7 @@ export default class BarberEditProfile extends Component {
                                            style={{
                                                fontSize: 14,
                                                marginStart: 10,
+                                               marginTop: 10,
                                            }}/>
                                 <TextInput Color={"white"} placeholder={"Enter Duration"}
                                            placeholderTextColor={"grey"}
@@ -1093,7 +1115,8 @@ export default class BarberEditProfile extends Component {
                                            keyboardType={'number-pad'}
                                            style={{
                                                fontSize: 14,
-                                               marginStart: 10
+                                               marginStart: 10,
+                                               marginTop: 10,
                                            }}/>
                                 <TextInput Color={"white"} placeholder={"Enter Price"}
                                            placeholderTextColor={"grey"}
@@ -1102,7 +1125,8 @@ export default class BarberEditProfile extends Component {
                                            keyboardType={'number-pad'}
                                            style={{
                                                fontSize: 14,
-                                               marginStart: 10
+                                               marginStart: 10,
+                                               marginTop: 10,
                                            }}/>
 
                                 <TouchableOpacity
@@ -1165,25 +1189,28 @@ export default class BarberEditProfile extends Component {
                                            onChangeText={(text) => this.setState({serviceName: text})}
                                            style={{
                                                fontSize: 14,
-                                               marginStart: 10
+                                               marginStart: 10,
+                                               marginTop: 10,
                                            }}/>
-                                <TextInput Color={"white"} placeholder={"Enter Duration"}
+                                <TextInput Color={"white"} placeholder={"Enter Duration in minutes"}
                                            placeholderTextColor={"grey"}
                                            value={this.state.serviceDuration}
-                                           onChangeText={(text) => this.setState({serviceDuration: text})}
+                                           onChangeText={(text) => this.setState({serviceDuration: text + "min"})}
                                            keyboardType={'number-pad'}
                                            style={{
                                                fontSize: 14,
-                                               marginStart: 10
+                                               marginStart: 10,
+                                               marginTop: 10,
                                            }}/>
-                                <TextInput Color={"white"} placeholder={"Enter Price"}
+                                <TextInput Color={"white"} placeholder={"Enter Price in $"}
                                            placeholderTextColor={"grey"}
                                            value={this.state.servicePrice}
-                                           onChangeText={(text) => this.setState({servicePrice: text})}
+                                           onChangeText={(text) => this.setPriceService(text)}
                                            keyboardType={'number-pad'}
                                            style={{
                                                fontSize: 14,
-                                               marginStart: 10
+                                               marginStart: 10,
+                                               marginTop: 10,
                                            }}/>
 
                                 <TouchableOpacity

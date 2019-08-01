@@ -79,7 +79,7 @@ export default class Cancellations extends Component {
                 console.log("updateBookingPrefrence-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
                     this.setState({showLoading: false})
-                    alert("Booking preferences updated successfully");
+                    //alert("Booking preferences updated successfully");
                     this.props.navigation.goBack();
                 } else {
                     this.setState({showLoading: false})
@@ -148,50 +148,59 @@ export default class Cancellations extends Component {
     }
 
     checkBox(val) {
-        if (val === "2 Hours Ahead,No Fee, 1 Reschedule") {
-            if (this.state.twoHour === false)
-                this.setState({twoHour: true,oneHour:false,thirtyMin:false})
-           /* else
-                this.setState({twoHour: false})*/
-        } else if (val === "1 Hour Ahead, 15% Fee, 1 Reschedule") {
-            if (this.state.oneHour === false)
-                this.setState({oneHour: true,twoHour: false,thirtyMin:false})
-            /*else
-                this.setState({oneHour: false})*/
-        } else if (val === "30 Minutes Ahead, 25% Fee, 1 Reschedule") {
-            if (this.state.thirtyMin === false)
-                this.setState({thirtyMin: true,twoHour: false,oneHour:false})
-           /* else
-                this.setState({thirtyMin: false})*/
-        } else if (val === "Charge 100%") {
-            if (this.state.bookingPrefrence === false)
-                this.setState({bookingPrefrence: true,cancellationNoShow:false,surgePrice:false})
-           /* else
-                this.setState({bookingPrefrence: false})*/
-        } else if (val === "Charge 75%") {
-            if (this.state.cancellationNoShow === false)
-                this.setState({cancellationNoShow: true,bookingPrefrence: false,surgePrice:false})
-            /*else
-                this.setState({cancellationNoShow: false})*/
-        } else if (val === "Charge 50%") {
-            if (this.state.surgePrice === false)
-                this.setState({surgePrice: true,bookingPrefrence: false,cancellationNoShow:false})
-            /*else
-                this.setState({surgePrice: false})*/
+        if(this.state.policy)
+        {
+            if (val === "2 Hours Ahead,No Fee, 1 Reschedule") {
+                if (this.state.twoHour === false)
+                    this.setState({twoHour: true,oneHour:false,thirtyMin:false})
+                /* else
+                     this.setState({twoHour: false})*/
+            } else if (val === "1 Hour Ahead, 15% Fee, 1 Reschedule") {
+                if (this.state.oneHour === false)
+                    this.setState({oneHour: true,twoHour: false,thirtyMin:false})
+                /*else
+                    this.setState({oneHour: false})*/
+            } else if (val === "30 Minutes Ahead, 25% Fee, 1 Reschedule") {
+                if (this.state.thirtyMin === false)
+                    this.setState({thirtyMin: true,twoHour: false,oneHour:false})
+                /* else
+                     this.setState({thirtyMin: false})*/
+            }
         }
+
+        if(this.state.noShowPolicy)
+        {
+            if (val === "Charge 100%") {
+                if (this.state.bookingPrefrence === false)
+                    this.setState({bookingPrefrence: true,cancellationNoShow:false,surgePrice:false})
+                /* else
+                     this.setState({bookingPrefrence: false})*/
+            } else if (val === "Charge 75%") {
+                if (this.state.cancellationNoShow === false)
+                    this.setState({cancellationNoShow: true,bookingPrefrence: false,surgePrice:false})
+                /*else
+                    this.setState({cancellationNoShow: false})*/
+            } else if (val === "Charge 50%") {
+                if (this.state.surgePrice === false)
+                    this.setState({surgePrice: true,bookingPrefrence: false,cancellationNoShow:false})
+                /*else
+                    this.setState({surgePrice: false})*/
+            }
+        }
+
 
     }
 
     setPolicy() {
         if (this.state.policy === true)
-            this.setState({policy: false})
+            this.setState({policy: false,twoHour: false,oneHour:false,thirtyMin:false})
         else
             this.setState({policy: true})
     }
 
     setNoShowPolicy() {
         if (this.state.noShowPolicy === true)
-            this.setState({noShowPolicy: false})
+            this.setState({noShowPolicy: false,surgePrice: false,bookingPrefrence: false,cancellationNoShow:false})
         else
             this.setState({noShowPolicy: true})
     }
@@ -237,6 +246,7 @@ export default class Cancellations extends Component {
                                    source={require("../../../assets/images/ic_cancellation_policy.png")}/>
                             <Text style={styles.row_title}>Cancellation Policy</Text>
                             <Switch onChange={() => this.setPolicy()} value={this.state.policy} style={{
+                                transform: [{ scaleX: .8 }, { scaleY: .8 }],
                                 position: 'absolute',
                                 right: 14,
                                 alignSelf: 'center',
@@ -253,6 +263,7 @@ export default class Cancellations extends Component {
                             <Image style={styles.leftIcon} source={require("../../../assets/images/ic_no_show.png")}/>
                             <Text style={styles.row_title}>No-Show Policy</Text>
                             <Switch onChange={() => this.setNoShowPolicy()} value={this.state.noShowPolicy} style={{
+                                transform: [{ scaleX: .8 }, { scaleY: .8 }],
                                 position: 'absolute',
                                 right: 14,
                                 alignSelf: 'center',

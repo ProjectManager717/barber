@@ -195,6 +195,28 @@ export default class ClientBarberProfile extends Component {
         }
     }
 
+    componentDidMount() {
+        let items = [];
+        for (i = 0; i < 7; i++) {
+            var weekDate = this.startOfWeek(new Date());
+            var newDate = weekDate.addDays(i);
+            items.push(this.renderWeekDay({k: i, d: newDate}));
+        }
+        let hours = Array.apply(null, Array(46)).map((v, i) => {
+            return {id: i, title: "Title " + i};
+        });
+        console.log("slotsData-->" + JSON.stringify(hours));
+        /*this.setState({
+            dayData: hours,
+            dataSource: items
+        });*/
+        this.setState({
+            dataSource: items
+        });
+        ////////////////////////////////////////////////////////////////////Calender
+        //this.setMonthDays(getmonthh, getYear);
+        this.setMonth();
+    }
 
     getDateToday() {
         let date = new Date();
@@ -275,28 +297,7 @@ export default class ClientBarberProfile extends Component {
         );
     }
 
-    componentDidMount() {
-        let items = [];
-        for (i = 0; i < 7; i++) {
-            var weekDate = this.startOfWeek(new Date());
-            var newDate = weekDate.addDays(i);
-            items.push(this.renderWeekDay({k: i, d: newDate}));
-        }
-        let hours = Array.apply(null, Array(46)).map((v, i) => {
-            return {id: i, title: "Title " + i};
-        });
-        console.log("slotsData-->" + JSON.stringify(hours));
-        /*this.setState({
-            dayData: hours,
-            dataSource: items
-        });*/
-        this.setState({
-            dataSource: items
-        });
-        ////////////////////////////////////////////////////////////////////Calender
-        //this.setMonthDays(getmonthh, getYear);
-        this.setMonth();
-    }
+
 
     addFavoriteBarber() {
         var details = {
@@ -463,7 +464,7 @@ export default class ClientBarberProfile extends Component {
         var details = {
             client_id: Preference.get("userId"),
             barber_id: barberId,
-            selected_services:this.state.selected_services,
+            selected_services:this.state.selectedServices,
             date: this.state.selectedDate,
             selected_slot_id: this.state.selectedSlotIds,
             total_price: this.state.totalPriceService,
@@ -676,6 +677,10 @@ export default class ClientBarberProfile extends Component {
         } else {
             am = "AM";
         }
+        if(waqt[1]<10)
+        {
+            waqt[1]="0"+waqt[1];
+        }
         return waqt[0] + ":" + waqt[1] + " " + am;
     }
 
@@ -799,12 +804,12 @@ export default class ClientBarberProfile extends Component {
         //alert("dayselected " + this.state.selectedDate);
     }
 
-    setMonth() {
+    async setMonth() {
         const input = getmonth + "-19";
         let outt = input.split("-");
         let showmonth = monthNames[outt[0]] + "20" + outt[1];
         this.setState({selectedMonth: input, showMonth: showmonth});
-        this.setMonthDays(input, true);
+        await this.setMonthDays(input, true);
     }
 
     increaseMonth() {
@@ -880,18 +885,28 @@ export default class ClientBarberProfile extends Component {
             }
 
             console.log("Real_date-----> ", realDate);
+            let dayColor = "";
+            let bottomColor = "";
+            if (i === loopstart) {
+                dayColor = "green";
+                bottomColor = "green";
+            } else {
+                dayColor = "#ffffff";
+                bottomColor = "transparent";
+            }
             daysData.push({
                 id: i,
                 day: i,
-                dayColor: "#ffffff",
+                dayColor: dayColor,
                 weekDay: this.getDayOfWeek(realDate),
-                bottomColor: "transparent",
+                bottomColor:bottomColor,
                 dateOfDay: realDate
             })
         }
         let mon = this.state.month[getmonth];
-        this.setState({monthDays: daysData});
+        this.setState({monthDays: daysData,selectedDate: daysData[0].dateOfDay});
         this.getBarberDetails(daysData[0].dateOfDay);
+        //this.selectday(0);
     }
 
     getDayOfWeek(date) {

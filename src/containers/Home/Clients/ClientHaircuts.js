@@ -97,7 +97,6 @@ export default class ClientHaircuts extends Component {
     }
 
     decreaseMonth() {
-
         let selectmonth = this.state.selectedMonth;
         console.log("Monthis", selectmonth);
         selectmonth = selectmonth.split("-");
@@ -316,7 +315,10 @@ export default class ClientHaircuts extends Component {
                             <TouchableOpacity
                                 onPress={() => this.optionSelected("upcoming", this.state.allAppointments)}
                                 style={{
+                                    height:25,
+                                    justifyContent:"center",
                                     marginStart: 10,
+                                    width: "20%",
                                     backgroundColor: this.state.upcomingBack,
                                     borderRadius: 15,
                                     alignItems: "center"
@@ -324,61 +326,55 @@ export default class ClientHaircuts extends Component {
                                 <Text style={{
                                     color: this.state.upcomingtext,
                                     fontSize: 10,
-                                    height: 20,
-                                    marginTop: 5,
-                                    marginStart: 5, marginEnd: 5
                                 }}
                                 >{"UPCOMING"}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
                                 onPress={() => this.optionSelected("complete", this.state.allAppointments)}
                                 style={{
+                                    height:25,
                                     backgroundColor: this.state.completeBack,
                                     borderRadius: 15,
                                     width: "20%",
                                     marginStart: 10,
-                                    alignItems: "center"
+                                    alignItems: "center",
+                                    justifyContent:"center",
+
                                 }}>
                                 <Text style={{
                                     color: this.state.completetext,
                                     fontSize: 10,
-                                    height: 20,
-                                    marginTop: 5,
-                                    textAlign: "center",
-                                    marginStart: 5, marginEnd: 5
                                 }}>{"COMPLETE"}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
                                 onPress={() => this.optionSelected("cancelled", this.state.allAppointments)}
                                 style={{
-
+                                    height:25,
                                     backgroundColor: this.state.cancelledBack,
                                     borderRadius: 15,
                                     width: "25%",
                                     alignItems: "center",
                                     marginStart: 10,
+                                    justifyContent:"center",
                                 }}>
                                 <Text style={{
                                     color: this.state.cancelledtext,
                                     fontSize: 10,
-                                    height: 20,
-                                    marginTop: 5, marginStart: 5, marginEnd: 5
                                 }}>{"CANCELLED"}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => this.optionSelected("all", this.state.allAppointments)}
                                               style={{
+                                                  height:25,
                                                   borderRadius: 15,
                                                   backgroundColor: this.state.allBack,
                                                   width: "18%",
+                                                  alignItems:"center",
+                                                  justifyContent:"center",
                                                   marginStart: 10,
-                                                  alignItems: "center"
                                               }}>
                                 <Text style={{
                                     color: this.state.alltext,
                                     fontSize: 10,
-                                    marginEnd: 5,
-                                    marginTop: 5,
-                                    height: 20, marginStart: 5
                                 }}>{"ALL"}</Text>
                             </TouchableOpacity>
                         </View>

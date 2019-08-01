@@ -10,7 +10,7 @@ import {
     Alert,
     AsyncStorage
 } from 'react-native';
-import {SafeAreaView} from 'react-navigation';
+import {NavigationActions, SafeAreaView, StackActions} from 'react-navigation';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {styles} from './styles';
 import {CloseButton, ImageButton, Input, RedButton} from '../../../components';
@@ -18,6 +18,7 @@ import {checkEmail} from '../../../utils';
 import Preference from 'react-native-preference';
 import {constants} from "../../../utils/constants";
 import firebase from 'react-native-firebase';
+import NotificationPopup from 'react-native-push-notification-popup';
 
 //import * as constants from "../../../utils/constants";
 import {LoginButton, AccessToken, GraphRequest, GraphRequestManager} from 'react-native-fbsdk';
@@ -59,6 +60,7 @@ class SignInScreen extends Component {
     }
 
     componentDidMount(): void {
+
         if (itemId === "Client") {
             if (Preference.get("clientlogin") === true) {
                 this.props.navigation.navigate("ClientTabNavigator");
@@ -77,64 +79,12 @@ class SignInScreen extends Component {
                 '1006799815583-9p41g2vs13dn03lp4j7bkvuiku3gcrtk.apps.googleusercontent.com',
         });
         this.checkPermission();
-        this.createNotificationListeners();
-    }
-
-    ////////////////////// Add these methods //////////////////////
-
-    //Remove listeners allocated in createNotificationListeners()
-    componentWillUnmount() {
-        this.notificationListener();
-        this.notificationOpenedListener();
-    }
-
-    async createNotificationListeners() {
-        /*
-        * Triggered when a particular notification has been received in foreground
-        * */
-        this.notificationListener = firebase.notifications().onNotification((notification) => {
-            const { title, body } = notification;
-            this.showAlert(title, body);
-        });
-
-        /*
-        * If your app is in background, you can listen for when a notification is clicked / tapped / opened as follows:
-        * */
-        this.notificationOpenedListener = firebase.notifications().onNotificationOpened((notificationOpen) => {
-            const { title, body } = notificationOpen.notification;
-            this.showAlert(title, body);
-        });
-
-        /*
-        * If your app is closed, you can check if it was opened by a notification being clicked / tapped / opened as follows:
-        * */
-        const notificationOpen = await firebase.notifications().getInitialNotification();
-        if (notificationOpen) {
-            const { title, body } = notificationOpen.notification;
-            this.showAlert(title, body);
-        }
-        /*
-        * Triggered for data only payload in foreground
-        * */
-        this.messageListener = firebase.messaging().onMessage((message) => {
-            //process data message
-            console.log(JSON.stringify(message));
-        });
-    }
-
-    showAlert(title, body) {
-        Alert.alert(
-            title, body,
-            [
-                { text: 'OK', onPress: () => console.log('OK Pressed') },
-            ],
-            { cancelable: false },
-        );
     }
 
     async checkPermission() {
         const enabled = await firebase.messaging().hasPermission();
         if (enabled) {
+            console.log("fcmToken getting");
             this.getToken();
         } else {
             this.requestPermission();
@@ -143,9 +93,12 @@ class SignInScreen extends Component {
 
     //3
     async getToken() {
-        fcmToken = await AsyncStorage.getItem('fcmToken');
+        console.log("fcmToken getting inside");
+        fcmToken = await Preference.get('fcmToken');
+        console.log("fcmToken getting inside",JSON.stringify(fcmToken));
         if (!fcmToken) {
             fcmToken = await firebase.messaging().getToken();
+            console.log("fcmToken getting inside Got",JSON.stringify(fcmToken));
             if (fcmToken) {
                 // user has a device token
                 console.log("fcmToken: ",fcmToken);
@@ -180,7 +133,7 @@ class SignInScreen extends Component {
             const userInfo = await GoogleSignin.signIn();
             console.log('Google User Info --> ', userInfo);
             this.setState({userInfo: userInfo});
-            this.socialLoginGoogle(this.state.userInfo);
+            this.socialLoginGoogle(userInfo);
 
         } catch (error) {
             console.log('Message', error.message);
@@ -212,6 +165,7 @@ class SignInScreen extends Component {
                     var encodedValue = encodeURIComponent(details[property]);
                     formBody.push(encodedKey + "=" + encodedValue);
                 }
+                this.setState({showLoading:true});
                 formBody = formBody.join("&");
                 fetch(constants.ClientSocialLogin, {
                     method: 'POST',
@@ -223,6 +177,7 @@ class SignInScreen extends Component {
                 }).then(response => response.json())
                     .then(response => {
                         console.log("responseClientlogin-->", "-" + JSON.stringify(response));
+                        this.setState({showLoading:false});
                         if (response.ResultType === 1) {
                             Preference.set({
                                 clientlogin: true,
@@ -240,6 +195,7 @@ class SignInScreen extends Component {
                         }
                     })
                     .catch(error => {
+                        this.setState({showLoading:false});
                         //console.error('Errorr:', error);
                         console.log('Error:', error);
                         alert("Error: "+error);
@@ -264,6 +220,7 @@ class SignInScreen extends Component {
                     var encodedValue = encodeURIComponent(details[property]);
                     formBody.push(encodedKey + "=" + encodedValue);
                 }
+                this.setState({showLoading:true});
                 formBody = formBody.join("&");
                 fetch(constants.BarberSocialLogin, {
                     method: 'POST',
@@ -275,6 +232,7 @@ class SignInScreen extends Component {
                 }).then(response => response.json())
                     .then(response => {
                         console.log("responseBarberlogin-->", "-" + JSON.stringify(response));
+                        this.setState({showLoading:false});
                         if (response.ResultType === 1) {
                             Preference.set({
                                 barberlogin: true,
@@ -292,6 +250,7 @@ class SignInScreen extends Component {
                         }
                     })
                     .catch(error => {
+                        this.setState({showLoading:false});
                         //console.error('Errorr:', error);
                         console.log('Error:', error);
                         alert("Error: "+error);
@@ -534,7 +493,7 @@ class SignInScreen extends Component {
         if (error) {
             alert(JSON.stringify(error))
         } else {
-            alert(JSON.stringify(result))
+           //alert(JSON.stringify(result))
             this.setState({dataFacebook: result});
             this.signinFacebook(this.state.dataFacebook, this.state.accessToken);
         }
@@ -667,10 +626,21 @@ class SignInScreen extends Component {
     }
 
     moveToHome() {
-        if (itemId === "Client")
-            this.props.navigation.navigate("ClientTabNavigator");
-        else {
-            this.props.navigation.navigate("TabNavigator");
+        if (itemId === "Client"){
+
+            const goToIntoScreen = StackActions.reset({
+                index: 0,
+                actions: [NavigationActions.navigate({ routeName: 'ClientTabNavigator' })],
+            });
+            this.props.navigation.dispatch(goToIntoScreen);
+           // this.props.navigation.navigate("ClientTabNavigator");
+        } else {
+            const goToIntoScreen = StackActions.reset({
+                index: 0,
+                actions: [NavigationActions.navigate({ routeName: 'TabNavigator' })],
+            });
+            this.props.navigation.dispatch(goToIntoScreen);
+           // this.props.navigation.navigate("TabNavigator");
         }
     }
 
@@ -698,6 +668,7 @@ class SignInScreen extends Component {
                 style={styles.container}
                 imageStyle={styles.backgroundImg}
             >
+                <NotificationPopup ref={ref => this.popup = ref} />
                 <View style={styles.bottomContainer}/>
                 <SafeAreaView style={styles.parentContainer}>
                     <View style={styles.closeContainer}>

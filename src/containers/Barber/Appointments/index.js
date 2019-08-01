@@ -47,6 +47,7 @@ export default class Appointments extends Component {
                     trackColor="#00D200"
                     thumbColor="#fff"
                     value={true} style={{
+                    transform: [{ scaleX: .8 }, { scaleY: .8 }],
                     position: 'absolute',
                     top: 5,
                     right: 14,

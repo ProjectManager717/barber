@@ -174,7 +174,7 @@ export default class Calendar extends Component {
         );
     }
 
-    componentDidMount() {
+    componentDidMount = () => {
         let items = [];
         for (i = 0; i < 7; i++) {
             var weekDate = this.startOfWeek(new Date());
@@ -196,9 +196,10 @@ export default class Calendar extends Component {
 
         const {navigation} = this.props;
         this.focusListener = navigation.addListener("didFocus", payload => {
-            if (this.state.lastDaySelected === "")
+            if (this.state.lastDaySelected === "") {
                 this.getCalenderSlots(getYear + "-" + parseInt(getmonth + 1) + "-" + getDate);
-            else
+                //this.selectday(0);
+            } else
                 this.getCalenderSlots(this.state.lastDaySelected);
         });
 
@@ -263,10 +264,28 @@ export default class Calendar extends Component {
         });
     }
 
+    showTime(time) {
+        let waqt = time.split(":");
+        let am = "";
+        if (waqt[0] > 11) {
+            waqt[0] = waqt[0] - 12;
+            if (waqt[0] === 0) {
+                waqt[0] = 12;
+            }
+            am = "PM";
+
+        } else {
+            am = "AM";
+        }
+        if (waqt[1] < 10) {
+            waqt[1] = "0" + waqt[1];
+        }
+        return waqt[0] + ":" + waqt[1] + " " + am;
+    }
+
     renderItem(item) {
         console.log("renderItem--->", item.length)
-        if(item.selected_slot_id.length>0)
-        {
+        if (item.selected_slot_id.length > 0) {
             if (this.state.calenderSlots.length > 0) {
                 console.log("calenderSlotslength- > 0");
                 let time = item.selected_slot_id[0].start_time;
@@ -420,7 +439,7 @@ export default class Calendar extends Component {
                                 color: Colors.white,
                                 fontSize: 10
                             }}>
-                                {item.selected_slot_id[0].start_time + " " + AM}
+                                {this.showTime(item.selected_slot_id[0].start_time)}
                             </Text>
                             <View style={{width: 6, backgroundColor: bgc}}/>
                             <View style={{
@@ -460,7 +479,10 @@ export default class Calendar extends Component {
                                                    }}
                                             />
                                             <Text
-                                                style={{color: "#95A2B5", fontSize: 12}}>{" " + timeofSlots + period}</Text>
+                                                style={{
+                                                    color: "#95A2B5",
+                                                    fontSize: 12
+                                                }}>{" " + timeofSlots + period}</Text>
                                             <View style={{
                                                 flexDirection: "column",
                                                 width: 1, height: 13,
@@ -469,7 +491,10 @@ export default class Calendar extends Component {
                                                 marginStart: 10,
                                                 marginEnd: 10
                                             }}/>
-                                            <Text style={{color: "#95A2B5", fontSize: 12}}>{" $" + item.total_price}</Text>
+                                            <Text style={{
+                                                color: "#95A2B5",
+                                                fontSize: 12
+                                            }}>{" $" + item.total_price}</Text>
                                         </View>
                                     </View>
 
@@ -515,7 +540,7 @@ export default class Calendar extends Component {
                                         fontSize: 10
                                     }}
                                 >
-                                    {item.selected_slot_id[0].start_time + " " + AM}
+                                    {this.showTime(item.selected_slot_id[0].start_time)}
                                 </Text>
 
                                 <Text
@@ -527,7 +552,7 @@ export default class Calendar extends Component {
                                         fontSize: 10
                                     }}
                                 >
-                                    {item.selected_slot_id[2].start_time + " " + AM}
+                                    {this.showTime(item.selected_slot_id[2].start_time)}
                                 </Text>
                             </View>
                             <View style={{height: 105, width: 6, backgroundColor: bgc}}/>
@@ -578,7 +603,8 @@ export default class Calendar extends Component {
                                                 marginStart: 10,
                                                 marginEnd: 10
                                             }}/>
-                                            <Text style={{color: "#95A2B5", fontSize: 12}}>{"$" + item.total_price}</Text>
+                                            <Text
+                                                style={{color: "#95A2B5", fontSize: 12}}>{"$" + item.total_price}</Text>
                                         </View>
                                     </View>
 
@@ -623,7 +649,7 @@ export default class Calendar extends Component {
                                         fontSize: 10
                                     }}
                                 >
-                                    {item.selected_slot_id[0].start_time + " " + AM}
+                                    {this.showTime(item.selected_slot_id[0].start_time)}
                                 </Text>
 
                                 <Text
@@ -635,7 +661,7 @@ export default class Calendar extends Component {
                                         fontSize: 10
                                     }}
                                 >
-                                    {item.selected_slot_id[2].start_time + " " + AM}
+                                    {this.showTime(item.selected_slot_id[2].start_time)}
                                 </Text>
                             </View>
 
@@ -686,7 +712,8 @@ export default class Calendar extends Component {
                                                 marginStart: 10,
                                                 marginEnd: 10
                                             }}/>
-                                            <Text style={{color: "#95A2B5", fontSize: 12}}>{"$" + item.total_price}</Text>
+                                            <Text
+                                                style={{color: "#95A2B5", fontSize: 12}}>{"$" + item.total_price}</Text>
                                         </View>
                                     </View>
 
@@ -731,7 +758,7 @@ export default class Calendar extends Component {
                                         fontSize: 10
                                     }}
                                 >
-                                    {item.selected_slot_id[0].start_time + " " + AM}
+                                    {this.showTime(item.selected_slot_id[0].start_time)}
                                 </Text>
 
                                 <Text
@@ -744,7 +771,7 @@ export default class Calendar extends Component {
                                         fontSize: 10
                                     }}
                                 >
-                                    {item.selected_slot_id[2].start_time + " " + AM}
+                                    {this.showTime(item.selected_slot_id[2].start_time)}
                                 </Text>
                                 <Text
                                     style={{
@@ -755,7 +782,7 @@ export default class Calendar extends Component {
                                         fontSize: 10
                                     }}
                                 >
-                                    {item.selected_slot_id[4].start_time + " " + AM}
+                                    {this.showTime(item.selected_slot_id[4].start_time)}
                                 </Text>
                             </View>
                             <View style={{height: 175, width: 6, backgroundColor: bgc}}/>
@@ -805,7 +832,8 @@ export default class Calendar extends Component {
                                                 marginStart: 10,
                                                 marginEnd: 10
                                             }}/>
-                                            <Text style={{color: "#95A2B5", fontSize: 12}}>{"$" + item.total_price}</Text>
+                                            <Text
+                                                style={{color: "#95A2B5", fontSize: 12}}>{"$" + item.total_price}</Text>
                                         </View>
                                     </View>
 
@@ -868,13 +896,13 @@ export default class Calendar extends Component {
         this.getCalenderSlots(monthDaysData[indx].showdate);
     }
 
-    setMonth() {
+    async setMonth() {
         const input = getmonth + "-19";
         console.log("SetMonth---->>>", input);
         let outt = input.split("-");
         let showmonth = monthNames[outt[0]] + "20" + outt[1];
         this.setState({selectedMonth: input, showMonth: showmonth});
-        this.setMonthDays(input, true);
+        await this.setMonthDays(input, true);
     }
 
     increaseMonth() {
@@ -950,84 +978,27 @@ export default class Calendar extends Component {
             }
 
             console.log("Real_date-----> ", realDate);
+            let dayColor = "";
+            let bottomColor = "";
+            if (i === loopstart) {
+                dayColor = "green";
+                bottomColor = "green";
+            } else {
+                dayColor = "#ffffff";
+                bottomColor = "transparent";
+            }
             daysData.push({
                 id: i,
                 day: i,
-                dayColor: "#ffffff",
+                dayColor: dayColor,
                 weekDay: this.getDayOfWeek(realDate),
-                bottomColor: "transparent",
+                bottomColor: bottomColor,
                 showdate: realDate
             })
-            /*if (getDay == 1)
-                daysData.push({
-                    id: i,
-                    day: i,
-                    dayColor: "#ffffff",
-                    weekDay: "Mon",
-                    bottomColor: "transparent",
-                    showdate: realDate
-                })
-            if (getDay == 2)
-                daysData.push({
-                    id: i,
-                    day: i,
-                    dayColor: "#ffffff",
-                    weekDay: "Tue",
-                    bottomColor: "transparent",
-                    showdate: realDate
-                })
-            if (getDay == 3)
-                daysData.push({
-                    id: i,
-                    day: i,
-                    dayColor: "#ffffff",
-                    weekDay: "Wed",
-                    bottomColor: "transparent",
-                    showdate: realDate
-                })
-            if (getDay == 4)
-                daysData.push({
-                    id: i,
-                    day: i,
-                    dayColor: "#ffffff",
-                    weekDay: "Thur",
-                    bottomColor: "transparent",
-                    showdate: realDate
-                })
-            if (getDay == 5)
-                daysData.push({
-                    id: i,
-                    day: i,
-                    dayColor: "#ffffff",
-                    weekDay: "Fri",
-                    bottomColor: "transparent",
-                    showdate: realDate
-                })
-            if (getDay == 6)
-                daysData.push({
-                    id: i,
-                    day: i,
-                    dayColor: "#ffffff",
-                    weekDay: "Sat",
-                    bottomColor: "transparent",
-                    showdate: realDate
-                })
-            if (getDay == 7)
-                daysData.push({
-                    id: i,
-                    day: i,
-                    dayColor: "#ffffff",
-                    weekDay: "Sun",
-                    bottomColor: "transparent",
-                    showdate: realDate
-                })*/
-
-            /*if (getDay === 7)
-                getDay = 1;
-            getDay++;*/
         }
         let mon = this.state.month[getmonth];
         this.setState({monthDays: daysData});
+        this.getCalenderSlots(daysData[0].showdate)
     }
 
     getDayOfWeek(date) {

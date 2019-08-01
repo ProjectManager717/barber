@@ -39,15 +39,19 @@ export default class BarberProfile extends Component {
             barberName: Preference.get("userName"),
             barberImage: require("../../../assets/images/personImage.jpg"),
             barberShopName: Preference.get("userShopname"),
-            barberRating: 5,
-            barberReviews: 17,
+            barberRating: 0,
+            barberReviews: 0,
             ListData:[],
             ListData2:[],
         }
     }
 
     componentDidMount(): void {
-        this.getBarberDetails();
+        const {navigation} = this.props;
+        this.focusListener = navigation.addListener("didFocus", payload => {
+            this.getBarberDetails();
+        });
+        //this.getBarberDetails();
     }
 
     getBarberDetails() {
