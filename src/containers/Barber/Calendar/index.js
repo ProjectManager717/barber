@@ -900,7 +900,7 @@ export default class Calendar extends Component {
         const input = getmonth + "-19";
         console.log("SetMonth---->>>", input);
         let outt = input.split("-");
-        let showmonth = monthNames[outt[0]] + "20" + outt[1];
+        let showmonth = monthNames[outt[0]] + " 20" + outt[1];
         this.setState({selectedMonth: input, showMonth: showmonth});
         await this.setMonthDays(input, true);
     }
@@ -919,7 +919,7 @@ export default class Calendar extends Component {
             console.log("SetMonth---->>>--->", parseInt(outt[0]) + 1);
         }
         console.log("SetMonth---->>>--->", outt[0]);
-        let showmonth = monthNames[outt[0]] + "20" + outt[1];
+        let showmonth = monthNames[outt[0]] + " 20" + outt[1];
         console.log("SetMonth---->>>", showmonth);
         let selectedmonth = outt[0] + "-" + outt[1];
         this.setState({selectedMonth: selectedmonth, showMonth: showmonth});
@@ -937,7 +937,7 @@ export default class Calendar extends Component {
         } else {
             outt[0] = parseInt(outt[0]) - 1;
         }
-        let showmonth = monthNames[outt[0]] + "20" + outt[1];
+        let showmonth = monthNames[outt[0]] + " 20" + outt[1];
         console.log("SetMonth---->>>", showmonth);
         let selectedmonth = outt[0] + "-" + outt[1];
         this.setState({selectedMonth: selectedmonth, showMonth: showmonth});
@@ -1053,7 +1053,6 @@ export default class Calendar extends Component {
                     }}
                 />
                 <View style={{flexDirection: "row", width: "100%", height: 40}}>
-
                     <Text
                         style={{
                             fontFamily: "AvertaStd-Semibold",

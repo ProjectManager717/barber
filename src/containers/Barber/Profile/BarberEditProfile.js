@@ -8,7 +8,7 @@ import {
     ScrollView,
     TouchableOpacity,
     ImageBackground,
-    Dimensions, Alert,
+    Dimensions, Alert,BackHandler,
     FlatList, Picker, TextInput,
 } from "react-native";
 import colors from "../../../themes/colors";
@@ -108,6 +108,11 @@ export default class BarberEditProfile extends Component {
     }
 
     componentDidMount(): void {
+        this.backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+            //this.goBack(); // works best when the goBack is async
+            return true;
+        });
+
         if (this.state.userShopName === "" || this.state.userShopName === null) {
             this.setState({userShopName: "Enter Shop name"})
         }
@@ -210,7 +215,7 @@ export default class BarberEditProfile extends Component {
                 console.log("saveDataForBarberProfile-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
                     this.setState({showLoading: false})
-                    Alert.alert("Success!", "Your Profile updated.");
+                    //Alert.alert("Success!", "Your Profile updated.");
                     if (Preference.get("newUser") === true)
                         this.props.navigation.push("ChooseTimings");
                     else
@@ -1195,7 +1200,7 @@ export default class BarberEditProfile extends Component {
                                 <TextInput Color={"white"} placeholder={"Enter Duration in minutes"}
                                            placeholderTextColor={"grey"}
                                            value={this.state.serviceDuration}
-                                           onChangeText={(text) => this.setState({serviceDuration: text + "min"})}
+                                           onChangeText={(text) => this.setState({serviceDuration: text})}
                                            keyboardType={'number-pad'}
                                            style={{
                                                fontSize: 14,
@@ -1205,7 +1210,7 @@ export default class BarberEditProfile extends Component {
                                 <TextInput Color={"white"} placeholder={"Enter Price in $"}
                                            placeholderTextColor={"grey"}
                                            value={this.state.servicePrice}
-                                           onChangeText={(text) => this.setPriceService(text)}
+                                           onChangeText={(text) =>this.setState({servicePrice: text})}
                                            keyboardType={'number-pad'}
                                            style={{
                                                fontSize: 14,

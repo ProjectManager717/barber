@@ -1,5 +1,16 @@
 import React, {Component} from "react";
-import {View, Text, FlatList, TouchableOpacity, Image, ScrollView, Platform, NetInfo, TextInput} from "react-native";
+import {
+    View,
+    Text,
+    FlatList,
+    TouchableOpacity,
+    Image,
+    ScrollView,
+    Platform,
+    NetInfo,
+    TextInput,
+    BackHandler
+} from "react-native";
 
 import {Header} from "react-native-elements";
 
@@ -127,6 +138,10 @@ export default class ChooseTimings extends Component {
     }
 
     componentDidMount() {
+        this.backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+            //this.goBack(); // works best when the goBack is async
+            return true;
+        });
         this.fetchWorkingHours();
     }
 

@@ -99,7 +99,7 @@ export default class Reviews extends Component {
     }
 
     render() {
-        let ratings = Math.floor(Math.random() * 5 + 1);
+        let ratings = Math.floor(this.state.AverageRating);
         return (
             <View style={styles.container}>
                 <Header
@@ -122,10 +122,10 @@ export default class Reviews extends Component {
                             isDisabled={true}
                             showRating={false}
                             count={5}
-                            defaultRating={this.state.AverageRating}
+                            defaultRating={ratings}
                             size={25}
                         />
-                        <Text style={[styles.rating_text, {fontSize: 16}]}>({this.state.AverageRating} of 5.0)</Text>
+                        <Text style={[styles.rating_text, {fontSize: 16}]}>({ratings} of 5.0)</Text>
                     </View>
                 </View>}
                 {(this.state.reviews.length > 0) && <FlatList

@@ -74,8 +74,8 @@ export default class BarberProfile extends Component {
                         barberShopName: barberData.shop_name,
                         ListData: barberData.portoflios,
                         ListData2: barberData.services,
-                        barberRating: barberData.rating,
-                        barberReviews: barberData.reviews,
+                        barberRating: barberData.average_Rating,
+                        barberReviews: barberData.total_Reviews,
                         barberImage: {uri: barberData.user_image},
                     });
                     let PortfolioImages = this.state.ListData;
@@ -143,7 +143,7 @@ export default class BarberProfile extends Component {
                                 <View style={styles.review}>
                                     <AirbnbRating
                                         showRating={false}
-                                        count={6}
+                                        count={5}
                                         defaultRating={this.state.barberRating}
                                         size={10}
                                         style={{marginStart: 10, height: 30}}
@@ -262,7 +262,7 @@ export default class BarberProfile extends Component {
                                             <Text style={{color: "white", fontSize: 12}}>   {item.name} </Text>
                                         </View>
                                         <View style={[{flexDirection: "row", width: "25%", alignItems: "center"}]}>
-                                            <Text style={{color: "white", fontSize: 12}}>{item.duration}</Text>
+                                            <Text style={{color: "white", fontSize: 12}}>{item.duration+" min"}</Text>
                                         </View>
                                         <View style={[{flexDirection: "row", width: "25%", alignItems: "center"}]}>
                                             <Text style={{color: "white", fontSize: 12}}>{"$"+item.price}</Text>
