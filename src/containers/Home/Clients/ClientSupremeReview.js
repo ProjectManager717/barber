@@ -66,7 +66,7 @@ export default class ClientSupremeReview extends Component {
 
     renderItem(item) {
         let ratings = Math.floor(Math.random() * 5 + 1);
-        let userImage = "http://ec2-3-14-204-57.us-east-2.compute.amazonaws.com:5000/images/client/" + item.client_id.client_image;
+        let userImage = constants.profileImagePath + item.client_id.client_image;
         console.log("Imageuser-->", userImage);
         return (
             <View style={styles.row_item}>
@@ -79,7 +79,7 @@ export default class ClientSupremeReview extends Component {
                             defaultRating={item.rating}
                             size={10}
                         />
-                        <Text style={styles.rating_text}>{item.rating} of 5.0</Text>
+                        <Text style={styles.rating_text}>{item.rating} of 5</Text>
                     </View>
                     <Text style={styles.comments}>
                         {item.review_text}
@@ -95,6 +95,7 @@ export default class ClientSupremeReview extends Component {
 
 
     render() {
+        let ratings = Math.floor(this.state.mainRating);
         return (
             <View style={styles.container}>
                 <Header
@@ -135,10 +136,10 @@ export default class ClientSupremeReview extends Component {
                         <AirbnbRating
                             showRating={false}
                             count={5}
-                            defaultRating={this.state.mainRating}
+                            defaultRating={ratings}
                             size={18}
                         />
-                        <Text style={[styles.rating_text, {fontSize: 16}]}>({this.state.mainRating} of 5.0)</Text>
+                        <Text style={[styles.rating_text, {fontSize: 16}]}>({ratings} of 5)</Text>
                     </View>
                 </View>
 
@@ -371,6 +372,7 @@ export const styles = {
         width: 86
     },
     client_name: {
+        width:"50%",
         marginLeft: 110,
         marginTop: 5,
         fontSize: 16,

@@ -10,7 +10,7 @@ import {constants} from "../../../utils/constants";
 import {SafeAreaView} from "react-navigation";
 var moment = require("moment");
 
-let appointmentId="",clr = "", clientName = "", createdAt = "", startTime = "", endTime = "", price = "", services = "",client_image="",
+let appointmentId="",clr = "",BannerImage="" ,clientName = "", createdAt = "", startTime = "", endTime = "", price = "", services = "",client_image="",
     totalServices = "";
 export default class Appointments extends Component {
 
@@ -26,11 +26,12 @@ export default class Appointments extends Component {
         endTime = navigation.getParam('endtTime');
         price = navigation.getParam('price');
         var m = moment(new Date(createdAt));
-        client_image=navigation.getParam("client_Image")
+        client_image=navigation.getParam("client_Image");
+        BannerImage=navigation.getParam("BannerImage");
         services = navigation.getParam('services');
-        console.log("Servicesss-->",services)
+        console.log("Servicesss-->",services);
         totalServices = services.split(",");
-        createdAt=m.format("DD-MM-YYYY HH:MM:SS");
+        createdAt=m.format("LL");
         console.log("gettingUSersignIn--->" +m.format("DD-MM-YYYY HH:MM:SS"));
         this.state={
             showLoading:false,
@@ -137,7 +138,7 @@ export default class Appointments extends Component {
         if(status==="cancelled")
             Appointmentstatus=5;
         if(status==="noshow")
-            Appointmentstatus=6;
+            Appointmentstatus=2;
         this.setState({showLoading:true})
         var details = {
             appointment_id: appointmentId,
@@ -163,8 +164,7 @@ export default class Appointments extends Component {
                 console.log("responseAddReviews-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
                     this.setState({showLoading:false})
-                    this.setState({showLoading: false});
-                    Alert.alert("Success!","Appointment Status changed successfully.")
+
                     this.props.navigation.goBack();
                 } else {
                     this.setState({showLoading:false})
@@ -209,7 +209,7 @@ export default class Appointments extends Component {
                     <View style={{flexDirection: "column"}}>
                         <View style={{height: 300, width: "100%"}}>
                             <View style={{width: "100%", height: 200}}>
-                                <Image resizeMode={"cover"} source={require("../../../assets/images/banner_surge.png")}
+                                <Image resizeMode={"cover"} source={{uri:BannerImage}}
                                        style={{width: "100%", height: "100%"}}/>
                             </View>
                             <View style={{
@@ -230,7 +230,9 @@ export default class Appointments extends Component {
                             </View>
                         </View>
                         {/*CONFIRMED*/}
-                        {clr === "#00B6FF" &&
+                        {/*clr === "#DF00FF"*/}
+
+                        {(clr === "#DF00FF") &&
                         <View style={{
                             flexDirection: "row",
                             width: "100%",
@@ -238,7 +240,42 @@ export default class Appointments extends Component {
                             backgroundColor: "grey",
                             marginTop: 15
                         }}>
-                            <View style={{width: "33.3%", backgroundColor: "#5BD900", height: "100%"}}>
+                            <View style={{width: "50%", backgroundColor: "#5BD900", height: "100%"}}>
+                                <TouchableOpacity onPress={()=>this.updateAppointment("complete")}>
+                                    {this.renderRowBox({
+                                        img: require("../../../assets/images/tick-2.png"),
+                                        title: "Complete"
+                                    })}
+                                </TouchableOpacity>
+                            </View>
+                            {/*<View style={{width: "33.3%", backgroundColor: "#A5AAAE", height: "100%"}}>
+                                <TouchableOpacity  onPress={()=>this.updateAppointment("noshow")}>
+                                    {this.renderRowBox({
+                                        img: require("../../../assets/images/-.png"),
+                                        title: "No-Show"
+                                    })}
+                                </TouchableOpacity>
+                            </View>*/}
+                            <View style={{width: "50%", backgroundColor: "#F7001E", height: "100%"}}>
+                                <TouchableOpacity  onPress={()=>this.updateAppointment("cancelled")}>
+                                    {this.renderRowBox({
+                                        img: require("../../../assets/images/x.png"),
+                                        title: "Cancel"
+                                    })}
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                        }
+
+                        {(clr === "#00B6FF") &&
+                        <View style={{
+                            flexDirection: "row",
+                            width: "100%",
+                            height: 80,
+                            backgroundColor: "grey",
+                            marginTop: 15
+                        }}>
+                            <View style={{width: "25%", backgroundColor: "#5BD900", height: "100%"}}>
                                 <TouchableOpacity onPress={()=>this.updateAppointment("complete")}>
                                 {this.renderRowBox({
                                     img: require("../../../assets/images/tick-2.png"),
@@ -246,7 +283,7 @@ export default class Appointments extends Component {
                                 })}
                                 </TouchableOpacity>
                             </View>
-                            <View style={{width: "33.3%", backgroundColor: "#A5AAAE", height: "100%"}}>
+                            <View style={{width: "25%", backgroundColor: "#A5AAAE", height: "100%"}}>
                                 <TouchableOpacity  onPress={()=>this.updateAppointment("noshow")}>
                                 {this.renderRowBox({
                                     img: require("../../../assets/images/-.png"),
@@ -254,7 +291,15 @@ export default class Appointments extends Component {
                                 })}
                                 </TouchableOpacity>
                             </View>
-                            <View style={{width: "33.3%", backgroundColor: "#F7001E", height: "100%"}}>
+                            <View style={{width: "25%", backgroundColor: "#DF00FF", height: "100%"}}>
+                                <TouchableOpacity  onPress={()=>this.updateAppointment("inprogress")}>
+                                    {this.renderRowBox({
+                                        img: require("../../../assets/images/loading_purple.gif"),
+                                        title: "In-progress"
+                                    })}
+                                </TouchableOpacity>
+                            </View>
+                            <View style={{width: "25%", backgroundColor: "#F7001E", height: "100%"}}>
                                 <TouchableOpacity  onPress={()=>this.updateAppointment("cancelled")}>
                                 {this.renderRowBox({
                                     img: require("../../../assets/images/x.png"),

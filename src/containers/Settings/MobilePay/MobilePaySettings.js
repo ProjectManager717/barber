@@ -48,8 +48,9 @@ export default class MobilePaySettings extends Component {
         if (itm.hintText === "Last Name") {
             this.setState({lastName: txt});
         }
-        if (itm.hintText === "Date Of Birth (MM/DD/YY)") {
+        if (itm.hintText === "Date Of Birth (MM/DD/YYYY)") {
             this.setState({DOB: txt});
+            Preference.set("userDOB",txt)
         }
         if (itm.hintText === "Personal ID Number") {
             this.setState({personIdNumber: txt});
@@ -84,20 +85,21 @@ export default class MobilePaySettings extends Component {
         return <View style={{flex: 1, flexDirection: 'column', width: "100%"}}>
             <View style={{flexDirection: "row", alignItems: "center"}}>
                 <TextInput
-                    style={{width:"80%",height: 40, color: "#ffffff", marginStart: 50}}
+                    style={{width:"70%",height: 40, color: "#ffffff", marginStart: 50,}}
                     onChangeText={(text) => this.setText(item, text)}
                     placeholder={item.hintText}
                     placeholderTextColor={"#52525D"}
                     value={item.value}
                 />
-                {item.showIC && <Image resizeMode={"contain"} source={require("../../../assets/images/question.png")}
+                 <TouchableOpacity  onPress={()=>alert("PERSONAL ID NUMBER is a NINE-DIGIT number & Country must be AMERICA")} style={{ position: "absolute",
+                     right: 20,}}  >
+                {item.showIC && <Image   resizeMode={"contain"} source={require("../../../assets/images/question.png")}
                                        style={{
                                            width: 20,
                                            height: 20,
-                                           position: "absolute",
-                                           right: 20,
+
                                            visibility: "hidden"
-                                       }}/>}
+                                       }}/>}</TouchableOpacity>
             </View>
             <View style={{height: 0.5, backgroundColor: "#52525D", marginStart: 50}}></View>
         </View>;
@@ -135,11 +137,12 @@ export default class MobilePaySettings extends Component {
 
             let dob=this.state.DOB;
             let dobSplit=dob.split("/");
-            if(dobSplit.length<3)
-            {
+            const REGEX_DOB = /^\d{2}[.\/-]\d{2}[.\/-]\d{4}$/ig;
+            if(!REGEX_DOB.test(dob)){
                 Alert.alert("Error!","Please enter correct date of birth by given format.")
                 return false;
             }
+
             this.setState({showLoading: true})
             var details = {
                 barberEmail: Preference.get("userEmail"),
@@ -178,19 +181,22 @@ export default class MobilePaySettings extends Component {
                     if (response.ResultType === 1) {
                         this.setState({showLoading: false});
                         Preference.set("userMobilePay", true);
-                        Alert.alert("Success!", "MobilePay Setting Saved.");
+                        Alert.alert("Success!", response.Message);
                         //this.props.navigation.navigate("Settings");
                         if (Preference.get("newUser") === true) {
-                            Preference.set("newUser", false);
-                            this.props.navigation.navigate("TabNavigator");
-                        } else {
+                            Preference.set({
+                                MobilePayActivation:response.Data.Mobile_Pay_Activation,
+                            });
+                            this.props.navigation.navigate("Cancellations")}
+                        else {
+                            Preference.set({MobilePayActivation:response.Data.Mobile_Pay_Activation});
                             this.props.navigation.navigate("Settings");
-                            //this.props.navigation.goBack();
+
                         }
                     } else {
                         this.setState({showLoading: false})
                         if (response.ResultType === 0) {
-                            alert(response.Message);
+                            alert(response.Data.message);
                         }
 
                     }
@@ -198,7 +204,8 @@ export default class MobilePaySettings extends Component {
                 //console.error('Errorr:', error);
                 this.setState({showLoading: false})
                 console.log('Error:', error);
-                alert("Error: " + error);
+                alert("Invalid Banking Details" + error);
+
             });
         }
 
@@ -324,7 +331,7 @@ export default class MobilePaySettings extends Component {
                         value: this.state.lastName,
                     })}
                     {this.renderRowInput({
-                        hintText: "Date Of Birth (MM/DD/YY)",
+                        hintText: "Date Of Birth (MM/DD/YYYY)",
                         showIC: false,
                         value: this.state.DOB,
                     })}

@@ -1,8 +1,8 @@
 import React, { Component } from "react";
-import {View, Switch, Text, StyleSheet, Image, ScrollView, TouchableOpacity, Linking} from "react-native";
+import {View, Switch, Text, StyleSheet, Image, ScrollView, TouchableOpacity, Linking,Platform} from "react-native";
 import { Colors } from "../../themes";
 import { globalStyles } from "../../themes/globalStyles";
-
+import {constants} from "../../utils/constants";
 import { NavigationActions, StackActions } from "react-navigation";
 //import { styles } from "./styles";
 import { Header } from "react-native-elements";
@@ -11,7 +11,9 @@ import {GoogleSignin,
     GoogleSigninButton,
     statusCodes,
 } from 'react-native-google-signin';
-
+import firebase from "react-native-firebase";
+const now = new Date();
+var moment = require('moment');
 const FBSDK = require('react-native-fbsdk');
 const {
     LoginManager,
@@ -20,6 +22,64 @@ const {
 
 
 export default class Settings extends Component {
+
+    constructor(props) {
+        super(props);
+        this.state={
+            notificationAlert:Preference.get("AlertNotification"),
+        }
+    }
+
+
+
+
+    async createNotificationListeners() {
+        /*
+        * Triggered when a particular notification has been received in foreground
+        * */
+        this.notificationListener = firebase.notifications().onNotification((notification) => {
+            const { title, body } = notification;
+            this.showAlert(title, body);
+        });
+
+        /*
+        * If your app is in background, you can listen for when a notification is clicked / tapped / opened as follows:
+        * */
+        this.notificationOpenedListener = firebase.notifications().onNotificationOpened((notificationOpen) => {
+            const { title, body } = notificationOpen.notification;
+            this.showAlert(title, body);
+        });
+
+        /*
+        * If your app is closed, you can check if it was opened by a notification being clicked / tapped / opened as follows:
+        * */
+        const notificationOpen = await firebase.notifications().getInitialNotification();
+        if (notificationOpen) {
+            const { title, body } = notificationOpen.notification;
+            this.showAlert(title, body);
+        }
+        /*
+        * Triggered for data only payload in foreground
+        * */
+        this.messageListener = firebase.messaging().onMessage((message) => {
+            //process data message
+            console.log(JSON.stringify(message));
+        });
+    }
+
+    showAlert(title, body) {
+        this.popup.show({
+            onPress: function () {
+                console.log('Pressed --->notification')
+            },
+            appIconSource: require('../../assets/images/logo.png'),
+            appTitle: title,
+            timeText: moment(now).calendar(),
+            title: title,
+            body: body,
+            slideOutTime: 5000
+        });
+    }
   renderRow(item){
     return <View style={{flex:1, flexDirection:'row',height:36}}>
       <Image style={styles.leftIcon} source={item.ic} />
@@ -48,6 +108,60 @@ export default class Settings extends Component {
         }
     };
 
+    Notifications()
+
+    {
+        var Details={
+            barber_id:Preference.get("userId"),
+            notificationAlert:this.state.notificationAlert
+        };
+        var formBody = [];
+        for (var property in Details) {
+            var encodedKey = encodeURIComponent(property);
+            var encodedValue = encodeURIComponent(Details[property]);
+            formBody.push(encodedKey + "=" + encodedValue);
+        }
+        formBody = formBody.join("&");
+        fetch(constants.BarberNotificationAlert, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },body:formBody
+    }).then(response => response.json())
+        .then(response => {
+            console.log("getFavoriteBarbers-->", "-" + JSON.stringify(response));
+            if (response.ResultType === 1) {
+                this.createNotificationListeners();
+                this.setState({notificationAlert:response.Data.notification_alert},()=>{
+                    console.log("NOTiIFICATIONS"+this.state.notificationAlert);
+                })
+            } else {
+                if (response.ResultType === 0) {
+                    alert(response.Message);
+                }
+            }
+        }).catch(error => {
+            //console.error('Errorr:', error);
+            console.log('Error:', error);
+            alert("Error: " + error);
+        });
+
+    }
+    NoticationToggle(){
+              if(this.state.notificationAlert===true)
+            this.setState({notificationAlert:false},()=>{
+                this.Notifications();
+            });
+
+        else {
+            this.setState({notificationAlert:true},()=>{
+                this.Notifications();
+            });
+
+        }
+    }
+
   render() {
     return (
       <View style={styles.container}>
@@ -73,8 +187,9 @@ export default class Settings extends Component {
             {this.renderRow({title:"Edit Account",ic:require("../../assets/images/ic_settings_account.png")})}
               </TouchableOpacity>
             {this.renderSeperator()}
-
+             <TouchableOpacity onPress={()=>this.props.navigation.navigate("ChangePassword")}>
             {this.renderRow({title:"Change Password",ic:require("../../assets/images/ic_settings_lock.png")})}
+             </TouchableOpacity>
             {this.renderSeperator()}
             <TouchableOpacity   onPress={()=>{ this.props.navigation.navigate("Share") }}  >
                 {this.renderRow({title:"Share Profile",ic:require("../../assets/images/share.png")})}
@@ -85,7 +200,7 @@ export default class Settings extends Component {
             <View style={{flex:1, flexDirection:'row',height:36}}>
               <Image style={styles.leftIcon} source={require("../../assets/images/ic_setting_alert.png")} />
               <Text style={styles.row_title} >Alert</Text>
-              <Switch value={true} style={{
+              <Switch onChange={()=>this.NoticationToggle()} value={this.state.notificationAlert} style={{
                   transform: [{ scaleX: .8 }, { scaleY: .8 }],
                 position:'absolute',
                 right:14,
@@ -97,7 +212,8 @@ export default class Settings extends Component {
           <Text style={styles.txtHeader}>PAYMENT</Text>
           <View style={[globalStyles.rowBackground, styles.row]}>
               <TouchableOpacity onPress={()=>{
-                  this.props.navigation.navigate('MobilePay');
+                this.props.navigation.navigate("MobilePay");
+
               }}>
 
           {this.renderRow({title:"Mobile Pay",ic:require("../../assets/images/ic_setting_mobile_pay.png")})}
@@ -136,11 +252,21 @@ export default class Settings extends Component {
           </View>
           <Text style={styles.txtHeader}>SHARE</Text>
             <View style={[globalStyles.rowBackground, styles.row]}>
-                <TouchableOpacity onPress={ ()=>{ Linking.openURL('sms:?&body=Invite Barbers')}}>
+                <TouchableOpacity onPress={ ()=>{if(Platform.OS==="ios"){
+                    return  Linking.openURL('sms:&body=Invite Barbers')
+
+                }else{
+                    return  Linking.openURL('sms:?body=Invite Barbers')
+                }}}>
                     {this.renderRow({title:"Invite Barbers",ic:require("../../assets/images/ic_invite_barbers.png")})}
                 </TouchableOpacity>
                 {this.renderSeperator()}
-                <TouchableOpacity onPress={ ()=>{ Linking.openURL('sms:?&body=Invite Clients')}}>
+                <TouchableOpacity onPress={ ()=>{if(Platform.OS==="ios"){
+                    return  Linking.openURL('sms:&body=Invite Clients')
+
+                }else{
+                    return  Linking.openURL('sms:?body=Invite Clients')
+                }}}>
                     {this.renderRow({title:"Invite Clients",ic:require("../../assets/images/ic_settings_clients.png")})}
                 </TouchableOpacity>
             </View>

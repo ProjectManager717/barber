@@ -7,6 +7,7 @@ import Preference from 'react-native-preference';
 class SplashScreen extends Component {
     constructor(props) {
         super(props);
+        console.disableYellowBox=true;
         this.state = {}
     }
 

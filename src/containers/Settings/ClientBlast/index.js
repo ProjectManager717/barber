@@ -30,8 +30,9 @@ export default class ClientBlast extends Component {
     {
         const {text2} = this.state;
         var details = {
-            sender_id: Preference.get("userId"),
-            notification_text:text2,};
+            barber_id: Preference.get("userId"),
+            notification_text:text2};
+        console.log("Blast Details"+JSON.stringify(details));
         var formBody = [];
         for (var property in details) {
             var encodedKey = encodeURIComponent(property);
@@ -50,7 +51,7 @@ export default class ClientBlast extends Component {
             .then(response => {
                 console.log("responseClientBlast-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
-                    Alert.alert("Success!","Your message was successfully sent to all your clients.");
+                    this.props.navigation.goBack();
                 } else {
                     if (response.ResultType === 0) {
                         alert(response.Message);
@@ -107,13 +108,13 @@ export default class ClientBlast extends Component {
                             }}>
                                 <TextInput style={{
                                     height:"100%",
-                                    fontFamily: "AvertaStd-RegularItalic", width: "100%",
-                                    color: "white", fontSize: 14,marginStart:10
+                                    fontFamily: "AvertaStd-RegularItalic", width: "95%",
+                                    color: "white", fontSize: 14,marginStart:10,textAlign:"left",textAlignVertical: "top"
                                 }}
-                                           multiline={true}
                                            numberOfLines={10}
                                            onChangeText={(text) => this.setState({text2:text})}
                                            placeholder={"Your Message..."}
+                                           multiline={true}
                                            placeholderTextColor={"#9C9CA2"}
                                 />
                             </View>

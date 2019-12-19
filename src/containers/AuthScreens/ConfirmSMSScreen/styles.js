@@ -25,7 +25,7 @@ export const styles = StyleSheet.create({
     marginTop: Metric.height / 30
   },
   whiteText: {
-    ...Metric.font.h4,
+    ...Metric.font.h3,
     color: Colors.white,
     textAlign: 'center',
   },
@@ -43,15 +43,23 @@ export const styles = StyleSheet.create({
   },
   whiteSmallBoldText: {
     ...Metric.font.h5Bold,
-    color: Colors.white
+    color: Colors.white,
+    marginTop:1,
+    marginBottom: 1,
+    marginStart:3,
+    marginEnd:3,
+    textAlign:"center",
+
   },
   whiteSmallText: {
     ...Metric.font.h5,
     color: Colors.white,
   },
   resendButton: {
-    borderBottomColor: Colors.border,
-    borderBottomWidth: 1
+
+    backgroundColor:Colors.red,
+
+    borderRadius:15
   }
 });
 

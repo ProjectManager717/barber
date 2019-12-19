@@ -1,23 +1,22 @@
 import React, {Component} from "react";
 import {
-    View,
-    Switch,
-    Text,
-    StyleSheet,
+    BackHandler,
+    Dimensions,
+    FlatList,
     Image,
     ScrollView,
+    StyleSheet,
+    Switch,
+    Text,
+    TextInput,
     TouchableOpacity,
-    ImageBackground,
-    Dimensions, Alert,BackHandler,
-    FlatList, Picker, TextInput,
+    View,
 } from "react-native";
 import colors from "../../../themes/colors";
 import {globalStyles} from "../../../themes/globalStyles";
 //import { styles } from "./styles";
 import {Header} from "react-native-elements";
-import CheckBoxSquare from "../../../components/CheckBox";
 import ImagePicker from 'react-native-image-picker';
-import {RedButton} from "../../../components/Buttons";
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 import {Colors} from "../../../themes";
 import PopupDialog from 'react-native-popup-dialog';
@@ -33,7 +32,7 @@ const options = {
         //places: [],
     },
 };
-
+  let IFHouseCall;
 export default class BarberEditProfile extends Component {
     constructor(props) {
         super(props);
@@ -48,6 +47,7 @@ export default class BarberEditProfile extends Component {
             imagesDataServer: [],
             barberRating: 0,
             barberReviews: 0,
+            barberBanner: require("../../../assets/images/bannerprofile.png"),
             NoExperience: false,
             barberPackage: "basic",
             houseCall: false,
@@ -68,8 +68,13 @@ export default class BarberEditProfile extends Component {
             serviceIndex: undefined,
             InstaUsername: Preference.get("userInsta"),
             places: [],
-            avatarSource: require("../../../assets/images/personImage.jpg"),
+            ExpericenceImage: "",
+            avatarSource: null,
             avatarForServer: "",
+            bannerForServer: "",
+            houseCallBit:0,
+            experienceForSever: "",
+            DetailedData:[],
             /* ListData: [
                  {
                      id: 1,
@@ -145,7 +150,17 @@ export default class BarberEditProfile extends Component {
                         barberAddress: barberData.location,
                         experience: barberData.experience,
                         serviceIndex: barberData.services.length,
+                        DetailedData:response.Data,
+                        barberBanner: {uri: barberData.banner_image,
+
+                        }
+                    },()=>{
+                        console.log("DetailedData",JSON.stringify(this.state.ListData))
                     });
+
+
+
+
                     let PortfolioImages = this.state.imagesData;
                     console.log("ImagesDataURlLength", PortfolioImages.length);
                     for (let i = 0; i < PortfolioImages.length; i++) {
@@ -160,6 +175,69 @@ export default class BarberEditProfile extends Component {
                     else
                         this.setState({barberPackage: "Supreme"})
                     //this.setState({barberData: response.Data});
+                    if(this.state.DetailedData.house_call_service===1){
+                        const { ListData } = this.state
+                        let houseCallTemp = false
+                        for(let i = 0; i < ListData.length; i++){
+                            if(ListData[i].name === 'Housecall'){
+                                houseCallTemp = true;
+                                break;
+                            }
+                        }
+                        if(houseCallTemp){
+                            this.setState({houseCall: true, houseCallBit: 1});
+
+                        }else{
+                            this.setState({houseCall: false, houseCallBit: 0});
+                        }
+
+
+                    }else{
+                        this.setState({houseCall:false,houseCallBit:0})
+                    }
+                } else {
+                    this.setState({showLoading: false})
+                    if (response.ResultType === 0) {
+                        alert(response.Message);
+                    }
+                }
+            }).catch(error => {
+            //console.error('Errorr:', error);
+            this.setState({showLoading: false})
+            console.log('Error:', error);
+            alert("Error: " + error);
+        });
+    }
+
+    uploadExperienceImages(imageUri) {
+        console.log("getBarberDetails-imageUri->", "-" + JSON.stringify(imageUri));
+        let requestBody = new FormData();
+        requestBody.append("barber_id", Preference.get("userId"));
+        requestBody.append("portfolio_image", {
+            uri: imageUri,
+            name: "experianceImage.png",
+            type: 'image/jpeg'
+        })
+        this.setState({showLoading: true})
+        fetch(constants.ExperienceImages, {
+            method: 'POST',
+            body: requestBody,
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'multipart/form-data',
+            }
+        }).then(response => response.json())
+            .then(response => {
+                console.log("uploadExperianceImage-->", "-" + JSON.stringify(response));
+                this.setState({showLoading: false})
+                if (response.ResultType === 1) {
+                    const sourceImage = imageUri;
+                    let imgDataServer = this.state.imagesDataServer;
+                    let imageDta = this.state.imagesData;
+                    imgDataServer.push(imageUri)
+                    imageDta.push({portfolio_image: constants.portfolioImagePath+response.Data.portfolio_image});
+                    this.setState({imagesData: imageDta, imagesDataServer: imgDataServer});
+                    //alert(JSON.stringify(response))
                 } else {
                     this.setState({showLoading: false})
                     if (response.ResultType === 0) {
@@ -182,17 +260,29 @@ export default class BarberEditProfile extends Component {
         requestBody.append("shop_name", this.state.barberShopName);
         requestBody.append("experience", this.state.experience)
         requestBody.append("location", this.state.barberAddress)
-        requestBody.append("house_call", 0)
+        requestBody.append("house_call_service", this.state.houseCallBit)
         requestBody.append("username", this.state.barberInsta)
-        requestBody.append("lat", this.state.latitude)
-        requestBody.append("long", this.state.longitude)
-        for (let i = 0; i < this.state.imagesDataServer.length; i++) {
-            requestBody.append("portfolio_image", {
-                uri: this.state.imagesDataServer[i],
-                name: "protfoliosAvatar.png",
-                type: 'image/jpeg'
+
+        console.log("locationMy", "-" + this.state.latitude);
+        if (this.state.latitude === null || this.state.latitude === undefined || this.state.latitude === "") {
+
+            this.setState({latitude: 0, longitude: 0}, () => {
+                console.log("locationnn", "-" + this.state.latitude);
+                requestBody.append("lat", this.state.latitude)
+                requestBody.append("long", this.state.longitude)
             })
+        } else {
+            requestBody.append("lat", this.state.latitude)
+            requestBody.append("long", this.state.longitude)
         }
+
+        // for (let i = 0; i < this.state.imagesDataServer.length; i++) {
+        //     requestBody.append("portfolio_image", {
+        //         uri: this.state.imagesDataServer[i],
+        //         name: "protfoliosAvatar.png",
+        //         type: 'image/jpeg'
+        //     })
+        // }
         if (this.state.avatarForServer) {
             requestBody.append("user_image", {
                 uri: this.state.avatarForServer,
@@ -200,6 +290,14 @@ export default class BarberEditProfile extends Component {
                 type: 'image/jpeg'
             })
         }
+        if (this.state.bannerForServer) {
+            requestBody.append("banner_image", {
+                uri: this.state.bannerForServer,
+                name: "BannerImage.png",
+                type: 'image/jpeg'
+            })
+        }
+
 
         console.log("SendingData::", JSON.stringify(requestBody));
         this.setState({showLoading: true});
@@ -214,12 +312,28 @@ export default class BarberEditProfile extends Component {
             .then(response => {
                 console.log("saveDataForBarberProfile-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
-                    this.setState({showLoading: false})
-                    //Alert.alert("Success!", "Your Profile updated.");
-                    if (Preference.get("newUser") === true)
-                        this.props.navigation.push("ChooseTimings");
-                    else
-                        this.props.navigation.goBack();
+                    this.setState({showLoading: false});
+                    if(IFHouseCall===true){
+                        console.log("HouseCall::","true")
+                        this.setState({showLoading: false});
+                        if (Preference.get("newUser") === true)
+                            this.props.navigation.push("ChooseTimings");
+                        else
+                            this.props.navigation.goBack();
+
+                    }else{
+                        console.log("HouseCall::","false")
+                        if (Preference.get("newUser") === true){
+                            console.log("HouseCall::","user True")
+                            this.props.navigation.push("ChooseTimings");
+                        } else{
+                            console.log("HouseCall::","user false")
+                            this.props.navigation.goBack();
+                        }
+
+                    }
+
+
 
                     /*if (Preference.get("newUser") === true)
                         this.props.navigation.push("Subscription")
@@ -227,30 +341,119 @@ export default class BarberEditProfile extends Component {
                         this.props.navigation.goBack();*/
 
                 } else {
+                    console.log("HouseCall::","else")
                     this.setState({showLoading: false})
                     if (response.ResultType === 0) {
-                        alert(response.Message);
+
                     }
                 }
             }).catch(error => {
             this.setState({showLoading: false})
-            //console.error('Errorr:', error);
             console.log('Error:', error);
             alert("Error: " + error);
         });
         //console.log("OutPutData::",details);
     }
 
+    selectImage3 = () => {
+        //alert("hello");
+        ImagePicker.showImagePicker(options, (response) => {
+            console.log('Response = ', response);
+
+            if (response.didCancel) {
+                console.log('User cancelled image picker');
+            } else if (response.error) {
+                console.log('ImagePicker Error: ', response.error);
+            } else if (response.customButton) {
+                console.log('User tapped custom button: ', response.customButton);
+            } else {
+                const source = {uri: response.uri};
+
+                // You can also display the image using data:
+                // const source = { uri: 'data:image/jpeg;base64,' + response.data };
+
+                this.setState({
+                    barberBanner: source, bannerForServer: response.uri
+                });
+            }
+        });
+    };
+
     changeHouseCall() {
-        console.log("housecall clicked");
-        if (this.state.barberPackage === "Basic") {
+        IFHouseCall=true;
+        if (this.state.houseCall === true){
+
+
+            const { ListData } = this.state
+            let houseCallTemp = false
+            for(let i = 0; i < ListData.length; i++){
+                if(ListData[i].name === 'Housecall'){
+                    houseCallTemp = true;
+                    break;
+                }
+            }
+
+            if(houseCallTemp){
+                this.setState({houseCall: true, houseCallBit: 1});
+                alert("Delete houseCall Service to turn it off ");
+
+            }else{
+                this.setState({houseCall: false, houseCallBit: 0});
+            }
+
+            console.log("HOUSECALL SERVICE"+JSON.stringify(houseCallTemp))
+        }
+        else{
+        if (!(this.state.DetailedData.supreme_barber === true)) {
             alert("To activate this feature please get Supreme Membership.");
         } else {
-            if (this.state.houseCall === true)
-                this.setState({houseCall: false, houseCallBit: 0})
-            else
-                this.setState({houseCall: true, houseCallBit: 1})
+            if(!(this.state.DetailedData.surge_pricing===1)){
+                alert("To activate this feature please turn Surge Pricing ON .")
+            }else{
+                if(!(this.state.DetailedData.housecall===1)){
+                   alert("please Turn Housecall service ON in Surge Settings")
+
+                }else{
+                    const { ListData } = this.state
+                    let item = null
+                    for(let i = 0; i < ListData.length; i++){
+                        if(ListData[i].name === 'Housecall'){
+                            alert("HouseCall is ON ");
+                            this.setState({houseCall: true, houseCallBit: 1});
+                            break;
+                        }else{
+                            this.setState({houseCall: false, houseCallBit: 0});
+                            break;
+                        }
+                    }
+
+                        this.setState({houseCall: true, houseCallBit: 1,serviceName:"Housecall",serviceDuration:this.state.DetailedData.surge_duration ,servicePrice:this.state.DetailedData.surge_price },()=>{
+                            console.log("HOUSECALL DATA => Name"+this.state.serviceName+"Duration"+this.state.serviceDuration+"Prize"+this.state.servicePrice)
+                            this.addServiceData();
+                        })
+                }
+
+            }
+
         }
+    }}
+
+    renderBannerImage() {
+        return (
+            <TouchableOpacity onPress={this.selectImage3} style={{
+                width: "90%",
+                justifyContent: 'center',
+                alignItems: 'center',
+                borderRadius: 5,
+                borderColor: "red",
+                borderWidth: 1,
+                marginStart: 20
+            }}>
+                <Image resizeMode={"stretch"} source={this.state.barberBanner}
+                       style={{width: "90%", height: 100, borderRadius: 5, marginTop: 10}}/>
+                <Text style={{textAlign: "center", fontWeight: 'bold', color: "white",}}>{"Edit Banner"}</Text>
+            </TouchableOpacity>
+        )
     }
 
     renderGooglePlacesInput = () => {
@@ -260,9 +463,9 @@ export default class BarberEditProfile extends Component {
                 minLength={2} // minimum length of text to search
                 autoFocus={false}
                 returnKeyType={'search'} // Can be left out for default return key https://facebook.github.io/react-native/docs/textinput.html#returnkeytype
-                listViewDisplayed='false'    // true/false/undefined
+                listViewDisplayed='true'    // true/false/undefined
                 fetchDetails={true}
-                renderDescription={row => row.description} // custom description render
+                renderDescription={row => row.description|| row.vicinity} // custom description render
                 onPress={(data, details = null,) => { // 'details' is provided when fetchDetails = true
                     console.log("GooglePlacesAutocomplete" + JSON.stringify(data));
                     console.log("GooglePlacesAutocomplete" + JSON.stringify(details));
@@ -272,21 +475,32 @@ export default class BarberEditProfile extends Component {
                     this.state.places.push(details);
                     this.setState({places: this.state.places});
                     if (this.state.places.length > 0) {
-                        this.setState({barberAddress: this.state.places[0].formatted_address,
-                        latitude: this.state.places[0].geometry.location.lat,
-                            longitude: this.state.places[0].geometry.location.lng});
+                        this.setState({
+                            barberAddress: this.state.places[0].formatted_address,
+                            latitude: this.state.places[0].geometry.location.lat,
+                            longitude: this.state.places[0].geometry.location.lng
+                        });
                         console.log("GooglePlacesAutocomplete lat ", JSON.stringify(this.state.places[0].geometry.location.lng))
-                        console.log("GooglePlacesAutocomplete lng ",  this.state.places[0].geometry.location.lng)
-                        //Preference.set("userAddress", this.state.places[0].formatted_address);
+                        console.log("GooglePlacesAutocomplete lng ", this.state.places[0].geometry.location.lng)
+                        Preference.set("userAddress", this.state.places[0].formatted_address);
                     } else {
                         Preference.set("userAddress", "");
                     }
                     //console.log("hello2" + JSON.stringify(this.state.places[0].formatted_address));
                 }}
-                getDefaultValue={() => this.state.barberAddress}
+                getDefaultValue={() =>{
+                    if(Preference.get("userAddress")===undefined)
+                    {
+                        return ""
+                    }else
+                    {
+                        return Preference.get("userAddress")
+                    }
+                } }
                 query={{
                     // available options: https://developers.google.com/places/web-service/autocomplete
-                    key: 'AIzaSyD5YuagFFL0m0IcjCIvbThN25l0m2jMm2w',
+                   // key: 'AIzaSyD5YuagFFL0m0IcjCIvbThN25l0m2jMm2w',
+                     key: 'AIzaSyD5YuagFFL0m0IcjCIvbThN25l0m2jMm2w',
                     language: 'en', // language of the results
                     types: '(cities)' // default: 'geocode'
                 }}
@@ -319,6 +533,8 @@ export default class BarberEditProfile extends Component {
                 currentLocationLabel="Current location"
                 nearbyPlacesAPI='GooglePlacesSearch' // Which API to use: GoogleReverseGeocoding or GooglePlacesSearch
                 GoogleReverseGeocodingQuery={{
+                    rankby: 'distance',
+                    types: 'food'
                     // available options for GoogleReverseGeocoding API : https://developers.google.com/maps/documentation/geocoding/intro
                 }}
                 GooglePlacesSearchQuery={{
@@ -354,7 +570,7 @@ export default class BarberEditProfile extends Component {
                     value={this.state.houseCall}
                     onValueChange={() => this.changeHouseCall()}
                     style={{
-                        transform: [{ scaleX: .8 }, { scaleY: .8 }],
+                        transform: [{scaleX: .8}, {scaleY: .8}],
                         position: 'absolute',
                         top: 5,
                         right: 14,
@@ -425,14 +641,20 @@ export default class BarberEditProfile extends Component {
             } else if (response.customButton) {
                 console.log('User tapped custom button: ', response.customButton);
             } else {
-                const source = response.uri;
-                console.log("URII:::", response.uri);
-                let imageDta = this.state.imagesData;
-                let imgDataServer = this.state.imagesDataServer;
-                imgDataServer.push(response.uri)
-                imageDta.push({portfolio_image: source});
-                this.setState({imagesData: imageDta, imagesDataServer: imgDataServer});
-                console.log("imageData::::", JSON.stringify(this.state.imagesData))
+                const source = {uri: response.uri};
+
+                this.uploadExperienceImages(response.uri);
+                this.setState({ExpericenceImage: source, experienceForSever: response.uri}, () => {
+                    console.log("ExperienceImages", this.state.ExpericenceImage);
+                });
+
+                // console.log("URII:::", response.uri);
+                // let imageDta = this.state.imagesData;
+                // let imgDataServer = this.state.imagesDataServer;
+                // imgDataServer.push(response.uri)
+                // imageDta.push({portfolio_image: source});
+                // this.setState({imagesData: imageDta, imagesDataServer: imgDataServer});
+                // console.log("imageData::::", JSON.stringify(this.state.imagesData))
             }
         });
     }
@@ -451,18 +673,16 @@ export default class BarberEditProfile extends Component {
             formBody.push(encodedKey + "=" + encodedValue);
         }
         formBody = formBody.join("&");
-        fetch(constants.BarbersDeleteImage, {
+        fetch(constants.BarbersDeleteImage+"?"+"barber_id="+Preference.get("userId")+"&"+"portfolio_image_id="+imageDta[indx]._id, {
             method: 'DELETE',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: formBody
+            }
         }).then(response => response.json())
             .then(response => {
-                console.log("responseClientlogin-->", "-" + JSON.stringify(response));
+                console.log("responseClientloginDELTE-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
-                    Alert.alert("Success!", "Image Deleted Successfully.")
+
                     imageDta.splice(indx, 1);
                     this.setState({imagesData: imageDta});
                     console.log("imagesData+ " + JSON.stringify(this.state.imagesData));
@@ -481,13 +701,14 @@ export default class BarberEditProfile extends Component {
     }
 
     setServiceData() {
-        if (parseInt(this.state.serviceDuration) >= 15 && parseInt(this.state.servicePrice) < 5) {
+        if (parseInt(this.state.serviceDuration) >= 15 && parseInt(this.state.servicePrice) >= 5) {
             let indx = this.state.serviceIndex;
             this.setState({DialogEditService: false});
             let services = this.state.ListData;
             services[indx].service_type = this.state.serviceName;
             services[indx].duration_type = this.state.serviceDuration;
             services[indx].prize_type = this.state.servicePrice;
+
             this.setState({ListData: services, showLoading: true});
 
 
@@ -497,6 +718,7 @@ export default class BarberEditProfile extends Component {
                 duration: this.state.serviceDuration,
                 price: this.state.servicePrice
             };
+            console.log("SERVICE Dtails "+ JSON.stringify(details) );
             var formBody = [];
             for (var property in details) {
                 var encodedKey = encodeURIComponent(property);
@@ -537,10 +759,14 @@ export default class BarberEditProfile extends Component {
     }
 
     renderYearsRow(item) {
-        return <TouchableOpacity onPress={() => this.setState({
-            experience: item.exp,
-            DialogVisible: false
-        })} style={{
+        return <TouchableOpacity onPress={() => {
+            this.setState({
+                    experience: item.exp,
+                    DialogVisible: false
+                }
+            )
+        }
+        } style={{
             width: "100%", borderWidth: 1, height: 50,
             borderColor: "grey", backgroundColor: colors.themeBackground, justifyContent: "center", alignItems: "center"
         }}>
@@ -558,10 +784,34 @@ export default class BarberEditProfile extends Component {
 
     }
 
-    deleteService(idx) {
-        let services = this.state.ListData;
+    deleteService(item) {
+
+        console.log('deleteService', JSON.stringify(item))
+
+ /*       let services = this.state.ListData;
         services.splice(idx, 1);
-        this.setState({ListData: services});
+        this.setState({ListData: services});*/
+        fetch(constants.ServiceDelete + "?barber_id=" + Preference.get("userId") +"&service_id=" +item._id , {
+            method: 'DELETE',
+            headers: {
+                'Accept': 'application/json',
+            }
+        }).then(response => response.json())
+            .then(response => {
+                console.log("getFavoriteBarbers-->", "-" + JSON.stringify(response));
+                if (response.ResultType === 1) {
+                    alert(response.Message)
+                    this.getBarberDetails();
+                } else {
+                    if (response.ResultType === 0) {
+                        alert(response.Message);
+                    }
+                }
+            }).catch(error => {
+            //console.error('Errorr:', error);
+            console.log('Error:', error);
+            alert("Error: " + error);
+        });
     }
 
     addServiceData() {
@@ -601,7 +851,9 @@ export default class BarberEditProfile extends Component {
                     console.log("responseClientlogin-->", "-" + JSON.stringify(response));
                     if (response.ResultType === 1) {
                         this.setState({showLoading: false, serviceName: "", serviceDuration: "", servicePrice: ""});
-                        //alert("Service Added");
+                         //this.saveData();
+                        this.getBarberDetails();
+
                     } else {
                         this.setState({showLoading: false});
                         if (response.ResultType === 0) {
@@ -779,7 +1031,8 @@ export default class BarberEditProfile extends Component {
                                                            style={{
                                                                fontWeight: "bold",
                                                                fontSize: 16,
-                                                               color: "black"
+                                                               color: "black",
+                                                               marginTop: 10,
                                                            }}/>
 
                                                 <TouchableOpacity
@@ -840,55 +1093,51 @@ export default class BarberEditProfile extends Component {
                                                 <Text style={{fontSize: 18, marginBottom: 20, color: "white"}}>Select
                                                     Years of Experience</Text>
                                                 <ScrollView style={{width: "90%",}}>
-                                                    <View style={{width: "100%",marginBottom:60}}>
+                                                    <View style={{width: "100%", marginBottom: 60}}>
                                                         {this.renderYearsRow({
-                                                            exp: "01",
-                                                            exptext: '01'
+                                                            exp: "1",
+                                                            exptext: '1'
+
+                                                        })}
+
+                                                        {this.renderYearsRow({
+                                                            exp: "2",
+                                                            exptext: '2'
 
                                                         })}
                                                         {this.renderYearsRow({
-                                                            exp: "02",
-                                                            exptext: '02'
+                                                            exp: "3",
+                                                            exptext: '3'
 
                                                         })}
                                                         {this.renderYearsRow({
-                                                            exp: "02",
-                                                            exptext: '02'
+                                                            exp: "4",
+                                                            exptext: '4'
 
                                                         })}
                                                         {this.renderYearsRow({
-                                                            exp: "03",
-                                                            exptext: '03'
+                                                            exp: "5",
+                                                            exptext: '5'
 
                                                         })}
                                                         {this.renderYearsRow({
-                                                            exp: "04",
-                                                            exptext: '04'
+                                                            exp: "6",
+                                                            exptext: '6'
 
                                                         })}
                                                         {this.renderYearsRow({
-                                                            exp: "05",
-                                                            exptext: '05'
+                                                            exp: "7",
+                                                            exptext: '7'
 
                                                         })}
                                                         {this.renderYearsRow({
-                                                            exp: "06",
-                                                            exptext: '06'
+                                                            exp: "8",
+                                                            exptext: '8'
 
                                                         })}
                                                         {this.renderYearsRow({
-                                                            exp: "07",
-                                                            exptext: '07'
-
-                                                        })}
-                                                        {this.renderYearsRow({
-                                                            exp: "08",
-                                                            exptext: '08'
-
-                                                        })}
-                                                        {this.renderYearsRow({
-                                                            exp: "09",
-                                                            exptext: '09'
+                                                            exp: "9",
+                                                            exptext: '9'
 
                                                         })}
                                                         {this.renderYearsRow({
@@ -1062,13 +1311,12 @@ export default class BarberEditProfile extends Component {
                                             }} source={require('../../../assets/images/edit.png')}/>
                                         </TouchableOpacity>
                                         <TouchableOpacity style={{position: "absolute", right: 40}}
-                                                          onPress={() => this.deleteService(index)}>
+                                                          onPress={() => this.deleteService(this.state.ListData[index])}>
                                             <Image style={{
                                                 width: 14, resizeMode: 'contain',
                                                 height: 14,
                                             }} source={require('../../../assets/images/delete.png')}/>
                                         </TouchableOpacity>
-
                                     </View>
                                 </View>
                                 {item.showLine && <View style={{height: 0.5, backgroundColor: "#868791"}}/>}
@@ -1210,7 +1458,7 @@ export default class BarberEditProfile extends Component {
                                 <TextInput Color={"white"} placeholder={"Enter Price in $"}
                                            placeholderTextColor={"grey"}
                                            value={this.state.servicePrice}
-                                           onChangeText={(text) =>this.setState({servicePrice: text})}
+                                           onChangeText={(text) => this.setState({servicePrice: text})}
                                            keyboardType={'number-pad'}
                                            style={{
                                                fontSize: 14,
@@ -1271,7 +1519,7 @@ export default class BarberEditProfile extends Component {
                             horizontal={true}
                             renderItem={({item, index}) =>
                                 <View style={{width: 100, height: 140, marginStart: 10}}>
-                                    <Image source={{uri: item.portfolio_image}}
+                                    <Image source={{uri:item.portfolio_image}}
                                            style={{borderRadius: 10, width: 100, height: 140}}
                                            resizeMode={"contain"}/>
                                     <TouchableOpacity style={{position: "absolute", top: 5, right: 5}}
@@ -1294,8 +1542,13 @@ export default class BarberEditProfile extends Component {
                             >Add New Pictures</Text>}
                         </View>
                     </View>
+                    {this.renderBannerImage()}
                     <View style={{justifyContent: 'center', alignItems: "center", width: "100%"}}>
-                        <TouchableOpacity onPress={() => this.saveData()} style={[globalStyles.button, {
+                        <TouchableOpacity onPress={() =>{
+                            IFHouseCall=false;
+                            this.saveData()
+
+                        } } style={[globalStyles.button, {
                             height: 35,
                             width: 250,
                             backgroundColor: "red",
@@ -1407,7 +1660,9 @@ const styles = StyleSheet.create({
         width: width / 3,
         borderRadius: width / 6,
         justifyContent: "flex-end",
-        alignItems: "flex-end"
+        alignItems: "flex-end",
+        borderWidth: 1,
+        borderColor: "white",
     },
     infoContainer: {
         flexDirection: "column",

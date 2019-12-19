@@ -3,20 +3,21 @@ import { Colors, Metric } from '../../../themes';
 
 export const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+    backgroundColor:Colors.themeBackground,
+
   },
-  backgroundImg: {
-    resizeMode: 'stretch'
-  },
+
   parentContainer: {
     flex: 1
   },
   closeContainer: {
     alignItems: 'flex-end',
     marginRight: Metric.marginHorizontal,
+    marginBottom:20
   },
   mainContainer: {
-    marginTop: Metric.height / 8,
+
     paddingHorizontal: Metric.marginHorizontal,
   },
   whiteBoldBigText: {

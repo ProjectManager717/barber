@@ -1,5 +1,16 @@
 import React, {Component} from "react";
-import {View, Switch, Text, StyleSheet, Image, ScrollView, TouchableOpacity, TextInput, Alert} from "react-native";
+import {
+    View,
+    Switch,
+    Text,
+    StyleSheet,
+    Image,
+    ScrollView,
+    TouchableOpacity,
+    TextInput,
+    Alert,
+    BackHandler
+} from "react-native";
 import {Colors} from "../../../themes";
 import {globalStyles} from "../../../themes/globalStyles";
 import PopupDialog from 'react-native-popup-dialog';
@@ -31,6 +42,10 @@ export default class SurgePricing extends Component {
     }
 
     componentDidMount(): void {
+        this.backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+            //this.goBack(); // works best when the goBack is async
+            return true;
+        });
         this.getSurgePricing()
     }
 
@@ -96,11 +111,15 @@ export default class SurgePricing extends Component {
                 console.log("updateBookingPrefrence-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
                     this.setState({showLoading: false});
-                    alert("Surge Pricing updated successfully");
-                    if (Preference.get("newUser") === true)
+                    /*if (Preference.get("newUser") === true)
                         this.props.navigation.push("BookingPreferences");
-                    else
-                        this.props.navigation.goBack();
+                    else*/
+                        if(response.Message==="Surge Price Only Update For Supreme Barber"){
+                            alert(response.Message)
+                        }else{
+                            this.props.navigation.goBack();
+                        }
+
                 } else {
                     this.setState({showLoading: false})
                     if (response.ResultType === 0) {
@@ -126,7 +145,7 @@ export default class SurgePricing extends Component {
             }
         }).then(response => response.json())
             .then(response => {
-                console.log("responseBookingPrefrence-->", "-" + JSON.stringify(response));
+                console.log("responseSurgePricing-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
                     this.setState({showLoading: false});
                     let prefrence = response.Data;
@@ -163,14 +182,12 @@ export default class SurgePricing extends Component {
     }
 
     setSurgePrice() {
-        if (Preference.get("userPackage") === "basic") {
-            this.setState({DialogSurgePrice: true})
-        } else {
+
             if (this.state.surgePrice === true)
                 this.setState({surgePrice: false,holidays:false,birthday:false,anyDayAfter10:false,houseCall:false})
             else
                 this.setState({surgePrice: true})
-        }
+
 
     }
 
@@ -200,18 +217,17 @@ export default class SurgePricing extends Component {
             }
         }
 
-    }
+}
 
     renderRowWithCheck(item) {
         return <TouchableOpacity onPress={()=>this.checkBox(item.title)} style={{flex: 1, flexDirection: 'row', height: 22, marginLeft: 40}}>
             <CheckBoxSquare rightText={item.title} onClick={() => this.checkBox(item.title)} rightText={item.title} isChecked={item.value} style={{width:160}}/>
            {/* <Text style={[styles.row_title, {fontSize: item.fontSize}]}>{item.title}</Text>*/}
-            {(item.title === "Birthday") &&
-            <Text style={[styles.row_title, {fontSize: 14}]}>{"- " + Preference.get("userDOB")}</Text>}
+
 
             {item.infoIcon && <TouchableOpacity onPress={() => Alert.alert(
                 'Holidays', " New Years, Valentines Day, Easter, Cinco de Mayo, 4th of July, Memorial Day, Labor Day, Halloween, Thanksgiving, Christmas")}>
-                <Image style={{marginStart: 10, width: 16, height: 16, marginTop: 3}}
+                <Image style={{ width: 16, height: 16, }}
                        source={require("../../../assets/images/info.png")}/>
             </TouchableOpacity>}
         </TouchableOpacity>;
@@ -355,7 +371,7 @@ export default class SurgePricing extends Component {
                                     }}/>
                                     {/* <Text>Radious Limit</Text>*/}
                                     <View style={{flexDirection: "row"}}>
-                                        <Text style={{fontSize: 15, color: "black", marginTop: 12}}>Radious
+                                        <Text style={{fontSize: 15, color: "black", marginTop: 12}}>Radius
                                             Limit :</Text>
                                         <TextInput
                                             onChangeText={(text) => this.setState({radiousLimit: text})}
@@ -363,7 +379,7 @@ export default class SurgePricing extends Component {
                                             fontSize={17}
                                             keyboardType="numeric"
                                             maxLength={5}
-                                            placeholder={"Radoius Limit"}
+                                            placeholder={"Radius Limit"}
                                             autoFocus={true}
                                         />
                                     </View>

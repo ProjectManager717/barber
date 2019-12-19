@@ -14,9 +14,9 @@ export const globalStyles = {
     flexDirection: "row",
     margin: 1
   },
-  buttonText: { 
-    color: "white", 
-    fontSize: 15, 
+  buttonText: {
+    color: "white",
+    fontSize: 15,
     marginTop:4,
     fontFamily: "AvertaStd-ExtraBold",
     alignSelf:"center",
@@ -30,6 +30,16 @@ export const globalStyles = {
   button: {
     width: width / 2.2,
     backgroundColor: "#FF0000",
+    justifyContent: "center",
+    alignSelf: "center",
+    borderRadius: 30,
+    height: height / 17,
+    alignItems: "center",
+
+  },
+  button2: {
+    width: width / 2.2,
+    backgroundColor:Colors.gray,
     justifyContent: "center",
     alignSelf: "center",
     borderRadius: 30,

@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {View, Switch, Text, StyleSheet, Image, ScrollView, TouchableOpacity, TouchableHighlight} from "react-native";
+import {View, Switch, Text, StyleSheet, Image, ScrollView, TouchableOpacity, TouchableHighlight,TouchableWithoutFeedback} from "react-native";
 import {Colors} from "../../../themes";
 import {globalStyles} from "../../../themes/globalStyles";
 //import { styles } from "./styles";
@@ -7,9 +7,12 @@ import {Header} from "react-native-elements";
 import CheckBoxSquare from "../../../components/CheckBox";
 
 import Preference from "react-native-preference";
+import {constants} from "../../../utils/constants";
 
 export default class Subscription extends Component {
     state = {
+        showLoading:false,
+        SubscriptionInfo:[],
         basic: {
             basicBgColor: "#686975",
             basicBorderColor: "white",
@@ -33,11 +36,8 @@ export default class Subscription extends Component {
     }
 
     componentDidMount(): void {
-        console.log("PackageBarber",Preference.get("supremeBarber"))
-        if (Preference.get("supremeBarber"))
-            this._selectedSupreme();
-        else
-            this._selectedBasic();
+         this.SubscriptionInfo();
+
     }
 
     _selectedBasic() {
@@ -60,6 +60,7 @@ export default class Subscription extends Component {
                 supremeCheck: require("../../../assets/images/radio_unselected.png"),
             },
             SelectedBasic: true,
+            SelectedSupreme:false,
 
         });
     }
@@ -84,30 +85,146 @@ export default class Subscription extends Component {
                 supremeCheck: require("../../../assets/images/radio_selected.png"),
             },
             SelectedSupreme: true,
+            SelectedBasic: false,
         });
     }
 
-    Onsubmit() {
+      Onsubmit() {
         if (Preference.get("newUser") === true) {
             if (this.state.SelectedBasic === true) {
-                Preference.set("userPackage", "basic")
+                Preference.set("userPackage", "basic");
+                 this.CancelSubscription();
                 this.props.navigation.navigate("BookingPreferences");
             } else if (this.state.SelectedSupreme === true) {
-                Preference.set("userPackage", "supreme")
-                this.props.navigation.navigate("SurgePricing")
+                if(this.state.SubscriptionInfo.account_subscription_type===2&&this.state.SubscriptionInfo.supreme_barber===true){
+                    alert("You are already a Supreme User");
+                    this.props.navigation.navigate("BookingPreferences");
+                    Preference.set("userPackage", "supreme");
+                }else{
+                    this.props.navigation.navigate("BarberPaymentMethod")}
             }
         } else {
             if (this.state.SelectedBasic === true) {
-                Preference.set("userPackage", "basic")
+                Preference.set("userPackage", "basic");
+                 this.CancelSubscription();
                 this.props.navigation.goBack()
             } else if (this.state.SelectedSupreme === true) {
-                Preference.set("userPackage", "supreme")
-                this.props.navigation.navigate("PaymentMethod")
+                if(this.state.SubscriptionInfo.account_subscription_type===2&&this.state.SubscriptionInfo.supreme_barber===true){
+                    alert("You are already a Supreme User");
+                    Preference.set("userPackage", "supreme");
+                }else{
+                    this.props.navigation.navigate("BarberPaymentMethod")}
+
             }
         }
 
 
     }
+
+    SubscriptionInfo(){
+
+            this.setState({showLoading:true});
+            var details = {
+                barberID:Preference.get("userId")
+            };
+            console.log("userid----->"+JSON.stringify(details));
+
+            var formBody = [];
+            for (var property in details) {
+                var encodedKey = encodeURIComponent(property);
+                var encodedValue = encodeURIComponent(details[property]);
+                formBody.push(encodedKey + "=" + encodedValue);
+            }
+            formBody = formBody.join("&");
+            fetch(constants.BarberSubscriptionInfo, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: formBody
+            }).then(response => response.json())
+                .then(response => {
+                    console.log("responsePaymentCard-->", "-" + JSON.stringify(response));
+                    this.setState({showLoading:false});
+                    if (response.ResultType === 1) {
+                        this.setState({SubscriptionInfo:response.Data},()=>{
+                            console.log("SUBCRIPTIOn INfo"+JSON.stringify(this.state.SubscriptionInfo))})
+                        if (this.state.SubscriptionInfo.supreme_barber===true &&this.state.SubscriptionInfo.account_subscription_type===2 ){
+                            this._selectedSupreme();
+                        }
+                        else {
+                            this._selectedBasic();
+                        }
+
+
+                    } else {
+                        if (response.ResultType === 0) {
+                            alert(response.Message);
+
+                        }
+                    }
+                })
+                .catch(error => {
+                    //console.error('Errorr:', error);
+                    console.log('Error:', error);
+                    this.setState({showLoading:false})
+                    alert("Error: "+error);
+                });
+
+        }
+
+
+    CancelSubscription(){
+
+        this.setState({showLoading:true});
+        var details = {
+            barberEmail:Preference.get("userEmail"),
+            accountSubscriptionType:1,
+            supremeBarber:false
+        };
+        console.log("userid----->"+JSON.stringify(details));
+
+        var formBody = [];
+        for (var property in details) {
+            var encodedKey = encodeURIComponent(property);
+            var encodedValue = encodeURIComponent(details[property]);
+            formBody.push(encodedKey + "=" + encodedValue);
+        }
+        formBody = formBody.join("&");
+        fetch(constants.CancelBarberSubscription, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: formBody
+        }).then(response => response.json())
+            .then(response => {
+                console.log("responsePaymentCard-->", "-" + JSON.stringify(response));
+                this.setState({showLoading:false});
+                if (response.ResultType === 1) {
+                    alert("Basic Subscription Activated");
+                   this.SubscriptionInfo();
+
+
+                } else {
+                    if (response.ResultType === 0) {
+                        //alert(response.Message);
+
+                    }
+                }
+            })
+            .catch(error => {
+                //console.error('Errorr:', error);
+                console.log('Error:', error);
+                this.setState({showLoading:false});
+                //alert("Error: "+error);
+            });
+
+    }
+
+
 
     render() {
         return (<View style={styles.container}>
@@ -172,7 +289,7 @@ export default class Subscription extends Component {
                                     color: "white",
                                 }}>{"BASIC"}</Text>
                             </View>
-                            <TouchableHighlight onPress={() => this._selectedBasic()}>
+                            <TouchableWithoutFeedback onPress={() => this._selectedBasic()}>
                                 <View style={{
                                     backgroundColor: this.state.basic.mainBgColor,
                                     width: "90%",
@@ -222,7 +339,7 @@ export default class Subscription extends Component {
                                            }}
                                     />
                                 </View>
-                            </TouchableHighlight>
+                            </TouchableWithoutFeedback>
 
                             <View style={{
                                 width: "30%",
@@ -245,7 +362,7 @@ export default class Subscription extends Component {
                                 }}>SUPREME</Text>
 
                             </View>
-                            <TouchableHighlight onPress={() => this._selectedSupreme()}>
+                            <TouchableWithoutFeedback onPress={() => this._selectedSupreme()}>
                                 <View style={{
                                     backgroundColor: this.state.supreme.supremeMainBgColor,
                                     width: "90%",
@@ -296,7 +413,7 @@ export default class Subscription extends Component {
                                     />
 
                                 </View>
-                            </TouchableHighlight>
+                            </TouchableWithoutFeedback>
 
                             <TouchableOpacity onPress={() => this.Onsubmit()}
                                               style={[globalStyles.button, {
@@ -309,7 +426,7 @@ export default class Subscription extends Component {
                                 <Text style={globalStyles.buttonText}>SUBMIT</Text>
 
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => alert("Your subscription has been cancelled")}
+                            <TouchableOpacity onPress={() => this.CancelSubscription()}
                                               style={{bottom: 20, marginBottom: 40}}>
                                 <Text style={{color: "grey", fontSize: 12}}>I'd Like to Cancel My Membership</Text>
                             </TouchableOpacity>
@@ -319,6 +436,18 @@ export default class Subscription extends Component {
 
                     </View>
                 </ScrollView>
+                {this.state.showLoading && <View style={{
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor: "transparent",
+                    position: "absolute",
+                    opacity: 1,
+                    alignItems: "center",
+                    justifyContent: "center"
+                }}>
+                    <Image resizeMode={"contain"} source={require("../../../assets/images/loading.gif")}
+                           style={{width: 60, height: 60, opacity: 1,}}/>
+                </View>}
             </View>
         );
     }

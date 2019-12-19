@@ -17,7 +17,7 @@ import {Header, AirbnbRating} from "react-native-elements";
 import CheckBoxSquare from "../../../components/CheckBox";
 import {constants} from "../../../utils/constants";
 import Preference from "react-native-preference";
-
+var moment = require('moment');
 let appointmentId = "";
 export default class ReceiptCancelled extends Component {
 
@@ -69,7 +69,7 @@ export default class ReceiptCancelled extends Component {
                     this.setState({
                         invoiceNo: recieptData.invoice_no,
                         invoiceDate: receptDate[0],
-                        invoiceTime: "12:00am",
+                        invoiceTime: moment(recieptData.cancal_date_time).format("LT"),
                         barberName: recieptData.barber_firstname +" "+recieptData.barber_lastname ,
                         barberShopName: recieptData.barber_shop_name,
                         barberLocation:recieptData.location,
@@ -172,7 +172,7 @@ export default class ReceiptCancelled extends Component {
                         <Text style={styles.txtHeader}>CANCELLED</Text>
                         <View style={{width: "85%", flexDirection: "row", marginStart: 30,marginEnd:30}}>
                             <Text
-                                style={{ color: "white", justifyContent: "flex-start", fontSize: 12}}>Invoice
+                                style={{ color: "white", justifyContent: "flex-start", fontSize: 10}}>Invoice
                                 No.{this.state.invoiceNo}</Text>
                             <Text style={{
                                 color: "white",
@@ -276,7 +276,7 @@ export default class ReceiptCancelled extends Component {
                                     fontSize: 14,
                                     width: "75%",
                                     marginStart: 10,
-                                }}>{"Dani Alvez (Client) "}</Text>
+                                }}>{this.state.barberName}</Text>
                             <View style={{width: "100%", flexDirection: 'row', height: 36}}>
                                 <Text style={{
                                     color: "white",
@@ -290,11 +290,12 @@ export default class ReceiptCancelled extends Component {
                                 <Text style={{
                                     color: "white",
                                     width: "55%",
+                                    marginStart:20,
                                     textAlign: "center",
                                     fontSize: 14,
                                     //backgroundColor:"red",
                                     marginTop: 10
-                                }}>{"2nd September at 10:00 AM"}</Text>
+                                }}>{this.state.invoiceDate+" "+this.state.invoiceTime}</Text>
                             </View>
                         </View>
                     </View>

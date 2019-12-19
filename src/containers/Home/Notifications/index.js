@@ -8,14 +8,15 @@ import {Avatar} from "react-native-elements";
 import Preference from "react-native-preference";
 import {constants} from "../../../utils/constants";
 import {Header, AirbnbRating} from "react-native-elements";
-
+var moment = require("moment");
 export default class Notifications extends Component {
     constructor() {
         super();
         this.state = {
             dataSource: {},
             Notifications: [],
-            NoNotification: false
+            NoNotification: false,
+
         };
     }
 
@@ -43,7 +44,9 @@ export default class Notifications extends Component {
             .then(response => {
                 console.log("responsegetNotifications-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
-                    this.setState({Notifications: response.Data})
+                    this.setState({Notifications: response.Data.reverse()},()=>{
+                        console.log("NotificationData"+JSON.stringify(this.state.Notifications))
+                    })
                 } else {
                     if (response.ResultType === 0) {
                         alert(response.Message);
@@ -69,14 +72,11 @@ export default class Notifications extends Component {
         );
     };
 
-    renderRowNotification(item) {
+    renderRowNotification(item,index) {
         let imagePath = "";
         let bgTitle="";
         let textColorTitle="";
         let timeDate=item.createdAt;
-        timeDate=timeDate.split("T");
-        let realTime=timeDate[1];
-        realTime=realTime.split(":");
         if (item.notification_type === "New Booking") {
             imagePath = require("../../../assets/images/new_booking.png");
             bgTitle="#563E2D";
@@ -92,7 +92,7 @@ export default class Notifications extends Component {
             bgTitle="#235731";
             textColorTitle="#30D121";
         }
-        if (item.notification_type === "New Customer") {
+        if (item.notification_type === "New Client") {
             imagePath = require("../../../assets/images/new_customer.png");
             bgTitle="#612163";
             textColorTitle="#E206BA";
@@ -112,199 +112,208 @@ export default class Notifications extends Component {
             bgTitle="#21546E";
             textColorTitle="#219CD5";
         }
-
-        if (item.notification_type === "New Review") {
-            return (<View style={{height: 160, flexDirection: "row"}}>
-                <View style={{marginLeft: 10, flexDirection: "column"}}>
-                    <View
-                        style={{
-                            width: 1,
-                            alignSelf: "center",
-                            backgroundColor: Colors.border,
-                            height: 30
-                        }}/>
-                    <View style={styles.circular_container}>
-                        <Image
-                            resizeMode="stretch"
-                            source={imagePath}
-                            style={{height: 30, width: 30, alignSelf: "center"}}/>
-                    </View>
-                    <View
-                        style={{
-                            width: 1,
-                            alignSelf: "center",
-                            backgroundColor: Colors.border,
-                            height: 70
-                        }}/>
-                </View>
-                <View style={{flexDirection: "column", marginTop: 30, height: 100}}>
-                    <View style={{flexDirection: "row", height: 60}}>
-                        <Image
-                            source={{uri:item.client_image}}
+        if(index<8)
+        {
+            if (item.notification_type === "New Review") {
+                return (<View style={{height: 160, flexDirection: "row"}}>
+                    <View style={{marginLeft: 10, flexDirection: "column",}}>
+                        <View
                             style={{
-                                marginLeft: 10,
-                                height: 50,
-                                borderRadius:30,
-                                width: 50
-                            }}
-                        />
-                        <Text style={[styles.client_name,{marginBottom:10}]}>
-                            {item.client_firstname+" "+item.client_lastname}
+                                width: 1,
+                                alignSelf: "center",
+                                backgroundColor: Colors.border,
+                                marginTop:25
+                            }}/>
+                        <View style={styles.circular_container}>
+                            <Image
+                                resizeMode="stretch"
+                                source={imagePath}
+                                style={{height: 30, width: 30, alignSelf: "center"}}/>
+                        </View>
+                        <View
+                            style={{
+                                width: 1,
+                                alignSelf: "center",
+                                backgroundColor: Colors.border,
+                                height: 100
+                            }}/>
+                    </View>
+                    <View style={{flexDirection: "column", marginTop: 30, height: 100}}>
+                        <View style={{flexDirection: "row", height: 60}}>
+                            <Image
+                                source={{uri:item.client_image}}
+                                style={{
+                                    marginLeft: 10,
+                                    height: 50,
+                                    borderRadius:30,
+                                    width: 50
+                                }}
+                            />
+                            <Text style={[styles.client_name,{marginBottom:10}]}>
+                                {item.client_firstname+" "+item.client_lastname}
+                            </Text>
+                        </View>
+                        <View style={{flexDirection: "row",marginStart:10}}>
+                            <Image source={require("../../../assets/images/chair.png")}
+                                   resizeMode={"contain"}
+                                   style={{
+                                       height: 12,
+                                       width: 12,
+                                       marginTop: 3
+
+                                   }}
+                            />
+                            <Text
+                                style={{color: "#95A2B5", fontSize: 12}}>{moment(timeDate).format("LT")}</Text>
+                            <View style={{
+                                flexDirection: "column",
+                                width: 1, height: 13,
+                                backgroundColor: "grey",
+                                marginStart: 10,
+                                marginEnd: 10
+                            }}/>
+                            <AirbnbRating
+                                isDisabled={true}
+                                showRating={false}
+                                count={5}
+
+                                defaultRating={item.rating}
+                                size={10}
+                            />
+                            <Text style={[styles.rating_text, {fontSize: 12,color:"white"}]}>{""} </Text>
+
+                        </View>
+                        <Text style={[styles.rating_text, {fontSize: 12,color:"white",marginStart:10,marginTop:10}]}>{item.review_text} </Text>
+                    </View>
+
+                    <View style={{
+                        flexDirection: "column",
+                        marginLeft: 10,
+                        marginTop: 15}}/>
+
+                    <View style={{position: "absolute", right: 10, top: 20}}>
+                        <View style={[styles.status_container,{backgroundColor:bgTitle}]}>
+                            <Text
+                                style={{
+                                    alignSelf: "center",
+                                    fontSize: 13,
+                                    fontWeight:"bold",
+                                    marginTop: 4,
+                                    color: textColorTitle
+                                }}>{item.notification_type}</Text>
+                        </View>
+                        <Text style={styles.time_ago}>
+                            {moment(timeDate).format("MM/DD/YYYY")}
                         </Text>
                     </View>
-                    <View style={{flexDirection: "row",marginStart:10}}>
-                        <Image source={require("../../../assets/images/chair.png")}
-                               resizeMode={"contain"}
-                               style={{
-                                   height: 12,
-                                   width: 12,
-                                   marginTop: 3
-
-                               }}
-                        />
-                        <Text
-                            style={{color: "#95A2B5", fontSize: 12}}>{" "+realTime[0]+":"+realTime[1]}</Text>
-                        <View style={{
-                            flexDirection: "column",
-                            width: 1, height: 13,
-                            backgroundColor: "grey",
-                            marginStart: 10,
-                            marginEnd: 10
-                        }}/>
-                        <AirbnbRating
-                            isDisabled={true}
-                            showRating={false}
-                            count={5}
-                            defaultRating={3}
-                            size={10}
-                        />
-                        <Text style={[styles.rating_text, {fontSize: 12,color:"white"}]}>{" 3 of 5"} </Text>
-                    </View>
-                    <Text style={[styles.rating_text, {fontSize: 12,color:"white",marginStart:10,marginTop:10}]}>{" Your cutting was very good."} </Text>
-                </View>
-
-                <View style={{
-                    flexDirection: "column",
-                    marginLeft: 10,
-                    marginTop: 15}}/>
-
-                <View style={{position: "absolute", right: 10, top: 20}}>
-                    <View style={[styles.status_container,{backgroundColor:bgTitle}]}>
-                        <Text
+                    <View style={{
+                        position: "absolute",
+                        bottom: 1,
+                        left: 80,
+                        right: 0,
+                        height: 0.5,
+                        backgroundColor: Colors.border
+                    }}/>
+                </View>);
+            }else
+            {
+                return (<View style={{height: 140, flexDirection: "row"}}>
+                    <View style={{marginLeft: 10, flexDirection: "column"}}>
+                        <View
                             style={{
+                                width: 1,
                                 alignSelf: "center",
-                                fontSize: 13,
-                                fontWeight:"bold",
-                                marginTop: 4,
-                                color: textColorTitle
-                            }}>{item.notification_type}</Text>
-                    </View>
-                    <Text style={styles.time_ago}>
-                        {timeDate[0]}
-                    </Text>
-                </View>
-                <View style={{
-                    position: "absolute",
-                    bottom: 1,
-                    left: 80,
-                    right: 0,
-                    height: 0.5,
-                    backgroundColor: Colors.border
-                }}/>
-            </View>);
-        }else {
-            return (<View style={{height: 140, flexDirection: "row"}}>
-                <View style={{marginLeft: 10, flexDirection: "column"}}>
-                    <View
-                        style={{
-                            width: 1,
-                            alignSelf: "center",
-                            backgroundColor: Colors.border,
-                            height: 30
-                        }}/>
-                    <View style={styles.circular_container}>
-                        <Image
-                            resizeMode="stretch"
-                            source={imagePath}
-                            style={{height: 30, width: 30, alignSelf: "center"}}/>
-                    </View>
-                    <View
-                        style={{
-                            width: 1,
-                            alignSelf: "center",
-                            backgroundColor: Colors.border,
-                            height: 70
-                        }}/>
-                </View>
-                <View style={{flexDirection: "column", marginTop: 30, height: 100}}>
-                    <View style={{flexDirection: "row", height: 60}}>
-                        <Image
-                            source={{uri:item.client_image}}
+                                backgroundColor: Colors.border,
+                                marginTop:25
+
+                            }}/>
+                        <View style={styles.circular_container}>
+                            <Image
+                                resizeMode="stretch"
+                                source={imagePath}
+                                style={{height: 30, width: 30, alignSelf: "center"}}/>
+                        </View>
+                        <View
                             style={{
-                                marginLeft: 10,
-                                height: 50,
-                                borderRadius:30,
-                                width: 50
-                            }}
-                        />
-                        <Text style={[styles.client_name,{marginBottom:10}]}>
-                            {item.client_firstname+" "+item.client_lastname}
+                                width: 1,
+                                alignSelf: "center",
+                                backgroundColor: Colors.border,
+                                height: 80
+                            }}/>
+                    </View>
+                    <View style={{flexDirection: "column", marginTop: 30, height: 100}}>
+                        <View style={{flexDirection: "row", height: 60}}>
+                            <Image
+                                source={{uri:item.client_image}}
+                                style={{
+                                    marginLeft: 10,
+                                    height: 50,
+                                    borderRadius:30,
+                                    width: 50
+                                }}
+                            />
+                            <Text style={[styles.client_name,{marginBottom:10}]}>
+                                {item.client_firstname+" "+item.client_lastname}
+                            </Text>
+                        </View>
+                        <View style={{flexDirection: "row",marginStart:10}}>
+                            <Image source={require("../../../assets/images/chair.png")}
+                                   resizeMode={"contain"}
+                                   style={{
+                                       height: 12,
+                                       width: 12,
+                                       marginTop: 3
+
+                                   }}
+                            />
+                            <Text
+                                style={{color: "#95A2B5", fontSize: 12}}>{moment(timeDate).format("LT")}</Text>
+                            <View style={{
+                                flexDirection: "column",
+                                width: 1, height: 13,
+                                marginTop: 3,
+                                backgroundColor: "grey",
+                                marginStart: 10,
+                                marginEnd: 10
+                            }}/>
+                            <Text style={{color: "#95A2B5", fontSize: 12}}>{"$"+item.price}</Text>
+                        </View>
+                    </View>
+
+                    <View style={{
+                        flexDirection: "column",
+                        marginLeft: 10,
+                        marginTop: 15}}/>
+
+                    <View style={{position: "absolute", right: 10, top: 20}}>
+                        <View style={[styles.status_container,{backgroundColor:bgTitle}]}>
+                            <Text
+                                style={{
+                                    alignSelf: "center",
+                                    fontSize: 13,
+                                    fontWeight:"bold",
+                                    marginTop: 4,
+                                    color: textColorTitle
+                                }}>{item.notification_type}</Text>
+                        </View>
+                        <Text style={styles.time_ago}>
+                            {moment(timeDate).format("MM/DD/YYYY")}
                         </Text>
                     </View>
-                    <View style={{flexDirection: "row",marginStart:10}}>
-                        <Image source={require("../../../assets/images/chair.png")}
-                               resizeMode={"contain"}
-                               style={{
-                                   height: 12,
-                                   width: 12,
-                                   marginTop: 3
+                    <View style={{
+                        position: "absolute",
+                        bottom: 1,
+                        left: 80,
+                        right: 0,
+                        height: 0.5,
+                        backgroundColor: Colors.border
+                    }}/>
+                </View>);
+            }
+        }else
+            return false;
 
-                               }}
-                        />
-                        <Text
-                            style={{color: "#95A2B5", fontSize: 12}}>{" "+realTime[0]+":"+realTime[1]}</Text>
-                        <View style={{
-                            flexDirection: "column",
-                            width: 1, height: 13,
-                            marginTop: 3,
-                            backgroundColor: "grey",
-                            marginStart: 10,
-                            marginEnd: 10
-                        }}/>
-                        <Text style={{color: "#95A2B5", fontSize: 12}}>{" $5.00" }</Text>
-                    </View>
-                </View>
 
-                <View style={{
-                    flexDirection: "column",
-                    marginLeft: 10,
-                    marginTop: 15}}/>
-
-                <View style={{position: "absolute", right: 10, top: 20}}>
-                    <View style={[styles.status_container,{backgroundColor:bgTitle}]}>
-                        <Text
-                            style={{
-                                alignSelf: "center",
-                                fontSize: 13,
-                                fontWeight:"bold",
-                                marginTop: 4,
-                                color: textColorTitle
-                            }}>{item.notification_type}</Text>
-                    </View>
-                    <Text style={styles.time_ago}>
-                        {timeDate[0]}
-                    </Text>
-                </View>
-                <View style={{
-                    position: "absolute",
-                    bottom: 1,
-                    left: 80,
-                    right: 0,
-                    height: 0.5,
-                    backgroundColor: Colors.border
-                }}/>
-            </View>);
-        }
 
     }
 
@@ -313,18 +322,22 @@ export default class Notifications extends Component {
             style={{
                 flexDirection: 'row',
                 marginTop: 10,
-                width: "100%",
+                width: "90%",
                 alignItems: "center",
                 height: 70,
-                justifyContent: "center",
                 backgroundColor: "#474857",
                 borderRadius: 5,
                 borderWidth: 0.5,
                 borderColor: "white"
             }}>
-            <Text
-                style={{fontSize: 15, color: "white"}}
-            >{item.title}</Text>
+
+            <View style={{flexDirection: "column", marginStart: 10}}>
+                <Text
+                    style={{fontSize: 15, color: "white"}}
+                >{item.title}</Text>
+
+            </View>
+
 
         </View>
     }
@@ -338,9 +351,10 @@ export default class Notifications extends Component {
                     }) :
                     <FlatList
                         data={this.state.Notifications}
-                        renderItem={({item}) => (
-                            this.renderRowNotification(item)
+                        renderItem={({item,index}) => (
+                            this.renderRowNotification(item,index)
                         )}
+                        style={{width:"100%"}}
                         numColumns={1}
                         keyExtractor={(item, index) => index}
                     />}

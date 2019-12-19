@@ -3,16 +3,21 @@ import { Metric, Colors } from '../../../themes';
 
 export const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex:1,
+    width:"100%",
+    height:"100%",
+    backgroundColor:Colors.themeBackground
   },
   backgroundImg: {
-    resizeMode: 'stretch'
+    resizeMode: 'stretch',
+
   },
   parentContainer: {
     paddingHorizontal: Metric.marginHorizontal
   },
   closeContainer: {
-    alignItems: 'flex-end'
+    alignItems: 'flex-end',
+    marginBottom:20
   },
   whiteBoldBigText: {
     ...Metric.font.bigBold,
@@ -20,10 +25,13 @@ export const styles = StyleSheet.create({
     marginBottom: Metric.height / 30
   },
   mainContainer: {
-    marginTop: Metric.height / 8,
+
   },
   inputContainer: {
-    marginBottom: Metric.height / 40
+    marginBottom: Metric.height / 40,
+
+
+
   },
   buttonContainer: {
     width: Metric.width - Metric.marginHorizontal * 4,

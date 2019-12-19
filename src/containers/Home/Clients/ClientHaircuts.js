@@ -20,12 +20,12 @@ import CalendarHeader from "react-native-calendars/src/calendar/header";
 import {constants} from "../../../utils/constants";
 
 const {width, height} = Dimensions.get("window");
-const today = moment().format("YYYY-MM-DD");
+let today = moment().format("YYYY-MM-DD");
 console.log("todaydate:" + today);
 let getDay = new Date().getDate();
 let getmonthh = new Date().getMonth();
 let getyear = new Date().getFullYear();
-
+console.log("TodayDate::",getyear+"-"+getmonthh+"-"+getDay)
 export default class ClientHaircuts extends Component {
 
     constructor(props) {
@@ -213,6 +213,7 @@ export default class ClientHaircuts extends Component {
                     details[`${appointdate}`] = {selected: true, selectedColor: "#2DD010"}
                 }
             }
+            details[`${today}`] = {marked: true, dotColor: 'yellow',}
             console.log("calenderAppointmentsArray-->", JSON.stringify(details));
             this.setState({allAppointmentsCalender: details});
         }
@@ -233,6 +234,10 @@ export default class ClientHaircuts extends Component {
                     if (allbookings[j].appointment_type==="cancelled") {
                         this.props.navigation.navigate("ReceiptCancelled",{appointmentId:allbookings[j]._id});
                         break;
+                    }
+
+                     else if(allbookings[j].appointment_type==="confirmed"){
+                        this.props.navigation.navigate("ReceiptUpcoming",{appointmentId:allbookings[j]._id})
                     }
                 }
             }
@@ -273,7 +278,7 @@ export default class ClientHaircuts extends Component {
                         marginTop: 20
                     }}>
                         <Calendar
-                            /* current={getyear+"-"+getmonthh+1+"-"+getDay}*/
+                            //current={today}
                             /* minDate={'1970-1-1'}
                              maxDate={'2050-12-31'}*/
                             minDate={'2010-01-01'}
@@ -283,7 +288,7 @@ export default class ClientHaircuts extends Component {
                             onDayPress={this.checkDayReciept}
                             //onDayPress={(day) => {console.log('selected day', day)}}
                             markedDates={this.state.allAppointmentsCalender}
-                            hideDayNames={true}
+                            hideDayNames={false}
                             onPressArrowLeft={substractMonth => {
                                 this.decreaseMonth();
                                 substractMonth();

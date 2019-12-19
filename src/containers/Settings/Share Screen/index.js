@@ -85,39 +85,43 @@ export default class Share extends Component {
     saveToClipboard = async (val) => {
         //To copy the text to clipboard
         await Clipboard.setString(val);
+        console.log("URL LINK"+val)
         //alert('Link Copied');
-        Alert.alert("Success!", "CLYPR Profile copied");
+
     };
 
     downloadImage() {
         this.refs.viewShot1.capture().then(uri => {
-            let destPath = RNFS.PicturesDirectoryPath + "/clypr1.jpg";
+            let destPath = RNFS.ExternalStorageDirectoryPath   + "/clypr1.jpg";
             RNFS.copyFile(uri, destPath)
                 .then((success) => {
-                    console.log('file copied!');
-                    Alert.alert("Success!", "Image is downloaded");
+                    console.log('file copied1!'+destPath);
+                    alert("Image Downloaded PATH:"+destPath);
                 })
                 .catch((err) => {
                     console.log('Error copying file: ' + err.message);
+                    alert('Error copying file: ' + err.message);
                 });
 
-            console.log("do something with ", uri);
+            console.log("do something with ", uri,destPath);
         });
     }
 
     downloadImage1() {
+        console.log("Image23")
         this.refs.viewShot2.capture().then(uri => {
-            let destPath = RNFS.PicturesDirectoryPath + "/clypr2.jpg";
+            let destPath = RNFS.ExternalStorageDirectoryPath + "/clypr2.jpg";
             RNFS.copyFile(uri, destPath)
                 .then((success) => {
-                    console.log('file copied!');
-                    Alert.alert("Success!", "Image is downloaded");
+                    console.log('file copied2!'+destPath);
+                    alert("Image Downloaded PATH:"+destPath);
                 })
                 .catch((err) => {
                     console.log('Error copying file: ' + err.message);
+                    alert('Error copying file: ' + err.message);
                 });
 
-            console.log("do something with ", uri);
+            console.log("do something with ", uri,destPath);
         });
     }
 
@@ -168,7 +172,7 @@ export default class Share extends Component {
                                     style={{marginStart: 5, color: "grey", fontFamily: "AvertaStd-Thin"}}
                                 >{"Copy & Paste the below link"}</Text></View>
                             <TouchableOpacity
-                                onPress={() => this.saveToClipboard("www.clypr.co/pro/" + this.state.barberInsta)}>
+                                onPress={() => this.saveToClipboard("clypr://profile/" + Preference.get("userId"))}>
                                 <Text style={{
                                     color: "white",
                                     fontSize: 15,

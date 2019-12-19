@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {ImageBackground, View, Text, TextInput,Alert} from 'react-native';
+import {ImageBackground, View, Text, TextInput, Alert,} from 'react-native';
 import {SafeAreaView} from 'react-navigation';
 import {styles} from './styles';
 import {CloseButton, RedButton} from '../../../components/Buttons';
@@ -17,49 +17,52 @@ class SMSScreen extends Component {
     }
 
     onClose = () => {
-       // alert('close');
+        // alert('close');
         this.props.navigation.goBack();
     };
 
-    getRandomNumber()
-    {
-       return  Math.floor(Math.random()*100000);
+    getRandomNumber() {
+        return Math.floor(Math.random() * 100000);
+    }
+    componentDidMount(): void {
     }
 
     onContinue = () => {
-        var code=this.getRandomNumber().toString()
+        var code = this.getRandomNumber().toString()
         const {number} = this.state;
         if (checkPhoneNumberValidation(number)) {
             if (Preference.get("userType") === "Barber") {
-                Alert.alert("Random Number ",code+"  "+number);
+
+                //Alert.alert("Random Number ", code + "  " + number);
                 this.sendVerifyCodeToServerBarber(code);
                 //this.props.navigation.navigate('ConfirmSMSScreen',{Code:code});
-            }else
-            {
-                Alert.alert("Random Number ",code+"  "+number);
+            } else {
+
+                //Alert.alert("Random Number ", code + "  " + number);
                 this.sendVerifyCodeToServerClient(code);
                 //this.props.navigation.navigate('ConfirmSMSScreen',{Code:code});
             }
-            console.log("RandomNumber",code);
+            console.log("RandomNumber", code);
         } else {
             alert('invalid format');
         }
     };
 
     onChangeText = (str) => {
+        this.setState({number:str});
         const number = str.replace(/\D/g, '');
         const formattedNumber = formatPhoneNumber(str);
         this.setState({number, formattedNumber});
     };
-    sendVerifyCodeToServerBarber(code)
-    {
+
+    sendVerifyCodeToServerBarber(code) {
 
         var details = {
             user_id: Preference.get("userId"),
-            contact_no:"+1"+this.state.formattedNumber,
-            code:code
+            contact_no: "1" + this.state.number,
+            verification_code: code
         };
-        console.log("BarbersSendVerfication", "-" +JSON.stringify(details));
+        console.log("BarbersSendVerfication", "-" + JSON.stringify(details));
         var formBody = [];
         for (var property in details) {
             var encodedKey = encodeURIComponent(property);
@@ -78,8 +81,9 @@ class SMSScreen extends Component {
             .then(response => {
                 console.log("responsesendVerifyCodeToServer-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
-                    Alert.alert("Success!","Your message is successfully sent on Number Provided.");
-                    this.props.navigation.navigate('ConfirmSMSScreen',{Code:code});
+                    Alert.alert("Success!", "Your message is successfully sent on Number Provided.");
+                    this.props.navigation.navigate('ConfirmSMSScreen', {Code: code,
+                        number: "+1" + this.state.formattedNumber});
                 } else {
                     if (response.ResultType === 0) {
                         alert(response.Message);
@@ -89,16 +93,15 @@ class SMSScreen extends Component {
             .catch(error => {
                 //console.error('Errorr:', error);
                 console.log('Error:', error);
-                alert("Error: "+error);
+                alert("Error: " + error);
             });
     }
 
-    sendVerifyCodeToServerClient(code)
-    {
+    sendVerifyCodeToServerClient(code) {
         var details = {
             client_id: Preference.get("userId"),
-            contact_no:"+1"+this.state.formattedNumber,
-            code:code
+            contact_no: "1" + this.state.number,
+            verification_code: code
         };
         var formBody = [];
         for (var property in details) {
@@ -118,8 +121,11 @@ class SMSScreen extends Component {
             .then(response => {
                 console.log("responsesendVerifyCodeToServer-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
-                    Alert.alert("Success!","Your message is successfully sent on Number Provided.");
-                    this.props.navigation.navigate('ConfirmSMSScreen',{Code:code,number:"+1"+this.state.formattedNumber});
+                    Alert.alert("Success!", "Your message is successfully sent on Number Provided.");
+                    this.props.navigation.navigate('ConfirmSMSScreen', {
+                        Code: code,
+                        number: "+1" + this.state.formattedNumber
+                    });
                 } else {
                     if (response.ResultType === 0) {
                         alert(response.Message);
@@ -129,7 +135,7 @@ class SMSScreen extends Component {
             .catch(error => {
                 //console.error('Errorr:', error);
                 console.log('Error:', error);
-                alert("Error: "+error);
+                alert("Error: " + error);
             });
     }
 

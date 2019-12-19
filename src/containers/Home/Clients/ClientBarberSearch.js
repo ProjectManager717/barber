@@ -1,21 +1,21 @@
 import React, {Component} from "react";
 import {
-    View,
-    Text,
     FlatList,
-    TouchableOpacity,
-    TouchableWithoutFeedback,
     Image,
     ImageBackground,
     ScrollView,
-    Switch, TextInput,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    TouchableWithoutFeedback,
+    View,
 } from "react-native";
 
-import {Header, AirbnbRating} from "react-native-elements";
+var moment = require("moment");
+import {AirbnbRating, Header} from "react-native-elements";
 
 import {Colors} from "../../../themes";
 import {styles} from "./styles";
-import {globalStyles} from "../../../themes/globalStyles";
 import {constants} from "../../../utils/constants";
 import Preference from "react-native-preference";
 
@@ -31,8 +31,8 @@ export default class ClientBarberSearch extends Component {
             dataSource2: [],
             searchText: "",
             filterLocation: "",
-            filterDistance: 10,
-            filterCost: "5",
+            filterDistance: 10000,
+            filterCost: "",
             blendQuality: 0,
             shapeUpAbility: 0,
             scissorTechnique: 0,
@@ -40,17 +40,30 @@ export default class ClientBarberSearch extends Component {
             latitude: "",
             longitude: "",
             dataSource3: [],
-            Address:"",
+            Address: "",
+            TopRatedBarbers: [],
         }
         this.setFilters = this.setFilters.bind(this);
     }
 
     componentDidMount(): void {
         this.getFavoriteBarbers();
+       // this.setLocationImage();
+        this.TopRatedBarbers();
+
     }
 
+    /*componentWillMount(): void {
+        this.getFavoriteBarbers();
+        //this.setLocationImage();
+        this.TopRatedBarbers();
+
+    }*/
+
     searchBarber(txt) {
-        console.log("getSearchDetails-txt->", "-" + constants.ClientBarbersSearch + "?search_barber=" + txt
+        const {searchText} = this.state;
+
+        console.log("getSearchDetails-txt->", "-" + constants.ClientBarbersSearch + "?search_barber=" + this.state.searchText
             + "&bliend_quality=" + this.state.blendQuality
             + "&shape_up_ability=" + this.state.shapeUpAbility
             + "&scissor_technique=" + this.state.scissorTechnique
@@ -60,8 +73,8 @@ export default class ClientBarberSearch extends Component {
             + "&distance=" + this.state.filterDistance
             + "&price=" + this.state.filterCost
         );
-        this.setState({showLoading: true, searchText: txt})
-        fetch(constants.ClientBarbersSearch + "?search_barber=" + txt
+        this.setState({showLoading: true})
+        fetch(constants.ClientBarbersSearch + "?search_barber=" + this.state.searchText
             + "&bliend_quality=" + this.state.blendQuality
             + "&shape_up_ability=" + this.state.shapeUpAbility
             + "&scissor_technique=" + this.state.scissorTechnique
@@ -78,13 +91,26 @@ export default class ClientBarberSearch extends Component {
                 }
             }).then(response => response.json())
             .then(response => {
-                this.setState({searchBarbers: []});
+
                 console.log("getSearchDetails-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
-                    this.setState({
-                        showLoading: false,
-                        searchBarbers: response.Data
-                    })
+                    if (searchText === "") {
+                        this.setState({
+                            showLoading: false,
+                            dataSource3: response.Data,
+
+                        }, () => {
+                            console.log("DATASOURCE" + JSON.stringify(this.state.dataSource3))
+                        })
+                    } else {
+                        this.setState({
+                            showLoading: false,
+                            searchBarbers: response.Data,
+
+                        })
+
+                    }
+
                     console.log("getSearchDetails-->", "-" + JSON.stringify(this.state.searchBarbers));
                 } else {
                     this.setState({showLoading: false, searchBarbers: []})
@@ -96,9 +122,37 @@ export default class ClientBarberSearch extends Component {
             //console.error('Errorr:', error);
             this.setState({showLoading: false})
             console.log('Error:', error);
-            alert("Error: " + error);
+            //alert("Error: " + error);
         });
     }
+
+    TopRatedBarbers() {
+
+        fetch(constants.TopRatedBarbers, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        }).then(response => response.json())
+            .then(response => {
+                console.log("TopRatedBarbers-->", "-" + JSON.stringify(response));
+                if (response.ResultType === 1) {
+                    this.setState({TopRatedBarbers: response.Data});
+                } else {
+                    if (response.ResultType === 0) {
+                        alert(response.Message);
+                    }
+                }
+            }).catch(error => {
+            //console.error('Errorr:', error);
+            console.log('Error:', error);
+            //alert("Error: " + error);
+        });
+
+
+    }
+
 
     getFavoriteBarbers() {
         fetch(constants.ClientFavoritBarbers + "?client_id=" + Preference.get("userId"), {
@@ -112,6 +166,7 @@ export default class ClientBarberSearch extends Component {
                 console.log("getFavoriteBarbers-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
                     this.setState({dataSource2: response.Data});
+                    this.searchBarber("");
                 } else {
                     if (response.ResultType === 0) {
                         alert(response.Message);
@@ -120,30 +175,45 @@ export default class ClientBarberSearch extends Component {
             }).catch(error => {
             //console.error('Errorr:', error);
             console.log('Error:', error);
-            alert("Error: " + error);
+            //alert("Error: " + error);
         });
     }
 
     renderRowInput() {
         return <View style={{width: "100%"}}>
-            <View style={{height: 50, flexDirection: "row", alignItems: "center", justifyContent: "center"}}>
-                <Image resizeMode={"contain"} source={require("../../../assets/images/searchicon.png")}
-                       style={{
-                           width: 16,
-                           height: 16,
-                       }}/>
-                <View style={{marginStart: 7}}>
+            <View style={{height: 50, flexDirection: "row", alignItems: "center",}}>
+                <View style={{justifyContent: 'center', alignItems: 'center', marginStart: 10, width: "5%"}}>
+                    <Image resizeMode={"contain"} source={require("../../../assets/images/searchicon.png")}
+                           style={{
+                               width: 16,
+                               height: 16,
+                           }}/>
+                </View>
+                <View style={{marginStart: 10, width: "90%", flexDirection: "row"}}>
                     <TextInput
                         style={{
                             color: "white",
-                            fontSize: 15,
+                            fontSize: 12,
                             fontFamily: "AvertaStd-RegularItalic",
+
+                            width: "80%"
+
+
                         }}
-                        onChangeText={(text) => this.searchBarber(text)}
+                        onChangeText={(text) => {
+                            this.setState({searchText: text})
+                            if (text === "")
+                                this.setState({searchBarbers:[]});
+                        }}
                         placeholder={"Search by Instagram, Name, or Barbershop"}
                         placeholderTextColor={"grey"}
                     />
+                    <TouchableOpacity onPress={() => this.searchBarber(this.state.searchText)}
+                                      style={{justifyContent: 'center', width: "20%"}}>
+                        <Text style={{color: "white", fontSize: 14, fontWeight: "bold"}}>Search</Text>
+                    </TouchableOpacity>
                 </View>
+
             </View>
         </View>;
     }
@@ -160,8 +230,15 @@ export default class ClientBarberSearch extends Component {
                 height: 150,
                 borderRadius: 30,
             }}>
-            <ImageBackground source={require("../../../assets/images/imgbck-3.png")}
-                             style={{width: "100%", height: "100%", borderRadius: 7, overflow: 'hidden'}}>
+            <ImageBackground source={{uri: item.banner_image}}
+                             style={{
+                                 width: "100%",
+                                 height: "100%",
+                                 borderRadius: 7,
+                                 overflow: 'hidden',
+                                 borderColor: "#84858f",
+                                 borderWidth: 1,
+                             }}>
                 <View style={{flexDirection: "row", width: "100%", height: "100%",}}>
                     <View style={{
                         flexDirection: "column",
@@ -279,7 +356,11 @@ export default class ClientBarberSearch extends Component {
                                 justifyContent: "center"
 
                             }}>
-                                <Text style={{fontSize: 12, color: "white", fontWeight: "bold"}}>{"10:00 AM"}</Text>
+                                <Text style={{
+                                    fontSize: 12,
+                                    color: "white",
+                                    fontWeight: "bold"
+                                }}>{moment(item.avilabeSlot, "HH:mm").format("hh:mm a")}</Text>
                             </View>
                         </View>
                     </View>
@@ -304,15 +385,21 @@ export default class ClientBarberSearch extends Component {
                 longitudeDelta: 0.00421 * 1.5
             };
             console.log("GeoLocation-->", region);
-            this.setState({latitude: region.latitude, longitude: region.longitude})
+            this.setState({latitude: region.latitude, longitude: region.longitude}, () => {
+                this.searchBarber();
+            })
             //this.onRegionChange(region, region.latitude, region.longitude);
         }, (error) => console.log("error--->", error));
     }
 
     async setLocationImage() {
-        if (this.state.setLocationToggle === false) {
-            this.setState({LocationToggle: require("../../../assets/images/location1.png"), setLocationToggle: true});
+        console.log("LocationSelected: ",this.state.setLocationToggle);
+        if (this.state.setLocationToggle == false) {
+            this.setState({LocationToggle: require("../../../assets/images/location1.png"), setLocationToggle: true},()=>{
+                this.forceUpdate();
+            });
             await this.getCurrentLocation();
+
         } else {
             this.setState({
                 LocationToggle: require("../../../assets/images/LocationOff.png"),
@@ -322,7 +409,7 @@ export default class ClientBarberSearch extends Component {
         }
     }
 
-    setFilters(filterlocation, filterdistance, filtercost, blendquality, shapeupability, scissortecnique, comboverskill, lat, long,address) {
+    setFilters(filterlocation, filterdistance, filtercost, blendquality, shapeupability, scissortecnique, comboverskill, lat, long, address) {
         this.setState({
             filterLocation: filterlocation,
             filterDistance: filterdistance,
@@ -333,7 +420,7 @@ export default class ClientBarberSearch extends Component {
             comboverSkills: comboverskill,
             latitude: lat,
             longitude: long,
-            Address:address
+            Address: address
         }, () => {
             this.searchBarber(this.state.searchText)
         })
@@ -363,8 +450,8 @@ export default class ClientBarberSearch extends Component {
                     rightComponent={<TouchableOpacity
                         onPress={() => {
                             this.props.navigation.push("ClientFilter", {
-                                onFilter: (filter1, filter2, filter3, filter4, filter5, filter6, filter7, filter8, filter9,filter10) => {
-                                    this.setFilters(filter1, filter2, filter3, filter4, filter5, filter6, filter7, filter8, filter9,filter10)
+                                onFilter: (filter1, filter2, filter3, filter4, filter5, filter6, filter7, filter8, filter9, filter10) => {
+                                    this.setFilters(filter1, filter2, filter3, filter4, filter5, filter6, filter7, filter8, filter9, filter10)
                                 },
                                 filterLocation: this.state.filterLocation,
                                 filterDistance: this.state.filterDistance,
@@ -387,7 +474,6 @@ export default class ClientBarberSearch extends Component {
                             source={require("../../../assets/images/filter-2.png")}
                         />
                     </TouchableOpacity>}
-
                     centerComponent={{text: "BARBERS", style: {color: "#fff"}}}
                     containerStyle={{
                         backgroundColor: Colors.dark,
@@ -435,61 +521,51 @@ export default class ClientBarberSearch extends Component {
                                 position: "absolute",
                                 top: 32,
                                 justifyContent: "center",
-                                flexDirection: "row",
                                 alignItems: "center",
                             }}>
-                                <TouchableWithoutFeedback
-                                    onPress={() => this.props.navigation.navigate("ClientBarberProfile")}>
+                                <FlatList
+                                    horizontal={true}
+                                    initialNumToRender={5}
+                                    contentContainerStyle={{justifyContent: 'center'}}
+                                    renderItem={({item, index}) => {
+                                        return (
+                                            <TouchableOpacity
+                                                activeOpacity={0.5}
+                                                onPress={() => {
+                                                    this.props.navigation.navigate("ClientBarberProfile", {
+                                                        barberId: item.barber_id
+                                                    });
 
-                                    <Image resizeMode={"contain"} source={require("../../../assets/images/img-1.png")}
-                                           style={{
-                                               borderRadius: 25,
-                                               height: 50,
-                                               width: "16%",
-                                           }}
+                                                }
+                                                }
+                                                style={{
+                                                    borderRadius: 30,
+                                                    justifyContent: 'center',
+                                                    alignItems: 'center',
+                                                    marginEnd: 5
+                                                }}
+                                            >
 
-                                    />
-                                </TouchableWithoutFeedback>
-                                <TouchableWithoutFeedback
-                                    onPress={() => this.props.navigation.navigate("ClientBarberProfile")}>
-                                    <Image resizeMode={"contain"} source={require("../../../assets/images/img-2.png")}
-                                           style={{
-                                               borderRadius: 25,
-                                               marginStart: 10,
-                                               height: 50,
-                                               width: "16%"
-                                           }}/>
-                                </TouchableWithoutFeedback>
-                                <TouchableWithoutFeedback
-                                    onPress={() => this.props.navigation.navigate("ClientBarberProfile")}>
-                                    <Image resizeMode={"contain"} source={require("../../../assets/images/img-3.png")}
-                                           style={{
-                                               borderRadius: 25,
-                                               marginStart: 10,
-                                               height: 50,
-                                               width: "16%"
-                                           }}/>
-                                </TouchableWithoutFeedback>
-                                <TouchableWithoutFeedback
-                                    onPress={() => this.props.navigation.navigate("ClientBarberProfile")}>
-                                    <Image resizeMode={"contain"} source={require("../../../assets/images/img-4.png")}
-                                           style={{
-                                               borderRadius: 25,
-                                               marginStart: 10,
-                                               height: 50,
-                                               width: "16%"
-                                           }}/>
-                                </TouchableWithoutFeedback>
-                                <TouchableWithoutFeedback
-                                    onPress={() => this.props.navigation.navigate("ClientBarberProfile")}>
-                                    <Image resizeMode={"contain"} source={require("../../../assets/images/img-5.png")}
-                                           style={{
-                                               borderRadius: 25,
-                                               marginStart: 10,
-                                               height: 50,
-                                               width: "16%"
-                                           }}/>
-                                </TouchableWithoutFeedback>
+                                                <Image resizeMode={"cover"}
+                                                       source={{uri: item.barber_image}}
+                                                       style={{
+                                                           height: 50,
+                                                           width: 50,
+                                                           borderRadius: 30,
+
+
+                                                       }}
+
+                                                />
+                                            </TouchableOpacity>
+                                        )
+                                    }}
+                                    keyExtractor={({item, index}) => index}
+                                    // data={this.state.TopRatedBarbers}
+                                    data={this.state.TopRatedBarbers}
+                                />
+
+
                             </View>
 
                         </View>}

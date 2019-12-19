@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {View, Text, Image, TouchableOpacity,Linking,Alert} from "react-native";
+import {View, Text, Image, TouchableOpacity, Linking, Alert, BackHandler} from "react-native";
 
 import {Header} from "react-native-elements";
 import {globalStyles} from "../../../themes/globalStyles";
@@ -20,8 +20,10 @@ export default class QRCheckIn extends Component {
             Start_Scanner: false,
         };
     }
+    componentWillUnmount(): void {
+    }
 
-    componentDidMountcomponentDidMount() {
+    componentDidMount() {
         var that = this;
         let items = Array.apply(null, Array(6)).map((v, i) => {
             return {id: i, title: "Title " + i};
@@ -49,7 +51,7 @@ export default class QRCheckIn extends Component {
             .then(response => {
                 console.log("getFavoriteBarbers-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
-                   Alert.alert("Success!","Your appointment is in progress now.");
+
                    this.props.navigation.goBack();
                 } else {
                     if (response.ResultType === 0) {

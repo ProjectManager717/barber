@@ -13,12 +13,20 @@ import Header from "../../../components/Header";
 import {ScrollView} from "react-native-gesture-handler";
 import colors from "../../../themes/colors";
 import CheckBoxSquare from "../../../components/CheckBox";
+import ImagePicker from 'react-native-image-picker';
 import Preference from "react-native-preference";
 import {constants} from "../../../utils/constants";
 import {AirbnbRating} from "react-native-elements";
 import {SafeAreaView} from "react-navigation";
 
-
+const options = {
+    title: 'Select Image',
+    storageOptions: {
+        skipBackup: true,
+        path: 'images',
+        //places: [],
+    },
+};
 const {height, width} = Dimensions.get("window");
 
 export default class BarberProfile extends Component {
@@ -33,70 +41,135 @@ export default class BarberProfile extends Component {
 
     constructor(props) {
         super(props);
+        console.disableYellowBox=true;
+
+        let barberId = Preference.get("userId")
+        const {params}=this.props.navigation.state;
+        console.log("PARMAS"+JSON.stringify(params));
+        if(params){
+            if(params.isShared === true){
+                barberId = params.id
+                console.log("BARBERId"+barberId)
+            }
+        }
+
         this.state = {
+            barberId: barberId,
             barberInsta:"",
             showLoading:false,
             barberName: Preference.get("userName"),
-            barberImage: require("../../../assets/images/personImage.jpg"),
+            barberImage: null,
             barberShopName: Preference.get("userShopname"),
             barberRating: 0,
             barberReviews: 0,
+            BannerImage:null,
+
             ListData:[],
             ListData2:[],
         }
-    }
+       /* const {navigation} = this.props;
+       const itemId = navigation.getParam('id');
+        console.log("gettingUSerID--->" + itemId);
+        const isShare = navigation.getParam('isShared');
+        console.log("gettingUSer--->" + isShare);*/
 
+    }
+    selectImage = () => {
+        //alert("hello");
+        ImagePicker.showImagePicker(options, (response) => {
+            console.log('Response = ', response);
+
+            if (response.didCancel) {
+                console.log('User cancelled image picker');
+            } else if (response.error) {
+                console.log('ImagePicker Error: ', response.error);
+            } else if (response.customButton) {
+                console.log('User tapped custom button: ', response.customButton);
+            } else {
+                const source = {uri: response.uri};
+
+                // You can also display the image using data:
+                // const source = { uri: 'data:image/jpeg;base64,' + response.data };
+
+                this.setState({
+                    barberBanner: source, avatarForServer: response.uri
+                });
+            }
+        });
+    };
     componentDidMount(): void {
         const {navigation} = this.props;
         this.focusListener = navigation.addListener("didFocus", payload => {
             this.getBarberDetails();
         });
-        //this.getBarberDetails();
+        this.getBarberDetails();
+    }
+
+    componentWillReceiveProps(nextProps: Readonly<P>, nextContext: any): void {
+        const previousPropsParams = this.props.navigation.state.params;
+        const nextPropsParams = nextProps.navigation.state.params;
+        console.log("componentWillReceiveProps - ", JSON.stringify(nextPropsParams));
+
+        if(previousPropsParams.isShared !== nextPropsParams.isShared){
+            if(nextPropsParams.isShared == true){
+
+                this.setState({
+                    barberId: nextPropsParams.id
+                }, ()=>{
+                    this.getBarberDetails()
+                })
+            }
+        }
     }
 
     getBarberDetails() {
-        this.setState({showLoading:true})
-        fetch(constants.ClientBarbersProfile + "/" + Preference.get("userId") + "/profile", {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
-        }).then(response => response.json())
-            .then(response => {
-                console.log("getBarberDetails-->", "-" + JSON.stringify(response));
-                if (response.ResultType === 1) {
-                    this.setState({showLoading:false})
-                    let barberData = response.Data;
-                    this.setState({
-                        barberInsta: barberData.username,
-                        barberName: barberData.firstname,
-                        barberShopName: barberData.shop_name,
-                        ListData: barberData.portoflios,
-                        ListData2: barberData.services,
-                        barberRating: barberData.average_Rating,
-                        barberReviews: barberData.total_Reviews,
-                        barberImage: {uri: barberData.user_image},
-                    });
-                    let PortfolioImages = this.state.ListData;
-                    for (let i = 0; i < PortfolioImages.length; i++) {
-                        console.log("ImagesDataURl", PortfolioImages[i].portfolio_image);
-                        PortfolioImages[i].portfolio_image = constants.portfolioImagePath + PortfolioImages[i].portfolio_image;
-                    }
-                    this.setState({ListData: PortfolioImages})
-                    //this.setState({barberData: response.Data});
-                } else {
-                    this.setState({showLoading:false})
-                    if (response.ResultType === 0) {
-                        alert(response.Message);
-                    }
+        this.setState({showLoading:true});
+        console.log("BARBERURL",constants.ClientBarbersProfile+ this.state.barberId + "/profile")
+            fetch(constants.ClientBarbersProfile + "/" + this.state.barberId + "/profile", {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
                 }
-            }).catch(error => {
-            //console.error('Errorr:', error);
-            this.setState({showLoading:false})
-            console.log('Error:', error);
-            alert("Error: " + error);
-        });
+            }).then(response => response.json())
+                .then(response => {
+                    console.log("getBarberDetails-->", "-" + JSON.stringify(response));
+                    if (response.ResultType === 1) {
+                        this.setState({showLoading:false})
+                        let barberData = response.Data;
+                        this.setState({
+                            barberInsta: barberData.username,
+                            barberName: barberData.firstname,
+                            barberShopName: barberData.shop_name,
+                            ListData: barberData.portoflios,
+                            ListData2: barberData.services,
+                            barberRating: barberData.average_Rating,
+                            barberReviews: barberData.total_Reviews,
+                            barberImage: {uri: barberData.user_image},
+                            BannerImage:{uri:barberData.banner_image},
+
+                        });
+                        let PortfolioImages = this.state.ListData;
+                        for (let i = 0; i < PortfolioImages.length; i++) {
+                            console.log("ImagesDataURl", PortfolioImages[i].portfolio_image);
+                            PortfolioImages[i].portfolio_image = constants.portfolioImagePath + PortfolioImages[i].portfolio_image;
+                        }
+                        this.setState({ListData: PortfolioImages})
+                        //this.setState({barberData: response.Data});
+                    } else {
+                        this.setState({showLoading:false})
+                        if (response.ResultType === 0) {
+
+                        }
+                    }
+                }).catch(error => {
+                //console.error('Errorr:', error);
+                this.setState({showLoading:false})
+                console.log('Error:', error);
+                alert("Error: " + error);
+            });
+
+
     }
 
 
@@ -108,9 +181,10 @@ export default class BarberProfile extends Component {
                     <Header
                         rightAction={this.rightAction.bind(this)}
                         leftAction={this.leftAction.bind(this)}
-                        bgIcon={require("../../../assets/images/bannerprofile.png")}
+                        bgIcon={this.state.BannerImage}
                         rightIcon={require("../../../assets/images/ic_navbar_edit.png")}
                         leftIcon={require("../../../assets/images/ic_back.png")}/>
+
                     <View style={styles.detailsContainer}>
                         <View style={styles.profileImageContainer}>
                             <Image
@@ -144,6 +218,7 @@ export default class BarberProfile extends Component {
                                     <AirbnbRating
                                         showRating={false}
                                         count={5}
+                                        isDisabled={true}
                                         defaultRating={this.state.barberRating}
                                         size={10}
                                         style={{marginStart: 10, height: 30}}

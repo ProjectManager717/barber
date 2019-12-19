@@ -294,10 +294,10 @@ export default class BookingPreferences extends Component {
                     //alert("Booking preferences updated successfully");
                     if (Preference.get("newUser") === true) {
                         if (this.state.MP.StateMP === true) {
-                            this.props.navigation.push("MobilePay");
+                            this.props.navigation.push("MobilePaySettings");
                         } else {
-                            this.props.navigation.navigate("TabNavigator");
-                            Preference.set("newUser", false);
+                            this.props.navigation.navigate("Cancellations");
+
                         }
                     } else {
                         this.props.navigation.goBack();

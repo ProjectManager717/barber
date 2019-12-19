@@ -1,0 +1,6 @@
+framework module Pods_Barber_tvOSTests {
+  umbrella header "Pods-Barber-tvOSTests-umbrella.h"
+
+  export *
+  module * { export * }
+}

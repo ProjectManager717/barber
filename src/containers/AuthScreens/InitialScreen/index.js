@@ -23,7 +23,7 @@ class InitialScreen extends Component {
     onSignIn = () => {
         this.props.navigation.navigate('SignInScreen', {User:this.state.userName});
     };
-    componentDidMount(){
+    /*componentDidMount(){
         this.getEvents();
     }
 
@@ -45,7 +45,7 @@ class InitialScreen extends Component {
                 console.log('Error:', error);
                 alert("Error: "+error);
             });
-    }
+    }*/
 
     render() {
         return (

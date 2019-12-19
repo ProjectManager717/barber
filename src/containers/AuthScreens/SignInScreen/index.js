@@ -5,6 +5,7 @@ import {
     View,
     TouchableOpacity,
     NetInfo,
+    Platform,
     ActivityIndicator,
     Image,
     Alert,
@@ -42,6 +43,7 @@ let fcmToken="";
 class SignInScreen extends Component {
     constructor(props) {
         super(props);
+        console.disableYellowBox=true;
         const {navigation} = this.props;
         itemId = navigation.getParam('User');
         console.log("gettingUSersignIn--->" + itemId);
@@ -75,9 +77,8 @@ class SignInScreen extends Component {
             //It is mandatory to call this method before attempting to call signIn()
             scopes: ['https://www.googleapis.com/auth/userinfo.profile'],
             // Repleace with your webClientId generated from Firebase console
-            webClientId:
-                '1006799815583-9p41g2vs13dn03lp4j7bkvuiku3gcrtk.apps.googleusercontent.com',
-        });
+            webClientId:"264908010858-90qei6m96daq2doi543gnahouvunl4v4.apps.googleusercontent.com"
+                        });
         this.checkPermission();
     }
 
@@ -136,7 +137,7 @@ class SignInScreen extends Component {
             this.socialLoginGoogle(userInfo);
 
         } catch (error) {
-            console.log('Message', error.message);
+            console.log('Message1122', error.message);
             if (error.code === statusCodes.SIGN_IN_CANCELLED) {
                 console.log('User Cancelled the Login Flow');
             } else if (error.code === statusCodes.IN_PROGRESS) {
@@ -153,11 +154,13 @@ class SignInScreen extends Component {
         if (itemId === "Client") {
             if (this.state.isConnected) {
                 var details = {
+
                     email: userInfo.user.email,
                     authType: "google",
                     authId: userInfo.idToken,
                     firstName: userInfo.user.givenName,
                     lastName: userInfo.user.familyName,
+                    device_token:fcmToken
                 };
                 var formBody = [];
                 for (var property in details) {
@@ -180,6 +183,7 @@ class SignInScreen extends Component {
                         this.setState({showLoading:false});
                         if (response.ResultType === 1) {
                             Preference.set({
+                                AlertNotification:response.Data.alert_notification,
                                 clientlogin: true,
                                 userEmail: response.Data.email,
                                 userId: response.Data.id,
@@ -213,6 +217,7 @@ class SignInScreen extends Component {
                     authId: userInfo.idToken,
                     firstName: userInfo.user.givenName,
                     lastName: userInfo.user.familyName,
+                    device_token:fcmToken
                 };
                 var formBody = [];
                 for (var property in details) {
@@ -235,12 +240,14 @@ class SignInScreen extends Component {
                         this.setState({showLoading:false});
                         if (response.ResultType === 1) {
                             Preference.set({
+                                AlertNotification:response.Data.alert_notification,
                                 barberlogin: true,
                                 userEmail: response.Data.email,
                                 userName: userInfo.user.givenName,
                                 userId: response.Data.id,
                                 userType: "Barber",
-                                userToken: response.Data.token
+                                userToken: response.Data.token,
+                                MobilePayActivation:response.Data.mobile_pay_activation,
                             });
                             this.moveToHome();
                         } else {
@@ -324,20 +331,37 @@ class SignInScreen extends Component {
                         .then(response => {
                             console.log("responseClientlogin-->", "-" + JSON.stringify(response));
                             if (response.ResultType === 1) {
-                                this.setState({showLoading: false});
-                                Preference.set({
-                                    clientlogin: true,
-                                    userEmail: response.Data.email,
-                                    userId: response.Data.id,
-                                    userName: response.Data.firstname + " " + response.Data.lastname,
-                                    userType: "Client",
-                                    userToken: response.Data.token
-                                });
-                                if (response.Data.firstTimeSignUp === true) {
-                                    this.props.navigation.navigate("SMSScreen");
-                                } else {
+                                if(response.Data.is_active === 1){
+
+                                    this.setState({showLoading: false});
+                                    Preference.set({
+                                        AlertNotification:response.Data.alert_notification,
+                                        clientlogin: true,
+                                        userEmail: response.Data.email,
+                                        userId: response.Data.id,
+                                        userName: response.Data.firstname + " " + response.Data.lastname,
+                                        userType: "Client",
+                                        userToken: response.Data.token
+                                    });
+                                    console.log("Client alert notifications"+Preference.get("AlertNotification"));
+
                                     this.moveToHome();
+
+
                                 }
+
+                                else if (response.Data.is_active === 0) {
+                                     this.setState({showLoading: false});
+                                     Preference.set({
+                                         clientlogin: false,
+                                         userEmail: response.Data.email,
+                                         userId: response.Data.id,
+                                         userName: response.Data.firstname + " " + response.Data.lastname,
+                                         userType: "Client",
+                                         userToken: response.Data.token
+                                     });
+                                     this.props.navigation.navigate("SMSScreen");
+                                 }
                             } else {
                                 this.setState({showLoading: false});
                                 if (response.ResultType === 0) {
@@ -388,21 +412,36 @@ class SignInScreen extends Component {
                         .then(response => {
                             console.log("responseBarberlogin-->", "-" + JSON.stringify(response));
                             if (response.ResultType === 1) {
-                                this.setState({showLoading: false});
-                                Preference.set({
-                                    barberlogin: true,
-                                    userEmail: response.Data.email,
-                                    userId: response.Data.id,
-                                    userName: response.Data.firstname + " " + response.Data.lastname,
-                                    userType: "Barber",
-                                    userToken: response.Data.token
-                                });
-                                if (response.Data.firstTimeSignUp === true) {
-                                    this.props.navigation.navigate("SMSScreen");
-                                } else {
+                                if(response.Data.is_active===1){
+                                    this.setState({showLoading: false});
+                                    Preference.set({
+                                        AlertNotification:response.Data.alert_notification,
+                                        barberlogin: true,
+                                        userEmail: response.Data.email,
+                                        userId: response.Data.id,
+                                        userName: response.Data.firstname + " " + response.Data.lastname,
+                                        userType: "Barber",
+                                        userToken: response.Data.token,
+                                        MobilePayActivation:response.Data.mobile_pay_activation,
+                                    });
+                                    console.log("alert notifications"+Preference.get("AlertNotification"));
+
                                     this.moveToHome();
                                 }
-                            } else {
+                                }
+
+                                if (response.Data.is_active === 0) {
+                                    this.setState({showLoading: false});
+                                    Preference.set({
+                                        barberlogin: false,
+                                        userEmail: response.Data.email,
+                                        userId: response.Data.id,
+                                        userName: response.Data.firstname + " " + response.Data.lastname,
+                                        userType: "Barber",
+                                        userToken: response.Data.token
+                                    });
+                                    this.props.navigation.navigate("SMSScreen");
+                                } else {
                                 this.setState({showLoading: false});
                                 if (response.ResultType === 0) {
                                     alert(response.Message);
@@ -425,8 +464,11 @@ class SignInScreen extends Component {
     };
 
     facebokLogin = async () => {
+        let result
         try {
-            let result = await LoginManager.logInWithPermissions(['email', 'public_profile']);
+            if(Platform.OS==="ios"){  result = await LoginManager.logInWithReadPermissions(['email', 'public_profile']);}
+            else{  result = await LoginManager.logInWithPermissions(['email', 'public_profile']);}
+
             if (result.isCancelled) {
                 alert("Login was cancelled");
             } else {
@@ -434,36 +476,36 @@ class SignInScreen extends Component {
                 this.FBGraphRequest('id,email,name,first_name,last_name,picture', this.FBLoginCallback);
             }
 
-           /* const accessToken = await AccessToken.getCurrentAccessToken();
-            console.log("Facebook access token: " + JSON.stringify(accessToken))
-            if (accessToken) {
-                //this.fetchFacebookData(accessToken.accessToken.toString());
-                console.log("Facebook access token: " + accessToken.accessToken)
-                let infoRequest = new GraphRequest(
-                    '/me',
-                    {
-                        accessToken: accessToken.accessToken,
-                        parameters: {
-                            fields: {
-                                string: 'id,email,name,first_name,last_name,picture'
-                            }
-                        }
-                    },
-                    (error, result) => {
-                        if (error) {
-                            console.log(error)
-                            alert('Error fetching data: ' + error.toString());
-                        } else {
-                            console.log('Success fetching data: ' + JSON.stringify(result))
+            /* const accessToken = await AccessToken.getCurrentAccessToken();
+             console.log("Facebook access token: " + JSON.stringify(accessToken))
+             if (accessToken) {
+                 //this.fetchFacebookData(accessToken.accessToken.toString());
+                 console.log("Facebook access token: " + accessToken.accessToken)
+                 let infoRequest = new GraphRequest(
+                     '/me',
+                     {
+                         accessToken: accessToken.accessToken,
+                         parameters: {
+                             fields: {
+                                 string: 'id,email,name,first_name,last_name,picture'
+                             }
+                         }
+                     },
+                     (error, result) => {
+                         if (error) {
+                             console.log(error)
+                             alert('Error fetching data: ' + error.toString());
+                         } else {
+                             console.log('Success fetching data: ' + JSON.stringify(result))
 
-                            this.setState({dataFacebook: result, accessToken: accessToken});
-                            this.signinFacebook(this.state.dataFacebook, this.state.accessToken);
-                            //alert('Success fetching data: ' + JSON.stringify(result));
-                        }
-                    });
+                             this.setState({dataFacebook: result, accessToken: accessToken});
+                             this.signinFacebook(this.state.dataFacebook, this.state.accessToken);
+                             //alert('Success fetching data: ' + JSON.stringify(result));
+                         }
+                     });
 
-                await new GraphRequestManager().addRequest(infoRequest).start();
-            }*/
+                 await new GraphRequestManager().addRequest(infoRequest).start();
+             }*/
 
             // this.setState({
             //     accessToken: accessToken
@@ -471,12 +513,12 @@ class SignInScreen extends Component {
         } catch (e) {
             alert("Login error: " + e);
         }
-    }
+    };
 
     async FBGraphRequest(fields, callback) {
         const accessData = await AccessToken.getCurrentAccessToken();
         // Create a graph request asking for user information
-        this.setState({accessToken: accessData.accessToken})
+        this.setState({accessToken: accessData.accessToken});
         const infoRequest = new GraphRequest('/me', {
             accessToken: accessData.accessToken,
             parameters: {
@@ -493,7 +535,7 @@ class SignInScreen extends Component {
         if (error) {
             alert(JSON.stringify(error))
         } else {
-           //alert(JSON.stringify(result))
+            //alert(JSON.stringify(result))
             this.setState({dataFacebook: result});
             this.signinFacebook(this.state.dataFacebook, this.state.accessToken);
         }
@@ -508,6 +550,7 @@ class SignInScreen extends Component {
                     authId: accessToken,
                     firstName: data.first_name,
                     lastName: data.last_name,
+                    device_token:fcmToken
                 };
                 var formBody = [];
                 for (var property in details) {
@@ -528,6 +571,7 @@ class SignInScreen extends Component {
                         console.log("responseClientlogin-->", "-" + JSON.stringify(response));
                         if (response.ResultType === 1) {
                             Preference.set({
+                                AlertNotification:response.Data.alert_notification,
                                 clientlogin: true,
                                 userEmail: response.Data.email,
                                 userName: data.first_name,
@@ -565,6 +609,7 @@ class SignInScreen extends Component {
                     authId: accessToken,
                     firstName: data.first_name,
                     lastName: data.last_name,
+                    device_token:fcmToken
                 };
                 var formBody = [];
                 for (var property in details) {
@@ -585,13 +630,16 @@ class SignInScreen extends Component {
                         console.log("responseBarberlogin-->", "-" + JSON.stringify(response));
                         if (response.ResultType === 1) {
                             Preference.set({
+                                AlertNotification:response.Data.alert_notification,
                                 barberlogin: true,
                                 userEmail: response.Data.email,
                                 userName: data.first_name,
                                 userId: response.Data.id,
                                 userType: "Barber",
-                                userToken: response.Data.token
+                                userToken: response.Data.token,
+                                MobilePayActivation:response.Data.mobile_pay_activation,
                             });
+                            console.log("alert notifications"+Preference.get("AlertNotification"));
                             if (response.Data.firstTimeSignUp === true) {
                                 this.props.navigation.navigate("SMSScreen");
                             } else {
@@ -633,14 +681,14 @@ class SignInScreen extends Component {
                 actions: [NavigationActions.navigate({ routeName: 'ClientTabNavigator' })],
             });
             this.props.navigation.dispatch(goToIntoScreen);
-           // this.props.navigation.navigate("ClientTabNavigator");
+            // this.props.navigation.navigate("ClientTabNavigator");
         } else {
             const goToIntoScreen = StackActions.reset({
                 index: 0,
                 actions: [NavigationActions.navigate({ routeName: 'TabNavigator' })],
             });
             this.props.navigation.dispatch(goToIntoScreen);
-           // this.props.navigation.navigate("TabNavigator");
+            // this.props.navigation.navigate("TabNavigator");
         }
     }
 
@@ -663,16 +711,19 @@ class SignInScreen extends Component {
         const isValidEmail = checkEmail(email);
         const isValidPassword = password.length >= 6;
         return (
-            <ImageBackground
-                source={require('../../../assets/img_background2.png')}
+            <View
                 style={styles.container}
-                imageStyle={styles.backgroundImg}
             >
                 <NotificationPopup ref={ref => this.popup = ref} />
                 <View style={styles.bottomContainer}/>
                 <SafeAreaView style={styles.parentContainer}>
                     <View style={styles.closeContainer}>
                         <CloseButton onPress={this.onClose}/>
+                    </View>
+                    <View style={{width:"100%",height:"10%",justifyContent:'center',alignItems:"center"}}  >
+                        <Image style={{resizeMode:"contain",width:150,height:100}}
+                               source={require("../../../assets/images/logo.png")}
+                        />
                     </View>
                     <KeyboardAwareScrollView style={styles.mainContainer}>
                         <View style={styles.subContainer}>
@@ -746,10 +797,10 @@ class SignInScreen extends Component {
                         alignItems: "center",
                         justifyContent: "center"
                     }}>
-                       <Image resizeMode={"contain"} source={require("../../../assets/images/loading.gif")} style={{width:60,height:60, opacity: 1,}}/>
+                        <Image resizeMode={"contain"} source={require("../../../assets/images/loading.gif")} style={{width:60,height:60, opacity: 1,}}/>
                     </View>}
                 </SafeAreaView>
-            </ImageBackground>
+            </View>
         )
     }
 }

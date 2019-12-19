@@ -10,6 +10,7 @@ import {
     TouchableOpacity, TouchableWithoutFeedback, TextInput,
 
 } from "react-native";
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import Header from "../../../components/Header/CustomHeader";
 import {ScrollView} from "react-native-gesture-handler";
 import colors from "../../../themes/colors";
@@ -20,16 +21,21 @@ import {AirbnbRating} from "react-native-elements";
 import Dialog, {DialogContent} from 'react-native-popup-dialog';
 import {constants} from "../../../utils/constants";
 import Preference from "react-native-preference";
-import {SafeAreaView} from "react-navigation";
+import {NavigationActions, SafeAreaView, StackActions} from "react-navigation";
 
 
 const {height, width} = Dimensions.get("window");
-let ratings = Math.floor(Math.random() * 5 + 1);
+//let ratings = Math.floor(Math.random() * 5 + 1);
 
-let barberId = "", barberImage = "", barberName = "", barberShopName = "",appointmentPrice=0,appointmentId;
+let  Params,  barberId = "",  client_id="", barberImage = "", barberName = "", barberShopName = "",appointmentPrice=0,appointmentId;
 export default class ClientLeaveReview extends Component {
     rightAction() {
-        this.props.navigation.goBack();
+        //this.props.navigation.goBack();
+        const goToIntoScreen = StackActions.reset({
+            index: 0,
+            actions: [NavigationActions.navigate({ routeName: 'ClientTabNavigator' })],
+        });
+        this.props.navigation.dispatch(goToIntoScreen);
     }
 
 
@@ -71,17 +77,25 @@ export default class ClientLeaveReview extends Component {
     }
 
     constructor(props) {
-        super(props)
-        const {navigation} = this.props;
+        super(props);
+        const {params}=this.props.navigation.state;
+        console.log("PARAMS",params);
+        Params=params;
+        console.log("PARAMS",JSON.stringify(Params));
+
+        /*const {navigation} = this.props;
         barberId = navigation.getParam('barber_id');
-        barberImage = navigation.getParam('barberImage');
-        barberName = navigation.getParam('barberName');
-        barberShopName = navigation.getParam('barberShopName');
+        client_id=navigation.getParam('client_id');
         appointmentPrice = parseInt(navigation.getParam('appointmentPrice'));
-        appointmentId= navigation.getParam('appointmentId');
+        appointmentId= navigation.getParam('appointmentId');*/
+        barberId =Params.barber_id;
+        client_id=Params.client_id;
+        appointmentPrice = Params.appointmentPrice;
+        appointmentId= Params.appointmentId
         this.state = {
+            BarberDetails:[],
             showLoading: false,
-            addTip: false,
+            addTip: true,
             DialogVisible: false,
             percentage: "0%",
             rating:0,
@@ -90,15 +104,53 @@ export default class ClientLeaveReview extends Component {
             punctuality:false,
             professional:false,
             addComment:"",
-            percentPrice:appointmentPrice,
+            percentPrice:0,
             unselected: require("../../../assets/images/greentick.png"),
             unselected2: require("../../../assets/images/greentick.png"),
             unselected3: require("../../../assets/images/greentick.png"),
-            unselected4: require("../../../assets/images/greentick.png")
+            unselected4: require("../../../assets/images/greentick.png"),
         };
 
     }
+    componentDidMount(): void {
+        //this.getBarberDetails();
+    }
 
+    getBarberDetails() {
+        this.setState({showLoading: true})
+        fetch(constants.ClientBarbersProfile + "/" + Params.barber_id + "/profile", {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        }).then(response => response.json())
+            .then(response => {
+                console.log("getBarberDetails-->", "-" + JSON.stringify(response));
+                if (response.ResultType === 1) {
+                    this.setState({showLoading: false})
+                    let barberData = response.Data;
+
+                    barberImage=barberData.user_image
+                    barberName=barberData.firstname +" "+barberData.lastname;
+                    barberShopName=barberData.shop_name;
+                    this.setState({BarberDetails:barberData},()=>
+                    console.log("barberDetailsReview"+this.state.BarberDetails)
+                    )
+
+                } else {
+                    this.setState({showLoading: false})
+                    if (response.ResultType === 0) {
+                        alert(response.Message);
+                    }
+                }
+            }).catch(error => {
+            //console.error('Errorr:', error);
+            this.setState({showLoading: false})
+            console.log('Error:', error);
+            alert("Error: " + error);
+        });
+    }
     setAddTip() {
         if (this.state.addTip === false) {
             this.setState({addTip: true});
@@ -123,6 +175,7 @@ export default class ClientLeaveReview extends Component {
             tip_price: this.state.percentPrice,
             appointment_id:appointmentId,
         };
+        console.log("Reviews"+JSON.stringify(details));
         console.log("Credentials",JSON.stringify(details));
         var formBody = [];
         for (var property in details) {
@@ -145,12 +198,17 @@ export default class ClientLeaveReview extends Component {
                 this.setState({showLoading:false});
                 if (response.ResultType === 1) {
                     this.setState({showLoading: false});
-                    Alert.alert("Success!","You review saved successfully")
-                    this.props.navigation.navigate("ClientTabNavigator");
+
+                    //this.props.navigation.goBack();
+                    const goToIntoScreen = StackActions.reset({
+                        index: 0,
+                        actions: [NavigationActions.navigate({routeName: 'ClientTabNavigator'})],
+                    });
+                    this.props.navigation.dispatch(goToIntoScreen);
                 } else {
                     this.setState({showLoading: false});
                     if (response.ResultType === 0) {
-                        alert(response.Message);
+                        //alert(response.Message);
                     }
                 }
             })
@@ -159,8 +217,10 @@ export default class ClientLeaveReview extends Component {
                 this.setState({showLoading:false});
                 //console.error('Errorr:', error);
                 console.log('Error:', error);
-                alert("Error: " + error);
+                //alert("Error: " + error);
             });
+
+
     }
 
     ratingCompleted=(rating)=> {
@@ -171,6 +231,7 @@ export default class ClientLeaveReview extends Component {
     setPercentage(per)
     {
         let percentprice=0;
+        //appointmentPrice=30;
         this.setState({percentage:per,DialogVisible:false});
         if(per=="10%")
         {
@@ -194,11 +255,12 @@ export default class ClientLeaveReview extends Component {
 
     render() {
         return (
-            <View>
-                <ScrollView>
+
+
                     <View style={styles.container}>
+                    <KeyboardAwareScrollView style={{
+                            height:"100%",}} >
                         <Header
-                            rightAction={this.rightAction.bind(this)}
                             leftAction={this.rightAction.bind(this)}
                             bgIcon={require("../../../assets/images/Reviewimage.png")}
                             centerComponent={{text: "REVIEW", style: {color: "#fff"}}}
@@ -206,7 +268,7 @@ export default class ClientLeaveReview extends Component {
                         <View style={styles.detailsContainer}>
                             <View style={styles.profileImageContainer}>
                                 <Image
-                                    source={barberImage}
+                                    source={{uri:barberImage}}
                                     style={styles.profileImage}>
                                 </Image>
                             </View>
@@ -228,7 +290,7 @@ export default class ClientLeaveReview extends Component {
                                             marginStart: 16,
                                             marginEnd: 17
                                         }}>
-                                            {barberShopName}
+                                            {"Awesome cut!"}
                                         </Text>
                                         <Image resizeMode={"contain"}
                                                style={{
@@ -245,7 +307,7 @@ export default class ClientLeaveReview extends Component {
                                         <AirbnbRating
                                             showRating={false}
                                             count={5}
-                                            defaultRating={ratings}
+                                            defaultRating={0}
                                             size={20}
                                             onFinishRating={this.ratingCompleted}
                                             style={{marginStart: 10, height: 30}}
@@ -432,13 +494,13 @@ export default class ClientLeaveReview extends Component {
                                     }}>(100% goes to your
                                         barber)</Text>
                                 </View>
-                                <View style={{flexDirection: "row", width: "40%"}}>
+                                <View style={{flexDirection: "row", width: "40%",alignItems:"center",justifyContent:"center"}}>
                                     <Text style={{
                                         color: "white",
                                         fontSize: 20,
                                         fontWeight: "bold",
                                         marginStart: 10
-                                    }}>${this.state.percentPrice}</Text>
+                                    }}>${this.state.percentPrice>0?this.state.percentPrice.toFixed(2):0}</Text>
                                     <TouchableOpacity onPress={() => this.setState({DialogVisible: true})} style={{
                                         flexDirection: "row",
                                         backgroundColor: "#474857",
@@ -448,7 +510,6 @@ export default class ClientLeaveReview extends Component {
                                         width: 50,
                                         justifyContent: "center",
                                         alignItems: "center",
-                                        marginTop: 3
                                     }}>
                                         <Text style={{
                                             color: "white",
@@ -481,7 +542,7 @@ export default class ClientLeaveReview extends Component {
                             </TouchableOpacity>
 
                         </View>
-                    </View>
+
 
                     <Dialog
                         visible={this.state.DialogVisible}
@@ -507,7 +568,7 @@ export default class ClientLeaveReview extends Component {
                                   style={{fontSize: 18, color: "black", marginBottom: 10, marginTop: 10}}>{"50%"}</Text>
                         </DialogContent>
                     </Dialog>
-                </ScrollView>
+
                 {this.state.showLoading && <View style={{
                     width: "100%",
                     height: "100%",
@@ -519,6 +580,8 @@ export default class ClientLeaveReview extends Component {
                 }}>
                     <Image resizeMode={"contain"} source={require("../../../assets/images/loading.gif")} style={{width:60,height:60, opacity: 1,}}/>
                 </View>}
+            </KeyboardAwareScrollView>
+
             </View>
         )
     }
@@ -526,7 +589,8 @@ export default class ClientLeaveReview extends Component {
 }
 const styles = StyleSheet.create({
     container: {
-        width,
+        flex:1,
+        height:"100%",
         backgroundColor: colors.themeBackground
     },
     detailsContainer: {

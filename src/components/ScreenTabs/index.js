@@ -107,11 +107,11 @@ export default class ScreenTabs extends Component {
                         <View style={styles.iconContainer}>
                             {(getViewIndex == 2 )&& <Image
                                 source={require("../../assets/images/notification_green.png")}
-                                style={styles.icon}
+                                style={styles.icon2}
                             />}
                             {!(getViewIndex == 2 )&& <Image
                                 source={require("../../assets/images/notification.png")}
-                                style={styles.icon}
+                                style={styles.icon2}
                             />}
                             <Text style={{color: getViewIndex == 2 ? "green" : "#535361"}}>
                                 Notifications
@@ -179,6 +179,11 @@ const styles = StyleSheet.create({
     icon: {
         height: 60,
         width: 60,
+        borderRadius: 30
+    },
+    icon2: {
+        height: 50,
+        width: 50,
         borderRadius: 30
     }
 });

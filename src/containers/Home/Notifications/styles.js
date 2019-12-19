@@ -3,7 +3,8 @@ export const styles = {
   MainContainer: {
 
     flex: 1,
-    paddingTop: 30
+    alignItems:"center",
+    width:"100%"
   },
   imageThumbnail: {
     justifyContent: "center",

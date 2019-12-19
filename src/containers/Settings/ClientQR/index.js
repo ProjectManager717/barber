@@ -14,11 +14,14 @@ export default class ClientQR extends Component {
         super(props);
         const {navigation} = this.props;
         qrCode = navigation.getParam('qr_code');
+        this.state = {
+            text: qrCode,
+            showQR:true
+        };
     }
 
-    state = {
-        text: qrCode,
-    };
+
+
 
     render() {
         return (
@@ -29,33 +32,32 @@ export default class ClientQR extends Component {
                     style={{backgroundColor: "yellow"}}
                     outerContainerStyles={{backgroundColor: "#1999CE"}}
                     centerComponent={{text: "CHECK IN", style: {color: "#fff"}}}
-                    rightComponent={{color: "#fff"}}
                     containerStyle={{
                         backgroundColor: Colors.dark,
                         justifyContent: "space-around"
                     }}
-                    leftComponent={
+                    rightComponent={
                         <TouchableOpacity onPress={() => {
                             this.props.navigation.goBack();
                         }}>
                             <Image
                                 style={{tintColor: 'white', height: 20, resizeMode: 'contain'}}
-                                source={require("../../../assets/images/ic_back.png")}
+                                source={require("../../../assets/images/right_arrow.png")}
                             />
                         </TouchableOpacity>
                     }
                 />
-                <View style={{flex: 1, flexDirection: "column", alignItems: "center"}}>
+                <View style={{ flexDirection: "column", alignItems: "center",}}>
                     <Text style={{color: "white", fontSize: 16, fontWeight: "bold", marginTop: 20}}>Your Barber Scan
                         Your Code</Text>
-                    <View style={{margin: 30}}>
+                    <View  style={{margin: 30,overflow:"hidden"}}>
                         {/*<Image source={require("../../../assets/images/QR_code.png")}
                                 style={{width:250,height:250}}/>*/}
-                        <QRCode
+                        {this.state.showQR &&<QRCode
                             value={this.state.text}
                             size={180}
                             bgColor='black'
-                            fgColor='#fffff0'/>
+                            fgColor='#fffff0'/>}
                     </View>
                 </View>
             </View>

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {ImageBackground, Text, View, TouchableOpacity, NetInfo, Dimensions, Keyboard} from 'react-native';
+import {ImageBackground, Text, View, TouchableOpacity, NetInfo, Dimensions, Keyboard, Image} from 'react-native';
 import {SafeAreaView} from 'react-navigation';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {styles} from './styles';
@@ -25,7 +25,9 @@ class ForgetPasswordScreen extends Component {
             isConnected: false,
             sendMail: true,
             resetPassword: false,
-            forgetpassword_pin: "1234", password: "", repassword: "",
+            forgetpassword_pin: "1234",
+            password: "",
+            repassword: "",
         };
         this.state.userName = itemId;
         this.showResetPassword = this.showResetPassword.bind(this);
@@ -34,7 +36,12 @@ class ForgetPasswordScreen extends Component {
         this.onResetPassword = this.onResetPassword.bind(this);
     }
 
+    getRandomNumber() {
+        return Math.floor(Math.random() * 10000);
+    }
+
     componentDidMount(): void {
+        var code = this.getRandomNumber().toString()
         NetInfo.isConnected.addEventListener(
             'change',
             this._handleConnectivityChange
@@ -44,6 +51,7 @@ class ForgetPasswordScreen extends Component {
                 this.setState({isConnected});
             }
         );
+        this.setState({forgetpassword_pin:code})
     }
 
     showResetPassword() {
@@ -67,6 +75,7 @@ class ForgetPasswordScreen extends Component {
 
     onForgot = () => {
         //alert('forgot');
+
         if (this.state.userName === "Client") {
             if (this.state.email === "") {
                 alert("Please enter email?");
@@ -116,6 +125,7 @@ class ForgetPasswordScreen extends Component {
                     email: this.state.email,
                     forgetpassword_pin: this.state.forgetpassword_pin
                 };
+                console.log("PIN123"+JSON.stringify(details));
                 var formBody = [];
                 for (var property in details) {
                     var encodedKey = encodeURIComponent(property);
@@ -271,18 +281,20 @@ class ForgetPasswordScreen extends Component {
         const isValidPasswordConfirm = repassword.length >= 6 && (password === repassword);
         return (
 
-            <ImageBackground
-                source={require('../../../assets/img_background2.png')}
-                style={styles.container}
-                imageStyle={styles.backgroundImg}
+            <View style={styles.container}
             >
                 {/*<View style={styles.bottomContainer}/>*/}
                 {this.state.sendMail && <SafeAreaView style={styles.parentContainer}>
                     <View style={styles.closeContainer}>
                         <CloseButton onPress={this.onClose}/>
                     </View>
+                    <View style={{width:"100%",height:"10%",justifyContent:'center',alignItems:"center",marginTop:30,marginBottom:20}}  >
+                        <Image style={{resizeMode:"contain",width:150,height:100}}
+                               source={require("../../../assets/images/logo.png")}
+                        />
+                    </View>
                     <KeyboardAwareScrollView style={styles.mainContainer}>
-                        <View style={[styles.subContainer, {margginTop: 10}]}>
+                        <View style={[styles.subContainer]}>
                             <Text style={styles.whiteBoldBigText}>
                                 Forgot Password • {this.state.userName}
                             </Text>
@@ -306,6 +318,11 @@ class ForgetPasswordScreen extends Component {
                 {this.state.resetPassword && <SafeAreaView style={styles.parentContainer}>
                     <View style={styles.closeContainer}>
                         <CloseButton onPress={this.onCloseReset}/>
+                    </View>
+                    <View style={{width:"100%",height:"10%",justifyContent:'center',alignItems:"center",marginTop:30,marginBottom:20}}  >
+                        <Image style={{resizeMode:"contain",width:150,height:100}}
+                               source={require("../../../assets/images/logo.png")}
+                        />
                     </View>
                     <KeyboardAwareScrollView style={styles.mainContainer}>
                         <View style={[styles.subContainer, {margginTop: 10}]}>
@@ -402,7 +419,7 @@ class ForgetPasswordScreen extends Component {
 
                     </View>
                 </Modal>
-            </ImageBackground>
+            </View>
 
         )
     }

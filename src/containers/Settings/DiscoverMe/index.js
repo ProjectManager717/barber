@@ -6,8 +6,10 @@ import {globalStyles} from "../../../themes/globalStyles";
 import {Header} from "react-native-elements";
 import CheckBox from "../../../components/CheckBox";
 import {constants} from "../../../utils/constants";
+import Preference from "react-native-preference";
 
 let item1price = 0, item2price = 0;
+var moment = require('moment');
 export default class DiscoverMe extends Component {
 
     constructor(props) {
@@ -21,35 +23,99 @@ export default class DiscoverMe extends Component {
             twoWeek: false,
             threeWeek: false,
             previosItemPrice: 0,
+            rangeprev:0,
             price: 0,
+            PaymentStatus:false,
+            PaymentExpiryTime:"",
+            GetDiscoveredRange:0,
+            GetDiscoveredPromotionRange:0
         }
     }
 
     componentDidMount(): void {
         this.getDiscovedMe()
     }
+     UpdateDiscoverMe(){
+        if(this.state.PaymentStatus===true){
+            alert("Discover Me Subscription Already Activated Expiry Date:"+moment(this.state.PaymentExpiryTime).format("L"))
+        }else{
+         this.setState({showLoading: true});
+         var details={
+             user_id:Preference.get("userId"),
+             get_discovered_range:this.state.GetDiscoveredRange,
+             get_discovered_promotion_duration:this.state.GetDiscoveredPromotionRange
+         };
+         var formBody = [];
+         for (var property in details) {
+             var encodedKey = encodeURIComponent(property);
+             var encodedValue = encodeURIComponent(details[property]);
+             formBody.push(encodedKey + "=" + encodedValue);
+         }
+         formBody = formBody.join("&");
+         fetch(constants.UpdateDiscoverMe, {
+             method: 'POST',
+             headers: {
+                 'Accept': 'application/json',
+                 'Content-Type': 'application/x-www-form-urlencoded'
+             },body: formBody
+         }).then(response => response.json())
+             .then(response => {
+                 console.log("responseBookingPrefrence-->", "-" + JSON.stringify(response));
+                 if (response.ResultType === 1) {
+                     this.setState({showLoading: false});
+                      this.props.navigation.navigate("DiscoverMePaymentMethod");
+
+                 } else {
+                     this.setState({showLoading: false});
+                     if (response.ResultType === 0) {
+                         alert(response.Message);
+                     }
+                 }
+             }).catch(error => {
+             this.setState({showLoading: false});
+             //console.error('Errorr:', error);
+             console.log('Error:', error);
+             alert("Error: " + error);
+         });
+     }}
 
     getDiscovedMe() {
         this.setState({showLoading: true});
-        fetch(constants.BarberBookingPreference + "?user_id=" + "5d1206c0a70da23e2c2ae205" /*Preference.get("userId")*/, {
-            method: 'GET',
+         var details={
+             barber_id:Preference.get("userId")
+         };
+        var formBody = [];
+        for (var property in details) {
+            var encodedKey = encodeURIComponent(property);
+            var encodedValue = encodeURIComponent(details[property]);
+            formBody.push(encodedKey + "=" + encodedValue);
+        }
+        formBody = formBody.join("&");
+        fetch(constants.GetDiscoverMe, {
+            method: 'POST',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },body: formBody
         }).then(response => response.json())
             .then(response => {
                 console.log("responseBookingPrefrence-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
-                    this.setState({showLoading: false});
                     let prefrence = response.Data;
+                    this.setState({showLoading: false});
+                    this.setState({
+                        PaymentStatus:prefrence.get_discovered_payment_activation,
+                        PaymentExpiryTime:prefrence.get_discovered_activation_expire_date
+
+                    });
+
 
                     if (prefrence.get_discovered_range === "1")
-                        this.setState({zipCode: true})
+                        this.setState({zipCode: true});
                     if (prefrence.get_discovered_range === "2")
-                        this.setState({city: true})
+                        this.setState({city: true});
                     if (prefrence.get_discovered_range === "3")
-                        this.setState({stat: true})
+                        this.setState({stat: true});
 
                     if (prefrence.get_discovered_promotion_duration === "1")
                         this.setState({oneWeek: true})
@@ -57,7 +123,7 @@ export default class DiscoverMe extends Component {
                         this.setState({twoWeek: true})
                     if (prefrence.get_discovered_promotion_duration === "3")
                         this.setState({threeWeek: true})
-
+                      this.setState({price:prefrence.get_discovered_total})
 
                 } else {
                     this.setState({showLoading: false});
@@ -76,36 +142,32 @@ export default class DiscoverMe extends Component {
     checkBox(val) {
         if (val === 1) {
             if (this.state.zipCode === true) {
-                let pr = this.state.price;
-                pr = pr - 5;
-                this.setState({zipCode: false, price: pr})
+                //this.setState({zipCode: false,city:false,stat:false,price:0,rangeprev:0})
             } else {
                 let pr = this.state.price;
-                pr = pr + 5;
-                this.setState({zipCode: true, price: pr})
+                pr = pr + 5-this.state.rangeprev;
+                this.setState({zipCode: true,city:false,stat:false, price: pr,rangeprev:5,GetDiscoveredRange:1})
             }
 
         }
         if (val === 2) {
             if (this.state.city === true) {
-                let pr = this.state.price;
-                pr = pr - 15;
-                this.setState({city: false, price: pr})
+
+                //this.setState({city: false,zipCode:false,stat:false,price:0,rangeprev:0 })
             } else {
                 let pr = this.state.price;
-                pr = pr + 15;
-                this.setState({city: true, price: pr})
+                pr = pr + 15-this.state.rangeprev;
+                this.setState({city: true,zipCode:false,stat:false, price: pr,rangeprev:15,GetDiscoveredRange:2})
             }
         }
         if (val === 3) {
             if (this.state.stat === true) {
-                let pr = this.state.price;
-                pr = pr - 50;
-                this.setState({stat: false, price: pr})
+
+                //this.setState({stat: false,city:false,zipCode:false,price:0,rangeprev:0})
             } else {
                 let pr = this.state.price;
-                pr = pr + 50;
-                this.setState({stat: true, price: pr})
+                pr = pr + 50-this.state.rangeprev;
+                this.setState({stat: true,city:false,zipCode:false, price: pr,rangeprev:50,GetDiscoveredRange:3})
             }
         }
         if (val === 4) {
@@ -116,7 +178,7 @@ export default class DiscoverMe extends Component {
             } else {
                 let pr = this.state.price;
                 pr = pr + 5 - this.state.previosItemPrice;
-                this.setState({oneWeek: true, twoWeek: false, threeWeek: false, previosItemPrice: 5, price: pr})
+                this.setState({oneWeek: true, twoWeek: false, threeWeek: false, previosItemPrice: 5, price: pr,GetDiscoveredPromotionRange:1})
             }
         }
         if (val === 5) {
@@ -127,7 +189,7 @@ export default class DiscoverMe extends Component {
             } else {
                 let pr = this.state.price;
                 pr = pr + 10 - this.state.previosItemPrice;
-                this.setState({twoWeek: true, oneWeek: false, threeWeek: false, previosItemPrice: 10, price: pr})
+                this.setState({twoWeek: true, oneWeek: false, threeWeek: false, previosItemPrice: 10, price: pr,GetDiscoveredPromotionRange:2})
             }
         }
         if (val === 6) {
@@ -138,7 +200,7 @@ export default class DiscoverMe extends Component {
             } else {
                 let pr = this.state.price;
                 pr = pr + 15 - this.state.previosItemPrice;
-                this.setState({threeWeek: true, oneWeek: false, twoWeek: false, previosItemPrice: 15, price: pr})
+                this.setState({threeWeek: true, oneWeek: false, twoWeek: false, previosItemPrice: 15, price: pr,GetDiscoveredPromotionRange:3})
             }
         }
     }
@@ -210,7 +272,7 @@ export default class DiscoverMe extends Component {
                     </View>
 
                     <TouchableOpacity style={[globalStyles.button, {marginTop: 70, width: '70%'}]} onPress={() => {
-                        this.props.navigation.navigate('PaymentMethod');
+                       this.UpdateDiscoverMe();
                     }}>
                         <Text style={globalStyles.buttonText}>Submit</Text>
                     </TouchableOpacity>

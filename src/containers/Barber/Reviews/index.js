@@ -10,7 +10,8 @@ import {styles} from "./styles";
 import {constants} from "../../../utils/constants";
 import Preference from "react-native-preference";
 import {SafeAreaView} from "react-navigation";
-
+var moment = require('moment');
+let createdAt;
 export default class Reviews extends Component {
     constructor() {
         super();
@@ -47,7 +48,10 @@ export default class Reviews extends Component {
                 console.log("ClientBarbersReviews-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
                     this.setState({showLoading: false, reviews: response.Data});
-                    console.log("dataSource:::", JSON.stringify(response.Data))
+                    console.log("dataSource:::", JSON.stringify(response.Data));
+
+
+
                     let ratingpoints=0;
                     for(let w=0;w<response.Data.length;w++)
                     {
@@ -71,12 +75,15 @@ export default class Reviews extends Component {
 
 
     renderItem(item) {
-        let userImage="http://ec2-3-14-204-57.us-east-2.compute.amazonaws.com:5000/images/client/"+item.client_id.client_image;
+        let userImage=constants.profileImagePath+item.client_image;
         console.log("Imageuser-->",userImage);
         return (
             <View style={styles.row_item}>
                 <View style={[globalStyles.rowBackground, {marginTop: 40}]}>
+                    <View>
                     <Text style={styles.client_name}>{item.client_id.firstname+" "+item.client_id.lastname}</Text>
+                        <Text style={{marginLeft: 110,color:"grey",fontSize:11}}  >{moment(item.createdAt).format("l")}</Text>
+                    </View>
                     <View style={styles.rating_container}>
                         <AirbnbRating
                             showRating={false}
@@ -84,16 +91,22 @@ export default class Reviews extends Component {
                             defaultRating={item.rating}
                             size={10}
                         />
-                        <Text style={styles.rating_text}>{item.rating} of 5.0</Text>
+                        <Text style={styles.rating_text}>{item.rating} of 5</Text>
                     </View>
+
                     <Text style={styles.comments}>
                         {item.review_text}
                     </Text>
+
+
+
                 </View>
+
                 <Image
                     source={{uri:userImage}}
                     style={styles.thumbnail}
                 />
+
             </View>
         );
     }
@@ -125,11 +138,11 @@ export default class Reviews extends Component {
                             defaultRating={ratings}
                             size={25}
                         />
-                        <Text style={[styles.rating_text, {fontSize: 16}]}>({ratings} of 5.0)</Text>
+                        <Text style={[styles.rating_text, {fontSize: 16}]}>({ratings} of 5)</Text>
                     </View>
                 </View>}
                 {(this.state.reviews.length > 0) && <FlatList
-                    data={this.state.reviews}
+                    data={this.state.reviews.reverse()}
                     renderItem={({item}) => this.renderItem(item)}
                     numColumns={1}
                     keyExtractor={(item, index) => index}

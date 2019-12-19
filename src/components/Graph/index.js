@@ -1,5 +1,15 @@
 import React, {Component} from "react";
-import {View, Dimensions, StyleSheet, Image, Text, TouchableOpacity, Picker, ScrollView} from "react-native";
+import {
+    View,
+    Dimensions,
+    StyleSheet,
+    Image,
+    Text,
+    TouchableOpacity,
+    Picker,
+    ScrollView,
+    BackHandler
+} from "react-native";
 import colors from "../../themes/colors";
 import PopupDialog from 'react-native-popup-dialog';
 import Dialog from "../../containers/Home/Clients/ClientBarberProfile";
@@ -12,12 +22,17 @@ import {
 } from 'react-native-chart-kit'
 import {constants} from "../../utils/constants";
 import Preference from "react-native-preference";
+import {data} from "react-native-chart-kit/data";
 
 const {height, width} = Dimensions.get("window");
-
-let getmonth = new Date().getMonth();
+var moment = require('moment');
+//require('moment-recur');
+let getmonth = new Date().getMonth()+1;
+let defaultMonth=moment(getmonth,"M").format("MMM")
 let getDate = new Date().getDate();
 let getYear = new Date().getFullYear();
+let WEEKDATE=Math.ceil(new Date().getDate() / 7);
+//WEEKDATE=WEEKDATE+1;
 
 export default class lGraphComp extends Component {
 
@@ -27,9 +42,9 @@ export default class lGraphComp extends Component {
             showLoading: false,
             DialogVisible: false,
             DialogVisible1: false,
-            monthSelect: "Jan",
-            monthSelectVal: 1,
-            weekSelect: "Week 1",
+            monthSelect:defaultMonth,
+            monthSelectVal:0,
+            weekSelect: "Week "+WEEKDATE,
             totalClients: 0,
             totalCancellations: 0,
             totalTips: 0,
@@ -42,12 +57,25 @@ export default class lGraphComp extends Component {
     }
 
     componentDidMount(): void {
-        let mon = parseInt(getmonth) + 1;
+        this.backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+            //this.goBack(); // works best when the goBack is async
+            return true;
+        });
+        let mon = parseInt(getmonth);
+        this.setState({monthSelectVal:mon})
         let startDate = getYear + "-" + mon + "-01";
         let endDate = getYear + "-" + mon + "-07";
         this.getRevenueofBarber(startDate, endDate);
+
     }
 
+    /* weekOfMonth(date) {
+        let weekInYearIndex = date.week();
+        if (date.year() !== date.weekYear()) {
+            weekInYearIndex = date.clone().subtract(1,'week').week() + 1;
+        }
+        const weekIndex = weekInYearIndex - moment(date).startOf('month').week() + 1;
+    }*/
     getRevenueofBarber(startDate, endDate) {
         this.setState({showLoading: true})
         console.log("URLresponseBarberGetRevenue-->", constants.BarberGetRevenue + "?barber_id=" + Preference.get("userId") + "&start_date_week=" + startDate + "&end_date_week=" + endDate);
@@ -142,11 +170,11 @@ export default class lGraphComp extends Component {
                     marginBottom: 10,
                     alignItems: 'center'
                 }}>
-                    <TouchableOpacity style={{marginLeft: 20, flexDirection: "row"}}
+                    <TouchableOpacity style={{marginLeft: 20, flexDirection: "row",width:"12%"}}
                                       onPress={() => this.setState({DialogVisible: true})}>
-                        <Text style={[styles.label, {fontSize: 11, fontWeight: 'bold'}]}>{this.state.monthSelect}</Text>
+                        <Text style={[styles.label, {fontSize: 11, fontWeight: 'bold',width:"50%"}]}>{this.state.monthSelect}</Text>
                         <Image source={require("../../assets/images/arrow_down.png")}
-                               style={[styles.arrow_down, {marginLeft: 5, marginTop: 5}]}/>
+                               style={[styles.arrow_down, {marginLeft: 5, marginTop: 5,}]}/>
                         <PopupDialog
                             visible={this.state.DialogVisible}
                             width={0.6}
@@ -156,8 +184,7 @@ export default class lGraphComp extends Component {
                             }}
                             ref={(popupDialog) => {
                                 this.popupDialog = popupDialog;
-                            }}
-                        >
+                            }}>
                                 <View style={{flexDirection: "column", alignItems: "center"}}>
                                     <View style={{
                                         width: "100%",
@@ -261,21 +288,22 @@ export default class lGraphComp extends Component {
                                                 width: "80%",
                                                 height: 0.5,
                                                 backgroundColor: "grey",
-                                                marginTop: 10
+                                                marginTop: 20
                                             }}/>
-                                            <Text style={{marginTop: 10, fontSize: 20, marginBottom: 10}}
+                                            <Text style={{marginTop: 10, fontSize: 20, marginBottom: 60}}
                                                   onPress={() => this.setMonth("Dec", "12")}>Dec</Text>
                                         </View>
                                     </ScrollView>
                                 </View>
                         </PopupDialog>
                     </TouchableOpacity>
-                    <TouchableOpacity style={{marginLeft: 20, flexDirection: "row"}}
+                    <TouchableOpacity style={{marginLeft: 20, flexDirection: "row",}}
                                       onPress={() => this.setState({DialogVisible1: true})}>
                         <Text style={[styles.label, {
                             marginLeft: 15,
                             fontWeight: 'bold',
-                            fontSize: 11
+                            fontSize: 11,
+                            width:"30%"
                         }]}>{this.state.weekSelect}</Text>
                         <Image source={require("../../assets/images/arrow_down.png")}
                                style={[styles.arrow_down, {marginLeft: 5, marginTop: 5}]}/>
@@ -341,7 +369,7 @@ export default class lGraphComp extends Component {
                             backgroundGradientFrom: '#3D3E4D',
                             backgroundGradientTo: '#3D3E4D',
                             //color:"#ffffff",
-                            decimalPlaces: 1, // optional, defaults to 2dp
+                            decimalPlaces: 0, // optional, defaults to 2dp
                             color: (opacity = 1) => `rgba(255,255,255, ${opacity})`,
                             style: {
                                 borderRadius: 10
@@ -385,7 +413,7 @@ export default class lGraphComp extends Component {
                                 <Text style={[styles.label, {
                                     fontWeight: 'bold',
                                     fontSize: 15
-                                }]}>${this.state.totalTips}</Text>
+                                }]}>${this.state.totalTips>0?this.state.totalTips.toFixed(2):this.state.totalTips}</Text>
                             </View>
                         </View>
                     </View>

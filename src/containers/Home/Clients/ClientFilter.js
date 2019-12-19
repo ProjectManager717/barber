@@ -85,6 +85,11 @@ export default class ClientBarberSearch extends Component {
             this.setState({unselected3: require("../../../assets/images/greenticked.png")})
     }
 
+    setValues()
+    {
+
+    }
+
     Selected() {
         if (this.state.unselected === require("../../../assets/images/greenticked.png")) {
             this.setState({unselected: require("../../../assets/images/greentick.png"),blendQuality:0})
@@ -186,9 +191,9 @@ export default class ClientBarberSearch extends Component {
                 minLength={2} // minimum length of text to search
                 autoFocus={false}
                 returnKeyType={'search'} // Can be left out for default return key https://facebook.github.io/react-native/docs/textinput.html#returnkeytype
-                listViewDisplayed='false'    // true/false/undefined
+                listViewDisplayed='true'    // true/false/undefined
                 fetchDetails={true}
-                renderDescription={row => row.description} // custom description render
+                renderDescription={row => row.description || row.vicinity} // custom description render
                 onPress={(data, details = null,) => { // 'details' is provided when fetchDetails = true
                     console.log("GooglePlacesAutocomplete" + JSON.stringify(data));
                     console.log("GooglePlacesAutocomplete" + JSON.stringify(details));
@@ -243,6 +248,8 @@ export default class ClientBarberSearch extends Component {
                 currentLocationLabel="Current location"
                 nearbyPlacesAPI='GooglePlacesSearch' // Which API to use: GoogleReverseGeocoding or GooglePlacesSearch
                 GoogleReverseGeocodingQuery={{
+                    rankby: 'distance',
+                    types: 'food'
                     // available options for GoogleReverseGeocoding API : https://developers.google.com/maps/documentation/geocoding/intro
                 }}
                 GooglePlacesSearchQuery={{
@@ -266,6 +273,27 @@ export default class ClientBarberSearch extends Component {
             />
         );
     };
+
+    clearAllFilters()
+    {
+        this.setState({
+            filterLocation:"",
+            filterDistance:0,
+            filterCost:"5",
+            blendQuality:0,
+            shapeUpAbility:0,
+            scissorTechnique:0,
+            comboverSkill:0,
+        });
+
+        this.setState({CheckBox1: require("../../../assets/images/tic_grey.png"), optionOne: "white"})
+        this.setState({CheckBox2: require("../../../assets/images/tic_grey.png"), optionTwo: "white"})
+        this.setState({CheckBox3: require("../../../assets/images/tic_grey.png"), optionThree: "white"})
+        this.setState({unselected: require("../../../assets/images/greentick.png")})
+        this.setState({unselected2: require("../../../assets/images/greentick.png")})
+        this.setState({unselected3: require("../../../assets/images/greentick.png")})
+        this.setState({unselected4: require("../../../assets/images/greentick.png")})
+    }
 
     gotoSearchResult()
     {
@@ -313,7 +341,7 @@ export default class ClientBarberSearch extends Component {
                     }}
                 />
                 <ScrollView>
-                    <View style={{marginBottom:100,}}>
+                    <View style={{marginBottom:140,}}>
                         <View style={{
                             marginTop: 20,
                             marginStart: 20, marginEnd: 20,
@@ -347,7 +375,7 @@ export default class ClientBarberSearch extends Component {
                                 onValueChange={value => this.setState({filterDistance:value})}
                                 minimumTrackTintColor='red'
                                 maximumTrackTintColor="#3D3E4D"
-                                minimumValue={1}
+                                minimumValue={1000}
                                 maximumValue={100000}
                                 trackStyle={{height: 2}}
                                 thumbStyle={{borderWidth: 0.5, borderColor: "white"}}
@@ -379,40 +407,43 @@ export default class ClientBarberSearch extends Component {
                             marginBottom: 20,
                             flexDirection: "row",
                         }}>
-                            <TouchableOpacity onPress={() => this.checkbox1()}>
-
+                            <TouchableOpacity style={{width:"33.33%",flexDirection:"row"}} onPress={() => this.checkbox1()}>
                                 <Image resizeMode={"contain"} source={this.state.CheckBox1}
-                                       style={{width: 20, height: 20}}
+                                       style={{width: 20, height: 20,marginTop:3}}
 
-                                /></TouchableOpacity>
-                            <Text style={{
-                                color: this.state.optionOne,
-                                marginStart: 10,
-                                fontSize: 15,
-                                fontWeight: 'bold'
-                            }}>$</Text>
+                                />
+                                <Text style={{
+                                    color: this.state.optionOne,
+                                    marginStart: 10,
+                                    fontSize: 18,
+                                    fontWeight: 'bold'
+                                }}>$</Text>
+                            </TouchableOpacity>
 
-                            <TouchableOpacity onPress={() => this.checkbox2()}>
-                                <Image style={{width: 20, height: 20, marginStart: 100}}
+
+                            <TouchableOpacity style={{width:"33.33%",flexDirection:"row"}} onPress={() => this.checkbox2()}>
+                                <Image style={{width: 20, height: 20,marginTop:3}}
                                        resizeMode={"contain"} source={this.state.CheckBox2}/>
+                                <Text style={{
+                                    color: this.state.optionTwo,
+                                    marginStart: 10,
+                                    fontSize: 18,
+                                    fontWeight: 'bold'
+                                }}>$$</Text>
                             </TouchableOpacity>
-                            <Text style={{
-                                color: this.state.optionTwo,
-                                marginStart: 10,
-                                fontSize: 15,
-                                fontWeight: 'bold'
-                            }}>$$</Text>
 
-                            <TouchableOpacity onPress={() => this.checkbox3()}>
+
+                            <TouchableOpacity style={{width:"33.33%",flexDirection:"row"}} onPress={() => this.checkbox3()}>
                                 <Image resizeMode={"contain"} source={this.state.CheckBox3}
-                                       style={{width: 20, height: 20, marginStart: 85}}/>
+                                       style={{width: 20, height: 20, marginTop:3}}/>
+                                <Text style={{
+                                    color: this.state.optionThree,
+                                    marginStart: 10,
+                                    fontSize: 18,
+                                    fontWeight: 'bold'
+                                }}>$$$</Text>
                             </TouchableOpacity>
-                            <Text style={{
-                                color: this.state.optionThree,
-                                marginStart: 10,
-                                fontSize: 15,
-                                fontWeight: 'bold'
-                            }}>$$$</Text>
+
 
 
                         </View>
@@ -544,12 +575,23 @@ export default class ClientBarberSearch extends Component {
                             </View>
                         </View>
                     </View>
+
+                    <TouchableOpacity onPress={() => this.clearAllFilters() } style={[globalStyles.button2, {
+                        marginTop: 70,
+                        height: 40,
+                        width: 260,
+                        position: "absolute",
+                        bottom: 80
+                    }]}>
+                        <Text style={globalStyles.buttonText}>Clear All Filters</Text>
+                    </TouchableOpacity>
+
                     <TouchableOpacity onPress={() => this.gotoSearchResult() } style={[globalStyles.button, {
                         marginTop: 70,
                         height: 40,
                         width: 260,
                         position: "absolute",
-                        bottom: 40
+                        bottom: 30
                     }]}>
                         <Text style={globalStyles.buttonText}>See Results</Text>
                     </TouchableOpacity>

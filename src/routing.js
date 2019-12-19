@@ -51,6 +51,10 @@ import ClientFilter from "./containers/Home/Clients/ClientFilter"
 import ClientHaircuts from "./containers/Home/Clients/ClientHaircuts"
 import Share from "./containers/Settings/Share Screen/index";
 import SplashScreen from "./containers/AuthScreens/SplashScreen";
+import ReceiptUpcoming from  "./containers/Settings/Receipt/ReceiptUpcoming";
+import ChangePassword from "./containers/Settings/ChangePassword/index.js"
+import BarberPaymentMethod from "./containers/Settings/Subscription/BarberPaymentMethod.js";
+import DiscoverMePaymentMethod from "./containers/Settings/DiscoverMe/DiscoverMePaymentMethod"
 
 
 import colors from "./themes/colors";
@@ -207,7 +211,10 @@ const AuthStack = createStackNavigator({
     SignUpScreen: SignUpScreen,
     SMSScreen: SMSScreen,
     ForgetPasswordScreen: ForgetPasswordScreen,
-    Profile: Profile,
+    Profile: {
+        screen:Profile,
+        path:"profile/id"
+    },
     QRCheckIn: QRCheckIn,
     ClientQR: ClientQR,
     Cancellations: Cancellations,
@@ -238,7 +245,13 @@ const AuthStack = createStackNavigator({
     ClientBarberSearch: ClientBarberSearch,
     ClientFilter: ClientFilter,
     ClientHaircuts: ClientHaircuts,
-    Share: Share
+    Share: Share,
+    ReceiptUpcoming:ReceiptUpcoming,
+    ChangePassword:ChangePassword,
+    BarberPaymentMethod:BarberPaymentMethod,
+    DiscoverMePaymentMethod:DiscoverMePaymentMethod,
+
+
 }, {
     initialRouteName: 'SplashScreen',
     //initialRouteName: 'TabNavigator',

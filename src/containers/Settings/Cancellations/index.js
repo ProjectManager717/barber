@@ -78,9 +78,14 @@ export default class Cancellations extends Component {
             .then(response => {
                 console.log("updateBookingPrefrence-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
-                    this.setState({showLoading: false})
-                    //alert("Booking preferences updated successfully");
-                    this.props.navigation.goBack();
+                    this.setState({showLoading: false});
+                    if (Preference.get("newUser") === true) {
+                        this.props.navigation.navigate("TabNavigator");
+                        Preference.set("newUser", false);
+                    }else{
+                        this.props.navigation.goBack();
+                    }
+
                 } else {
                     this.setState({showLoading: false})
                     if (response.ResultType === 0) {
@@ -150,17 +155,17 @@ export default class Cancellations extends Component {
     checkBox(val) {
         if(this.state.policy)
         {
-            if (val === "2 Hours Ahead,No Fee, 1 Reschedule") {
+            if (val === "2 Hours Ahead,No Fee") {
                 if (this.state.twoHour === false)
                     this.setState({twoHour: true,oneHour:false,thirtyMin:false})
                 /* else
                      this.setState({twoHour: false})*/
-            } else if (val === "1 Hour Ahead, 15% Fee, 1 Reschedule") {
+            } else if (val === "1 Hour Ahead, 15% Fee") {
                 if (this.state.oneHour === false)
                     this.setState({oneHour: true,twoHour: false,thirtyMin:false})
                 /*else
                     this.setState({oneHour: false})*/
-            } else if (val === "30 Minutes Ahead, 25% Fee, 1 Reschedule") {
+            } else if (val === "30 Minutes Ahead, 25% Fee") {
                 if (this.state.thirtyMin === false)
                     this.setState({thirtyMin: true,twoHour: false,oneHour:false})
                 /* else
@@ -254,9 +259,9 @@ export default class Cancellations extends Component {
                             }}/>
                         </View>
                     </View>
-                    {this.renderRow({title: "2 Hours Ahead,No Fee, 1 Reschedule", value: this.state.twoHour})}
-                    {this.renderRow({title: "1 Hour Ahead, 15% Fee, 1 Reschedule", value: this.state.oneHour})}
-                    {this.renderRow({title: "30 Minutes Ahead, 25% Fee, 1 Reschedule", value: this.state.thirtyMin})}
+                    {this.renderRow({title: "2 Hours Ahead,No Fee", value: this.state.twoHour})}
+                    {this.renderRow({title: "1 Hour Ahead, 15% Fee", value: this.state.oneHour})}
+                    {this.renderRow({title: "30 Minutes Ahead, 25% Fee", value: this.state.thirtyMin})}
                     <Text style={styles.txtHeader}>NO-SHOWS</Text>
                     <View style={[globalStyles.rowBackground, styles.row]}>
                         <View style={{flex: 1, flexDirection: 'row', height: 36}}>

@@ -36,24 +36,29 @@ Date.prototype.addDays = function (days) {
     date.setDate(date.getDate() + days);
     return date;
 };
+const BreakStart = new Date().setHours(12, 0, 0);
+const BreakEnd = new Date().setHours(13, 0, 0);
 
 export default class ChooseTimings extends Component {
     constructor() {
         super();
+
+        let startDate = new Date();
+
         this.state = {
             showLoader: false,
             dataSource: [],
             daysData: [],
             workingDays: [],
-            startTime: new Date(),
+            startTime: startDate,
             endTime: new Date(),
             chosenDate: new Date(),
             isOffToday: false,
             date: new Date().setHours(13, 0, 0),
             daySelected: "",
             showBreakTimeDialog: false,
-            breakStart: "",
-            breakEnd: "",
+            breakStart: BreakStart,
+            breakEnd: BreakEnd,
             showVacationDialog: false,
 
             newYear: false,
@@ -143,6 +148,7 @@ export default class ChooseTimings extends Component {
             return true;
         });
         this.fetchWorkingHours();
+
     }
 
     setDate(newDate) {
@@ -173,7 +179,7 @@ export default class ChooseTimings extends Component {
                     this.setState({workingDays: response.Data.working_days, yearlyHolidays: response.Data.holidays});
                     //this.setWorkingDay();
                     this.setDays();
-                    console.log("yearlyHolidays-1->",response.Data.holidays);
+                    console.log("yearlyHolidays-1->", response.Data.holidays);
                     this.setHolidays(response.Data.holidays);
                 } else {
                     this.setState({showLoading: false});
@@ -190,7 +196,7 @@ export default class ChooseTimings extends Component {
     };
 
     setHolidays(holidays) {
-        console.log("yearlyHolidays-->",holidays);
+        console.log("yearlyHolidays-->", holidays);
         for (let n = 0; n < holidays.length; n++) {
             if (holidays[n].yearly_holiday === "New Year") {
                 this.setState({newYear: holidays[n].status})
@@ -219,7 +225,7 @@ export default class ChooseTimings extends Component {
     setHolidaysData() {
         this.setState({showVacationDialog: false});
         let holiday = this.state.yearlyHolidays;
-        console.log("yearlyHolidays-->",holiday);
+        console.log("yearlyHolidays-->", holiday);
         if (this.state.newYear) {
             holiday[0].status = true;
         } else {
@@ -272,9 +278,9 @@ export default class ChooseTimings extends Component {
             holiday[9].status = false;
         }
 
-        console.log("yearlyHolidays-->",holiday);
+        console.log("yearlyHolidays-->", holiday);
 
-        this.setState({yearlyHolidays:holiday});
+        this.setState({yearlyHolidays: holiday});
 
     }
 
@@ -298,7 +304,7 @@ export default class ChooseTimings extends Component {
                 console.log("responseworkinghours-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
                     this.setState({showLoading: false})
-                    alert("Your working hours updated.");
+
                     if (Preference.get("newUser") === true)
                         this.props.navigation.push("Subscription")
                     else
@@ -366,7 +372,17 @@ export default class ChooseTimings extends Component {
                 this.setState({endTime: endtimeDay})
                 console.log("SetTime:::-->" + this.state.endTime);
                 workingdayz[j].selected = true;
-                this.setState({breakStart: workingdayz[j].break_from, breakEnd: workingdayz[j].break_to})
+
+                let startbreak = workingdayz[j].break_from;
+                startbreak = startbreak.split(":");
+                let startbreakTime = new Date().setHours(startbreak[0], startbreak[1], 0);
+
+                let endbreak = workingdayz[j].break_to;
+                endbreak = endbreak.split(":");
+                let endbreakTime = new Date().setHours(endbreak[0], endbreak[1], 0);
+
+
+                this.setState({breakStart: startbreakTime, breakEnd: endbreakTime})
             } else {
                 workingdayz[j].selected = false;
             }
@@ -391,7 +407,7 @@ export default class ChooseTimings extends Component {
         }
         this.setState({workingDays: workdays})
         let items = [];
-        for (i = 0; i < 7; i++) {
+        for (let i = 0; i < 7; i++) {
             items.push(this.renderWeekDay({k: i}));
         }
         this.setState({
@@ -485,7 +501,7 @@ export default class ChooseTimings extends Component {
         }
     }
 
-    onTimeSelected = date => {
+    onTimeSelected(date) {
 
     };
 
@@ -514,37 +530,47 @@ export default class ChooseTimings extends Component {
     saveBreakTime() {
         let index = this.state.daySelected;
         let workdays = this.state.workingDays;
+
+        console.log("BreakTimee:", this.state.breakStart)
+        console.log("BreakTimee:", this.state.breakEnd)
+
+        let dateString1 = moment(this.state.breakStart).format("HH:mm");
+        let dateString2 = moment(this.state.breakEnd).format("HH:mm");
+
+        console.log("BreakTimee:", dateString1);
+        console.log("BreakTimee:", dateString2);
+
+
         if (index === "Mon") {
-            workdays[0].break_from = this.state.breakStart;
-            workdays[0].break_to = this.state.breakEnd;
+            workdays[0].break_from = dateString1;
+            workdays[0].break_to = dateString2;
         }
         if (index === "Tue") {
-            workdays[0].break_from = this.state.breakStart;
-            workdays[0].break_to = this.state.breakEnd;
+            workdays[0].break_from = dateString1;
+            workdays[0].break_to = dateString2
         }
         if (index === "Wed") {
-            workdays[0].break_from = this.state.breakStart;
-            workdays[0].break_to = this.state.breakEnd;
+            workdays[0].break_from = dateString1;
+            workdays[0].break_to = dateString2;
         }
         if (index === "Thurs") {
-            workdays[0].break_from = this.state.breakStart;
-            workdays[0].break_to = this.state.breakEnd;
+            workdays[0].break_from =  dateString1;
+            workdays[0].break_to = dateString2;
         }
         if (index === "Fri") {
-            workdays[0].break_from = this.state.breakStart;
-            workdays[0].break_to = this.state.breakEnd;
+            workdays[0].break_from =  dateString1;
+            workdays[0].break_to = dateString2;
         }
         if (index === "Sat") {
-            workdays[0].break_from = this.state.breakStart;
-            workdays[0].break_to = this.state.breakEnd;
+            workdays[0].break_from =  dateString1;
+            workdays[0].break_to = dateString2;
         }
         if (index === "Sun") {
-            workdays[0].break_from = this.state.breakStart;
-            workdays[0].break_to = this.state.breakEnd;
+            workdays[0].break_from =  dateString1;
+            workdays[0].break_to = dateString2;
         }
         this.setState({workingDays: workdays, showBreakTimeDialog: false});
     }
-
 
 
     render() {
@@ -585,8 +611,8 @@ export default class ChooseTimings extends Component {
                             {this.state.dataSource}
                         </View>
 
-                        <View style={{flexDirection: "row", width: "100%", height: 100}}>
-                            <View style={{flexDirection: "column", width: "40%", marginStart: 10}}>
+                        <View style={{flexDirection: "row", width: "100%", height: 100, marginBottom: 60}}>
+                            <View style={{flexDirection: "column", width: "45%",}}>
                                 <Text style={{
                                     color: "grey",
                                     fontWeight: "bold",
@@ -596,7 +622,7 @@ export default class ChooseTimings extends Component {
                                 }}>{"FROM"}</Text>
                                 <DatePicker
                                     date={this.state.startTime}
-                                    style={{width: 200, backgroundColor: Colors.themeBackground, height: 150}}
+                                    style={{width: 200, backgroundColor: Colors.themeBackground, height: 120}}
                                     minuteInterval={15}
                                     fadeToColor={"none"}
                                     onDateChange={date => this.setTimeStart(date)}
@@ -606,7 +632,7 @@ export default class ChooseTimings extends Component {
 
 
                             </View>
-                            <View style={{width: "40%", marginStart: 10}}>
+                            <View style={{width: "45%", marginStart: 10}}>
                                 <Text style={{
                                     color: "grey",
                                     fontWeight: "bold",
@@ -620,22 +646,13 @@ export default class ChooseTimings extends Component {
                                     onDateChange={date => this.setTimeEnd(date)}
                                     minuteInterval={15}
                                     mode={"time"}
-                                    style={{width: 200, backgroundColor: Colors.themeBackground, height: 150}}
+                                    style={{width: 200, backgroundColor: Colors.themeBackground, height: 120}}
                                     fadeToColor={"none"}
                                     textColor={"#ffffff"}
                                 />
                             </View>
 
 
-                        </View>
-
-
-                        <View style={{flexDirection: 'row', height: 40, marginLeft: 20, marginTop: 130}}>
-                            {/*<CheckBoxSquare onClick={() => {
-                    }} isChecked={this.state.isOffToday} style={{alignSelf: 'center'}}/>
-                    <Text style={{color: "white", textAlignVertical: "center", marginStart: 7}}>{"Off"}<Text style={
-                        {color: "grey",}
-                    }>{"  (Today Not Working)"}</Text></Text>*/}
                         </View>
 
 
@@ -674,11 +691,88 @@ export default class ChooseTimings extends Component {
 
                 <PopupDialog
                     visible={this.state.showBreakTimeDialog}
-                    width={0.7}
+                    width={0.9}
                     onTouchOutside={() => {
                         this.setState({showBreakTimeDialog: false});
                     }}>
-                    <View style={{flexDirection: "column"}}>
+                    <View style={{backgroundColor: Colors.themeBackground}}>
+                        <View style={{flexDirection: "row", backgroundColor: Colors.themeBackground}}>
+                            <View style={{
+                                flexDirection: "column",
+                                width: "40%",
+                                marginStart: 25,
+                                marginTop: 20,
+                                justifyContent: "center",
+                                alignItems: 'center'
+                            }}>
+                                <Text style={{
+                                    color: "red",
+                                    fontWeight: "bold",
+                                    fontSize: 13,
+                                    marginBottom: 10,
+                                    marginStart: 20
+                                }}>{"START"}</Text>
+                                <DatePicker
+                                    date={this.state.breakStart}
+                                    style={{width: 150, backgroundColor: Colors.themeBackground, height: 120}}
+                                    minuteInterval={15}
+                                    fadeToColor={"none"}
+                                    onDateChange={date => {
+                                        this.setState({breakStart: date})
+                                    }}
+                                    mode={"time"}
+                                    textColor={"#ffffff"}
+                                />
+
+
+                            </View>
+                            <View style={{
+                                flexDirection: "column",
+                                width: "40%",
+                                marginStart: 10,
+                                marginTop: 20,
+                                justifyContent: "center",
+                                alignItems: 'center'
+                            }}>
+                                <Text style={{
+                                    color: "red",
+                                    fontWeight: "bold",
+                                    fontSize: 13,
+                                    marginBottom: 10,
+                                    marginStart: 20
+                                }}>{"END"}</Text>
+                                <DatePicker
+                                    date={this.state.breakEnd}
+                                    style={{width: 150, backgroundColor: Colors.themeBackground, height: 120}}
+                                    minuteInterval={15}
+                                    fadeToColor={"none"}
+                                    onDateChange={date => this.setState({breakEnd: date})}
+                                    mode={"time"}
+                                    textColor={"#ffffff"}
+                                />
+
+
+                            </View>
+
+                        </View>
+                        <TouchableOpacity
+                            onPress={() => this.saveBreakTime()}
+                            style={[globalStyles.button, {
+                                height: 35,
+                                width: "80%",
+                                backgroundColor: "red",
+                                marginTop: 20,
+                                marginBottom: 20,
+                            }]}>
+                            <Text style={{
+                                fontSize: 15,
+                                fontWeight: "bold",
+                                color: "white"
+                            }}>{"Save"}</Text>
+                        </TouchableOpacity>
+                    </View>
+
+                    {/* <View style={{flexDirection: "column"}}>
                         <View style={{
                             width: "100%",
                             height: 0,
@@ -698,7 +792,7 @@ export default class ChooseTimings extends Component {
                         <TextInput Color={"white"}
                                    placeholder={"Enter start time"}
                                    placeholderTextColor={"grey"}
-                                   value={this.state.breakStart}
+                                   value={moment(this.state.breakStart,"HH:mm").format("LT")}
                                    onChangeText={(text) => this.setState({breakStart: text})}
                                    style={{
                                        fontSize: 14,
@@ -708,7 +802,7 @@ export default class ChooseTimings extends Component {
 
                         <TextInput Color={"white"} placeholder={"Enter end time"}
                                    placeholderTextColor={"grey"}
-                                   value={this.state.breakEnd}
+                                   value={moment(this.state.breakEnd,"HH:mm").format("LT")}
                                    onChangeText={(text) => this.setState({breakEnd: text})}
                                    keyboardType={'number-pad'}
                                    style={{
@@ -731,7 +825,7 @@ export default class ChooseTimings extends Component {
                                 color: "white"
                             }}>{"Save"}</Text>
                         </TouchableOpacity>
-                    </View>
+                    </View>*/}
                 </PopupDialog>
                 <PopupDialog
                     visible={this.state.showVacationDialog}
@@ -842,11 +936,12 @@ export default class ChooseTimings extends Component {
         </View>;
     }
 
-
     renderTimingView(item) {
         if (item.title === "Add Break Time") {
             return (
-                <TouchableOpacity onPress={() => this.setState({showBreakTimeDialog: true})}
+                <TouchableOpacity onPress={() => {
+                    this.setState({showBreakTimeDialog: true})
+                }}
                                   style={[globalStyles.rowBackground, {height: 80, marginTop: 16}]}>
                     <View
                         style={{

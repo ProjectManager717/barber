@@ -209,12 +209,13 @@ export default class Calendar extends Component {
 
     itemSelect(colorItem, item, services) {
         let endSlot = item.selected_slot_id.length - 1;
-        if (colorItem !== "#DF00FF" && colorItem !== "yellow") {
+        if (/*colorItem !== "#DF00FF" &&*/ colorItem !== "yellow") {
             this.props.navigation.navigate("Appointments", {
                 appointmentId: item._id,
                 bgc: colorItem,
-                client_Image: item.barber_image,
-                clientName: item.barber,
+                client_Image: item.client_image,
+                BannerImage:item.banner_image,
+                clientName: item.client_firstname,
                 createdAt: item.createdAt,
                 startTime: item.selected_slot_id[0].start_time,
                 endtTime: item.selected_slot_id[endSlot].end_time,
@@ -444,7 +445,7 @@ export default class Calendar extends Component {
                             <View style={{width: 6, backgroundColor: bgc}}/>
                             <View style={{
                                 backgroundColor: "#454656",
-                                width: "75%",
+                                width: "80%",
                                 flexDirection: "row",
                                 borderTopLeftRadius: 0,
                                 borderBottomLeftRadius: 0,
@@ -558,7 +559,7 @@ export default class Calendar extends Component {
                             <View style={{height: 105, width: 6, backgroundColor: bgc}}/>
                             <View style={{
                                 backgroundColor: "#454656",
-                                width: "75%",
+                                width: "80%",
                                 height: 105,
                                 flexDirection: "row",
                                 borderTopLeftRadius: 0,
@@ -668,7 +669,7 @@ export default class Calendar extends Component {
                             <View style={{width: 6, backgroundColor: bgc}}/>
                             <View style={{
                                 backgroundColor: "#454656",
-                                width: "75%",
+                                width: "80%",
                                 flexDirection: "row",
                                 borderTopLeftRadius: 0,
                                 borderBottomLeftRadius: 0,
@@ -788,7 +789,7 @@ export default class Calendar extends Component {
                             <View style={{height: 175, width: 6, backgroundColor: bgc}}/>
                             <View style={{
                                 backgroundColor: "#454656",
-                                width: "75%",
+                                width: "80%",
                                 height: 175,
                                 flexDirection: "row",
                                 borderTopLeftRadius: 0,
@@ -1003,7 +1004,7 @@ export default class Calendar extends Component {
 
     getDayOfWeek(date) {
         var dayOfWeek = new Date(date).getDay();
-        return isNaN(dayOfWeek) ? null : ['Sun', 'Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat'][dayOfWeek];
+        return isNaN(dayOfWeek) ? null : [ 'Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat','Sun'][dayOfWeek];
     }
 
     render() {
@@ -1046,7 +1047,7 @@ export default class Calendar extends Component {
                             />
                         </TouchableOpacity>
                     }
-                    centerComponent={{text: "CALENDER", style: {color: "#fff"}}}
+                    centerComponent={{text: "CALENDAR", style: {color: "#fff"}}}
                     containerStyle={{
                         backgroundColor: Colors.dark,
                         justifyContent: "space-around"
@@ -1100,6 +1101,9 @@ export default class Calendar extends Component {
                                     style={{
                                         color: item.dayColor,
                                         fontWeight: "bold",
+                                        width:"100%",
+
+                                        textAlign:'center',
                                         fontSize: 12
                                     }}>{item.day}</Text>
 

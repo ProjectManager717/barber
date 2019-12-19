@@ -9,7 +9,7 @@ import {
     TouchableOpacity,
     ImageBackground,
     Dimensions,
-    TextInput, FlatList,
+    TextInput, FlatList, BackHandler,
 } from "react-native";
 import colors from "../../../themes/colors";
 import {globalStyles} from "../../../themes/globalStyles";
@@ -54,6 +54,11 @@ export default class ClientEditProfile extends Component {
     }
 
     componentDidMount(): void {
+
+        this.backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+            //this.goBack(); // works best when the goBack is async
+            return true;
+        });
         this.getProfileData();
     }
 
@@ -81,12 +86,6 @@ export default class ClientEditProfile extends Component {
                     this.locationRef.setAddressText(this.state.userAddress);
                     console.log("DataUSER:--->"+this.state.userAddress);
                     console.log("DataUSER:--->"+this.state.userName);
-                    if(clientData.client_image==="")
-                    {
-                        this.setState({
-                            avatarSource:require("../../../assets/images/personImage.jpg")
-                        });
-                    }
                     //this.setState({barberData: response.Data});
                 } else {
                     this.setState({showLoading:false})
@@ -110,9 +109,9 @@ export default class ClientEditProfile extends Component {
                 minLength={2} // minimum length of text to search
                 autoFocus={false}
                 returnKeyType={'search'} // Can be left out for default return key https://facebook.github.io/react-native/docs/textinput.html#returnkeytype
-                listViewDisplayed='false'    // true/false/undefined
+                listViewDisplayed='true'    // true/false/undefined
                 fetchDetails={true}
-                renderDescription={row => row.description} // custom description render
+                renderDescription={row => row.description || row.vicinity} // custom description render
                 onPress={(data, details = null,) => { // 'details' is provided when fetchDetails = true
                     console.log("hello" + data, details);
 
@@ -161,6 +160,8 @@ export default class ClientEditProfile extends Component {
                 currentLocationLabel="Current location"
                 nearbyPlacesAPI='GooglePlacesSearch' // Which API to use: GoogleReverseGeocoding or GooglePlacesSearch
                 GoogleReverseGeocodingQuery={{
+                    rankby: 'distance',
+                    types: 'food'
                     // available options for GoogleReverseGeocoding API : https://developers.google.com/maps/documentation/geocoding/intro
                 }}
                 GooglePlacesSearchQuery={{
@@ -209,21 +210,29 @@ export default class ClientEditProfile extends Component {
                 requestBody.append("address", this.state.userAddress)
                 requestBody.append("username", this.state.userName)
 
-                requestBody.append("portfolios[]", this.state.userName)
+                //requestBody.append("portfolios[]", this.state.userName)
 
-                if (this.state.avatarSource) {
+
+                if(!(this.state.avatarSource.uri==="https://clyprstatistics.com/images/client/client_image-defult.jpg"))
+                {
                     requestBody.append("client_image", {
                         uri: this.state.avatarSource.uri,
                         name: "imageAvatar.png",
                         type: 'image/jpeg'
                     })
                 }
+                   /*requestBody.append("client_image", {
+                        uri: this.state.avatarSource.uri,
+                        name: "imageAvatar.png",
+                        type: 'image/jpeg'
+                    })
+*/
                 console.log("URL:--> " + constants.ClientProfileUpdate);
                 console.log("URL body:--> " + JSON.stringify(requestBody));
                 fetch(constants.ClientProfileUpdate, {
                     method: 'POST',
                     headers: {
-                        /*'Content-Type': 'multipart/form-data',*/
+                        'Content-Type': 'multipart/form-data',
                         'Accept': 'application/json',
                     },
                     body: requestBody
@@ -232,12 +241,13 @@ export default class ClientEditProfile extends Component {
                         console.log('ClientProfileEdit -- response -- ' + JSON.stringify(response))
                         if (response.ResultType === 1) {
                             this.setState({showLoading: false});
-                            alert("Profile updated")
-                            /*Preference.set({
-                                userName: this.state.userName,
-                                userAddress: this.state.userAddress,
-                            });*/
-                            this.props.navigation.goBack();
+                           if(Preference.get("newUser")===true){
+                               this.props.navigation.navigate("ClientTabNavigator");
+                               Preference.set({newUser:false})
+                           }else{
+                               this.props.navigation.goBack();
+                           }
+
                         } else {
                             this.setState({showLoading: false})
                             if (response.ResultType === 0) {

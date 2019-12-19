@@ -78,8 +78,7 @@ export default class ClientHome extends Component {
                 if (response.ResultType === 1) {
                     this.setState({showLoading: false});
                     let Data = response.Data;
-
-                    let allClients = Data.client_info;
+                    let allClients = Data;
                     let newClients = 0;
                     let oldClients = 0;
                     for (let c = 0; c < allClients.length; c++) {
@@ -89,7 +88,7 @@ export default class ClientHome extends Component {
                             oldClients++;
                     }
                     this.setState({
-                        dataSource: Data.client_info, newCustomers: newClients, oldCustomers: oldClients
+                        dataSource: Data, newCustomers: newClients, oldCustomers: oldClients
                     });
 
                 } else {
@@ -111,6 +110,8 @@ export default class ClientHome extends Component {
         let colorLabel="";
         let textLabelColor="";
         let counterText="";
+        let clientTip=item.client_tips;
+        clientTip=clientTip.toFixed(2)
         if (item.client_counter > 1) {
             colorLabel="red";
             textLabelColor="white";
@@ -173,7 +174,7 @@ export default class ClientHome extends Component {
                     backgroundColor: "#626371"
                 }}>
 
-                <Text style={{marginTop: 3, color: "white", fontSize: 10, fontWeight: "bold"}}>{"$5.00"}</Text>
+                <Text style={{marginTop: 3, color: "white", fontSize: 10, fontWeight: "bold"}}>{"$"+clientTip}</Text>
             </TouchableOpacity>
 
         </View>
@@ -206,8 +207,8 @@ export default class ClientHome extends Component {
 
     render() {
         return (
-            <View style={styles.container}>
-                <ScrollView>
+
+                <View  style={styles.container}  >
                     {this.state.dataSource.length >0 ?
                         <View style={{height: 50, flexDirection: "row", marginStart: 20, marginEnd: 20}}>
                             <View style={{width: "50%", flexDirection: "row", justifyContent: "flex-start"}}>
@@ -248,20 +249,21 @@ export default class ClientHome extends Component {
                             })}
 
                     </View>
-                </ScrollView>
-                {this.state.showLoading && <View style={{
-                    width: "100%",
-                    height: "100%",
-                    backgroundColor: "transparent",
-                    position: "absolute",
-                    opacity: 1,
-                    alignItems: "center",
-                    justifyContent: "center"
-                }}>
-                    <Image resizeMode={"contain"} source={require("../../../assets/images/loading.gif")}
-                           style={{width: 60, height: 60, opacity: 1,}}/>
-                </View>}
-            </View>
+                    {this.state.showLoading && <View style={{
+                        width: "100%",
+                        backgroundColor: "transparent",
+                        position: "absolute",
+                        opacity: 1,
+                        alignItems: "center",
+                        justifyContent: "center"
+                    }}>
+                        <Image resizeMode={"contain"} source={require("../../../assets/images/loading.gif")}
+                               style={{width: 60, height: 60, opacity: 1,}}/>
+                    </View>}
+
+                </View>
+
+
 
         )
     }

@@ -1,14 +1,15 @@
 import React, {Component} from "react";
 import {
-    View,
+    Alert,
     Dimensions,
-    Text,
-    StyleSheet,
-    ImageBackground,
-    Image,
     FlatList,
-    TouchableOpacity, TouchableWithoutFeedback, Share, Linking, Alert
-
+    Image,
+    Linking,
+    Share,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View
 } from "react-native";
 import Header from "../../../components/Header";
 import {ScrollView} from "react-native-gesture-handler";
@@ -52,17 +53,6 @@ let barberId = 0;
 let barberMobilePay = false;
 export default class ClientBarberProfile extends Component {
 
-    rightAction() {
-        //this.props.navigation.navigate('BarberEditProfile');
-        //this.props.navigation.push('Share');
-        Share.share({message: "Share Profile"}).then(result => {
-        }).catch(errorMessage => console.log(errorMsg));
-    }
-
-    leftAction() {
-        this.props.navigation.goBack();
-    }
-
     constructor(props) {
         super(props);
         const {navigation} = this.props;
@@ -71,19 +61,23 @@ export default class ClientBarberProfile extends Component {
         let barberReviews = navigation.getParam('barberReviews');
         barberMobilePay = navigation.getParam('barberMobilePay');
         this.state = {
+            isConnected:true,
             showLoading: false,
             selectedMonth: "",
             showMonth: "",
-            barberProfileImage: require("../../../assets/images/personImage.jpg"),
+            barberProfileImage: "",
             barberInsta: "",
             barberName: "",
             barberShopName: "",
+            stripeActive: false,
             barberRating: barberRating,
             barberReviews: barberReviews,
             barberImages: [],
             barberServices: [],
             barberTimeSlots: [],
             barberTotalAmout: 0,
+            selectedCardNum: "",
+            selectedCardImage: "Visa",
             barberFav: false,
             barberMobilePay: "",
             //barberData:undefined,
@@ -96,11 +90,14 @@ export default class ClientBarberProfile extends Component {
             serviceTimeSelected: false,
             totalPriceService: 0,
             selectedServices: [],
+            Barberbanner: "",
             totalServicesTime: 0,
             selectedDate: "",
             selectedSlotTime: "",
             selectedSlotIds: [],
             buttonPayText: "Pay",
+            mobilePayActivation: false,
+            SelectedCard: "",
             dayData: [
                 {
                     id: 1,
@@ -154,7 +151,7 @@ export default class ClientBarberProfile extends Component {
                     id: 1,
                     check: false,
                     title: "Haircut",
-                    duration: "30 mins",
+                    duration: "30",
                     prize: 20,
                     selected: "transparent",
                 },
@@ -162,7 +159,7 @@ export default class ClientBarberProfile extends Component {
                     id: 2,
                     check: false,
                     title: "Beard Trim",
-                    duration: "15 mins",
+                    duration: "15",
                     prize: 15,
                     selected: "transparent",
                 },
@@ -170,7 +167,7 @@ export default class ClientBarberProfile extends Component {
                     id: 3,
                     check: false,
                     title: "Design",
-                    duration: "30 mins",
+                    duration: "30",
                     prize: 20,
                     selected: "transparent",
                 },
@@ -178,7 +175,7 @@ export default class ClientBarberProfile extends Component {
                     id: 4,
                     check: false,
                     title: "Hot Towel Shape",
-                    duration: "45 mins",
+                    duration: "45",
                     prize: 40,
                     selected: "transparent",
                 },
@@ -186,13 +183,26 @@ export default class ClientBarberProfile extends Component {
                     id: 5,
                     check: false,
                     title: "Housecall",
-                    duration: "1 hr",
+                    duration: "1",
                     prize: 100,
                     selected: "transparent",
                 }
 
-            ]
+            ],
+            showFullImage: false
         }
+
+    }
+
+    rightAction() {
+        //this.props.navigation.navigate('BarberEditProfile');
+        //this.props.navigation.push('Share');
+        Share.share({message: "Share Profile"}).then(result => {
+        }).catch(errorMessage => console.log(errorMsg));
+    }
+
+    leftAction() {
+        this.props.navigation.goBack();
     }
 
     componentDidMount() {
@@ -211,7 +221,7 @@ export default class ClientBarberProfile extends Component {
             dataSource: items
         });*/
         this.setState({
-            dataSource: items
+            dataSource: items, showFullImage: false,
         });
         ////////////////////////////////////////////////////////////////////Calender
         //this.setMonthDays(getmonthh, getYear);
@@ -298,7 +308,6 @@ export default class ClientBarberProfile extends Component {
     }
 
 
-
     addFavoriteBarber() {
         var details = {
             user_id: barberId,
@@ -325,7 +334,7 @@ export default class ClientBarberProfile extends Component {
                 console.log("ClientAddFavoriteBarber-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
                     this.setState({showLoading: false})
-                    Alert.alert("Success!", "Barber set Favorite successfully");
+
                 } else {
                     this.setState({showLoading: false})
                     if (response.ResultType === 0) {
@@ -366,7 +375,59 @@ export default class ClientBarberProfile extends Component {
                 console.log("ClientAddFavoriteBarber-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
                     this.setState({showLoading: false})
-                    Alert.alert("Success!", "Barber set un Favorite successfully");
+
+                } else {
+                    this.setState({showLoading: false})
+                    if (response.ResultType === 0) {
+                        alert(response.Message);
+                    }
+                }
+            }).catch(error => {
+            this.setState({showLoading: false})
+            //console.error('Errorr:', error);
+            console.log('Error:', error);
+            alert("Error: " + error);
+        });
+    }
+
+
+    getDaySlots(dateDay) {
+        console.log("getBarberDetails barberID-->" + barberId);
+        console.log("getBarberDetails barberID-->" + dateDay);
+        var details = {
+            barber_id: barberId,
+            check_date: dateDay,
+            //client_id: Preference.get("userId"),
+        };
+        var formBody = [];
+        for (var property in details) {
+            var encodedKey = encodeURIComponent(property);
+            var encodedValue = encodeURIComponent(details[property]);
+            formBody.push(encodedKey + "=" + encodedValue);
+        }
+        formBody = formBody.join("&");
+        console.log("formData:" + JSON.stringify(formBody));
+        this.setState({showLoading: true})
+        fetch(constants.getDaySlots, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: formBody,
+        }).then(response => response.json())
+            .then(response => {
+
+                console.log("gettingDaySlots-->", "-" + JSON.stringify(response));
+                if (response.ResultType === 1) {
+                    this.setState({showLoading: false})
+                    let barberData = response.Data;
+
+                    this.setState({
+                        barberTimeSlots: barberData.slots,
+                    }, () => {
+                    });
+                    //this.setState({barberData: response.Data});
                 } else {
                     this.setState({showLoading: false})
                     if (response.ResultType === 0) {
@@ -418,7 +479,7 @@ export default class ClientBarberProfile extends Component {
                     this.setState({
                         barberProfileImage: {uri: barberData.user_image},
                         barberInsta: barberData.username,
-                        barberName: barberData.firstname + barberData.lastname,
+                        barberName: barberData.firstname + " " + barberData.lastname,
                         barberShopName: barberData.shop_name,
                         ListData: barberData.portoflios,
                         ListData2: barberData.services,
@@ -427,8 +488,15 @@ export default class ClientBarberProfile extends Component {
                         barberReviews: barberData.total_reviews,
                         barberTotalAmout: 0,
                         totalPriceService: 0,
+                        stripeActive: barberData.stripe_active,
                         barberMobilePay: barberData.payment_option,
+                        Barberbanner: {uri: barberData.banner_image},
+                        mobilePayActivation: barberData.mobile_pay_activation,
+                        savedCard: barberData.card_list
+                    }, () => {
+                        console.log("stripeActiveCheck:", this.state.stripeActive)
                     });
+
 
                     let PortfolioImages = this.state.ListData;
                     for (let i = 0; i < PortfolioImages.length; i++) {
@@ -439,10 +507,18 @@ export default class ClientBarberProfile extends Component {
                     //this.setState({barberData: response.Data});
 
                     if (this.state.barberMobilePay === "mobilePay") {
-                        this.setState({buttonPayText: "PAY"})
+                        this.setState({buttonPayText: "PAY"}, () => {
+                            if (this.state.mobilePayActivation) {
+                                this.setState({buttonPayText: "PAY"})
+                            } else {
+                                this.setState({buttonPayText: "RESERVE"})
+                            }
+                        })
                     } else {
                         this.setState({buttonPayText: "RESERVE"})
                     }
+
+
                     console.log("Slotsdata::", this.state.barberTimeSlots);
                     //this.setState({barberData: response.Data});
                 } else {
@@ -459,25 +535,25 @@ export default class ClientBarberProfile extends Component {
         });
     }
 
-    bookApointment() {
-        this.setState({showLoading:true});
+    bookApointmentCard(data) {
+        this.setState({showLoading: true});
         var details = {
             client_id: Preference.get("userId"),
             barber_id: barberId,
-            selected_services:this.state.selectedServices,
+            selected_services: this.state.selectedServices,
             date: this.state.selectedDate,
             selected_slot_id: this.state.selectedSlotIds,
             total_price: this.state.totalPriceService,
             service_fee: "1",
             selected_surge_price: false,
-            cus_stripe_id: "",
-            transaction_id:"",
-            balance_transaction: "" ,
-            destination: "" ,
-            destination_payment: "" ,
-            source_transaction: "",
-            payment_date: "",
-            payment_created : ""
+            cus_stripe_id: data.cus_stripe_id,
+            transaction_id: data.transaction_id,
+            balance_transaction: data.balance_transaction,
+            destination: data.destination,
+            destination_payment: data.destination_payment,
+            source_transaction: data.source_transaction,
+            payment_date: data.date,
+            payment_created: data.created
         };
         console.log("Outputdata::::" + JSON.stringify(details));
         fetch(constants.ClientBookAppointment, {
@@ -492,22 +568,70 @@ export default class ClientBarberProfile extends Component {
                 console.log("ClientBookAppointment-->", "-" + JSON.stringify(response));
                 this.setState({showLoading: false})
                 if (response.ResultType === 1) {
-                    Alert.alert("Success!", "Appointment is Booked successfully.");
-                    this.props.navigation.navigate('ClientLeaveReview',{
-                        client_id: Preference.get("userId"),
-                        barber_id: barberId,
-                        barberImage: this.state.barberProfileImage,
-                        barberName: this.state.barberName,
-                        barberShopName: this.state.barberShopName,
-                        appointmentPrice: this.state.totalPriceService,
-                        selected_services: this.state.selectedServices,
-                        date: this.state.selectedDate,
-                        selected_slot_id: this.state.selectedSlotIds,
-                        total_price: this.state.totalPriceService,
-                        service_fee: "1",
-                        selected_surge_price: true,
-                        appointmentId:response.Data._id
-                    });
+                    this.props.navigation.navigate("ClientTabNavigator");
+                    /*   this.props.navigation.navigate('ClientLeaveReview', {
+                           client_id: Preference.get("userId"),
+                           barber_id: barber_id,
+                           barberImage: barberImage,
+                           barberName: barberName,
+                           barberShopName: barberShopName,
+                           appointmentPrice: appointmentPrice,
+                           selected_services: selected_services,
+                           date: date,
+                           selected_slot_id: selected_slot_id,
+                           total_price: total_price,
+                           service_fee: "1",
+                           selected_surge_price: false,
+                           appointmentId: response.Data._id
+                       });*/
+                } else {
+                    if (response.ResultType === 0) {
+                        alert(response.Message);
+                    }
+                }
+            }).catch(error => {
+            this.setState({showLoading: false})
+            //console.error('Errorr:', error);
+            console.log('Error:', error);
+            alert("Error: " + error);
+        });
+    }
+
+    bookApointment() {
+        this.setState({showLoading: true});
+        var details = {
+            client_id: Preference.get("userId"),
+            barber_id: barberId,
+            selected_services: this.state.selectedServices,
+            date: this.state.selectedDate,
+            selected_slot_id: this.state.selectedSlotIds,
+            total_price: this.state.totalPriceService,
+            service_fee: "1",
+            selected_surge_price: false,
+            cus_stripe_id: "",
+            transaction_id: "",
+            balance_transaction: "",
+            destination: "",
+            destination_payment: "",
+            source_transaction: "",
+            payment_date: "",
+            payment_created: ""
+        };
+        console.log("Outputdata::::" + JSON.stringify(details));
+        fetch(constants.ClientBookAppointment, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(details),
+        }).then(response => response.json())
+            .then(response => {
+                console.log("ClientBookAppointment-->", "-" + JSON.stringify(response));
+                this.setState({showLoading: false})
+                if (response.ResultType === 1) {
+
+                    this.props.navigation.navigate('ClientTabNavigator',);
                 } else {
                     if (response.ResultType === 0) {
                         alert(response.Message);
@@ -540,12 +664,12 @@ export default class ClientBarberProfile extends Component {
                 for (let j = 0; j < totalSlotsNeeded; j++) {
                     //console.log("checkSlots -Availability:", i + "--*********--" + j);
                     if (totalslots[i + j].slot_status === 0) {
-                        //console.log("checkSlots -Availability:", i + "----" + j + "--");
+                        console.log("checkSlots -Availability:", i + "----" + j + "--");
                         availSlots++;
                         totalSelectedSlotsIds.push(totalslots[i + j].slot_detail._id);
                     } else {
                         if (totalslots[i + j].slot_status === 1) {
-                            //console.log("checkSlots -Availability:", i + "----" + j + "--rejected");
+                            console.log("checkSlots -Availability:", i + "----" + j + "--rejected");
                             Alert.alert("Warning!", "Consective slots are not available for these services.");
                             return false;
                         }
@@ -553,7 +677,7 @@ export default class ClientBarberProfile extends Component {
                     if (availSlots === totalSlotsNeeded) {
                         //console.log("checkSlots -Availability:", i + "----" + j + "--allAvailable");
                         this.setState({selectedSlotIds: totalSelectedSlotsIds});
-                        //console.log("checkSlots -Availability:", i + "----" + j + "--allAvailable----->>>>>>" + totalSelectedSlotsIds);
+                        console.log("checkSlots -Availability:", i + "----" + j + "--allAvailable----->>>>>>" + JSON.stringify(totalSelectedSlotsIds));
                         return true;
                     }
                 }
@@ -604,8 +728,7 @@ export default class ClientBarberProfile extends Component {
                         </View>
                     </TouchableOpacity>
                 </View>)
-            } else
-            {
+            } else {
                 return (<View>
                     <TouchableOpacity onPress={() => this.itemSelect(index)}>
                         <View style={{
@@ -665,7 +788,8 @@ export default class ClientBarberProfile extends Component {
     }
 
     showTime(time) {
-        let waqt = time.split(":");
+        console.log("SlotDATime : ",time);
+        /*let waqt = time.split(":");
         let am = "";
         if (waqt[0] > 11) {
             waqt[0] = waqt[0] - 12;
@@ -677,11 +801,11 @@ export default class ClientBarberProfile extends Component {
         } else {
             am = "AM";
         }
-        if(waqt[1]<10)
-        {
-            waqt[1]="0"+waqt[1];
-        }
-        return waqt[0] + ":" + waqt[1] + " " + am;
+        if (waqt[1] < 10) {
+            //waqt[1] = "0" + waqt[1];
+        }*/
+        //moment(time, "HH:mm").format("hh:mm a")
+        return moment(time, "HH:mm").format("hh:mm a");
     }
 
     showDialog() {
@@ -689,13 +813,18 @@ export default class ClientBarberProfile extends Component {
     }
 
     cardSelected(card) {
-        this.setState({DialogVisible: false})
+        this.setState({
+            DialogVisible: false,
+            SelectedCard: card,
+            selectedCardNum: card.last4,
+            selectedCardImage: card.brand
+        })
     }
 
     checkSurgePriceSelected() {
         if (this.state.serviceTypeSelected === true && this.state.serviceDaySelected === true && this.state.serviceTimeSelected === true) {
             if (this.state.surgePriceSelected === true)
-                this.props.navigation.navigate('SurgePricingRate',{
+                this.props.navigation.navigate('SurgePricingRate', {
                     client_id: Preference.get("userId"),
                     barber_id: barberId,
                     barberImage: this.state.barberProfileImage,
@@ -708,34 +837,101 @@ export default class ClientBarberProfile extends Component {
                     total_price: this.state.totalPriceService,
                     service_fee: "1",
                     selected_surge_price: true,
-                    barberMobilePay:this.state.barberMobilePay
+                    barberMobilePay: this.state.barberMobilePay
                 });
             else {
-                if (this.state.barberMobilePay === "mobilePay")
-                {
-                    this.props.navigation.navigate("PaymentMethodClient",{
-                        client_id: Preference.get("userId"),
-                        barber_id: barberId,
-                        barberImage: this.state.barberProfileImage,
-                        barberName: this.state.barberName,
-                        barberShopName: this.state.barberShopName,
-                        appointmentPrice: this.state.totalPriceService,
-                        selected_services: this.state.selectedServices,
-                        date: this.state.selectedDate,
-                        selected_slot_id: this.state.selectedSlotIds,
-                        total_price: this.state.totalPriceService,
-                        service_fee: "1",
-                        selected_surge_price: false,
-                    })
+                if (this.state.mobilePayActivation === true) {
+                    if (this.state.savedCard.length < 1) {
+                        this.props.navigation.navigate("PaymentMethodClient", {
+                            client_id: Preference.get("userId"),
+                            barber_id: barberId,
+                            barberImage: this.state.barberProfileImage,
+                            barberName: this.state.barberName,
+                            barberShopName: this.state.barberShopName,
+                            appointmentPrice: this.state.totalPriceService,
+                            selected_services: this.state.selectedServices,
+                            date: this.state.selectedDate,
+                            selected_slot_id: this.state.selectedSlotIds,
+                            total_price: this.state.totalPriceService,
+                            service_fee: "1",
+                            selected_surge_price: false,
+                        })
+                    } else {
+                        this.PaymentFlow();
+                    }
 
-                }else
-                {
+
+                } else {
                     this.bookApointment();
+                    // this.props.navigation.navigate("PaymentMethodClient", {
+                    //     client_id: Preference.get("userId"),
+                    //     barber_id: barberId,
+                    //     barberImage: this.state.barberProfileImage,
+                    //     barberName: this.state.barberName,
+                    //     barberShopName: this.state.barberShopName,
+                    //     appointmentPrice: this.state.totalPriceService,
+                    //     selected_services: this.state.selectedServices,
+                    //     date: this.state.selectedDate,
+                    //     selected_slot_id: this.state.selectedSlotIds,
+                    //     total_price: this.state.totalPriceService,
+                    //     service_fee: "1",
+                    //     selected_surge_price: false,
+                    // })
                 }
 
             }
         } else {
             alert("Please select Service,Time and Day for further procedure.");
+        }
+    }
+
+    PaymentFlow() {
+        let selectedcard = this.state.SelectedCard;
+        if (this.state.isConnected) {
+            this.setState({showLoading: true})
+            var details = {
+                barberID: barberId,
+                clientID: Preference.get("userId"),
+                amount: this.state.totalPriceService * 100,
+                card_id: selectedcard.id,
+            };
+            console.log("CARD Email----->" + JSON.stringify(details));
+            console.log("APi URL ----->" + JSON.stringify(constants.PaymentFLow));
+            var formBody = [];
+            for (var property in details) {
+                var encodedKey = encodeURIComponent(property);
+                var encodedValue = encodeURIComponent(details[property]);
+                formBody.push(encodedKey + "=" + encodedValue);
+            }
+            formBody = formBody.join("&");
+            fetch(constants.PaymentFLow, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: formBody
+            }).then(response => response.json())
+                .then(response => {
+                    console.log("responsePaymentCard-->", "-" + JSON.stringify(response));
+                    this.setState({showLoading: false})
+                    if (response.ResultType === 1) {
+                        this.bookApointmentCard(response.Data)
+                    } else {
+                        if (response.ResultType === 0) {
+                            alert(response.Message);
+                        }
+                    }
+                })
+                .catch(error => {
+                    //console.error('Errorr:', error);
+                    console.log('Error:', error);
+                    this.setState({showLoading: false})
+                    //alert("Error: "+error);
+                });
+
+        } else {
+            alert("Please connect Internet");
         }
     }
 
@@ -800,14 +996,14 @@ export default class ClientBarberProfile extends Component {
         });
 
         console.log("selectedDateIs", JSON.stringify(monthDaysData[indx].dateOfDay));
-        this.getBarberDetails(monthDaysData[indx].dateOfDay)
+        this.getDaySlots(monthDaysData[indx].dateOfDay)
         //alert("dayselected " + this.state.selectedDate);
     }
 
     async setMonth() {
         const input = getmonth + "-19";
         let outt = input.split("-");
-        let showmonth = monthNames[outt[0]] + "20" + outt[1];
+        let showmonth = monthNames[outt[0]] + " 20" + outt[1];
         this.setState({selectedMonth: input, showMonth: showmonth});
         await this.setMonthDays(input, true);
     }
@@ -826,7 +1022,7 @@ export default class ClientBarberProfile extends Component {
             console.log("SetMonth---->>>--->", parseInt(outt[0]) + 1);
         }
         console.log("SetMonth---->>>--->", outt[0]);
-        let showmonth = monthNames[outt[0]] + "20" + outt[1];
+        let showmonth = monthNames[outt[0]] + " 20" + outt[1];
         console.log("SetMonth---->>>", showmonth);
         let selectedmonth = outt[0] + "-" + outt[1];
         this.setState({selectedMonth: selectedmonth, showMonth: showmonth});
@@ -844,7 +1040,7 @@ export default class ClientBarberProfile extends Component {
         } else {
             outt[0] = parseInt(outt[0]) - 1;
         }
-        let showmonth = monthNames[outt[0]] + "20" + outt[1];
+        let showmonth = monthNames[outt[0]] + " 20" + outt[1];
         console.log("SetMonth---->>>", showmonth);
         let selectedmonth = outt[0] + "-" + outt[1];
         this.setState({selectedMonth: selectedmonth, showMonth: showmonth});
@@ -864,7 +1060,7 @@ export default class ClientBarberProfile extends Component {
         let daysData = [];
         let loopstart = 0;
         if (current) {
-            loopstart = getDate;
+            loopstart = parseInt(getDate);
         } else
             loopstart = 1;
         for (let i = loopstart; i <= lastDay; i++) {
@@ -899,30 +1095,36 @@ export default class ClientBarberProfile extends Component {
                 day: i,
                 dayColor: dayColor,
                 weekDay: this.getDayOfWeek(realDate),
-                bottomColor:bottomColor,
+                bottomColor: bottomColor,
                 dateOfDay: realDate
             })
         }
         let mon = this.state.month[getmonth];
-        this.setState({monthDays: daysData,selectedDate: daysData[0].dateOfDay});
+        console.log("daysDataOutput:", JSON.stringify(daysData));
+        this.setState({monthDays: daysData, selectedDate: daysData[0].dateOfDay});
         this.getBarberDetails(daysData[0].dateOfDay);
         //this.selectday(0);
     }
 
     getDayOfWeek(date) {
         var dayOfWeek = new Date(date).getDay();
-        return isNaN(dayOfWeek) ? null : ['Sun', 'Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat'][dayOfWeek];
+        console.log("WEEK DAAYS" + dayOfWeek)
+        return isNaN(dayOfWeek) ? null : ['Sun','Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat'][dayOfWeek];
+    }
+
+    showImageInLarge(imagePath) {
+        this.setState({imageInFull: imagePath, showFullImage: true})
     }
 
     render() {
         return (
             <View>
                 <ScrollView>
-                    <View style={styles.container}>
+                    {!(this.state.showFullImage) && <View style={styles.container}>
                         <Header
                             leftAction={this.leftAction.bind(this)}
                             rightAction={this.rightAction.bind(this)}
-                            bgIcon={require("../../../assets/images/bannerprofile.png")}
+                            bgIcon={this.state.Barberbanner}
                             rightIcon={require("../../../assets/images/share.png")}
                             leftIcon={require("../../../assets/images/ic_back.png")}/>
                         {this.state.barberFav && <TouchableOpacity onPress={() => this.setFavorite()}
@@ -966,28 +1168,31 @@ export default class ClientBarberProfile extends Component {
                                            source={require("../../../assets/images/arrow_down.png")}/>*/}
                                     </View>
 
-                                    <View style={styles.review}>
-                                        <TouchableOpacity onPress={() => {
-                                            this.props.navigation.navigate('ClientSupremeReview', {barberId: barberId});
-                                        }}>
-                                            <AirbnbRating
-                                                isDisabled={true}
-                                                showRating={false}
-                                                count={5}
-                                                defaultRating={this.state.barberRating}
-                                                size={10}
-                                                style={{marginStart: 10, height: 30}}
-                                            />
-                                            {/*<Image
+                                    {(this.state.barberReviews > 0) ? <View style={styles.review}>
+                                            <TouchableOpacity onPress={() => {
+                                                this.props.navigation.navigate('ClientSupremeReview', {barberId: barberId});
+                                            }}>
+                                                <AirbnbRating
+                                                    isDisabled={true}
+                                                    showRating={false}
+                                                    count={5}
+                                                    defaultRating={this.state.barberRating}
+                                                    size={10}
+                                                    style={{marginStart: 10, height: 30}}
+                                                />
+                                                {/*     <Image
                                             resizeMode="contain"
                                             source={require("../../../assets/images/start.png")}
                                             style={styles.rating}
                                         />*/}
-                                        </TouchableOpacity>
-                                        <Text
-                                            style={[styles.allFontStyle, styles.reviewText]}>{"(" + this.state.barberReviews + " Reviews)"}</Text>
-
-                                    </View>
+                                            </TouchableOpacity>
+                                            <Text
+                                                style={[styles.allFontStyle, styles.reviewText]}>{"(" + this.state.barberReviews + " Reviews)"}</Text>
+                                        </View> :
+                                        <View style={styles.review}>
+                                            <Text
+                                                style={[styles.allFontStyle, styles.reviewText]}>{"This barber has no reviews yet!"}</Text>
+                                        </View>}
 
                                 </View>
                             </View>
@@ -1027,7 +1232,9 @@ export default class ClientBarberProfile extends Component {
                                 showsHorizontalScrollIndicator={false}
                                 keyExtractor={index => index}
                                 renderItem={({item}) =>
-                                    <View>
+                                    <TouchableOpacity onPress={() => {
+                                        this.showImageInLarge(item.portfolio_image)
+                                    }}>
                                         <Image style={{
                                             borderRadius: 10,
                                             marginStart: 8,
@@ -1037,14 +1244,14 @@ export default class ClientBarberProfile extends Component {
                                         }}
                                                resizeMode='cover'
                                                source={{uri: item.portfolio_image}}/>
-                                    </View>}
+                                    </TouchableOpacity>}
                             />}
                             {(this.state.ListData.length < 1) &&
                             <View style={{width: "100%", height: 60, alignItems: "center", justifyContent: "center"}}>
                                 <Text style={{
                                     fontSize: 15,
                                     color: "white"
-                                }}>{this.state.barberName+" don't have any Experience Images"}</Text>
+                                }}>{this.state.barberName + " don't have any Experience Images"}</Text>
                             </View>}
                             {(this.state.ListData.length > 0) &&
                             <Image resizeMode={"contain"} source={require("../../../assets/images/arrow1.png")}
@@ -1113,7 +1320,10 @@ export default class ClientBarberProfile extends Component {
                                                 <Text style={{color: "white", fontSize: 12}}>   {item.name} </Text>
                                             </View>
                                             <View style={[{flexDirection: "row", width: "25%", alignItems: "center"}]}>
-                                                <Text style={{color: "white", fontSize: 12}}>{item.duration}</Text>
+                                                <Text style={{
+                                                    color: "white",
+                                                    fontSize: 12
+                                                }}>{item.duration + " mins"}</Text>
                                             </View>
                                             <View style={[{flexDirection: "row", width: "25%", alignItems: "center"}]}>
                                                 <Text style={{color: "white", fontSize: 12}}>{"$" + item.price}</Text>
@@ -1195,7 +1405,11 @@ export default class ClientBarberProfile extends Component {
                                             style={{
                                                 color: item.dayColor,
                                                 fontWeight: "bold",
-                                                fontSize: 12
+                                                fontSize: 12,
+                                                width: "100%",
+
+                                                textAlign: "center"
+
                                             }}>{item.day}</Text>
 
                                     </TouchableOpacity>
@@ -1226,8 +1440,7 @@ export default class ClientBarberProfile extends Component {
                                 flexDirection: "column",
                                 height: 100,
                                 width: "100%",
-                                marginBottom: 30,
-                                marginTop: 30
+                                marginTop: 10
                             }}>
                             <View style={{
                                 flexDirection: "row",
@@ -1257,17 +1470,17 @@ export default class ClientBarberProfile extends Component {
                                                 textAlign: "left",
                                                 color: "white",
                                             }}
-                                        >${this.state.totalPriceService}</Text>
+                                        >${this.state.totalPriceService + 1}</Text>
                                         <Text style={{color: "white", fontFamily: "AvertaStd-Thin", fontSize: 12}}>Service
                                             Fee:
                                             <Text style={{
-                                                fontWeight: "bold",
+                                                fontWeight: "900",
                                                 color: "white"
-                                            }}>{"$1.00"}</Text>
+                                            }}>{" $1.00"}</Text>
                                         </Text>
                                     </View>
                                 </View>
-                                {(this.state.buttonPayText === "PAY") &&
+                                {(this.state.buttonPayText == "PAY") && (this.state.savedCard.length > 0) &&
                                 <TouchableOpacity onPress={() => this.showDialog()} style={{
                                     flexDirection: "row",
                                     width: "40%",
@@ -1275,23 +1488,41 @@ export default class ClientBarberProfile extends Component {
                                     justifyContent: "center",
                                     alignItems: "center"
                                 }}>
+                                    {this.state.selectedCardImage === "Visa" &&
                                     <Image resizeMode={"contain"} source={require("../../../assets/images/visa.png")}
-                                           style={{width: 25}}/>
+                                           style={{width: 25}}/>}
+                                    {this.state.selectedCardImage === "Discover" && <Image resizeMode={"contain"}
+                                                                                          source={require("../../../assets/images/discover.png")}
+                                                                                          style={{width: 25}}/>}
+                                    {this.state.selectedCardImage === "MasterCard" &&
+                                    <Image resizeMode={"contain"} source={require("../../../assets/images/master.png")}
+                                           style={{width: 25}}/>}
+                                    {this.state.selectedCardImage === "American Express" && <Image resizeMode={"contain"}
+                                                                                                  source={require("../../../assets/images/american.png")}
+                                                                                                  style={{width: 25}}/>}
+                                    {this.state.selectedCardImage === "UnionPay" && <Image resizeMode={"contain"}
+                                                                                          source={require("../../../assets/images/unionpay.png")}
+                                                                                          style={{width: 25}}/>}
+                                    {this.state.selectedCardImage === "Diners Club" && <Image resizeMode={"contain"}
+                                                                                             source={require("../../../assets/images/dinnerclub.png")}
+                                                                                             style={{width: 25}}/>}
+                                    {this.state.selectedCardImage === "JCB" &&
+                                    <Image resizeMode={"contain"} source={require("../../../assets/images/jcb.png")}
+                                           style={{width: 25}}/>}
+
                                     <Text style={{
                                         textAlign: "center",
                                         fontSize: 17,
                                         marginStart: 5,
-
                                         color: "white"
-
-                                    }}>****4242</Text>
+                                    }}>{this.state.selectedCardNum}</Text>
                                     <Image
                                         style={{
                                             marginStart: 5,
                                         }} resizeMode={"contain"}
                                         source={require("../../../assets/images/arrow_down.png")}/>
                                 </TouchableOpacity>}
-                                {!(this.state.buttonPayText === "PAY") &&<View style={{
+                                {(this.state.buttonPayText == "RESERVE") && <View style={{
                                     width: "40%",
                                     height: "100%",
                                     justifyContent: "center",
@@ -1310,6 +1541,8 @@ export default class ClientBarberProfile extends Component {
                                     backgroundColor: "red",
                                     width: "20%",
                                     height: "100%",
+                                    position:"absolute",
+                                    right:0,
                                     alignItems: "center",
                                     justifyContent: "center"
                                 }}>
@@ -1341,6 +1574,7 @@ export default class ClientBarberProfile extends Component {
                                     keyExtractor={(item, index) => index.toString()}
                                     style={{marginTop: 10}}
                                     data={this.state.savedCard}
+                                    extraData={this.state.savedCard}
                                     renderItem={({item}) =>
                                         <TouchableOpacity onPress={() => this.cardSelected(item)}>
                                             <Text
@@ -1348,7 +1582,7 @@ export default class ClientBarberProfile extends Component {
                                                     fontSize: 18,
                                                     color: "black",
                                                     margin: 10
-                                                }}>{"Card # " + item}</Text>
+                                                }}>{"Card # **** **** ****" + item.last4}</Text>
                                             <View style={{width: "100%", height: 0.5, backgroundColor: "black"}}/>
                                         </TouchableOpacity>
                                     }
@@ -1357,7 +1591,30 @@ export default class ClientBarberProfile extends Component {
                                     horizontal={false}/>
                             </DialogContent>
                         </Dialog>
-                    </View>
+                    </View>}
+                    {this.state.showFullImage && <View style={{
+                        width: width,
+                        height: height,
+                        backgroundColor: "grey",
+                        alignItems: "center",
+                        justifyContent: "center"
+                    }}>
+                        <Image style={{width: "100%", height: "100%", backgroundColor: "yellow"}}
+                               source={{uri: this.state.imageInFull}}/>
+                        <TouchableOpacity onPress={() => this.setState({showFullImage: false})} style={{
+                            alignItems: "center",
+                            justifyContent: "center",
+                            position: "absolute",
+                            top: 20,
+                            right: 20,
+                            width: 50,
+                            height: 50
+                        }}>
+                            <Image style={{width: 35, height: 35}}
+                                   source={require("../../../assets/images/error.png")}/>
+                        </TouchableOpacity>
+
+                    </View>}
                 </ScrollView>
                 {this.state.showLoading && <View style={{
                     width: "100%",

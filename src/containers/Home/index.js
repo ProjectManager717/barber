@@ -5,8 +5,8 @@ import {
     Text,
     StyleSheet,
     ImageBackground,
-    Image,Alert,
-    TouchableOpacity, Linking, AsyncStorage
+    Image, Alert,
+    TouchableOpacity, Linking, AsyncStorage, Platform
 } from "react-native";
 import Header from "../../components/Header/";
 import {ScrollView} from "react-native-gesture-handler";
@@ -18,6 +18,7 @@ import Notifications from "./Notifications";
 import Preference from "react-native-preference";
 import {AirbnbRating} from "react-native-elements";
 import {constants} from "../../utils/constants";
+import {NavigationActions} from "react-navigation";
 
 
 const {height, width} = Dimensions.get("window");
@@ -39,27 +40,64 @@ export default class Home extends Component {
 
     constructor(props) {
         super(props);
+        console.disableYellowBox=true;
         this.state = {
             showLoading: false,
             barberName: Preference.get("userName"),
-            barberImage: require("../../assets/images/personImage.jpg"),
-            barberExperiance: 0,
+            barberImage: null,
+            barberExperiance: null,
             barberShopName: "",
             barberRating: 0,
             barberReviews: "",
             barberInsta: "",
             barberAddress: "",
+            bannerImage:null
         }
     }
 
+
     componentDidMount(): void {
         const {navigation} = this.props;
+
+
+        if (Platform.OS === 'android') {
+            Linking.getInitialURL().then(url => {
+                if (url) {
+                    this.navigate(url);
+                }
+            }).catch(error => console.log("Deep linking error: " + error));
+            Linking.addEventListener('url', this.handleOpenURL);
+        } else {
+            Linking.addEventListener('url', this.handleOpenURL);
+        }
         this.focusListener = navigation.addListener("didFocus", payload => {
             this.getBarberDetails();
         });
         //this.getBarberDetails();
     }
+    handleOpenURL = (event) => {
+        this.navigate(event.url);
+    }
+    componentWillUnmount(): void {
+        Linking.removeEventListener('url', this.handleOpenURL);
+    }
+    navigate = (url) => {
+        console.log("Deep linking1: " + JSON.stringify(url))
 
+        const route = url.replace('clypr://', '');
+        console.log("Deep linking2: " + JSON.stringify(route))
+        const params = route.split('/')
+        console.log("Deep linking3: " + JSON.stringify(params))
+
+        if (params[0] == 'profile') {
+            this.props.navigation.navigate({ routeName: 'Profile' ,
+                params:{
+                    id: params[1],
+                    isShared: true,
+                }
+            })
+        }
+    };
     getBarberDetails() {
         this.setState({showLoading: true})
         fetch(constants.BarbersProfile + "/" + Preference.get("userId") + "/profile", {
@@ -83,21 +121,26 @@ export default class Home extends Component {
                         barberImage: {uri: barberData.user_image},
                         barberShopName: barberData.shop_name,
                         barberName: barberData.firstname,
-                        barberRating: barberData.rating,
-                        barberReviews: barberData.reviews,
+                        barberRating: barberData.average_Rating,
+                        barberReviews: barberData.total_Reviews,
                         barberExperiance: barberData.experience,
                         barberInsta: barberData.username,
-                        barberAddress: barberData.location
+                        barberAddress: barberData.location,
+                        bannerImage:{uri:barberData.banner_image}
                     });
                     //this.setState({barberData: response.Data});
-                    if (barberData.reviews === undefined) {
+                    if (barberData.total_Reviews === undefined) {
                         this.setState({barberReviews: "You don’t have any reviews yet"})
                     } else {
-                        this.setState({barberReviews: barberData.reviews + " Reviews"})
+                        this.setState({barberReviews: barberData.total_Reviews + " Reviews"})
                     }
-                    if (barberData.experience === "0") {
+                    if (barberData.experience === null) {
                         this.setState({barberExperiance: "Set your years of experience"})
-                    } else {
+                    }
+                    if(barberData.experience === "0"){
+                        this.setState({barberExperiance: "Set your years of experience"})
+                    }
+                     else {
                         this.setState({barberExperiance: "Barber with " + this.state.barberExperiance + " years of experience"})
                     }
                 } else {
@@ -121,7 +164,7 @@ export default class Home extends Component {
                         <Header
                             leftAction={this.leftAction.bind(this)}
                             rightAction={this.rightAction.bind(this)}
-                            bgIcon={require("../../assets/images/header.png")}
+                            bgIcon={this.state.bannerImage}
                             rightIcon={require("../../assets/images/share.png")}
                             leftIcon={require("../../assets/images/qr.png")}/>
                         <View style={styles.detailsContainer}>
@@ -134,7 +177,7 @@ export default class Home extends Component {
                             </View>
                             <TouchableOpacity
                                 style={{position: 'absolute', top: 10, right: width / 2 - width / 2.7 / 2}}
-                                onPress={() => Linking.openURL('https://www.instagram.com/' + Preference.get("userInsta"))}>
+                                onPress={() => Linking.openURL('https://www.instagram.com/'+this.state.barberInsta)}>
                                 <Image
                                     source={require("../../assets/images/insta.png")}
                                     style={styles.icon}

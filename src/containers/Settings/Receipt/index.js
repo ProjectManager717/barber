@@ -17,7 +17,7 @@ import {Header, AirbnbRating} from "react-native-elements";
 import CheckBoxSquare from "../../../components/CheckBox";
 import {constants} from "../../../utils/constants";
 import Preference from "react-native-preference";
-
+var moment = require('moment');
 let appointmentId = "";
 let Subtotal=0;
 export default class Receipt extends Component {
@@ -71,7 +71,7 @@ export default class Receipt extends Component {
                     this.setState({
                         invoiceNo: recieptData.invoice_no,
                         invoiceDate: receptDate[0],
-                        invoiceTime: timeReciept[0]+":"+timeReciept[1],
+                        invoiceTime: moment(recieptData.createdAt).format("LT"),
                         barberName: recieptData.barber_firstname +" "+recieptData.barber_lastname ,
                         barberShopName: recieptData.barber_shop_name,
                         barberLocation:recieptData.location,
@@ -194,7 +194,7 @@ export default class Receipt extends Component {
                         <Text style={styles.txtHeader}>BILLING DETAILS</Text>
                         <View style={{width: "85%", flexDirection: "row", marginStart: 30,marginEnd:30}}>
                             <Text
-                                style={{ color: "white", justifyContent: "flex-start", fontSize: 12}}>Invoice
+                                style={{ color: "white", justifyContent: "flex-start", fontSize: 10}}>Invoice
                                 No.{this.state.invoiceNo}</Text>
                             <Text style={{
                                 color: "white",
@@ -305,6 +305,7 @@ export default class Receipt extends Component {
                                     marginBottom:10
                                 }}>
                                     <AirbnbRating
+                                        isDisabled={true}
                                         showRating={false}
                                         count={5}
                                         defaultRating={this.state.rating}
@@ -358,7 +359,7 @@ export default class Receipt extends Component {
                         }}>
                             <Text style={{fontSize: 16, color: "white"}}>{"Does something look wrong?"}</Text>
                             <TouchableOpacity
-                                onPress={() => Linking.openURL('mailto:cbanks@clypr.co?subject=Receipt%201234')}
+                                onPress={() => Linking.openURL('mailto:cbanks@clypr.co?subject=Receipt%20'+this.state.invoiceNo)}
                                 style={{flexDirection: "row"}}>
                                 <Text style={{fontSize: 16, color: "red"}}>{"Contact us "}</Text>
                                 <Text style={{fontSize: 16, color: "white"}}>{"if you have any disputes"}</Text>

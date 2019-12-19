@@ -16,8 +16,9 @@ export default class MobilePay extends Component {
     }
 
     componentDidMount(): void {
-        if (Preference.get("userMobilePay") === true) {
+        if (Preference.get("MobilePayActivation") === true) {
             this.setState({mobilePayText: "Disable Mobile Pay"})
+            alert("MobilePay is already activated. Press button below to disable.");
         } else {
             this.setState({mobilePayText: "Enable Mobile Pay"})
         }
@@ -25,8 +26,8 @@ export default class MobilePay extends Component {
 
     setMobilePay() {
         //alert("Mobile Pay");
-        if (Preference.get("userMobilePay") === true) {
-            Preference.set("userMobilePay", false);
+        if (Preference.get("MobilePayActivation") === true) {
+            Preference.set({"MobilePayActivation": false});
             this.setState({mobilePayText: "Enable Mobile Pay"})
         } else {
             this.props.navigation.push("MobilePaySettings");
