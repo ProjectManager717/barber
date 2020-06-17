@@ -75,7 +75,7 @@ export default class Reviews extends Component {
 
 
     renderItem(item) {
-        let userImage=constants.profileImagePath+item.client_image;
+        let userImage=constants.profileImagePath+item.client_id.client_image;
         console.log("Imageuser-->",userImage);
         return (
             <View style={styles.row_item}>
@@ -149,7 +149,7 @@ export default class Reviews extends Component {
                 />}
                 {(this.state.reviews.length < 1) &&
                 <View style={{marginTop: 30, height: 30, marginStart: 20, marginEnd: 20,alignItems:"center"}}>
-                    <Text style={{color:"white",fontSize:20,}}>{"You have no reviews yet!"}</Text>
+                    <Text style={{color:"white",fontSize:20,textAlign:"center"}}>{"You have no reviews yet! \n Complete some appointments\nand start building your\n reputation!"}</Text>
                 </View>}
 
                 {this.state.showLoading && <View style={{

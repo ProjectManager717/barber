@@ -81,7 +81,7 @@ class SMSScreen extends Component {
             .then(response => {
                 console.log("responsesendVerifyCodeToServer-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
-                    Alert.alert("Success!", "Your message is successfully sent on Number Provided.");
+                    Alert.alert("Success!", "Your message is successfully sent on Number Provided.\n Your code is on it way!");
                     this.props.navigation.navigate('ConfirmSMSScreen', {Code: code,
                         number: "+1" + this.state.formattedNumber});
                 } else {
@@ -121,7 +121,7 @@ class SMSScreen extends Component {
             .then(response => {
                 console.log("responsesendVerifyCodeToServer-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
-                    Alert.alert("Success!", "Your message is successfully sent on Number Provided.");
+                    Alert.alert("Success!", "Your message is successfully sent on Number Provided.\n Your code is on it way!");
                     this.props.navigation.navigate('ConfirmSMSScreen', {
                         Code: code,
                         number: "+1" + this.state.formattedNumber
@@ -173,9 +173,9 @@ class SMSScreen extends Component {
                                 </View>
                             </View>
                             <Text style={styles.whiteText}>
-                                We will send you One-Time code.
+                                We will send you a One-Time code.
                             </Text>
-                            <RedButton label="Continue" onPress={this.onContinue} style={styles.btnContainer}/>
+                            <RedButton label="Continue" onPress={this.onContinue} textStyle={{width:"100%",textAlign:"center"}} style={styles.btnContainer}/>
                         </View>
                     </ImageBackground>
                     <View style={styles.bottomContainer}/>

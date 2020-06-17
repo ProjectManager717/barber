@@ -22,7 +22,8 @@ import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view'
 import stripe from 'tipsi-stripe'
 
 stripe.setOptions({
-    publishableKey: 'pk_test_5f4q3aLF1SgN7kQdEV6WBSnn',
+    //publishableKey: 'pk_test_5f4q3aLF1SgN7kQdEV6WBSnn',
+    publishableKey: 'pk_test_U4Ri0H7rP3PClZwTI5Z2r78J',
     androidPayMode: 'test', // Android only
 })
 let client_id, barber_id, barberImage, barberName, barberShopName, appointmentPrice, selected_services, date,
@@ -137,7 +138,7 @@ export default class PaymentMethodClient1 extends Component {
                 body: formBody
             }).then(response => response.json())
                 .then(response => {
-                    console.log("responsePaymentCard-->", "-" + JSON.stringify(response));
+                    console.log("responsePaymentCard1-->", "-" + JSON.stringify(response));
                     if (response.ResultType === 1) {
                         this.setState({showLoading: false})
                         let cardImage = "";
@@ -544,7 +545,7 @@ export default class PaymentMethodClient1 extends Component {
                             fontWeight: "bold"
                         }}>{item.cardInfo.brand}</Text>
                         <Text style={{color: item.colortext}}>{" Ending In"}</Text>
-                        <Text style={{color: item.colortext, fontWeight: 'bold'}}>{" " + item.cardInfo.last4}</Text>
+                        <Text style={{color: item.colortext, fontWeight: 'bold',width:70,textAlign:"left"}}>{" " + item.cardInfo.last4}</Text>
                     </View>
                     {item.tick &&
                     <View style={{alignItems: "flex-end", width: "15%"}}>
@@ -704,14 +705,48 @@ export default class PaymentMethodClient1 extends Component {
                                                resizeMode={"contain"}
                                                source={require("../../../assets/images/vcircle.png")}/>
                                         <TextInput style={{fontSize: 15, color: 'white', marginStart: 10, width: "80%"}}
-                                                   placeholder={"Enter card number"}
-                                                   onChangeText={(text) => this.setState({
-                                                       params: {
-                                                           ...this.state.params,
-                                                           number: text,
-                                                       }
-                                                   })}
-                                                   placeholderTextColor={"grey"}/>
+                                        placeholder={"Enter card number"}
+                                        value={this.state.params.number}
+                                       onChangeText={(text) => {
+                                           if (text.length == 16) {
+
+                                               var pho =  text.substring(0, 4) + " " + text.substring(4, 8) + " " + text.substring(8, 12)+" "+ text.substring(12, 16)
+                                               this.setState({
+                                                   params: {
+                                                       ...this.state.params,
+                                                        number: pho,
+                                                   }
+                                               })
+                                           }  else
+                                               this.setState({
+                                                   params: {
+                                                       ...this.state.params,
+                                                       number: text,
+                                                   }
+                                               })
+                                           }
+                                       }
+                                       placeholderTextColor={"grey"}
+                                                  /*  placeholder={"Enter card number"}
+                                                   onChangeText={(text) => {
+                                                       if (text.length == 16) {
+                                                           var pho = + text.substring(0, 4) + " " + text.substring(4, 8) + " " + text.substring(8, 12)+" "+ text.substring(12, 16)
+                                                           this.setState({
+                                                               params: {
+                                                                   ...this.state.params,
+                                                                   number: pho,
+                                                               }
+                                                           })
+                                                       } else
+                                                           this.setState({
+                                                               params: {
+                                                                   ...this.state.params,
+                                                                   number: text,
+                                                               }
+                                                           })
+
+                                                   }}
+                                                   placeholderTextColor={"grey"} *//>
                                     </View>
                                 </View>
 
@@ -1015,7 +1050,7 @@ export default class PaymentMethodClient1 extends Component {
                                     width: 260,
                                     marginBottom: 30
                                 }]}>
-                                    <Text style={{fontSize: 14, fontWeight: "bold", color: "white"}}>Add My Card</Text>
+                                    <Text style={{fontSize: 14, fontWeight: "bold", color: "white",width:"100%",textAlign:"center"}}>Add My Card</Text>
                                 </TouchableOpacity>
                             </View>
                             {this.state.showLoading && <View style={{
@@ -1038,7 +1073,7 @@ export default class PaymentMethodClient1 extends Component {
                             width: 260,
                             marginBottom: 30
                         }]}>
-                            <Text style={{fontSize: 14, fontWeight: "bold", color: "white"}}>PAY</Text>
+                            <Text style={{fontSize: 14, fontWeight: "bold", color: "white",width:"100%",textAlign:"center"}}>PAY</Text>
                         </TouchableOpacity>}
                     </View>
                 </ScrollView>

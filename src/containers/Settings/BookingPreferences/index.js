@@ -289,6 +289,7 @@ export default class BookingPreferences extends Component {
         }).then(response => response.json())
             .then(response => {
                 console.log("updateBookingPrefrence-->", "-" + JSON.stringify(response));
+               // alert(JSON.stringify(response))
                 if (response.ResultType === 1) {
                     this.setState({showLoading: false})
                     //alert("Booking preferences updated successfully");
@@ -351,7 +352,7 @@ export default class BookingPreferences extends Component {
                             {this.renderRow({
                                 title: "Mobile Pay",
                                 ic: require("../../../assets/images/mobile_pay.png"),
-                                hint: "Payment through the App",
+                                hint: "Clients pay through the App",
                                 ic2: this.state.MP.MPradiocheck
                             })}
                         </TouchableOpacity>
@@ -360,7 +361,7 @@ export default class BookingPreferences extends Component {
                             {this.renderRow({
                                 title: "In Shop",
                                 ic: require("../../../assets/images/inshop.png"),
-                                hint: "Cash,Card and Other",
+                                hint: "Clients pay in person with cash or card",
                                 ic2: this.state.IN.INradiocheck
                             })}
                         </TouchableOpacity>

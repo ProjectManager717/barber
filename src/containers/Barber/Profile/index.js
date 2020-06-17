@@ -80,7 +80,7 @@ export default class BarberProfile extends Component {
             console.log('Response = ', response);
 
             if (response.didCancel) {
-                console.log('User cancelled image picker');
+                console.log('User canceled image picker');
             } else if (response.error) {
                 console.log('ImagePicker Error: ', response.error);
             } else if (response.customButton) {
@@ -419,7 +419,9 @@ const styles = StyleSheet.create({
     name: {
         fontSize: 18,
         fontWeight: "bold",
-        color: "white"
+        color: "white",
+        width:"100%",
+        textAlign:"center"
     },
     button: {
         width: width / 2.2,

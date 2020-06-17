@@ -24,6 +24,9 @@ import {AirbnbRating} from "react-native-elements";
 
 const {height, width} = Dimensions.get("window");
 var moment = require("moment");
+let Policy = "By booking now, you are \n" +
+    "agreeing to be charged 25% if you cancel 30 minutes prior to your appointment and \n" +
+    "also agreeing to be charged 50% of your total if you are a No-Show.";
 
 Date.prototype.addDays = function (days) {
     var date = new Date(this.valueOf());
@@ -61,7 +64,7 @@ export default class ClientBarberProfile extends Component {
         let barberReviews = navigation.getParam('barberReviews');
         barberMobilePay = navigation.getParam('barberMobilePay');
         this.state = {
-            isConnected:true,
+            isConnected: true,
             showLoading: false,
             selectedMonth: "",
             showMonth: "",
@@ -147,7 +150,7 @@ export default class ClientBarberProfile extends Component {
                     imagePath: require('../../../assets/images/vp2.png')
                 }],
             ListData2: [
-                {
+                /*{
                     id: 1,
                     check: false,
                     title: "Haircut",
@@ -186,7 +189,7 @@ export default class ClientBarberProfile extends Component {
                     duration: "1",
                     prize: 100,
                     selected: "transparent",
-                }
+                }*/
 
             ],
             showFullImage: false
@@ -207,7 +210,7 @@ export default class ClientBarberProfile extends Component {
 
     componentDidMount() {
         let items = [];
-        for (i = 0; i < 7; i++) {
+        for (let i = 0; i < 7; i++) {
             var weekDate = this.startOfWeek(new Date());
             var newDate = weekDate.addDays(i);
             items.push(this.renderWeekDay({k: i, d: newDate}));
@@ -482,7 +485,7 @@ export default class ClientBarberProfile extends Component {
                         barberName: barberData.firstname + " " + barberData.lastname,
                         barberShopName: barberData.shop_name,
                         ListData: barberData.portoflios,
-                        ListData2: barberData.services,
+                        //ListData2: barberData.services,
                         barberTimeSlots: barberData.slots,
                         barberRating: barberData.average_rating,
                         barberReviews: barberData.total_reviews,
@@ -495,6 +498,9 @@ export default class ClientBarberProfile extends Component {
                         savedCard: barberData.card_list
                     }, () => {
                         console.log("stripeActiveCheck:", this.state.stripeActive)
+                        if (this.state.ListData2.length < 1) {
+                            this.setState({ListData2: barberData.services,})
+                        }
                     });
 
 
@@ -659,27 +665,31 @@ export default class ClientBarberProfile extends Component {
         let totalSelectedSlotsIds = [];
         for (let i = 0; i < totalslots.length; i++) {
             //console.log("checkSlots -Availability:", i + "------inside loop-" + id + "===" + totalslots[i].slot_detail._id);
-
             if (id === totalslots[i].slot_detail._id) {
                 for (let j = 0; j < totalSlotsNeeded; j++) {
-                    //console.log("checkSlots -Availability:", i + "--*********--" + j);
-                    if (totalslots[i + j].slot_status === 0) {
-                        console.log("checkSlots -Availability:", i + "----" + j + "--");
-                        availSlots++;
-                        totalSelectedSlotsIds.push(totalslots[i + j].slot_detail._id);
+                    console.log("checkSlotsss -Availability--:", i + j + "--*********--" + totalslots.length);
+                    if ((i + j) > totalslots.length - 1) {
+                        Alert.alert("Check Service Time!", "Selected service time exceeds shop time.")
                     } else {
-                        if (totalslots[i + j].slot_status === 1) {
-                            console.log("checkSlots -Availability:", i + "----" + j + "--rejected");
-                            Alert.alert("Warning!", "Consective slots are not available for these services.");
-                            return false;
+                        if (totalslots[i + j].slot_status === 0) {
+                            console.log("checkSlots -Availability:", i + "----" + j + "--");
+                            availSlots++;
+                            totalSelectedSlotsIds.push(totalslots[i + j].slot_detail._id);
+                        } else {
+                            if (totalslots[i + j].slot_status === 1) {
+                                console.log("checkSlots -Availability:", i + "----" + j + "--rejected");
+                                Alert.alert("Warning!", "Consective slots are not available for these services.");
+                                return false;
+                            }
+                        }
+                        if (availSlots === totalSlotsNeeded) {
+                            //console.log("checkSlots -Availability:", i + "----" + j + "--allAvailable");
+                            this.setState({selectedSlotIds: totalSelectedSlotsIds});
+                            console.log("checkSlots -Availability:", i + "----" + j + "--allAvailable----->>>>>>" + JSON.stringify(totalSelectedSlotsIds));
+                            return true;
                         }
                     }
-                    if (availSlots === totalSlotsNeeded) {
-                        //console.log("checkSlots -Availability:", i + "----" + j + "--allAvailable");
-                        this.setState({selectedSlotIds: totalSelectedSlotsIds});
-                        console.log("checkSlots -Availability:", i + "----" + j + "--allAvailable----->>>>>>" + JSON.stringify(totalSelectedSlotsIds));
-                        return true;
-                    }
+
                 }
             }
         }
@@ -788,23 +798,8 @@ export default class ClientBarberProfile extends Component {
     }
 
     showTime(time) {
-        console.log("SlotDATime : ",time);
-        /*let waqt = time.split(":");
-        let am = "";
-        if (waqt[0] > 11) {
-            waqt[0] = waqt[0] - 12;
-            if (waqt[0] === 0) {
-                waqt[0] = 12;
-            }
-            am = "PM";
+        console.log("SlotDATime : ", time);
 
-        } else {
-            am = "AM";
-        }
-        if (waqt[1] < 10) {
-            //waqt[1] = "0" + waqt[1];
-        }*/
-        //moment(time, "HH:mm").format("hh:mm a")
         return moment(time, "HH:mm").format("hh:mm a");
     }
 
@@ -841,44 +836,31 @@ export default class ClientBarberProfile extends Component {
                 });
             else {
                 if (this.state.mobilePayActivation === true) {
-                    if (this.state.savedCard.length < 1) {
-                        this.props.navigation.navigate("PaymentMethodClient", {
-                            client_id: Preference.get("userId"),
-                            barber_id: barberId,
-                            barberImage: this.state.barberProfileImage,
-                            barberName: this.state.barberName,
-                            barberShopName: this.state.barberShopName,
-                            appointmentPrice: this.state.totalPriceService,
-                            selected_services: this.state.selectedServices,
-                            date: this.state.selectedDate,
-                            selected_slot_id: this.state.selectedSlotIds,
-                            total_price: this.state.totalPriceService,
-                            service_fee: "1",
-                            selected_surge_price: false,
-                        })
+                    if (this.state.barberMobilePay === "inShop") {
+                        this.bookApointment();
                     } else {
-                        this.PaymentFlow();
+                        if (this.state.savedCard.length < 1) {
+                            this.props.navigation.navigate("PaymentMethodClient", {
+                                client_id: Preference.get("userId"),
+                                barber_id: barberId,
+                                barberImage: this.state.barberProfileImage,
+                                barberName: this.state.barberName,
+                                barberShopName: this.state.barberShopName,
+                                appointmentPrice: this.state.totalPriceService,
+                                selected_services: this.state.selectedServices,
+                                date: this.state.selectedDate,
+                                selected_slot_id: this.state.selectedSlotIds,
+                                total_price: this.state.totalPriceService,
+                                service_fee: "1",
+                                selected_surge_price: false,
+                            })
+                        } else {
+                            this.PaymentFlow();
+                        }
                     }
-
-
                 } else {
                     this.bookApointment();
-                    // this.props.navigation.navigate("PaymentMethodClient", {
-                    //     client_id: Preference.get("userId"),
-                    //     barber_id: barberId,
-                    //     barberImage: this.state.barberProfileImage,
-                    //     barberName: this.state.barberName,
-                    //     barberShopName: this.state.barberShopName,
-                    //     appointmentPrice: this.state.totalPriceService,
-                    //     selected_services: this.state.selectedServices,
-                    //     date: this.state.selectedDate,
-                    //     selected_slot_id: this.state.selectedSlotIds,
-                    //     total_price: this.state.totalPriceService,
-                    //     service_fee: "1",
-                    //     selected_surge_price: false,
-                    // })
                 }
-
             }
         } else {
             alert("Please select Service,Time and Day for further procedure.");
@@ -1001,7 +983,7 @@ export default class ClientBarberProfile extends Component {
     }
 
     async setMonth() {
-        const input = getmonth + "-19";
+        const input = getmonth + "-" + moment().format('YY');
         let outt = input.split("-");
         let showmonth = monthNames[outt[0]] + " 20" + outt[1];
         this.setState({selectedMonth: input, showMonth: showmonth});
@@ -1108,8 +1090,10 @@ export default class ClientBarberProfile extends Component {
 
     getDayOfWeek(date) {
         var dayOfWeek = new Date(date).getDay();
-        console.log("WEEK DAAYS" + dayOfWeek)
-        return isNaN(dayOfWeek) ? null : ['Sun','Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat'][dayOfWeek];
+        //var dayOfWeek = new Date("2020-06-14").getDay();
+        console.log("WEEK DAAYSs" + dayOfWeek)
+        //return dayOfWeek;
+        return isNaN(dayOfWeek) ? null : [ 'Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat','Sun'][dayOfWeek];
     }
 
     showImageInLarge(imagePath) {
@@ -1407,9 +1391,7 @@ export default class ClientBarberProfile extends Component {
                                                 fontWeight: "bold",
                                                 fontSize: 12,
                                                 width: "100%",
-
                                                 textAlign: "center"
-
                                             }}>{item.day}</Text>
 
                                     </TouchableOpacity>
@@ -1492,20 +1474,21 @@ export default class ClientBarberProfile extends Component {
                                     <Image resizeMode={"contain"} source={require("../../../assets/images/visa.png")}
                                            style={{width: 25}}/>}
                                     {this.state.selectedCardImage === "Discover" && <Image resizeMode={"contain"}
-                                                                                          source={require("../../../assets/images/discover.png")}
-                                                                                          style={{width: 25}}/>}
+                                                                                           source={require("../../../assets/images/discover.png")}
+                                                                                           style={{width: 25}}/>}
                                     {this.state.selectedCardImage === "MasterCard" &&
                                     <Image resizeMode={"contain"} source={require("../../../assets/images/master.png")}
                                            style={{width: 25}}/>}
-                                    {this.state.selectedCardImage === "American Express" && <Image resizeMode={"contain"}
-                                                                                                  source={require("../../../assets/images/american.png")}
-                                                                                                  style={{width: 25}}/>}
+                                    {this.state.selectedCardImage === "American Express" &&
+                                    <Image resizeMode={"contain"}
+                                           source={require("../../../assets/images/american.png")}
+                                           style={{width: 25}}/>}
                                     {this.state.selectedCardImage === "UnionPay" && <Image resizeMode={"contain"}
-                                                                                          source={require("../../../assets/images/unionpay.png")}
-                                                                                          style={{width: 25}}/>}
+                                                                                           source={require("../../../assets/images/unionpay.png")}
+                                                                                           style={{width: 25}}/>}
                                     {this.state.selectedCardImage === "Diners Club" && <Image resizeMode={"contain"}
-                                                                                             source={require("../../../assets/images/dinnerclub.png")}
-                                                                                             style={{width: 25}}/>}
+                                                                                              source={require("../../../assets/images/dinnerclub.png")}
+                                                                                              style={{width: 25}}/>}
                                     {this.state.selectedCardImage === "JCB" &&
                                     <Image resizeMode={"contain"} source={require("../../../assets/images/jcb.png")}
                                            style={{width: 25}}/>}
@@ -1541,21 +1524,25 @@ export default class ClientBarberProfile extends Component {
                                     backgroundColor: "red",
                                     width: "20%",
                                     height: "100%",
-                                    position:"absolute",
-                                    right:0,
+                                    position: "absolute",
+                                    right: 0,
                                     alignItems: "center",
                                     justifyContent: "center"
                                 }}>
                                     <Text style={{
                                         fontSize: 16,
                                         color: "white",
-                                        fontWeight: "bold"
+                                        fontWeight: "bold",
+                                        width:"100%",
+                                        textAlign:"center"
                                     }}>{this.state.buttonPayText}</Text>
                                 </TouchableOpacity>
 
                             </View>
 
+
                         </View>
+
                         <Dialog
                             visible={this.state.DialogVisible}
                             onTouchOutside={() => {
@@ -1615,6 +1602,16 @@ export default class ClientBarberProfile extends Component {
                         </TouchableOpacity>
 
                     </View>}
+                    <TouchableOpacity
+                        onPress={() => Alert.alert("This barber has Cancelation & No-Show Policies activated.", Policy)}
+                        style={{width: "100%", height: 20, backgroundColor: "white"}}>
+                        <Text style={{
+                            width: "100%",
+                            fontSize: 12,
+                            colors: "blue",
+                            textAlign: "center"
+                        }}>{"Cancelation & No-Show Policy"}</Text>
+                    </TouchableOpacity>
                 </ScrollView>
                 {this.state.showLoading && <View style={{
                     width: "100%",
@@ -1681,7 +1678,9 @@ const styles = StyleSheet.create({
     name: {
         fontSize: 18,
         fontWeight: "bold",
-        color: "white"
+        color: "white",
+        width:"100%",
+        textAlign:"center"
     },
     button: {
         width: width / 2.2,

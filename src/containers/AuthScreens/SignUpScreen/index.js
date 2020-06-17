@@ -149,7 +149,7 @@ class SignUpScreen extends Component {
         }
     }
 
-    _signIn = async () => {
+    _signIn1 = async () => {
         //Prompts a modal to let the user sign in into your application.
         try {
 
@@ -166,6 +166,35 @@ class SignUpScreen extends Component {
 
         } catch (error) {
             console.log('Message', error.message);
+            if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+                console.log('User Cancelled the Login Flow');
+            } else if (error.code === statusCodes.IN_PROGRESS) {
+                console.log('Signing In');
+            } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+                console.log('Play Services Not Available or Outdated');
+            } else {
+                console.log('Some Other Error Happened' + error.code);
+            }
+        }
+    };
+
+    _signIn = async () => {
+        //Prompts a modal to let the user sign in into your application.
+        try {
+
+            await GoogleSignin.hasPlayServices({
+                //Check if device has Google Play Services installed.
+                //Always resolves to true on iOS.
+                showPlayServicesUpdateDialog: true,
+            });
+            console.log('Google --> ', "yessss");
+            const userInfo = await GoogleSignin.signIn();
+            console.log('Google User Info --> ', userInfo);
+            // this.setState({userInfo: userInfo});
+            this.socialLoginGoogle(userInfo);
+
+        } catch (error) {
+            console.log('Message1122', error);
             if (error.code === statusCodes.SIGN_IN_CANCELLED) {
                 console.log('User Cancelled the Login Flow');
             } else if (error.code === statusCodes.IN_PROGRESS) {
@@ -303,6 +332,14 @@ class SignUpScreen extends Component {
                 this.setState({isConnected});
             }
         );
+
+        GoogleSignin.configure({
+            //It is mandatory to call this method before attempting to call signIn()
+            scopes: ['https://www.googleapis.com/auth/userinfo.profile'],
+            // Repleace with your webClientId generated from Firebase console
+            webClientId: "264908010858-90qei6m96daq2doi543gnahouvunl4v4.apps.googleusercontent.com",
+            iosClientId: '264908010858-imh71lfsb360c40oq6c7hrgqdkhuqu3b.apps.googleusercontent.com',
+        });
     }
 
     facebokLogin = async () => {
@@ -312,7 +349,7 @@ class SignUpScreen extends Component {
             else{  result = await LoginManager.logInWithPermissions(['email', 'public_profile']);}
 
             if (result.isCancelled) {
-                alert("Login was cancelled");
+                alert("Login was canceled");
             } else {
                 //alert("Login is succesfull with permission " + result.grantedPermissions.toString())
                 this.FBGraphRequest('id,email,name,first_name,last_name,picture', this.FBLoginCallback);
@@ -809,21 +846,22 @@ class SignUpScreen extends Component {
                             {this.state.userName === "Client" && <View style={styles.subContainer}>
                                 <Text style={styles.whiteBoldBigText}>Register • {this.state.userName}</Text>
                                 {this.renderInputsClient()}
-                                <RedButton label="Sign Up" onPress={()=>this.onSignUp()} style={styles.buttonContainer}/>
+                                <RedButton label="Sign Up" onPress={()=>this.onSignUp()} textStyle={{width:"100%",textAlign:"center"}} style={styles.buttonContainer}/>
                             </View>}
                             {this.state.userName === "Barber" && <View style={styles.subContainer}>
                                 <Text style={styles.whiteBoldBigText}>Register • {this.state.userName}</Text>
                                 {this.renderInputsBarber()}
-                                <RedButton label="Sign Up" onPress={()=>this.onSignUp()} style={styles.buttonContainer}/>
+                                <RedButton label="Sign Up" onPress={()=>this.onSignUp()} textStyle={{width:"100%",textAlign:"center"}} style={[styles.buttonContainer]}/>
 
                             </View>}
                             <View style={styles.termsContainer}>
-                                <Text style={styles.whiteText}>
+                                <Text style={[styles.whiteText,{width:"60%",textAlign:"right"}]}>
                                     {'By Signing Up, you agree to our '}
                                 </Text>
-                                <TouchableOpacity onPress={()=>{ Linking.openURL('https://clypr.co/terms-of-service')}}>
-                                    <Text style={styles.redText}>
-                                        Terms and Conditions
+                                <TouchableOpacity onPress={()=>{ Linking.openURL('https://clypr.co/terms-of-service')}}
+                                style={{width:"40%",textAlign:"left"}}>
+                                    <Text style={[styles.redText,{width:"100%",textAlign:"center"}]}>
+                                        {'Terms and Conditions'}
                                     </Text>
                                 </TouchableOpacity>
                             </View>

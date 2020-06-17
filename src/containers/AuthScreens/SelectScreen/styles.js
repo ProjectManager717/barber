@@ -15,7 +15,8 @@ export const styles = StyleSheet.create({
   },
   bottomIconContainer: {
     flex: 1,
-    justifyContent: 'flex-end'
+    justifyContent: 'flex-end',
+    marginBottom:15
   },
   whiteTinySmallText: {
     ...Metric.font.h5Tiny,

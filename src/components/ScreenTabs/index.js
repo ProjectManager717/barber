@@ -15,12 +15,15 @@ export default class ScreenTabs extends Component {
     constructor() {
         super();
         this.state = {
-            getViewIndex: 0
+            getViewIndex: 0,
+            indexSet:0
         };
+
         this.tintPosition = new Animated.Value(0);
     }
 
     animateTabUnderline(i) {
+
         Animated.timing(this.tintPosition, {
             toValue: i,
             duration: 100
@@ -28,13 +31,23 @@ export default class ScreenTabs extends Component {
     }
 
     handler(index) {
+        this.setState({indexSet:index})
         this.flatlistRef.scrollToIndex({animated: true, index});
     }
 
     changeIndex = event => {
+        console.log("TAB- render->");
         this.animateTabUnderline(event.viewableItems[0].index);
-        this.setState({getViewIndex: event.viewableItems[0].index});
+        this.setState({getViewIndex: event.viewableItems[0].index},()=>{
+            console.log("TAB- render->"+event.viewableItems[0].index);
+            console.log("TAB- render2->"+this.state.getViewIndex);
+        });
+
     };
+
+    shouldComponentUpdate(nextProps, nextState) {
+        return this.state.indexSet != nextState.indexSet || this.state.getViewIndex!=nextState.getViewIndex ;
+    }
 
     render() {
         let {getViewIndex} = this.state;
@@ -44,6 +57,7 @@ export default class ScreenTabs extends Component {
             inputRange: [0, 1, 2],
             outputRange: [0, TabWidth, TabWidth * 2]
         });
+
         return (
             <View style={styles.container}>
                 <Animated.View
@@ -71,7 +85,7 @@ export default class ScreenTabs extends Component {
                             {getViewIndex == 0 && <Image
                                 source={require("../../assets/images/revenue.png")}
                                 style={styles.icon}/>}
-                            {!getViewIndex == 0 && <Image
+                            {!(getViewIndex == 0) && <Image
                                 source={require("../../assets/images/revenue_grey.png")}
                                 style={styles.icon}
                             />}
@@ -133,6 +147,7 @@ export default class ScreenTabs extends Component {
                     keyExtractor={(item, index) => index.toString()}
                     renderItem={({item, index}) => {
                         const Comp = item;
+                        console.log("TAB-->"+index);
                         return (
                             <View key={index} style={{width}}>
                                 <Comp/>

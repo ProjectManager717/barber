@@ -195,10 +195,7 @@ export default class ClientBarberSearch extends Component {
                             color: "white",
                             fontSize: 12,
                             fontFamily: "AvertaStd-RegularItalic",
-
                             width: "80%"
-
-
                         }}
                         onChangeText={(text) => {
                             this.setState({searchText: text})
@@ -219,6 +216,10 @@ export default class ClientBarberSearch extends Component {
     }
 
     renderRowSurge2(item) {
+        if(item.avilabeSlot!='Tomorrow')
+        {
+            item.avilabeSlot=moment(item.avilabeSlot,"hh:mm").format("hh:mm a");
+        }
         console.log("Barber Detail---->" + JSON.stringify(item));
         let ratings = Math.floor(Math.random() * 5 + 1);
         return <View
@@ -247,6 +248,15 @@ export default class ClientBarberSearch extends Component {
                         marginTop: 75,
                         marginStart: 10
                     }}>
+                        <View style={{
+                            flexDirection: "row", alignItems: "center", backgroundColor: "#454656",
+                            borderRadius: 10,
+                            width: "100%",
+                            borderWidth: 1,
+                            borderTopWidth: 0,
+                            borderColor: "darkgrey",
+                            opacity: 0.8
+                        }}>
                         <Text style={{
                             fontSize: 14,
                             fontWeight: "bold",
@@ -254,14 +264,11 @@ export default class ClientBarberSearch extends Component {
                             textShadowOffset: {width: -2, height: 1},
                             textShadowRadius: 3,
                             color: Colors.white,
-                            backgroundColor: "#454656",
-                            borderRadius: 10,
-                            width: "100%",
-                            borderWidth: 1,
-                            borderColor: "darkgrey",
-                            paddingStart: 5,
-                            opacity: 0.8
+                            width:"90%",
+                            textAlign:"left",
+                            marginStart:10
                         }}>{item.barber_name}</Text>
+                        </View>
                         <View style={{
                             flexDirection: "row", alignItems: "center", backgroundColor: "#454656",
                             borderRadius: 10,
@@ -337,7 +344,9 @@ export default class ClientBarberSearch extends Component {
                                         marginStart: 5,
                                         fontSize: 10,
                                         color: "red",
-                                        fontWeight: 'bold'
+                                        fontWeight: 'bold',
+                                        width:"100%",
+                                        textAlign:"center"
                                     }}>{"Next Available"}</Text>
                                     <Image resizeMode={"contain"}
                                            source={require("../../../assets/images/nextarrow.png")}
@@ -359,8 +368,11 @@ export default class ClientBarberSearch extends Component {
                                 <Text style={{
                                     fontSize: 12,
                                     color: "white",
-                                    fontWeight: "bold"
-                                }}>{moment(item.avilabeSlot, "HH:mm").format("hh:mm a")}</Text>
+                                    fontWeight: "bold",
+                                    width:"100%",
+                                    textAlign:"center"
+                                }}>{item.avilabeSlot}</Text>
+
                             </View>
                         </View>
                     </View>
@@ -512,8 +524,10 @@ export default class ClientBarberSearch extends Component {
                                 fontWeight: "bold",
                                 fontSize: 12,
                                 position: "absolute",
-                                top: 12
-                            }}>TOP RATED PROFESSIONALS IN YOUR AREA</Text>
+                                top: 12,
+                                width:"100%",
+                                textAlign:"center"
+                            }}>{'TOP RATED BARBERS IN YOUR AREA'}</Text>
 
                             <View style={{
                                 width: "90%",
@@ -591,7 +605,7 @@ export default class ClientBarberSearch extends Component {
                                 {!(this.state.dataSource2.length > 0) && <View
                                     style={{width: "100%", height: 80, alignItems: "center", justifyContent: "center"}}>
                                     <Text
-                                        style={{fontSize: 15, color: "white"}}>{"You don't have favorite Barber"}</Text>
+                                        style={{fontSize: 15, color: "white"}}>{"You don't have favorite Barber yet"}</Text>
                                 </View>}
                             </View>
 
@@ -613,7 +627,7 @@ export default class ClientBarberSearch extends Component {
                                 />}
                                 {!(this.state.dataSource3.length > 0) && <View
                                     style={{width: "100%", height: 80, alignItems: "center", justifyContent: "center"}}>
-                                    <Text style={{fontSize: 15, color: "white"}}>{"You don't have Nearby Barber"}</Text>
+                                    <Text style={{fontSize: 15, color: "white"}}>{"There aren't any barbers nearby.\n Please update your search location."}</Text>
                                 </View>}
                             </View>
                         </View>}

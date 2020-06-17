@@ -175,8 +175,8 @@ class ConfirmSMSScreen extends Component {
                     <CloseButton onPress={this.onClose}/>
                 </View>
                 <View style={styles.mainContainer}>
-                    <Text style={styles.whiteBoldBigText}>
-                        Confirmation
+                    <Text style={[styles.whiteBoldBigText,{width:"100%",textAlign:"center"}]}>
+                        {'Confirmation'}
                     </Text>
                     <View style={styles.descriptionContainer}>
                         <Text style={styles.whiteText}>
@@ -204,7 +204,7 @@ class ConfirmSMSScreen extends Component {
                             <Text style={styles.whiteSmallBoldText}>Resend code</Text>
                         </TouchableOpacity>
                     </View>
-                    <RedButton label="Submit" onPress={this.onSubmit}/>
+                    <RedButton label="Submit" onPress={this.onSubmit} textStyle={{width:"100%",textAlign:"center"}}/>
                 </View>
                 {this.state.showLoading && <View style={{
                     width: "100%",

@@ -17,9 +17,7 @@ export default class ChangePassword extends Component {
             ConfirmPassword: "",
             UserType:Preference.get("userType"),
             showLoading:false
-
         };
-
     }
 
     onChangeText = (key, value) => {
@@ -190,7 +188,7 @@ export default class ChangePassword extends Component {
                         />
                     </View>
                     <View style={styles.buttonsContainer}>
-                        <RedButton style={styles.loginButton} label="Reset" onPress={this.Reset}/>
+                        <RedButton style={styles.loginButton} label="Reset" onPress={this.Reset} textStyle={{width:"100%",textAlign:"center"}}/>
                     </View>
                 </KeyboardAwareScrollView>
                 {this.state.showLoading && <View style={{

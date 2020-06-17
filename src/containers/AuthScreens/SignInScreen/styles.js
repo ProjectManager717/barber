@@ -1,15 +1,18 @@
 import { StyleSheet } from 'react-native';
 import { Colors, Metric } from '../../../themes';
 
+
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
+    width:"100%",
+    height:"100%",
     backgroundColor:Colors.themeBackground,
 
   },
 
   parentContainer: {
-    flex: 1
+    height:"100%",
   },
   closeContainer: {
     alignItems: 'flex-end',
@@ -19,6 +22,7 @@ export const styles = StyleSheet.create({
   mainContainer: {
 
     paddingHorizontal: Metric.marginHorizontal,
+    height:"100%",
   },
   whiteBoldBigText: {
     ...Metric.font.bigBold,
@@ -79,6 +83,9 @@ export const styles = StyleSheet.create({
     right: 0,
   },
   bottomButtonContainer: {
+    position:"absolute",
+    bottom:0,
+    width:"100%",
     height: Metric.buttonHeight,
     alignItems: 'center',
     justifyContent: 'center',

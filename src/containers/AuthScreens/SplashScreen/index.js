@@ -11,7 +11,7 @@ class SplashScreen extends Component {
         this.state = {}
     }
 
-    componentDidMount(): void {
+    componentDidMount(){
         setTimeout(() => {
             //this.setState({splashScreen: false});
             // Alert.alert("hello");
@@ -22,6 +22,7 @@ class SplashScreen extends Component {
     closeScreen() {
         if (Preference.get("clientlogin") === true) {
             this.props.navigation.navigate("ClientTabNavigator");
+            //this.checkPendingReviews();
         } else if (Preference.get("barberlogin") === true) {
             this.props.navigation.navigate("TabNavigator");
         } else
@@ -39,9 +40,9 @@ class SplashScreen extends Component {
                     backgroundColor: Colors.themeBackground
                 }}
                 imageStyle={{resizeMode: 'stretch', backgroundColor: "grey"}}>
-                <View style={{width: "100%", height: "100%", justifyContent: "center", alignItems: "center"}}>
+                <View style={{/* width: "100%", height: "100%", */flex:1, justifyContent: "center", alignItems: "center"}}>
                     <Image resizeMode={"contain"} source={require("../../../assets/images/logo.png")}
-                           style={{height: 100, width: 140}}/>
+                            style={{height: 135, width: 175,marginBottom:45,marginStart:5}}/>
                 </View>
             </ImageBackground>
         )

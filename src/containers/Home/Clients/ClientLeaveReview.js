@@ -113,7 +113,7 @@ export default class ClientLeaveReview extends Component {
 
     }
     componentDidMount(): void {
-        //this.getBarberDetails();
+        this.getBarberDetails();
     }
 
     getBarberDetails() {
@@ -249,8 +249,8 @@ export default class ClientLeaveReview extends Component {
         {
             percentprice=(appointmentPrice*50)/100;
         }
-        console.log("PercentPrice---->",percentprice);
-        this.setState({percentPrice:percentprice})
+        console.log("PercentPrice---->",percentprice.toFixed(2));
+        this.setState({percentPrice:percentprice.toFixed(2)})
     }
 
     render() {
@@ -538,7 +538,7 @@ export default class ClientLeaveReview extends Component {
                                                   marginTop: 20,
                                                   marginBottom: 20,
                                               }]}>
-                                <Text style={{fontSize: 15, fontWeight: "bold", color: "white"}}>Submit</Text>
+                                <Text style={{width:'100%',textAlign:"center",fontSize: 15, fontWeight: "bold", color: "white"}}>{'Submit'}</Text>
                             </TouchableOpacity>
 
                         </View>

@@ -8,7 +8,7 @@ import {
     ScrollView,
     TouchableOpacity,
     ImageBackground,
-    FlatList
+    FlatList, Dimensions, TextInput
 } from "react-native";
 import {Colors} from "../../../themes";
 import {globalStyles} from "../../../themes/globalStyles";
@@ -17,8 +17,10 @@ import {Header, AirbnbRating} from "react-native-elements";
 import CheckBoxSquare from "../../../components/CheckBox";
 import {constants} from "../../../utils/constants";
 import Preference from "react-native-preference";
+import PopupDialog from 'react-native-popup-dialog';
 var moment = require('moment');
 let appointmentId = "";
+const {height, width} = Dimensions.get("window");
 export default class ReceiptUpcoming extends Component {
 
     constructor(props) {
@@ -42,6 +44,7 @@ export default class ReceiptUpcoming extends Component {
             cleanliness: false,
             punctuality: false,
             professional: false,
+            DialogCancelAppointment:false
         }
         const {navigation} = this.props;
         appointmentId = navigation.getParam('appointmentId');
@@ -131,6 +134,54 @@ export default class ReceiptUpcoming extends Component {
 
     renderSeperator() {
         return <View style={{height: 0.5, backgroundColor: Colors.lightGrey}}></View>
+    }
+
+    cancelAppointment()
+    {
+        let Appointmentstatus=5;
+
+        this.setState({showLoading:true})
+        var details = {
+            appointment_id: appointmentId,
+            appointment_type: Appointmentstatus,
+        };
+        console.log("Credentials",JSON.stringify(details));
+        var formBody = [];
+        for (var property in details) {
+            var encodedKey = encodeURIComponent(property);
+            var encodedValue = encodeURIComponent(details[property]);
+            formBody.push(encodedKey + "=" + encodedValue);
+        }
+        formBody = formBody.join("&");
+        fetch(constants.ClientUpdateAppointmentStatus, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: formBody
+        }).then(response => response.json())
+            .then(response => {
+                console.log("responseAddReviews-->", "-" + JSON.stringify(response));
+                if (response.ResultType === 1) {
+                    this.setState({showLoading:false,DialogCancelAppointment:false},()=>{
+                        this.props.navigation.goBack();
+                    })
+
+
+                } else {
+                    this.setState({showLoading:false})
+                    if (response.ResultType === 0) {
+                        alert(response.Message);
+                    }
+                }
+            })
+            .catch(error => {
+                this.setState({showLoading:false})
+                //console.error('Errorr:', error);
+                console.log('Error:', error);
+                //alert("Error: " + error);
+            });
     }
 
     render() {
@@ -257,13 +308,78 @@ export default class ReceiptUpcoming extends Component {
                                 }}>{"$"+this.state.totalMain}</Text>
 
                             </View>
+
+
+
                             {this.renderSeperator()}
-
-
-
-
-
                         </View>
+                        <TouchableOpacity style={styles.button} onPress={() => {
+                            //this.props.navigation.navigate('Profile',);
+                            this.setState({DialogCancelAppointment:true})
+                        }}>
+                            <Text style={[styles.buttonText,{width:"100%",textAlign:"center"}]}>{"Cancel Appointment"}</Text>
+                        </TouchableOpacity>
+                        <PopupDialog
+                            visible={this.state.DialogCancelAppointment}
+                            width={0.8}
+                            onTouchOutside={() => {
+                                this.setState({DialogCancelAppointment: false});
+                            }}
+
+                            dialog
+                            ref={(popupDialog) => {
+                                this.popupDialog = popupDialog;
+                            }}>
+                                <View style={{flexDirection: "column", alignItems: "center"}}>
+                                    <View style={{
+                                        width: "100%",
+                                        height: 0,
+                                        marginTop: 3,
+                                        marginBottom: 3,
+                                        backgroundColor: "white",
+                                        flexDirection: "column",
+                                    }}/>
+                                    <Text style={{fontSize: 20, marginTop: 5, color: "black"}}>{"Do you want to cancel?"}</Text>
+                                    <View style={{flexDirection: "row", alignItems: "center",width:"100%",justifyContent:"center",marginTop:30}}>
+                                        <TouchableOpacity
+                                            onPress={() => this.cancelAppointment()}
+                                            style={[globalStyles.button, {
+                                                height: 35,
+                                                width: "40%",
+                                                backgroundColor: "green",
+                                                marginTop: 20,
+                                                marginBottom: 20,
+                                            }]}>
+                                            <Text style={{
+                                                fontSize: 15,
+                                                fontWeight: "bold",
+                                                color: "white",
+                                            }}>{"YES"}</Text>
+
+                                        </TouchableOpacity>
+                                        <TouchableOpacity
+                                            onPress={() => this.setState({DialogCancelAppointment: false})}
+                                            style={[globalStyles.button, {
+                                                height: 35,
+                                                width: "40%",
+                                                backgroundColor: "red",
+                                                marginTop: 20,
+                                                marginBottom: 20,
+                                                marginStart:20
+                                            }]}>
+                                            <Text style={{
+                                                fontSize: 15,
+                                                fontWeight: "bold",
+                                                color: "white"
+                                            }}>{"NO"}</Text>
+
+                                        </TouchableOpacity>
+                                    </View>
+
+
+                                </View>
+                        </PopupDialog>
+
                     </View>
                 </ScrollView>
                 {this.state.showLoading && <View style={{
@@ -312,6 +428,16 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         resizeMode: "contain"
     },
+    button: {
+        width: width / 2.2,
+        backgroundColor: "#FF0000",
+        justifyContent: "center",
+        alignSelf: "center",
+        borderRadius: 30,
+        height: height / 19,
+        alignItems: "center"
+    },
+    buttonText: {color: "white", fontSize: 15, fontWeight: "500"},
     row_title: {
         color: Colors.white,
         marginTop: 5,

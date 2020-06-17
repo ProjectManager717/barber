@@ -22,7 +22,8 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import stripe from 'tipsi-stripe'
 
 stripe.setOptions({
-    publishableKey: 'pk_test_5f4q3aLF1SgN7kQdEV6WBSnn',
+    //publishableKey: 'pk_test_5f4q3aLF1SgN7kQdEV6WBSnn',
+    publishableKey: 'pk_test_U4Ri0H7rP3PClZwTI5Z2r78J',
     androidPayMode: 'test', // Android only
 })
 /*let client_id, barber_id,barberImage,barberName,barberShopName,appointmentPrice, selected_services, date, selected_slot_id, total_price, service_fee, selected_surge_price;
@@ -477,7 +478,7 @@ export default class DiscoverMePaymentMethod extends Component {
                         <Image style={{resizeMode:"contain",height:20,width:20,marginStart:20}} source={item.cardImage}  />
                         <Text style={{marginStart:10,color:item.colortext,fontSize:15,fontWeight:"bold"}}>{item.cardInfo.brand}</Text>
                         <Text style={{color:item.colortext}}  >{" Ending In"}</Text>
-                        <Text style={{color:item.colortext,fontWeight:'bold'}}  >{" "+item.cardInfo.last4}</Text>
+                        <Text style={{color:item.colortext,fontWeight:'bold',width:70,textAlign:"left"}}  >{" "+item.cardInfo.last4}</Text>
                     </View>
                     {item.tick &&
                     <View style={{alignItems:"flex-end",width:"15%"}}   >
@@ -587,14 +588,36 @@ export default class DiscoverMePaymentMethod extends Component {
                                         <Image  style={{width:30,height:25,position:"absolute",right:5,top:5,borderRadius:5}}
                                                source={require("../../../assets/images/vcircle.png")}/>
                                         <TextInput style={{fontSize: 15, color: 'white',marginStart: 10,width:"80%"}}
-                                                   placeholder={"Enter card number"}
+                                        placeholder={"Enter card number"}
+                                        value={this.state.params.number}
+                                       onChangeText={(text) => {
+                                           if (text.length == 16) {
+
+                                               var pho =  text.substring(0, 4) + " " + text.substring(4, 8) + " " + text.substring(8, 12)+" "+ text.substring(12, 16)
+                                               this.setState({
+                                                   params: {
+                                                       ...this.state.params,
+                                                        number: pho,
+                                                   }
+                                               })
+                                           }  else
+                                               this.setState({
+                                                   params: {
+                                                       ...this.state.params,
+                                                       number: text,
+                                                   }
+                                               })
+                                           }
+                                       }
+                                       placeholderTextColor={"grey"}
+                                                 /*   placeholder={"Enter card number"}
                                                    onChangeText={(text) => this.setState({
                                                        params: {
                                                            ...this.state.params,
                                                            number:text,
                                                        }
                                                    })}
-                                                   placeholderTextColor={"grey"}/>
+                                                   placeholderTextColor={"grey"} *//>
                                     </View>
                                 </View>
 
@@ -768,7 +791,7 @@ export default class DiscoverMePaymentMethod extends Component {
                                     width: 260,
                                     marginBottom: 30
                                 }]}>
-                                    <Text style={{fontSize: 14, fontWeight: "bold", color: "white"}}>Add My Card</Text>
+                                    <Text style={{fontSize: 14, fontWeight: "bold", color: "white",width:"100%",textAlign:"center"}}>Add My Card</Text>
                                 </TouchableOpacity>
                             </View>
                             {this.state.showLoading && <View style={{
@@ -790,7 +813,7 @@ export default class DiscoverMePaymentMethod extends Component {
                             width: 260,
                             marginBottom: 30
                         }]}>
-                            <Text style={{fontSize: 14, fontWeight: "bold", color: "white"}}>PAY</Text>
+                            <Text style={{fontSize: 14, fontWeight: "bold", color: "white",width:"100%",textAlign:"center"}}>PAY</Text>
                         </TouchableOpacity>}
                     </View>
                 </ScrollView>

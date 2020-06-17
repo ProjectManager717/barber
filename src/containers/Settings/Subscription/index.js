@@ -287,6 +287,9 @@ export default class Subscription extends Component {
                                     fontWeight: "bold",
                                     fontSize: 17,
                                     color: "white",
+                                    width:"100%",
+                                    textAlign:"center",
+                                    //backgroundColor: "yellow",
                                 }}>{"BASIC"}</Text>
                             </View>
                             <TouchableWithoutFeedback onPress={() => this._selectedBasic()}>
@@ -325,7 +328,8 @@ export default class Subscription extends Component {
                                         <Text style={{
                                             color: "white",
                                             fontWeight: "bold",
-                                            marginLeft: 10
+                                            marginLeft: 10,width:"100%",
+                                            textAlign:"left",
                                         }}>Pay by appointment ($0.15 each) </Text>
                                     </View>
 
@@ -358,6 +362,8 @@ export default class Subscription extends Component {
                                 <Text style={{
                                     fontWeight: "bold",
                                     fontSize: 17,
+                                    width:"100%",
+                                    textAlign:"center",
                                     color: this.state.supreme.supremeTextColor
                                 }}>SUPREME</Text>
 
@@ -398,7 +404,9 @@ export default class Subscription extends Component {
                                         <Text style={{
                                             color: "white",
                                             fontWeight: "bold",
-                                            marginLeft: 10
+                                            marginLeft: 10,
+                                            width:"100%",
+                                            textAlign:"left",
                                         }}>{"Pay per month($30 subscription) "} </Text>
                                     </View>
 

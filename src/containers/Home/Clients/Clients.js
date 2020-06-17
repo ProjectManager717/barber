@@ -60,7 +60,14 @@ export default class ClientHome extends Component {
         }
     }
 
-    componentDidMount(): void {
+
+
+    componentDidMount(){
+        /*const {navigation} = this.props;
+        this.focusListener = navigation.addListener("didFocus", payload => {
+            this.getClients();
+        });*/
+        console.log("URLresponseBarberGetRevenue-->", constants.BarberGetClients + "?barber_id=" + Preference.get("userId"));
         this.getClients();
     }
 
@@ -111,7 +118,7 @@ export default class ClientHome extends Component {
         let textLabelColor="";
         let counterText="";
         let clientTip=item.client_tips;
-        clientTip=clientTip.toFixed(2)
+        //clientTip=clientTip.toFixed(2)
         if (item.client_counter > 1) {
             colorLabel="red";
             textLabelColor="white";
@@ -134,8 +141,8 @@ export default class ClientHome extends Component {
                 borderWidth: 0.5,
                 borderColor: "white"
             }}>
-            <Image resizeMode={"contain"} source={item.client_data.client_image} style={{
-                marginStart: 10, height: "100%", width: 50
+            <Image resizeMode={"cover"} source={{uri:item.client_data.client_image}} style={{
+                marginStart: 10, height: 50, width: 50,borderRadius:25,backgroundColor:"grey"
             }}/>
             <View style={{flexDirection: "column", marginStart: 10}}>
                 <Text
@@ -174,7 +181,7 @@ export default class ClientHome extends Component {
                     backgroundColor: "#626371"
                 }}>
 
-                <Text style={{marginTop: 3, color: "white", fontSize: 10, fontWeight: "bold"}}>{"$"+clientTip}</Text>
+                <Text style={{marginTop: 3, color: "white", fontSize: 10, fontWeight: "bold"}}>{"$"+parseFloat(clientTip).toFixed(2)}</Text>
             </TouchableOpacity>
 
         </View>

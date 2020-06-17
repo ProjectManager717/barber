@@ -3,7 +3,7 @@ import {Platform, StatusBar, View, Linking} from 'react-native';
 import Routing from './Routing';
 import NotificationPopup from 'react-native-push-notification-popup';
 import firebase from 'react-native-firebase';
-import {NavigationActions} from "react-navigation";
+import {NavigationActions,SafeAreaView} from "react-navigation";
 
 StatusBar.setHidden(false);
 StatusBar.setBarStyle('light-content');
@@ -103,12 +103,13 @@ class App extends Component {
 
     render() {
         return (
-            <View style={{flex: 1}}>
+            <View style={{flex: 1, backgroundColor: '#29243A'}}>
                 <Routing ref={ref => {
                     this.navigator = ref;
                 }} uriPrefix={prefix}/>
                 <NotificationPopup ref={ref => this.popup = ref} style={{zIndex: 999}}/>
-            </View>)
+            </View>
+            )
     }
 }
 

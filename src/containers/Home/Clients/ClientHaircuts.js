@@ -53,6 +53,13 @@ export default class ClientHaircuts extends Component {
 
     componentDidMount(): void {
         const {navigation} = this.props;
+        let mon = getmonthh + 1;
+        if (parseInt(mon) < 10) {
+            mon = "0" + mon;
+        }
+        let mn = getyear + "-" + mon;
+        this.setState({selectedMonth: mn})
+        this.getAllAppointments(mn);
         this.focusListener = navigation.addListener("didFocus", payload => {
             let mon = getmonthh + 1;
             if (parseInt(mon) < 10) {
@@ -365,7 +372,7 @@ export default class ClientHaircuts extends Component {
                                 <Text style={{
                                     color: this.state.cancelledtext,
                                     fontSize: 10,
-                                }}>{"CANCELLED"}</Text>
+                                }}>{"CANCELED"}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => this.optionSelected("all", this.state.allAppointments)}
                                               style={{

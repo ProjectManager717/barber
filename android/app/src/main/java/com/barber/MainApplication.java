@@ -3,10 +3,12 @@ package com.barber;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.reactnativecommunity.rnpermissions.RNPermissionsPackage;
 
 import io.invertase.firebase.RNFirebasePackage;
 import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
 import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage;
+import io.invertase.firebase.links.RNFirebaseLinksPackage;
 
 
 import com.rnfs.RNFSPackage;
@@ -37,7 +39,7 @@ import com.facebook.soloader.SoLoader;
 import java.util.Arrays;
 import java.util.List;
 
-import android.support.multidex.MultiDex;
+//import android.support.multidex.MultiDex;
 import android.content.Context;
 
 public class MainApplication extends Application implements ReactApplication {
@@ -59,7 +61,9 @@ public class MainApplication extends Application implements ReactApplication {
         protected List<ReactPackage> getPackages() {
             return Arrays.<ReactPackage>asList(
                     new MainReactPackage(),
+            new RNPermissionsPackage(),
                     new RNFirebasePackage(),
+                    new RNFirebaseLinksPackage(),
                     new RNFirebaseMessagingPackage(),
                     new RNFirebaseNotificationsPackage(),
                     new StripeReactPackage(),
@@ -102,6 +106,6 @@ public class MainApplication extends Application implements ReactApplication {
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
-        MultiDex.install(this);
+        //MultiDex.install(this);
     }
 }

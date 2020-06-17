@@ -127,16 +127,15 @@ export default class ClientBlast extends Component {
                                 fontSize: 12,
                                 marginTop: 10,
                                 marginLeft: 5
-                            }}>{"This message will be sent to all of your Clients."} </Text>
+                            }}>{"This message will be sent to all of your clients. \n Let them know of any upcoming sales, vacations, or reminders"} </Text>
                         </View>
                         <TouchableOpacity onPress={()=>this.sendBlastMessage()} style={[globalStyles.button, {
                             height: 40,
                             width: 230,
                             position: "absolute",
-                            bottom: 30,
+                            bottom: 50,
                         }]}>
                             <Text style={globalStyles.buttonText}>SEND</Text>
-
                         </TouchableOpacity>
                     </View>
                 </ScrollView>

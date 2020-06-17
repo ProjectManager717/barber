@@ -104,7 +104,7 @@ export default class Calendar extends Component {
                     duration: '45 mins',
                     price: '$28.00',
                     imagep: require("../../../assets/images/cancelled.png"),
-                    imgText: "CANCELLED",
+                    imgText: "CANCELED",
                     imgTextcolor: Colors.red,
                     bitSet: 3,
                     bgc: Colors.red,
@@ -214,7 +214,7 @@ export default class Calendar extends Component {
                 appointmentId: item._id,
                 bgc: colorItem,
                 client_Image: item.client_image,
-                BannerImage:item.banner_image,
+                BannerImage: item.banner_image,
                 clientName: item.client_firstname,
                 createdAt: item.createdAt,
                 startTime: item.selected_slot_id[0].start_time,
@@ -336,7 +336,7 @@ export default class Calendar extends Component {
                     bgcEnd = "#6C6146";
                 } else if (item.appointment_type === "cancelled") {
                     imagep = require("../../../assets/images/cancelled.png");
-                    imgText = "CANCELLED";
+                    imgText = "CANCELED";
                     imgTextcolor = Colors.red;
                     bgc = Colors.red;
                     bgcEnd = "#6B3945";
@@ -369,7 +369,7 @@ export default class Calendar extends Component {
                     }
 
                 }
-
+                let clientName = item.client_firstname + " " + item.client_lastname;
                 if (timeofSlots === 0) {
                     console.log("calenderSlots-time > " + item.total_time);
                     return (<TouchableOpacity onPress={() => this.props.navigation.navigate("Appointments")}>
@@ -395,8 +395,7 @@ export default class Calendar extends Component {
                                         fontFamily: "AvertaStd-Regular",
                                         color: Colors.white,
                                         fontSize: 10
-                                    }}
-                                >
+                                    }}>
                                     {n.format("HH:mm A")}
                                 </Text>
                             </View>
@@ -440,7 +439,7 @@ export default class Calendar extends Component {
                                 color: Colors.white,
                                 fontSize: 10
                             }}>
-                                {this.showTime(item.selected_slot_id[0].start_time)}
+                                {m.format("HH:mm A")}
                             </Text>
                             <View style={{width: 6, backgroundColor: bgc}}/>
                             <View style={{
@@ -466,7 +465,7 @@ export default class Calendar extends Component {
                                                 fontSize: 11
                                             }}>{servicesSelected}</Text>
                                             <Text style={{marginStart: 8, marginTop: 1, color: "white", fontSize: 10}}>
-                                                {item.barber}
+                                                {clientName}
                                             </Text>
                                         </View>
                                         <View style={{flexDirection: "row", marginTop: 7}}>
@@ -541,7 +540,7 @@ export default class Calendar extends Component {
                                         fontSize: 10
                                     }}
                                 >
-                                    {this.showTime(item.selected_slot_id[0].start_time)}
+                                    {m.format("HH:mm A")}
                                 </Text>
 
                                 <Text
@@ -553,7 +552,7 @@ export default class Calendar extends Component {
                                         fontSize: 10
                                     }}
                                 >
-                                    {this.showTime(item.selected_slot_id[2].start_time)}
+                                    {n.format("HH:mm A")}
                                 </Text>
                             </View>
                             <View style={{height: 105, width: 6, backgroundColor: bgc}}/>
@@ -582,7 +581,7 @@ export default class Calendar extends Component {
                                                 fontSize: 11
                                             }}>{servicesSelected}</Text>
                                             <Text style={{marginStart: 8, marginTop: 1, color: "white", fontSize: 10}}>
-                                                {item.barber}
+                                                {clientName}
                                             </Text>
                                         </View>
                                         <View style={{flexDirection: "row", marginTop: 7}}>
@@ -650,7 +649,7 @@ export default class Calendar extends Component {
                                         fontSize: 10
                                     }}
                                 >
-                                    {this.showTime(item.selected_slot_id[0].start_time)}
+                                    {m.format("HH:mm A")}
                                 </Text>
 
                                 <Text
@@ -662,7 +661,7 @@ export default class Calendar extends Component {
                                         fontSize: 10
                                     }}
                                 >
-                                    {this.showTime(item.selected_slot_id[2].start_time)}
+                                    {n.format("HH:mm A")}
                                 </Text>
                             </View>
 
@@ -691,7 +690,7 @@ export default class Calendar extends Component {
                                                 fontSize: 11
                                             }}>{servicesSelected}</Text>
                                             <Text style={{marginStart: 8, marginTop: 1, color: "white", fontSize: 10}}>
-                                                {item.barber}
+                                                {clientName}
                                             </Text>
                                         </View>
                                         <View style={{flexDirection: "row", marginTop: 7}}>
@@ -759,7 +758,7 @@ export default class Calendar extends Component {
                                         fontSize: 10
                                     }}
                                 >
-                                    {this.showTime(item.selected_slot_id[0].start_time)}
+                                    {m.format("HH:mm A")}
                                 </Text>
 
                                 <Text
@@ -772,7 +771,7 @@ export default class Calendar extends Component {
                                         fontSize: 10
                                     }}
                                 >
-                                    {this.showTime(item.selected_slot_id[2].start_time)}
+                                    {n.format("HH:mm A")}
                                 </Text>
                                 <Text
                                     style={{
@@ -783,7 +782,7 @@ export default class Calendar extends Component {
                                         fontSize: 10
                                     }}
                                 >
-                                    {this.showTime(item.selected_slot_id[4].start_time)}
+                                    {o.format("HH:mm A")}
                                 </Text>
                             </View>
                             <View style={{height: 175, width: 6, backgroundColor: bgc}}/>
@@ -811,7 +810,7 @@ export default class Calendar extends Component {
                                                 fontSize: 11
                                             }}>{servicesSelected}</Text>
                                             <Text style={{marginStart: 8, marginTop: 1, color: "white", fontSize: 10}}>
-                                                {item.barber}
+                                                {clientName}
                                             </Text>
                                         </View>
                                         <View style={{flexDirection: "row", marginTop: 7}}>
@@ -898,7 +897,7 @@ export default class Calendar extends Component {
     }
 
     async setMonth() {
-        const input = getmonth + "-19";
+        const input = getmonth + "-" + moment().format('YY');
         console.log("SetMonth---->>>", input);
         let outt = input.split("-");
         let showmonth = monthNames[outt[0]] + " 20" + outt[1];
@@ -1004,7 +1003,7 @@ export default class Calendar extends Component {
 
     getDayOfWeek(date) {
         var dayOfWeek = new Date(date).getDay();
-        return isNaN(dayOfWeek) ? null : [ 'Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat','Sun'][dayOfWeek];
+        return isNaN(dayOfWeek) ? null : ['Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun'][dayOfWeek];
     }
 
     render() {
@@ -1101,9 +1100,9 @@ export default class Calendar extends Component {
                                     style={{
                                         color: item.dayColor,
                                         fontWeight: "bold",
-                                        width:"100%",
+                                        width: "100%",
 
-                                        textAlign:'center',
+                                        textAlign: 'center',
                                         fontSize: 12
                                     }}>{item.day}</Text>
 
@@ -1134,7 +1133,7 @@ export default class Calendar extends Component {
                     justifyContent: "center",
                     alignItems: "center"
                 }}>
-                    <Text style={{fontSize: 16, color: "white"}}>{"There are no bookings on current date"}</Text>
+                    <Text style={{fontSize: 16, color: "white"}}>{"You have no appointment on this date."}</Text>
                 </View>}
                 {this.state.showLoading && <View style={{
                     width: "100%",

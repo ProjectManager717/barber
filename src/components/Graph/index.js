@@ -7,7 +7,7 @@ import {
     Text,
     TouchableOpacity,
     Picker,
-    ScrollView,
+    ScrollView, Alert,
     BackHandler
 } from "react-native";
 import colors from "../../themes/colors";
@@ -27,14 +27,15 @@ import {data} from "react-native-chart-kit/data";
 const {height, width} = Dimensions.get("window");
 var moment = require('moment');
 //require('moment-recur');
-let getmonth = new Date().getMonth()+1;
-let defaultMonth=moment(getmonth,"M").format("MMM")
+let getmonth = new Date().getMonth() + 1;
+let defaultMonth = moment(getmonth, "M").format("MMM")
 let getDate = new Date().getDate();
 let getYear = new Date().getFullYear();
-let WEEKDATE=Math.ceil(new Date().getDate() / 7);
+let WEEKDATE = Math.ceil(new Date().getDate() / 7);
+import {withNavigation } from "react-navigation";
 //WEEKDATE=WEEKDATE+1;
 
-export default class lGraphComp extends Component {
+class lGraphComp extends Component {
 
     constructor(props) {
         super(props);
@@ -42,31 +43,40 @@ export default class lGraphComp extends Component {
             showLoading: false,
             DialogVisible: false,
             DialogVisible1: false,
-            monthSelect:defaultMonth,
-            monthSelectVal:0,
-            weekSelect: "Week "+WEEKDATE,
+            monthSelect: defaultMonth,
+            monthSelectVal: 0,
+            weekSelect: "Week " + WEEKDATE,
             totalClients: 0,
             totalCancellations: 0,
             totalTips: 0,
             totalRevenue: 0,
+            totalRevenueInAccount: 0,
             startWeek: 1,
             endWeek: 7,
+            startDate:undefined,
+            endDate:undefined,
             chartData: [0, 0, 0, 0, 0, 0, 0],
             chartLabels: ["Mon", "Tue", "Wed", "Thur", "Fri", "Sat", "Sun"],
         }
     }
 
     componentDidMount(): void {
+        const {navigation} = this.props;
+        this.focusListener = navigation.addListener("didFocus", payload => {
+            //this.getBarberDetails();
+            console.log("BarberGetRevenue --didFocus--called");
+            this.getRevenueofBarber(this.state.startDate, this.state.endDate);
+        });
         this.backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
             //this.goBack(); // works best when the goBack is async
             return true;
         });
-        let mon = parseInt(getmonth);
-        this.setState({monthSelectVal:mon})
-        let startDate = getYear + "-" + mon + "-01";
-        let endDate = getYear + "-" + mon + "-07";
-        this.getRevenueofBarber(startDate, endDate);
-
+        console.log("BarberGetRevenue --month-" + moment(new Date(), 'YYYY/MM/DD').format("M"))
+        let mon = moment(new Date(), 'YYYY/MM/DD').format("M");
+        this.setState({monthSelectVal: mon}, () => {
+            console.log("BarberGetRevenue --month--" + this.state.monthSelectVal)
+            this.setWeek(this.state.weekSelect, WEEKDATE);
+        })
     }
 
     /* weekOfMonth(date) {
@@ -86,15 +96,17 @@ export default class lGraphComp extends Component {
             },
         }).then(response => response.json())
             .then(response => {
-                console.log("responseBarberGetRevenue-->", "-" + JSON.stringify(response));
+                console.log("responseBarberGetRevenueNow-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
                     this.setState({showLoading: false});
+
                     let Data = response.Data;
+
                     this.setState({
                         totalClients: Data.weekly_clients,
                         totalCancellations: Data.weekly_cancellations,
                         totalTips: Data.weekly_tips,
-                        totalRevenue: Data.weekly_revenue,
+                        //totalRevenue: total,
                     });
                     //this.setState({chartData:[],chartLabels:[]});
                     let chartdata = [];
@@ -104,7 +116,32 @@ export default class lGraphComp extends Component {
                         chartdata.push(Data.per_day_revenue[i].total_price);
                     }
 
-                    this.setState({chartData: chartdata, chartLabels: chartlabels});
+                    this.setState({chartData: chartdata, chartLabels: chartlabels},()=>{
+                        if(Data.Stripe_Current_Balance===true)
+                        {
+                            let total = Data.Stripe_Current_Balance.available[0].amount;
+                            if (parseInt(total) >= 0) {
+                                total = total / 100;
+                            }
+                            let totalpending = Data.Stripe_Current_Balance.pending[0].amount;
+                            if (parseInt(totalpending) >= 0) {
+                                totalpending = totalpending / 100;
+                            }
+                            this.setState({totalRevenue: total,totalRevenueInAccount:totalpending},()=>{
+                                if(this.state.totalRevenue===0)
+                                {
+                                    this.setState({totalRevenue:"0.00"})
+                                }
+                                if(this.state.totalRevenueInAccount===0)
+                                {
+                                    this.setState({totalRevenueInAccount:"0.00"})
+                                }
+
+                            });
+                        }
+
+
+                    });
                 } else {
                     this.setState({showLoading: false})
                     if (response.ResultType === 0) {
@@ -115,7 +152,7 @@ export default class lGraphComp extends Component {
             this.setState({showLoading: false})
             //console.error('Errorr:', error);
             console.log('Error:', error);
-            alert("Error: " + error);
+            //alert("Error: " + error);
         });
     }
 
@@ -123,6 +160,7 @@ export default class lGraphComp extends Component {
         this.setState({monthSelect: monthSelected, monthSelectVal: monthVal, DialogVisible: false});
         let startDate = getYear + "-" + monthVal + "-" + this.state.startWeek;
         let endDate = getYear + "-" + monthVal + "-" + this.state.endWeek;
+        this.setState({startDate:startDate,endDate:endDate});
         this.getRevenueofBarber(startDate, endDate);
     }
 
@@ -156,7 +194,55 @@ export default class lGraphComp extends Component {
         }
         let startDate = getYear + "-" + this.state.monthSelectVal + "-" + startDay;
         let endDate = getYear + "-" + this.state.monthSelectVal + "-" + endDay;
+        this.setState({startDate:startDate,endDate:endDate});
         this.getRevenueofBarber(startDate, endDate);
+    }
+
+    cashOut() {
+        if (parseInt(this.state.totalRevenue) > 0) {
+            //Alert.alert("Warning!","Please provide all necessary information to enable it.")
+            this.setState({showLoading: true})
+            var details = {
+                barber_email: Preference.get("userEmail"),
+                amount: parseInt(this.state.totalRevenue),
+            };
+            var formBody = [];
+            for (var property in details) {
+                var encodedKey = encodeURIComponent(property);
+                var encodedValue = encodeURIComponent(details[property]);
+                formBody.push(encodedKey + "=" + encodedValue);
+            }
+            formBody = formBody.join("&");
+            console.log("cashOut-->", constants.BarberCashOut);
+            fetch(constants.BarberCashOut, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: formBody
+            }).then(response => response.json())
+                .then(response => {
+                    console.log("responseBarberBarberCashOut-->", "-" + JSON.stringify(response));
+                    if (response.ResultType === 1) {
+                        this.setState({showLoading: false});
+                        Alert.alert("Success!", "Your request has been submit for payout.")
+                    } else {
+                        this.setState({showLoading: false})
+                        if (response.ResultType === 0) {
+                            alert(response.Message);
+                        }
+                    }
+                }).catch(error => {
+                this.setState({showLoading: false})
+                //console.error('Errorr:', error);
+                console.log('Error:', error);
+                //alert("Error: " + error);
+            });
+        } else {
+            Alert.alert("Warning!", "Payout amount must be greater than $0.")
+        }
+
     }
 
     render() {
@@ -170,9 +256,13 @@ export default class lGraphComp extends Component {
                     marginBottom: 10,
                     alignItems: 'center'
                 }}>
-                    <TouchableOpacity style={{marginLeft: 20, flexDirection: "row",width:"12%"}}
+                    <TouchableOpacity style={{marginLeft: 20, flexDirection: "row", width: "12%"}}
                                       onPress={() => this.setState({DialogVisible: true})}>
-                        <Text style={[styles.label, {fontSize: 11, fontWeight: 'bold',width:"50%"}]}>{this.state.monthSelect}</Text>
+                        <Text style={[styles.label, {
+                            fontSize: 11,
+                            fontWeight: 'bold',
+                            width: "50%"
+                        }]}>{this.state.monthSelect}</Text>
                         <Image source={require("../../assets/images/arrow_down.png")}
                                style={[styles.arrow_down, {marginLeft: 5, marginTop: 5,}]}/>
                         <PopupDialog
@@ -185,116 +275,140 @@ export default class lGraphComp extends Component {
                             ref={(popupDialog) => {
                                 this.popupDialog = popupDialog;
                             }}>
-                                <View style={{flexDirection: "column", alignItems: "center"}}>
+                            <View style={{flexDirection: "column", alignItems: "center"}}>
+                                <View style={{
+                                    width: "100%",
+                                    height: 0,
+                                    marginTop: 3,
+                                    backgroundColor: "black"
+                                }}/>
+
+                                <Text style={{margin: 10, fontSize: 20, fontWeight: "bold"}}>
+                                    {"Please Select Month"}</Text>
+                                <ScrollView style={{
+                                    width: "100%",
+                                }}>
                                     <View style={{
                                         width: "100%",
-                                        height: 0,
-                                        marginTop: 3,
-                                        backgroundColor: "black"
-                                    }}/>
-
-                                    <Text style={{margin: 10, fontSize: 20, fontWeight: "bold"}}>
-                                        {"Please Select Month"}</Text>
-                                    <ScrollView style={{
-                                        width: "100%",
+                                        alignItems: "center"
                                     }}>
+                                        <Text style={{marginTop: 10, fontSize: 20}}
+                                              onPress={() => {
+                                                  this.setMonth("Jan", "01")
+                                              }}>Jan</Text>
                                         <View style={{
-                                            width: "100%",
-                                            alignItems:"center"
-                                        }}>
-                                            <Text style={{marginTop: 10, fontSize: 20}}
-                                                  onPress={() => this.setMonth("Jan", "01")}>Jan</Text>
-                                            <View style={{
-                                                width: "80%",
-                                                height: 0.5,
-                                                backgroundColor: "grey",
-                                                marginTop: 10
-                                            }}/>
-                                            <Text style={{marginTop: 10, fontSize: 20}}
-                                                  onPress={() => this.setMonth("Feb", "02")}>Feb</Text>
-                                            <View style={{
-                                                width: "80%",
-                                                height: 0.5,
-                                                backgroundColor: "grey",
-                                                marginTop: 10
-                                            }}/>
-                                            <Text style={{marginTop: 10, fontSize: 20}}
-                                                  onPress={() => this.setMonth("Mar", "03")}>Mar</Text>
-                                            <View style={{
-                                                width: "80%",
-                                                height: 0.5,
-                                                backgroundColor: "grey",
-                                                marginTop: 10
-                                            }}/>
-                                            <Text style={{marginTop: 10, fontSize: 20}}
-                                                  onPress={() => this.setMonth("Apr", "04")}>Apr</Text>
-                                            <View style={{
-                                                width: "80%",
-                                                height: 0.5,
-                                                backgroundColor: "grey",
-                                                marginTop: 10
-                                            }}/>
-                                            <Text style={{marginTop: 10, fontSize: 20}}
-                                                  onPress={() => this.setMonth("May", "05")}>May</Text>
-                                            <View style={{
-                                                width: "80%",
-                                                height: 0.5,
-                                                backgroundColor: "grey",
-                                                marginTop: 10
-                                            }}/>
-                                            <Text style={{marginTop: 10, fontSize: 20}}
-                                                  onPress={() => this.setMonth("Jun", "06")}>Jun</Text>
-                                            <View style={{
-                                                width: "80%",
-                                                height: 0.5,
-                                                backgroundColor: "grey",
-                                                marginTop: 10
-                                            }}/>
-                                            <Text style={{marginTop: 10, fontSize: 20}}
-                                                  onPress={() => this.setMonth("Jul", "07")}>Jul</Text>
-                                            <View style={{
-                                                width: "80%",
-                                                height: 0.5,
-                                                backgroundColor: "grey",
-                                                marginTop: 10
-                                            }}/>
-                                            <Text style={{marginTop: 10, fontSize: 20}}
-                                                  onPress={() => this.setMonth("Aug", "08")}>Aug</Text>
-                                            <View style={{
-                                                width: "80%",
-                                                height: 0.5,
-                                                backgroundColor: "grey",
-                                                marginTop: 10
-                                            }}/>
-                                            <Text style={{marginTop: 10, fontSize: 20}}
-                                                  onPress={() => this.setMonth("Sep", "09")}>Sep</Text>
-                                            <View style={{
-                                                width: "80%",
-                                                height: 0.5,
-                                                backgroundColor: "grey",
-                                                marginTop: 10
-                                            }}/>
-                                            <Text style={{marginTop: 10, fontSize: 20}}
-                                                  onPress={() => this.setMonth("Oct", "10")}>Oct</Text>
-                                            <View style={{
-                                                width: "80%",
-                                                height: 0.5,
-                                                backgroundColor: "grey",
-                                                marginTop: 10
-                                            }}/>
-                                            <Text style={{marginTop: 10, fontSize: 20}}
-                                                  onPress={() => this.setMonth("Nov", "11")}>Nov</Text>
-                                            <View style={{
-                                                width: "80%",
-                                                height: 0.5,
-                                                backgroundColor: "grey",
-                                                marginTop: 20
-                                            }}/>
-                                            <Text style={{marginTop: 10, fontSize: 20, marginBottom: 60}}
-                                                  onPress={() => this.setMonth("Dec", "12")}>Dec</Text>
-                                        </View>
-                                    </ScrollView>
-                                </View>
+                                            width: "80%",
+                                            height: 0.5,
+                                            backgroundColor: "grey",
+                                            marginTop: 10
+                                        }}/>
+                                        <Text style={{marginTop: 10, fontSize: 20}}
+                                              onPress={() => {
+                                                  this.setMonth("Feb", "02")
+                                              }}>Feb</Text>
+                                        <View style={{
+                                            width: "80%",
+                                            height: 0.5,
+                                            backgroundColor: "grey",
+                                            marginTop: 10
+                                        }}/>
+                                        <Text style={{marginTop: 10, fontSize: 20}}
+                                              onPress={() => {
+                                                  this.setMonth("Mar", "03")
+                                              }}>Mar</Text>
+                                        <View style={{
+                                            width: "80%",
+                                            height: 0.5,
+                                            backgroundColor: "grey",
+                                            marginTop: 10
+                                        }}/>
+                                        <Text style={{marginTop: 10, fontSize: 20}}
+                                              onPress={() => {
+                                                  this.setMonth("Apr", "04")
+                                              }}>Apr</Text>
+                                        <View style={{
+                                            width: "80%",
+                                            height: 0.5,
+                                            backgroundColor: "grey",
+                                            marginTop: 10
+                                        }}/>
+                                        <Text style={{marginTop: 10, fontSize: 20}}
+                                              onPress={() => {
+                                                  this.setMonth("May", "05")
+                                              }}>May</Text>
+                                        <View style={{
+                                            width: "80%",
+                                            height: 0.5,
+                                            backgroundColor: "grey",
+                                            marginTop: 10
+                                        }}/>
+                                        <Text style={{marginTop: 10, fontSize: 20}}
+                                              onPress={() => {
+                                                  this.setMonth("Jun", "06")
+                                              }}>Jun</Text>
+                                        <View style={{
+                                            width: "80%",
+                                            height: 0.5,
+                                            backgroundColor: "grey",
+                                            marginTop: 10
+                                        }}/>
+                                        <Text style={{marginTop: 10, fontSize: 20}}
+                                              onPress={() => {
+                                                  this.setMonth("Jul", "07")
+                                              }}>Jul</Text>
+                                        <View style={{
+                                            width: "80%",
+                                            height: 0.5,
+                                            backgroundColor: "grey",
+                                            marginTop: 10
+                                        }}/>
+                                        <Text style={{marginTop: 10, fontSize: 20}}
+                                              onPress={() => {
+                                                  this.setMonth("Aug", "08")
+                                              }}>Aug</Text>
+                                        <View style={{
+                                            width: "80%",
+                                            height: 0.5,
+                                            backgroundColor: "grey",
+                                            marginTop: 10
+                                        }}/>
+                                        <Text style={{marginTop: 10, fontSize: 20}}
+                                              onPress={() => {
+                                                  this.setMonth("Sep", "09")
+                                              }}>Sep</Text>
+                                        <View style={{
+                                            width: "80%",
+                                            height: 0.5,
+                                            backgroundColor: "grey",
+                                            marginTop: 10
+                                        }}/>
+                                        <Text style={{marginTop: 10, fontSize: 20}}
+                                              onPress={() => {
+                                                  this.setMonth("Oct", "10")
+                                              }}>Oct</Text>
+                                        <View style={{
+                                            width: "80%",
+                                            height: 0.5,
+                                            backgroundColor: "grey",
+                                            marginTop: 10
+                                        }}/>
+                                        <Text style={{marginTop: 10, fontSize: 20}}
+                                              onPress={() => {
+                                                  this.setMonth("Nov", "11")
+                                              }}>Nov</Text>
+                                        <View style={{
+                                            width: "80%",
+                                            height: 0.5,
+                                            backgroundColor: "grey",
+                                            marginTop: 20
+                                        }}/>
+                                        <Text style={{marginTop: 10, fontSize: 20, marginBottom: 60}}
+                                              onPress={() => {
+                                                  this.setMonth("Dec", "12")
+                                              }}>Dec</Text>
+                                    </View>
+                                </ScrollView>
+                            </View>
                         </PopupDialog>
                     </TouchableOpacity>
                     <TouchableOpacity style={{marginLeft: 20, flexDirection: "row",}}
@@ -303,7 +417,7 @@ export default class lGraphComp extends Component {
                             marginLeft: 15,
                             fontWeight: 'bold',
                             fontSize: 11,
-                            width:"30%"
+                            width: "30%"
                         }]}>{this.state.weekSelect}</Text>
                         <Image source={require("../../assets/images/arrow_down.png")}
                                style={[styles.arrow_down, {marginLeft: 5, marginTop: 5}]}/>
@@ -327,23 +441,33 @@ export default class lGraphComp extends Component {
                                     style={{margin: 10, fontSize: 20, fontWeight: "bold"}}>{"Please select Week"}</Text>
 
                                 <Text style={{marginTop: 10, fontSize: 20}}
-                                      onPress={() => this.setWeek("Week 1", 1)}>Week
+                                      onPress={() => {
+                                          this.setWeek("Week 1", 1)
+                                      }}>Week
                                     1</Text>
                                 <View style={{width: "80%", height: 0.5, backgroundColor: "grey", marginTop: 10}}/>
                                 <Text style={{marginTop: 10, fontSize: 20}}
-                                      onPress={() => this.setWeek("Week 2", 2)}>Week
+                                      onPress={() => {
+                                          this.setWeek("Week 2", 2)
+                                      }}>Week
                                     2</Text>
                                 <View style={{width: "80%", height: 0.5, backgroundColor: "grey", marginTop: 10}}/>
                                 <Text style={{marginTop: 10, fontSize: 20}}
-                                      onPress={() => this.setWeek("Week 3", 3)}>Week
+                                      onPress={() => {
+                                          this.setWeek("Week 3", 3)
+                                      }}>Week
                                     3</Text>
                                 <View style={{width: "80%", height: 0.5, backgroundColor: "grey", marginTop: 10}}/>
                                 <Text style={{marginTop: 10, fontSize: 20}}
-                                      onPress={() => this.setWeek("Week 4", 4)}>Week
+                                      onPress={() => {
+                                          this.setWeek("Week 4", 4)
+                                      }}>Week
                                     4</Text>
                                 <View style={{width: "80%", height: 0.5, backgroundColor: "grey", marginTop: 10}}/>
-                                {!(this.state.monthSelectVal === 2) && <Text style={{marginTop: 10, fontSize: 20}}
-                                                                             onPress={() => this.setWeek("Week 5", 5)}>Week
+                                {!(this.state.monthSelectVal === "02") && <Text style={{marginTop: 10, fontSize: 20}}
+                                                                                onPress={() => {
+                                                                                    this.setWeek("Week 5", 5)
+                                                                                }}>Week
                                     5</Text>}
 
                             </View>
@@ -395,7 +519,7 @@ export default class lGraphComp extends Component {
                                 }]}>{this.state.totalClients}</Text>
                             </View>
                         </View>
-                        <View style={[styles.smallBox, {width: width / 3.5}]}>
+                        <View style={[styles.smallBox, {width: width / 3}]}>
                             <Image source={require("../../assets/images/close.png")} style={{width: 25, height: 25}}/>
                             <View style={{marginLeft: 3}}>
                                 <Text style={[styles.label]}>CANCELLATIONS</Text>
@@ -405,7 +529,7 @@ export default class lGraphComp extends Component {
                                 }]}>{this.state.totalCancellations}</Text>
                             </View>
                         </View>
-                        <View style={[styles.smallBox, {width: width / 3}]}>
+                        <View style={[styles.smallBox, {width: width / 3.5}]}>
                             <Image source={require("../../assets/images/total_tip.png")}
                                    style={{width: 28, height: 25}}/>
                             <View style={{marginLeft: 3}}>
@@ -413,8 +537,19 @@ export default class lGraphComp extends Component {
                                 <Text style={[styles.label, {
                                     fontWeight: 'bold',
                                     fontSize: 15
-                                }]}>${this.state.totalTips>0?this.state.totalTips.toFixed(2):this.state.totalTips}</Text>
+                                }]}>${this.state.totalTips > 0 ? this.state.totalTips.toFixed(2) : this.state.totalTips}</Text>
                             </View>
+                        </View>
+                    </View>
+                    <View style={styles.largeBox}>
+                        <Image source={require("../../assets/images/dollar.png")}
+                               style={{width: 25, height: 25, marginLeft: 15}}/>
+                        <View style={{flex: 1, marginLeft: 10}}>
+                            <Text style={[styles.label]}>TOTAL AVAILABLE</Text>
+                            <Text style={[styles.label, {
+                                fontWeight: 'bold',
+                                fontSize: 15
+                            }]}>${this.state.totalRevenueInAccount}</Text>
                         </View>
                     </View>
                     <View style={styles.largeBox}>
@@ -427,7 +562,9 @@ export default class lGraphComp extends Component {
                                 fontSize: 15
                             }]}>${this.state.totalRevenue}</Text>
                         </View>
-                        <View style={{
+                        <TouchableOpacity onPress={() => {
+                            this.cashOut()
+                        }} style={{
                             width: 100,
                             height: 30,
                             borderRadius: 15,
@@ -438,7 +575,7 @@ export default class lGraphComp extends Component {
                             marginRight: 15
                         }}>
                             <Text style={{color: colors.green, fontSize: 13}}>Cashout</Text>
-                        </View>
+                        </TouchableOpacity>
                     </View>
                 </View>
                 {this.state.showLoading && <View style={{
@@ -454,24 +591,27 @@ export default class lGraphComp extends Component {
                            style={{width: 60, height: 60, opacity: 1,}}/>
                 </View>}
             </View>
-    )
-    ;
+        )
+            ;
     }
-    }
-    const styles = StyleSheet.create({
-        container: {
+
+}
+export default withNavigation(lGraphComp);
+
+const styles = StyleSheet.create({
+    container: {
         width,
         alignItems: "center",
         height: height / 1.45
     },
-        graphContainer: {width, height: height / 3.5},
-        graph: {height: "100%", width: "100%"},
-        boxContainer: {
+    graphContainer: {width, height: height / 3.5},
+    graph: {height: "100%", width: "100%"},
+    boxContainer: {
         justifyContent: "space-between",
         flexDirection: "row",
         width: width / 1.12
     },
-        smallBox: {
+    smallBox: {
         flexDirection: 'row',
         backgroundColor: colors.btn_bg_color,
         width: width / 4.3,
@@ -482,7 +622,7 @@ export default class lGraphComp extends Component {
         alignItems: 'center',
         justifyContent: 'center'
     },
-        largeBox: {
+    largeBox: {
         flexDirection: 'row',
         width: width / 1.12,
         height: height / 12,
@@ -495,16 +635,17 @@ export default class lGraphComp extends Component {
 
 
     },
-        allBoxes: {
-        height: height / 12 + height / 10 + 7,
+    allBoxes: {
+        height: height / 3.5,
         justifyContent: "space-between",
-        marginTop: 40
+        marginTop: 10,
+        marginBottom:30
     },
-        arrow_down: {
+    arrow_down: {
         width: 9,
         height: 5
     },
-        label: {
+    label: {
         fontSize: 8, color: colors.white
     }
-    });
+});

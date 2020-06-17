@@ -46,6 +46,7 @@ export const constants = {
     ClientProfileUpdate: Base_url + clientPath1 + "update_client",
     ClientPaymentMethod: Base_url + "/api/paymentCard/" + "add",
     ClientRecentBookings: Base_url + clientPath1 + "client_recent_booking",
+    ClientPendingReviews: Base_url +  "/api/reviews/" + "review_status",
     ClientFavoritBarbers: Base_url + clientPath1 + "favoriteBarbers",
     ClientBarbersProfile: Base_url + path2,
     ClientBarbersSearch: Base_url + clientPath1 + "clientSearchBarber",
@@ -83,5 +84,8 @@ export const constants = {
     TopRatedBarbers:Base_url+clientPath1+"top_rated_barbers",
     BarberNotificationAlert:Base_url+path3+"settings/notificationAlert",
     ClientNotificationAlert:Base_url+clientPath1+"notificationAlert",
-    ServiceDelete:Base_url+path2+"service_delete"
+    ServiceDelete:Base_url+path2+"service_delete",
+    ClientUpdateAppointmentStatus: Base_url + clientPath1 + "updateAppointmentStatus",
+    BarberCashOut:Base_url+path3+"stripes/payout"
+
 };

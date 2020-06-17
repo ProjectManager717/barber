@@ -30,7 +30,6 @@ const {
 } = FBSDK;
 
 
-
 import {
     GoogleSignin,
     GoogleSigninButton,
@@ -39,11 +38,12 @@ import {
 
 
 let itemId = "";
-let fcmToken="";
+let fcmToken = "";
+
 class SignInScreen extends Component {
     constructor(props) {
         super(props);
-        console.disableYellowBox=true;
+        console.disableYellowBox = true;
         const {navigation} = this.props;
         itemId = navigation.getParam('User');
         console.log("gettingUSersignIn--->" + itemId);
@@ -77,8 +77,9 @@ class SignInScreen extends Component {
             //It is mandatory to call this method before attempting to call signIn()
             scopes: ['https://www.googleapis.com/auth/userinfo.profile'],
             // Repleace with your webClientId generated from Firebase console
-            webClientId:"264908010858-90qei6m96daq2doi543gnahouvunl4v4.apps.googleusercontent.com"
-                        });
+            webClientId: "264908010858-90qei6m96daq2doi543gnahouvunl4v4.apps.googleusercontent.com",
+            iosClientId: '264908010858-imh71lfsb360c40oq6c7hrgqdkhuqu3b.apps.googleusercontent.com',
+        });
         this.checkPermission();
     }
 
@@ -96,13 +97,13 @@ class SignInScreen extends Component {
     async getToken() {
         console.log("fcmToken getting inside");
         fcmToken = await Preference.get('fcmToken');
-        console.log("fcmToken getting inside",JSON.stringify(fcmToken));
+        console.log("fcmToken getting inside", JSON.stringify(fcmToken));
         if (!fcmToken) {
             fcmToken = await firebase.messaging().getToken();
-            console.log("fcmToken getting inside Got",JSON.stringify(fcmToken));
+            console.log("fcmToken getting inside Got", JSON.stringify(fcmToken));
             if (fcmToken) {
                 // user has a device token
-                console.log("fcmToken: ",fcmToken);
+                console.log("fcmToken: ", fcmToken);
                 Preference.set('fcmToken', fcmToken);
             }
         }
@@ -160,7 +161,7 @@ class SignInScreen extends Component {
                     authId: userInfo.idToken,
                     firstName: userInfo.user.givenName,
                     lastName: userInfo.user.familyName,
-                    device_token:fcmToken
+                    device_token: fcmToken
                 };
                 var formBody = [];
                 for (var property in details) {
@@ -168,7 +169,7 @@ class SignInScreen extends Component {
                     var encodedValue = encodeURIComponent(details[property]);
                     formBody.push(encodedKey + "=" + encodedValue);
                 }
-                this.setState({showLoading:true});
+                this.setState({showLoading: true});
                 formBody = formBody.join("&");
                 fetch(constants.ClientSocialLogin, {
                     method: 'POST',
@@ -180,10 +181,10 @@ class SignInScreen extends Component {
                 }).then(response => response.json())
                     .then(response => {
                         console.log("responseClientlogin-->", "-" + JSON.stringify(response));
-                        this.setState({showLoading:false});
+                        this.setState({showLoading: false});
                         if (response.ResultType === 1) {
                             Preference.set({
-                                AlertNotification:response.Data.alert_notification,
+                                AlertNotification: response.Data.alert_notification,
                                 clientlogin: true,
                                 userEmail: response.Data.email,
                                 userId: response.Data.id,
@@ -199,10 +200,10 @@ class SignInScreen extends Component {
                         }
                     })
                     .catch(error => {
-                        this.setState({showLoading:false});
+                        this.setState({showLoading: false});
                         //console.error('Errorr:', error);
                         console.log('Error:', error);
-                        alert("Error: "+error);
+                        alert("Error: " + error);
                     });
                 //Keyboard.dismiss();
             } else {
@@ -217,7 +218,7 @@ class SignInScreen extends Component {
                     authId: userInfo.idToken,
                     firstName: userInfo.user.givenName,
                     lastName: userInfo.user.familyName,
-                    device_token:fcmToken
+                    device_token: fcmToken
                 };
                 var formBody = [];
                 for (var property in details) {
@@ -225,7 +226,7 @@ class SignInScreen extends Component {
                     var encodedValue = encodeURIComponent(details[property]);
                     formBody.push(encodedKey + "=" + encodedValue);
                 }
-                this.setState({showLoading:true});
+                this.setState({showLoading: true});
                 formBody = formBody.join("&");
                 fetch(constants.BarberSocialLogin, {
                     method: 'POST',
@@ -237,17 +238,17 @@ class SignInScreen extends Component {
                 }).then(response => response.json())
                     .then(response => {
                         console.log("responseBarberlogin-->", "-" + JSON.stringify(response));
-                        this.setState({showLoading:false});
+                        this.setState({showLoading: false});
                         if (response.ResultType === 1) {
                             Preference.set({
-                                AlertNotification:response.Data.alert_notification,
+                                AlertNotification: response.Data.alert_notification,
                                 barberlogin: true,
                                 userEmail: response.Data.email,
                                 userName: userInfo.user.givenName,
                                 userId: response.Data.id,
                                 userType: "Barber",
                                 userToken: response.Data.token,
-                                MobilePayActivation:response.Data.mobile_pay_activation,
+                                MobilePayActivation: response.Data.mobile_pay_activation,
                             });
                             this.moveToHome();
                         } else {
@@ -257,10 +258,10 @@ class SignInScreen extends Component {
                         }
                     })
                     .catch(error => {
-                        this.setState({showLoading:false});
+                        this.setState({showLoading: false});
                         //console.error('Errorr:', error);
                         console.log('Error:', error);
-                        alert("Error: "+error);
+                        alert("Error: " + error);
                     });
                 //Keyboard.dismiss();
             } else {
@@ -280,7 +281,7 @@ class SignInScreen extends Component {
         } catch (error) {
             //console.error('Errorr:', error);
             console.log('Error:', error);
-            alert("Error: "+error);
+            alert("Error: " + error);
         }
     };
 
@@ -292,7 +293,7 @@ class SignInScreen extends Component {
         } catch (error) {
             //console.error('Errorr:', error);
             console.log('Error:', error);
-            alert("Error: "+error);
+            alert("Error: " + error);
         }
     };
 
@@ -311,7 +312,7 @@ class SignInScreen extends Component {
                     var details = {
                         email: email,
                         password: password,
-                        device_token:fcmToken
+                        device_token: fcmToken
                     };
                     var formBody = [];
                     for (var property in details) {
@@ -331,11 +332,11 @@ class SignInScreen extends Component {
                         .then(response => {
                             console.log("responseClientlogin-->", "-" + JSON.stringify(response));
                             if (response.ResultType === 1) {
-                                if(response.Data.is_active === 1){
+                                if (response.Data.is_active === 1) {
 
                                     this.setState({showLoading: false});
                                     Preference.set({
-                                        AlertNotification:response.Data.alert_notification,
+                                        AlertNotification: response.Data.alert_notification,
                                         clientlogin: true,
                                         userEmail: response.Data.email,
                                         userId: response.Data.id,
@@ -343,25 +344,23 @@ class SignInScreen extends Component {
                                         userType: "Client",
                                         userToken: response.Data.token
                                     });
-                                    console.log("Client alert notifications"+Preference.get("AlertNotification"));
+                                    console.log("Client alert notifications" + Preference.get("AlertNotification"));
 
                                     this.moveToHome();
 
 
+                                } else if (response.Data.is_active === 0) {
+                                    this.setState({showLoading: false});
+                                    Preference.set({
+                                        clientlogin: false,
+                                        userEmail: response.Data.email,
+                                        userId: response.Data.id,
+                                        userName: response.Data.firstname + " " + response.Data.lastname,
+                                        userType: "Client",
+                                        userToken: response.Data.token
+                                    });
+                                    this.props.navigation.navigate("SMSScreen");
                                 }
-
-                                else if (response.Data.is_active === 0) {
-                                     this.setState({showLoading: false});
-                                     Preference.set({
-                                         clientlogin: false,
-                                         userEmail: response.Data.email,
-                                         userId: response.Data.id,
-                                         userName: response.Data.firstname + " " + response.Data.lastname,
-                                         userType: "Client",
-                                         userToken: response.Data.token
-                                     });
-                                     this.props.navigation.navigate("SMSScreen");
-                                 }
                             } else {
                                 this.setState({showLoading: false});
                                 if (response.ResultType === 0) {
@@ -373,7 +372,7 @@ class SignInScreen extends Component {
                             this.setState({showLoading: false});
                             //console.error('Errorr:', error);
                             console.log('Error:', error);
-                            alert("Error: "+error);
+                            alert("Error: " + error);
                         });
                     //Keyboard.dismiss();
                 }
@@ -392,7 +391,7 @@ class SignInScreen extends Component {
                     var details = {
                         email: email,
                         password: password,
-                        device_token:fcmToken
+                        device_token: fcmToken
                     };
                     var formBody = [];
                     for (var property in details) {
@@ -412,36 +411,36 @@ class SignInScreen extends Component {
                         .then(response => {
                             console.log("responseBarberlogin-->", "-" + JSON.stringify(response));
                             if (response.ResultType === 1) {
-                                if(response.Data.is_active===1){
+                                if (response.Data.is_active === 1) {
                                     this.setState({showLoading: false});
                                     Preference.set({
-                                        AlertNotification:response.Data.alert_notification,
+                                        AlertNotification: response.Data.alert_notification,
                                         barberlogin: true,
                                         userEmail: response.Data.email,
                                         userId: response.Data.id,
                                         userName: response.Data.firstname + " " + response.Data.lastname,
                                         userType: "Barber",
                                         userToken: response.Data.token,
-                                        MobilePayActivation:response.Data.mobile_pay_activation,
+                                        MobilePayActivation: response.Data.mobile_pay_activation,
                                     });
-                                    console.log("alert notifications"+Preference.get("AlertNotification"));
+                                    console.log("alert notifications" + Preference.get("AlertNotification"));
 
                                     this.moveToHome();
                                 }
-                                }
+                            }
 
-                                if (response.Data.is_active === 0) {
-                                    this.setState({showLoading: false});
-                                    Preference.set({
-                                        barberlogin: false,
-                                        userEmail: response.Data.email,
-                                        userId: response.Data.id,
-                                        userName: response.Data.firstname + " " + response.Data.lastname,
-                                        userType: "Barber",
-                                        userToken: response.Data.token
-                                    });
-                                    this.props.navigation.navigate("SMSScreen");
-                                } else {
+                            if (response.Data.is_active === 0) {
+                                this.setState({showLoading: false});
+                                Preference.set({
+                                    barberlogin: false,
+                                    userEmail: response.Data.email,
+                                    userId: response.Data.id,
+                                    userName: response.Data.firstname + " " + response.Data.lastname,
+                                    userType: "Barber",
+                                    userToken: response.Data.token
+                                });
+                                this.props.navigation.navigate("SMSScreen");
+                            } else {
                                 this.setState({showLoading: false});
                                 if (response.ResultType === 0) {
                                     alert(response.Message);
@@ -452,7 +451,7 @@ class SignInScreen extends Component {
                             this.setState({showLoading: false});
                             //console.error('Errorr:', error);
                             console.log('Error:', error);
-                            alert("Error: "+error);
+                            alert("Error: " + error);
                         });
                     //Keyboard.dismiss();
                 }
@@ -466,9 +465,16 @@ class SignInScreen extends Component {
     facebokLogin = async () => {
         let result
         try {
-            if(Platform.OS==="ios"){  result = await LoginManager.logInWithReadPermissions(['email', 'public_profile']);}
-            else{  result = await LoginManager.logInWithPermissions(['email', 'public_profile']);}
+            console.log("OSfor this APP: ", Platform.OS)
+            if (Platform.OS === "ios") {
+                console.log("OSfor this APP1: ", Platform.OS)
+                result = await LoginManager.logInWithReadPermissions(['email', 'public_profile']);
+            } else {
+                result = await LoginManager.logInWithPermissions(['email', 'public_profile']);
+            }
 
+            //result = await LoginManager.logInWithPermissions(['email', 'public_profile']);
+            console.log("OSfor this APP1: ",JSON.stringify(result))
             if (result.isCancelled) {
                 alert("Login was cancelled");
             } else {
@@ -550,7 +556,7 @@ class SignInScreen extends Component {
                     authId: accessToken,
                     firstName: data.first_name,
                     lastName: data.last_name,
-                    device_token:fcmToken
+                    device_token: fcmToken
                 };
                 var formBody = [];
                 for (var property in details) {
@@ -571,7 +577,7 @@ class SignInScreen extends Component {
                         console.log("responseClientlogin-->", "-" + JSON.stringify(response));
                         if (response.ResultType === 1) {
                             Preference.set({
-                                AlertNotification:response.Data.alert_notification,
+                                AlertNotification: response.Data.alert_notification,
                                 clientlogin: true,
                                 userEmail: response.Data.email,
                                 userName: data.first_name,
@@ -594,7 +600,7 @@ class SignInScreen extends Component {
                     .catch(error => {
                         //console.error('Errorr:', error);
                         console.log('Error:', error);
-                        alert("Error: "+error);
+                        alert("Error: " + error);
                     });
                 //Keyboard.dismiss();
             } else {
@@ -609,7 +615,7 @@ class SignInScreen extends Component {
                     authId: accessToken,
                     firstName: data.first_name,
                     lastName: data.last_name,
-                    device_token:fcmToken
+                    device_token: fcmToken
                 };
                 var formBody = [];
                 for (var property in details) {
@@ -630,16 +636,16 @@ class SignInScreen extends Component {
                         console.log("responseBarberlogin-->", "-" + JSON.stringify(response));
                         if (response.ResultType === 1) {
                             Preference.set({
-                                AlertNotification:response.Data.alert_notification,
+                                AlertNotification: response.Data.alert_notification,
                                 barberlogin: true,
                                 userEmail: response.Data.email,
                                 userName: data.first_name,
                                 userId: response.Data.id,
                                 userType: "Barber",
                                 userToken: response.Data.token,
-                                MobilePayActivation:response.Data.mobile_pay_activation,
+                                MobilePayActivation: response.Data.mobile_pay_activation,
                             });
-                            console.log("alert notifications"+Preference.get("AlertNotification"));
+                            console.log("alert notifications" + Preference.get("AlertNotification"));
                             if (response.Data.firstTimeSignUp === true) {
                                 this.props.navigation.navigate("SMSScreen");
                             } else {
@@ -654,7 +660,7 @@ class SignInScreen extends Component {
                     .catch(error => {
                         //console.error('Errorr:', error);
                         console.log('Error:', error);
-                        alert("Error: "+error);
+                        alert("Error: " + error);
                     });
                 //Keyboard.dismiss();
             } else {
@@ -674,18 +680,18 @@ class SignInScreen extends Component {
     }
 
     moveToHome() {
-        if (itemId === "Client"){
+        if (itemId === "Client") {
 
             const goToIntoScreen = StackActions.reset({
                 index: 0,
-                actions: [NavigationActions.navigate({ routeName: 'ClientTabNavigator' })],
+                actions: [NavigationActions.navigate({routeName: 'ClientTabNavigator'})],
             });
             this.props.navigation.dispatch(goToIntoScreen);
             // this.props.navigation.navigate("ClientTabNavigator");
         } else {
             const goToIntoScreen = StackActions.reset({
                 index: 0,
-                actions: [NavigationActions.navigate({ routeName: 'TabNavigator' })],
+                actions: [NavigationActions.navigate({routeName: 'TabNavigator'})],
             });
             this.props.navigation.dispatch(goToIntoScreen);
             // this.props.navigation.navigate("TabNavigator");
@@ -711,21 +717,19 @@ class SignInScreen extends Component {
         const isValidEmail = checkEmail(email);
         const isValidPassword = password.length >= 6;
         return (
-            <View
-                style={styles.container}
-            >
-                <NotificationPopup ref={ref => this.popup = ref} />
+            <View style={styles.container}>
+                <NotificationPopup ref={ref => this.popup = ref}/>
                 <View style={styles.bottomContainer}/>
-                <SafeAreaView style={styles.parentContainer}>
-                    <View style={styles.closeContainer}>
+                <KeyboardAwareScrollView >
+                    <View style={[styles.closeContainer,{marginTop:50}]}>
                         <CloseButton onPress={this.onClose}/>
                     </View>
-                    <View style={{width:"100%",height:"10%",justifyContent:'center',alignItems:"center"}}  >
-                        <Image style={{resizeMode:"contain",width:150,height:100}}
+                    <View style={{width: "100%", height: "10%", justifyContent: 'center', alignItems: "center"}}>
+                        <Image style={{resizeMode: "contain", width: 150, height: 100}}
                                source={require("../../../assets/images/logo.png")}
                         />
                     </View>
-                    <KeyboardAwareScrollView style={styles.mainContainer}>
+                    <View style={[styles.mainContainer,{marginTop:20}]}>
                         <View style={styles.subContainer}>
                             <Text style={styles.whiteBoldBigText}>
                                 Login • {this.state.userName}
@@ -750,17 +754,17 @@ class SignInScreen extends Component {
                             />
                         </View>
                         <View style={styles.forgotPasswordContainer}>
-                            <Text style={styles.whiteText}>
+                            <Text style={[styles.whiteText,{width:70,textAlign:"center"}]}>
                                 {`Can't login? `}
                             </Text>
                             <TouchableOpacity onPress={this.onForgot}>
-                                <Text style={styles.redText}>
-                                    Forgot password!
+                                <Text style={[styles.redText,{width:130,textAlign:"center"}]}>
+                                    {'Forgot password! '}
                                 </Text>
                             </TouchableOpacity>
                         </View>
                         <View style={styles.buttonsContainer}>
-                            <RedButton style={styles.loginButton} label="Login" onPress={this.onLogin}/>
+                            <RedButton style={styles.loginButton} label="Login" textStyle={{width:60,textAlign:"center"}} onPress={this.onLogin}/>
                             <ImageButton
                                 onPress={this.facebokLogin}
                                 iconSource={require('../../../assets/icon_facebook.png')}
@@ -774,19 +778,11 @@ class SignInScreen extends Component {
                                 style={styles.imgBtnContainer}
                             />
                         </View>
-                    </KeyboardAwareScrollView>
-                    <View style={{flex: 1}}>
+
                     </View>
-                    <View style={styles.bottomButtonContainer}>
-                        <Text style={styles.grayText}>
-                            {`Don't have an account? `}
-                        </Text>
-                        <TouchableOpacity onPress={() => this.signupClicked()}>
-                            <Text style={styles.redText}>
-                                Sign Up!
-                            </Text>
-                        </TouchableOpacity>
-                    </View>
+                   {/* <View style={{flex: 1}}>
+                    </View>*/}
+
 
                     {this.state.showLoading && <View style={{
                         width: "100%",
@@ -797,9 +793,22 @@ class SignInScreen extends Component {
                         alignItems: "center",
                         justifyContent: "center"
                     }}>
-                        <Image resizeMode={"contain"} source={require("../../../assets/images/loading.gif")} style={{width:60,height:60, opacity: 1,}}/>
+                        <Image resizeMode={"contain"} source={require("../../../assets/images/loading.gif")}
+                               style={{width: 60, height: 60, opacity: 1,}}/>
                     </View>}
-                </SafeAreaView>
+
+
+                </KeyboardAwareScrollView>
+                <View style={styles.bottomButtonContainer}>
+                    <Text style={[styles.grayText,{width:160,textAlign:"center"}]}>
+                        {`Don't have an account? `}
+                    </Text>
+                    <TouchableOpacity onPress={() => this.signupClicked()}>
+                        <Text style={[styles.redText,{width:50,textAlign:"center"}]}>
+                            {'Sign Up!'}
+                        </Text>
+                    </TouchableOpacity>
+                </View>
             </View>
         )
     }

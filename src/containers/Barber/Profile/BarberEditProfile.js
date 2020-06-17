@@ -632,7 +632,7 @@ export default class BarberEditProfile extends Component {
     selectImage2 = () => {
         //alert("hello");
         ImagePicker.showImagePicker(options, (response) => {
-            console.log('Response = ', response);
+            console.log('Response = ', JSON.stringify(response));
 
             if (response.didCancel) {
                 console.log('User cancelled image picker');
@@ -642,10 +642,10 @@ export default class BarberEditProfile extends Component {
                 console.log('User tapped custom button: ', response.customButton);
             } else {
                 const source = {uri: response.uri};
-
                 this.uploadExperienceImages(response.uri);
                 this.setState({ExpericenceImage: source, experienceForSever: response.uri}, () => {
                     console.log("ExperienceImages", this.state.ExpericenceImage);
+                    console.log('testing: ' + JSON.stringify(source));
                 });
 
                 // console.log("URII:::", response.uri);
@@ -848,11 +848,12 @@ export default class BarberEditProfile extends Component {
                 body: formBody
             }).then(response => response.json())
                 .then(response => {
+                    this.setState({showLoading: false});
                     console.log("responseClientlogin-->", "-" + JSON.stringify(response));
                     if (response.ResultType === 1) {
                         this.setState({showLoading: false, serviceName: "", serviceDuration: "", servicePrice: ""});
                          //this.saveData();
-                        this.getBarberDetails();
+                        //this.getBarberDetails();
 
                     } else {
                         this.setState({showLoading: false});
@@ -983,7 +984,8 @@ export default class BarberEditProfile extends Component {
                                                     <Text style={{
                                                         fontSize: 15,
                                                         fontWeight: "bold",
-                                                        color: "white"
+                                                        color: "white",width:"100%",
+                                                        textAlign:"center"
                                                     }}>{"Save"}</Text>
 
                                                 </TouchableOpacity>
@@ -1047,7 +1049,9 @@ export default class BarberEditProfile extends Component {
                                                     <Text style={{
                                                         fontSize: 15,
                                                         fontWeight: "bold",
-                                                        color: "white"
+                                                        color: "white",
+                                                        width:"100%",
+                                                        textAlign:"center"
                                                     }}>{"Save"}</Text>
 
                                                 </TouchableOpacity>
@@ -1243,7 +1247,8 @@ export default class BarberEditProfile extends Component {
                                                       marginTop: 20,
                                                       marginBottom: 20,
                                                   }]}>
-                                    <Text style={{fontSize: 15, fontWeight: "bold", color: "white"}}>{"Save"}</Text>
+                                    <Text style={{fontSize: 15, fontWeight: "bold", color: "white",width:"100%",
+        textAlign:"center"}}>{"Save"}</Text>
                                 </TouchableOpacity>
 
                             </View>
@@ -1394,7 +1399,9 @@ export default class BarberEditProfile extends Component {
                                     <Text style={{
                                         fontSize: 15,
                                         fontWeight: "bold",
-                                        color: "white"
+                                        color: "white",
+                                        width:"100%",
+                                        textAlign:"center"
                                     }}>{"Save"}</Text>
                                 </TouchableOpacity>
                             </View>
@@ -1478,7 +1485,9 @@ export default class BarberEditProfile extends Component {
                                     <Text style={{
                                         fontSize: 15,
                                         fontWeight: "bold",
-                                        color: "white"
+                                        color: "white",
+                                        width:"100%",
+                                        textAlign:"center"
                                     }}>{"Save"}</Text>
                                 </TouchableOpacity>
                             </View>
@@ -1554,8 +1563,10 @@ export default class BarberEditProfile extends Component {
                             backgroundColor: "red",
                             marginTop: 20,
                             marginBottom: 20,
+                            width:"100%",
+                            textAlign:"center"
                         }]}>
-                            <Text style={{fontSize: 15, fontWeight: "bold", color: "white"}}>{"Save"}</Text>
+                            <Text style={{fontSize: 15, fontWeight: "bold", color: "white",width:"100%",textAlign:"center"}}>{"Save"}</Text>
 
                         </TouchableOpacity>
                     </View>
@@ -1676,7 +1687,9 @@ const styles = StyleSheet.create({
     name: {
         fontSize: 18,
         fontWeight: "bold",
-        color: "white"
+        color: "white",
+        width:"100%",
+        textAlign:"center"
     },
     review: {
         flexDirection: "row",

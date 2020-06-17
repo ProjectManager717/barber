@@ -155,7 +155,7 @@ export default class Cancellations extends Component {
     checkBox(val) {
         if(this.state.policy)
         {
-            if (val === "2 Hours Ahead,No Fee") {
+            if (val === "2 Hours Ahead, No Fee") {
                 if (this.state.twoHour === false)
                     this.setState({twoHour: true,oneHour:false,thirtyMin:false})
                 /* else
@@ -226,7 +226,7 @@ export default class Cancellations extends Component {
                     barStyle="light-content" // or directly
                     style={{backgroundColor: "yellow"}}
                     outerContainerStyles={{backgroundColor: "#1999CE"}}
-                    centerComponent={{text: "CANCELLATIONS & NO-SHOWS", style: {color: "#fff"}}}
+                    centerComponent={{text: "CANCELATIONS & NO-SHOWS", style: {color: "#fff"}}}
                     rightComponent={{color: "#fff"}}
                     containerStyle={{
                         backgroundColor: Colors.dark,
@@ -244,12 +244,12 @@ export default class Cancellations extends Component {
                     }
                 />
                 <ScrollView>
-                    <Text style={styles.txtHeader}>CANCELLATIONS</Text>
+                    <Text style={styles.txtHeader}>CANCELATIONS</Text>
                     <View style={[globalStyles.rowBackground, styles.row]}>
                         <View style={{flex: 1, flexDirection: 'row', height: 36}}>
                             <Image style={styles.leftIcon}
                                    source={require("../../../assets/images/ic_cancellation_policy.png")}/>
-                            <Text style={styles.row_title}>Cancellation Policy</Text>
+                            <Text style={styles.row_title}>Cancelation Policy</Text>
                             <Switch onChange={() => this.setPolicy()} value={this.state.policy} style={{
                                 transform: [{ scaleX: .8 }, { scaleY: .8 }],
                                 position: 'absolute',
@@ -259,7 +259,7 @@ export default class Cancellations extends Component {
                             }}/>
                         </View>
                     </View>
-                    {this.renderRow({title: "2 Hours Ahead,No Fee", value: this.state.twoHour})}
+                    {this.renderRow({title: "2 Hours Ahead, No Fee", value: this.state.twoHour})}
                     {this.renderRow({title: "1 Hour Ahead, 15% Fee", value: this.state.oneHour})}
                     {this.renderRow({title: "30 Minutes Ahead, 25% Fee", value: this.state.thirtyMin})}
                     <Text style={styles.txtHeader}>NO-SHOWS</Text>

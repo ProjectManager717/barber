@@ -187,7 +187,7 @@ export default class ClientBarberSearch extends Component {
     renderGooglePlacesInput = () => {
         return (
             <GooglePlacesAutocomplete
-                placeholder="Enter City,State or Zip Code"
+                placeholder="Enter City, State or Zip Code"
                 minLength={2} // minimum length of text to search
                 autoFocus={false}
                 returnKeyType={'search'} // Can be left out for default return key https://facebook.github.io/react-native/docs/textinput.html#returnkeytype
@@ -416,7 +416,10 @@ export default class ClientBarberSearch extends Component {
                                     color: this.state.optionOne,
                                     marginStart: 10,
                                     fontSize: 18,
-                                    fontWeight: 'bold'
+                                    fontWeight: 'bold',
+                                    width:"100%",
+                                    textAlign:"left",
+                                    //backgroundColor:"pink"
                                 }}>$</Text>
                             </TouchableOpacity>
 
@@ -428,7 +431,10 @@ export default class ClientBarberSearch extends Component {
                                     color: this.state.optionTwo,
                                     marginStart: 10,
                                     fontSize: 18,
-                                    fontWeight: 'bold'
+                                    fontWeight: 'bold',
+                                    width:"100%",
+                                    textAlign:"left",
+                                    //backgroundColor:"yellow"
                                 }}>$$</Text>
                             </TouchableOpacity>
 
@@ -440,7 +446,10 @@ export default class ClientBarberSearch extends Component {
                                     color: this.state.optionThree,
                                     marginStart: 10,
                                     fontSize: 18,
-                                    fontWeight: 'bold'
+                                    fontWeight: 'bold',
+                                    width:"100%",
+                                    textAlign:"left",
+                                    //backgroundColor:"pink"
                                 }}>$$$</Text>
                             </TouchableOpacity>
 

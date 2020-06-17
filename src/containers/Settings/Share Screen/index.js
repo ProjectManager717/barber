@@ -8,7 +8,7 @@ import {
     ScrollView,
     TouchableOpacity,
     TouchableHighlight, Clipboard,
-    TextInput, Dimensions, ImageBackground, Alert
+    TextInput, Dimensions, ImageBackground, Alert,Platform, CameraRoll
 } from "react-native";
 import LinearGradient from 'react-native-linear-gradient';
 import {Colors} from "../../../themes";
@@ -18,12 +18,15 @@ import Preference from 'react-native-preference';
 import ViewShot from "react-native-view-shot";
 import {constants} from "../../../utils/constants";
 import {SafeAreaView} from "react-navigation";
+import moment from 'moment';
+import { Firebase } from "react-native-firebase";
+
 
 var RNFS = require('react-native-fs');
 
 const {width, height} = Dimensions.get("window");
 
-const link = "www.clypr.co/pro/" + Preference.get("userName");
+const link = "https://www.clypr.co/pro/" + Preference.get("userName");
 export default class Share extends Component {
 
     constructor(props) {
@@ -83,45 +86,93 @@ export default class Share extends Component {
     }
 
     saveToClipboard = async (val) => {
-        //To copy the text to clipboard
-        await Clipboard.setString(val);
-        console.log("URL LINK"+val)
-        //alert('Link Copied');
+        const sharedUrl = val
+        const link = new Firebase.links.DynamicLink(sharedUrl, 'https://clypr.page.link')
+            .android.setPackageName('com.barber')
+            .ios.setBundleId('com.reactjs.native.Barber')
+            .ios.setCustomScheme('CLYPR')
+
+        firebase.links()
+        .createShortDynamicLink(link, 'SHORT')
+        .then((url) => {
+            Clipboard.setString(url);
+        })
 
     };
 
     downloadImage() {
         this.refs.viewShot1.capture().then(uri => {
-            let destPath = RNFS.ExternalStorageDirectoryPath   + "/clypr1.jpg";
-            RNFS.copyFile(uri, destPath)
-                .then((success) => {
-                    console.log('file copied1!'+destPath);
-                    alert("Image Downloaded PATH:"+destPath);
-                })
-                .catch((err) => {
-                    console.log('Error copying file: ' + err.message);
-                    alert('Error copying file: ' + err.message);
-                });
 
-            console.log("do something with ", uri,destPath);
+        /*    console.log("\n\n\nfile uri: "+ JSON.stringify(uri));
+            console.log("\n pic MainBundlePath: " + RNFS.MainBundlePath)
+            console.log("\n pic CachesDirectoryPath: " + RNFS.CachesDirectoryPath)
+            console.log("\n pic ExternalCachesDirectoryPath: " + RNFS.ExternalCachesDirectoryPath)
+            console.log("\n pic DocumentDirectoryPath: " + RNFS.DocumentDirectoryPath)
+            console.log("\n pic ExternalDirectoryPath: " + RNFS.ExternalDirectoryPath)
+            console.log("\n pic ExternalStorageDirectoryPath: " + RNFS.ExternalStorageDirectoryPath)
+            console.log("\n pic TemporaryDirectoryPath: " + RNFS.TemporaryDirectoryPath)
+            console.log("\n pic LibraryDirectoryPath: " + RNFS.LibraryDirectoryPath)
+            console.log("\n pic PicturesDirectoryPath: " + RNFS.PicturesDirectoryPath)
+            console.log("\n pic FileProtectionKeys: " + RNFS.FileProtectionKeys)
+            let destPath = RNFS.LibraryDirectoryPath + "/"+moment().format("x")+".jpg";*/
+
+            console.log("\n\n\nfile uri: "+ JSON.stringify(uri));
+            const directory = Platform.OS === 'ios' ? RNFS.DocumentDirectoryPath : RNFS.PicturesDirectoryPath
+            let destPath = directory + "/"+moment().format("x")+".jpg";
+
+            RNFS.copyFile(uri, destPath)
+            .then((success) => {
+                console.log('ShareScreen','file copied1!' + destPath);
+
+                if(Platform.OS === 'ios'){
+                    CameraRoll.saveToCameraRoll(destPath)
+                    .then(res => {
+                        console.log('ShareScreen','download-image-CameraRoll-result', JSON.stringify(res))
+                        alert("Image saved to camera-roll successfully");
+                    })
+                    .catch(err => {
+                        console.log('ShareScreen','download-image-CameraRoll-err', err)
+                    })
+                }else{
+                    alert("Image saved to gallery successfully");
+                }
+            })
+            .catch((err) => {
+                console.log('ShareScreen','Error copying file: ' + err.message);
+                alert('Error copying file: ' + err.message);
+            });
         });
     }
 
-    downloadImage1() {
-        console.log("Image23")
-        this.refs.viewShot2.capture().then(uri => {
-            let destPath = RNFS.ExternalStorageDirectoryPath + "/clypr2.jpg";
-            RNFS.copyFile(uri, destPath)
-                .then((success) => {
-                    console.log('file copied2!'+destPath);
-                    alert("Image Downloaded PATH:"+destPath);
-                })
-                .catch((err) => {
-                    console.log('Error copying file: ' + err.message);
-                    alert('Error copying file: ' + err.message);
-                });
 
-            console.log("do something with ", uri,destPath);
+
+
+    downloadImage1() {
+        this.refs.viewShot2.capture().then(uri => {
+            console.log("\n\n\nfile uri: "+ JSON.stringify(uri));
+            const directory = Platform.OS === 'ios' ? RNFS.DocumentDirectoryPath : RNFS.PicturesDirectoryPath
+            let destPath = directory + "/clypr_"+moment().format("x")+".jpg";
+            RNFS.copyFile(uri, destPath)
+            .then((success) => {
+                console.log('ShareScreen','file copied1!' + destPath);
+
+                if(Platform.OS === 'ios'){
+                    CameraRoll.saveToCameraRoll(destPath)
+                    .then(res => {
+                        console.log('ShareScreen','download-image-CameraRoll-result', JSON.stringify(res))
+                        alert("Image saved to camera-roll successfully");
+                    })
+                    .catch(err => {
+                        console.log('ShareScreen','download-image-CameraRoll-err', err)
+                    })
+                }else{
+                    alert("Image saved to gallery successfully");
+                }
+            })
+            .catch((err) => {
+                console.log('ShareScreen','Error copying file: ' + err.message);
+                alert('Error copying file: ' + err.message);
+            });
         });
     }
 
@@ -172,7 +223,7 @@ export default class Share extends Component {
                                     style={{marginStart: 5, color: "grey", fontFamily: "AvertaStd-Thin"}}
                                 >{"Copy & Paste the below link"}</Text></View>
                             <TouchableOpacity
-                                onPress={() => this.saveToClipboard("clypr://profile/" + Preference.get("userId"))}>
+                                onPress={() => this.saveToClipboard("https://www.clypr.co/pro/" + this.state.barberInsta)}>
                                 <Text style={{
                                     color: "white",
                                     fontSize: 15,

@@ -38,6 +38,8 @@ export default class ReceiptCancelled extends Component {
             surgePrice: "",
             totalMain: "",
             rating: "",
+            appointment_updatedby:'',
+            clientName:'',
             goodQuality: false,
             cleanliness: false,
             punctuality: false,
@@ -71,6 +73,8 @@ export default class ReceiptCancelled extends Component {
                         invoiceDate: receptDate[0],
                         invoiceTime: moment(recieptData.cancal_date_time).format("LT"),
                         barberName: recieptData.barber_firstname +" "+recieptData.barber_lastname ,
+                        clientName: recieptData.client_firstname +" "+recieptData.client_lastname,
+                        appointment_updatedby: recieptData.appointment_UpdatedBy,
                         barberShopName: recieptData.barber_shop_name,
                         barberLocation:recieptData.location,
                         barberServices: recieptData.selected_services,
@@ -276,7 +280,7 @@ export default class ReceiptCancelled extends Component {
                                     fontSize: 14,
                                     width: "75%",
                                     marginStart: 10,
-                                }}>{this.state.barberName}</Text>
+                                }}>{(this.state.appointment_updatedby=="client") ?  this.state.clientName : this.state.barberName}</Text>
                             <View style={{width: "100%", flexDirection: 'row', height: 36}}>
                                 <Text style={{
                                     color: "white",

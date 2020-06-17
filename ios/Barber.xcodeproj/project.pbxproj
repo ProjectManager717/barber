@@ -14,20 +14,20 @@
 		00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302E41ABCB9EE00DB3ED1 /* libRCTVibration.a */; };
 		00E356F31AD99517003FC87E /* BarberTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* BarberTests.m */; };
 		038E9AF1E1594B13A9B2EF44 /* AvertaStd-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 709DF313FA7D4161B7B2FD8B /* AvertaStd-BoldItalic.ttf */; };
+		0AD6595323AD380C00FE4421 /* libRCTFBSDK.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4250757622F8255800137826 /* libRCTFBSDK.a */; };
 		0F4DE90504FD45A2A2711B96 /* AvertaStd-BlackItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6C1D384772214852850062F3 /* AvertaStd-BlackItalic.ttf */; };
 		11D1A2F320CAFA9E000508D9 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
 		133E29F31AD74F7200F7D852 /* libRCTLinking.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 78C398B91ACF4ADC00677621 /* libRCTLinking.a */; };
 		139105C61AF99C1200B5F7CC /* libRCTSettings.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 139105C11AF99BAD00B5F7CC /* libRCTSettings.a */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
-		13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		140ED2AC1D01E1AD002B40FF /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
 		146834051AC3E58100842450 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
 		14AD9A2968144F5AAC997B4C /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E8E622D10F3847129345812B /* Ionicons.ttf */; };
 		184BF4A622AF986700357CB1 /* libRCTWebSocket.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 139FDEF41B06529B00C62182 /* libRCTWebSocket.a */; };
+		184D95082465F5BF00B6EC8E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 184D95072465F5BF00B6EC8E /* LaunchScreen.storyboard */; };
 		188CEDEC22AFE024009E40D9 /* GoogleSignIn.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 188CEDEB22AFE024009E40D9 /* GoogleSignIn.framework */; };
-		188CEDEE22AFE062009E40D9 /* GoogleSignIn.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 188CEDED22AFE062009E40D9 /* GoogleSignIn.bundle */; };
 		188CEDEF22AFE096009E40D9 /* libRNGoogleSignin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 188CED8122AFDABD009E40D9 /* libRNGoogleSignin.a */; };
 		188CEDF122AFE0AB009E40D9 /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 188CEDF022AFE0AB009E40D9 /* AddressBook.framework */; };
 		188CEDF322AFE0B0009E40D9 /* SafariServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 188CEDF222AFE0B0009E40D9 /* SafariServices.framework */; };
@@ -63,25 +63,25 @@
 		428B8C1C22F5A1BF008BDD1E /* FBSDKShareKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 184BF45922AF91FF00357CB1 /* FBSDKShareKit.framework */; };
 		428B8C1D22F5A1D4008BDD1E /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 184BF45A22AF920000357CB1 /* FBSDKCoreKit.framework */; };
 		428B8C1E22F5A1E2008BDD1E /* Bolts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 184BF46C22AF938500357CB1 /* Bolts.framework */; };
-		53BC08C2A119936DBCBC5685 /* Pods_Barber.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6B7BFBC3B9E70865B578177D /* Pods_Barber.framework */; };
 		558E032021BA4686800B6D63 /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E1E9AF997A2A473E8D602341 /* FontAwesome.ttf */; };
-		5AE37D76CBF99C611BD3785B /* Pods_Barber_tvOSTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D6AFED710DAC4C412C51540E /* Pods_Barber_tvOSTests.framework */; };
 		5F56EC0A9F354766B9520704 /* AvertaStd-ThinItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 905D3F883C6F48F0A6983694 /* AvertaStd-ThinItalic.ttf */; };
 		626B23EFF8414106B7D1C31B /* libRNVectorIcons.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 098E2F43E376486BBD3C28BA /* libRNVectorIcons.a */; };
 		64001F56B6354AF1BD125092 /* FontAwesome5_Brands.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 62EED934F43D4B2EA690DF02 /* FontAwesome5_Brands.ttf */; };
 		662C729E811346A9B556EEFA /* AvertaStd-Extrathin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8219BF59A83F4E06B5D54755 /* AvertaStd-Extrathin.ttf */; };
 		669180078EEE4D34AFC44447 /* libRNPreferenceManager.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 756FC6DDC4E94BFC852DFA5A /* libRNPreferenceManager.a */; };
+		677861F5BB8A8DD80DB0A38C /* libPods-Barber-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 778AD72EAD7B815F4E2E70E8 /* libPods-Barber-tvOSTests.a */; };
 		694322BB67184CEA890DE788 /* FontAwesome5_Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A59F57333A3740DBBDD87896 /* FontAwesome5_Regular.ttf */; };
 		769016B780FF44FB81EC9534 /* AntDesign.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4DD999B563304E63A8CE6D6C /* AntDesign.ttf */; };
 		780CFEFB591540BBBF3A7B07 /* AvertaStd-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 295B510185C54443A605919B /* AvertaStd-Thin.ttf */; };
-		784F43B501B3446B1719DED4 /* Pods_BarberTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 323EE1B97E2D2503D22D6280 /* Pods_BarberTests.framework */; };
 		7CCED30A075A401DB346E6C0 /* AvenirNext-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2D38C8A8A4C042F8B02C9DA0 /* AvenirNext-Bold.ttf */; };
+		7D25B3F855BAAF09F8194B5F /* libPods-Barber.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BF9785EF0558A8BFBD9570FC /* libPods-Barber.a */; };
 		7F647E121B624FA6ABA1E5CB /* AvertaStd-Semibold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 555E861E296F4EC089616020 /* AvertaStd-Semibold.ttf */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		85A6A61AC1614634A685AC93 /* libBVLinearGradient.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4DFC5C7102874EC4AA686710 /* libBVLinearGradient.a */; };
 		8B32FE3C7226465EA50F2CF5 /* Feather.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2CE2E8B3652046E39E5AE021 /* Feather.ttf */; };
 		8C870D8874204F918D44E206 /* libRNGestureHandler-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 673C37BE1E4C425ABDA5C9CD /* libRNGestureHandler-tvOS.a */; };
 		8EC8345F81334BB683DAF3FB /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BE1547F32BE54816B1A0FFBB /* SimpleLineIcons.ttf */; };
+		9301E871F3CBD451DE97E39B /* libPods-BarberTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 03A3153675913352CB669CBB /* libPods-BarberTests.a */; };
 		99269672FF14460AA5ABAA98 /* AvertaStd-SemiboldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0966DE251D964F859C07337D /* AvertaStd-SemiboldItalic.ttf */; };
 		9E7280B41D33495CB1581406 /* AvertaStd-ExtraBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7F660A19A6A844FEB8A74E85 /* AvertaStd-ExtraBoldItalic.ttf */; };
 		A3BB71ABE113478995CD3E18 /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9379501DE2E14B1BB4ADBBB7 /* MaterialIcons.ttf */; };
@@ -97,6 +97,9 @@
 		CDF3D0E13CBC4ACFA0F756C3 /* AvertaStd-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CF4C8EC40DF84B6FBE25538D /* AvertaStd-Regular.ttf */; };
 		CE545947ABBD4D6C9D0C7649 /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4845413103AA4BE5A08D36F7 /* Entypo.ttf */; };
 		D64120CFA07D445AB260FF75 /* libRNVectorIcons-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0E72E959C8624382A0321863 /* libRNVectorIcons-tvOS.a */; };
+		D6884D2C242BAF9B00BC548D /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D6884D2B242BAF9B00BC548D /* UserNotifications.framework */; };
+		D6884D2D242BAFA400BC548D /* libRCTPushNotification.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D6884CFE242BAF4800BC548D /* libRCTPushNotification.a */; };
+		D6E07EB6241025FE00B6C339 /* libRCTCameraRoll.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D6E07E83241025EC00B6C339 /* libRCTCameraRoll.a */; };
 		D71FA63149D54AA2AEA8E712 /* libRNFirebase.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5750194CCEB14675A50D01CB /* libRNFirebase.a */; };
 		D739C02466FC463AA73EB0DC /* libRNFS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9168CA01010C435B8AB2F249 /* libRNFS.a */; };
 		DB213267F6994C63BCD8AE9B /* libReactNativeCameraKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C61F6FF7C66E49B3A8902F6E /* libReactNativeCameraKit.a */; };
@@ -523,10 +526,30 @@
 			remoteGlobalIDString = 358F4ED71D1E81A9004DF814;
 			remoteInfo = RCTBlob;
 		};
+		D6884CFD242BAF4800BC548D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D6884CE8242BAF4700BC548D /* RCTPushNotification.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 134814201AA4EA6300B7C361;
+			remoteInfo = RCTPushNotification;
+		};
+		D6884CFF242BAF4800BC548D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D6884CE8242BAF4700BC548D /* RCTPushNotification.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 3D05745F1DE6004600184BB4;
+			remoteInfo = "RCTPushNotification-tvOS";
+		};
+		D6E07E82241025EC00B6C339 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D6E07E77241025EB00B6C339 /* RCTCameraRoll.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 58B5115D1A9E6B3D00147676;
+			remoteInfo = RCTCameraRoll;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		008F07F21AC5B25A0029DE68 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
 		00C302A71ABCB8CE00DB3ED1 /* RCTActionSheet.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTActionSheet.xcodeproj; path = "../node_modules/react-native/Libraries/ActionSheetIOS/RCTActionSheet.xcodeproj"; sourceTree = "<group>"; };
 		00C302B51ABCB90400DB3ED1 /* RCTGeolocation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTGeolocation.xcodeproj; path = "../node_modules/react-native/Libraries/Geolocation/RCTGeolocation.xcodeproj"; sourceTree = "<group>"; };
 		00C302BB1ABCB91800DB3ED1 /* RCTImage.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTImage.xcodeproj; path = "../node_modules/react-native/Libraries/Image/RCTImage.xcodeproj"; sourceTree = "<group>"; };
@@ -536,6 +559,7 @@
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* BarberTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BarberTests.m; sourceTree = "<group>"; };
 		0359AC720D45402B9D0FEBF5 /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
+		03A3153675913352CB669CBB /* libPods-BarberTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-BarberTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		044C05F540DD4D29A3E01948 /* libStripeNative.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libStripeNative.a; sourceTree = "<group>"; };
 		0742ADA199A86965D5C29411 /* Pods-BarberTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BarberTests.debug.xcconfig"; path = "Target Support Files/Pods-BarberTests/Pods-BarberTests.debug.xcconfig"; sourceTree = "<group>"; };
 		0966DE251D964F859C07337D /* AvertaStd-SemiboldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "AvertaStd-SemiboldItalic.ttf"; path = "../src/assets/fonts/AvertaStd-SemiboldItalic.ttf"; sourceTree = "<group>"; };
@@ -550,7 +574,6 @@
 		13B07F961A680F5B00A75B9A /* Barber.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Barber.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = Barber/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = Barber/AppDelegate.m; sourceTree = "<group>"; };
-		13B07FB21A68108700A75B9A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Barber/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Barber/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Barber/main.m; sourceTree = "<group>"; };
@@ -560,9 +583,9 @@
 		184BF45A22AF920000357CB1 /* FBSDKCoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FBSDKCoreKit.framework; sourceTree = "<group>"; };
 		184BF45B22AF920100357CB1 /* FBSDKLoginKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FBSDKLoginKit.framework; sourceTree = "<group>"; };
 		184BF46C22AF938500357CB1 /* Bolts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Bolts.framework; sourceTree = "<group>"; };
+		184D95072465F5BF00B6EC8E /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		187292FB22FD969F00518AC2 /* FirebaseCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = FirebaseCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		188CEDEB22AFE024009E40D9 /* GoogleSignIn.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GoogleSignIn.framework; sourceTree = "<group>"; };
-		188CEDED22AFE062009E40D9 /* GoogleSignIn.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = GoogleSignIn.bundle; sourceTree = "<group>"; };
 		188CEDF022AFE0AB009E40D9 /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
 		188CEDF222AFE0B0009E40D9 /* SafariServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SafariServices.framework; path = System/Library/Frameworks/SafariServices.framework; sourceTree = SDKROOT; };
 		188CEDF422AFE0BA009E40D9 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
@@ -581,7 +604,6 @@
 		2D02E4901E0B4A5D006451C7 /* Barber-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Barber-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D16E6891FA4F8E400B85C8A /* libReact.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libReact.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D38C8A8A4C042F8B02C9DA0 /* AvenirNext-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "AvenirNext-Bold.ttf"; path = "../src/assets/fonts/AvenirNext-Bold.ttf"; sourceTree = "<group>"; };
-		323EE1B97E2D2503D22D6280 /* Pods_BarberTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BarberTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		32C18B987DBFB3CC176A8C38 /* Pods-Barber.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Barber.debug.xcconfig"; path = "Target Support Files/Pods-Barber/Pods-Barber.debug.xcconfig"; sourceTree = "<group>"; };
 		335D414545D546A91B0F62D2 /* Pods-Barber-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Barber-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-Barber-tvOSTests/Pods-Barber-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
 		3DD1FC80C76F430082947BC9 /* RNGoogleSignin.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNGoogleSignin.xcodeproj; path = "../node_modules/react-native-google-signin/ios/RNGoogleSignin.xcodeproj"; sourceTree = "<group>"; };
@@ -604,10 +626,10 @@
 		641AD9B276140C9AF088A0CE /* Pods-Barber.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Barber.release.xcconfig"; path = "Pods/Target Support Files/Pods-Barber/Pods-Barber.release.xcconfig"; sourceTree = "<group>"; };
 		669595B04DF04ABB92953D63 /* RNSVG.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNSVG.xcodeproj; path = "../node_modules/react-native-svg/ios/RNSVG.xcodeproj"; sourceTree = "<group>"; };
 		673C37BE1E4C425ABDA5C9CD /* libRNGestureHandler-tvOS.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = "libRNGestureHandler-tvOS.a"; sourceTree = "<group>"; };
-		6B7BFBC3B9E70865B578177D /* Pods_Barber.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Barber.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6C1D384772214852850062F3 /* AvertaStd-BlackItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "AvertaStd-BlackItalic.ttf"; path = "../src/assets/fonts/AvertaStd-BlackItalic.ttf"; sourceTree = "<group>"; };
 		709DF313FA7D4161B7B2FD8B /* AvertaStd-BoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "AvertaStd-BoldItalic.ttf"; path = "../src/assets/fonts/AvertaStd-BoldItalic.ttf"; sourceTree = "<group>"; };
 		756FC6DDC4E94BFC852DFA5A /* libRNPreferenceManager.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNPreferenceManager.a; sourceTree = "<group>"; };
+		778AD72EAD7B815F4E2E70E8 /* libPods-Barber-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Barber-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
 		7D3786AE6682419EB5177208 /* libRCTFBSDK.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRCTFBSDK.a; sourceTree = "<group>"; };
 		7D4A07DC5925420EAB2B005D /* AvertaStd-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "AvertaStd-Light.ttf"; path = "../src/assets/fonts/AvertaStd-Light.ttf"; sourceTree = "<group>"; };
@@ -634,12 +656,16 @@
 		B9F0FB8C1EFD438DAE8122C2 /* AvertaStd-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "AvertaStd-Bold.ttf"; path = "../src/assets/fonts/AvertaStd-Bold.ttf"; sourceTree = "<group>"; };
 		BE1547F32BE54816B1A0FFBB /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SimpleLineIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; };
 		BF526F4D6BC8422D9CE3F7AC /* AvertaStd-RegularItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "AvertaStd-RegularItalic.ttf"; path = "../src/assets/fonts/AvertaStd-RegularItalic.ttf"; sourceTree = "<group>"; };
+		BF9785EF0558A8BFBD9570FC /* libPods-Barber.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Barber.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BFD0BCD1A7C840F2BF35ED28 /* RNPreferenceManager.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNPreferenceManager.xcodeproj; path = "../node_modules/react-native-preference/ios/RNPreferenceManager.xcodeproj"; sourceTree = "<group>"; };
 		C61F6FF7C66E49B3A8902F6E /* libReactNativeCameraKit.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libReactNativeCameraKit.a; sourceTree = "<group>"; };
 		CF4C8EC40DF84B6FBE25538D /* AvertaStd-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "AvertaStd-Regular.ttf"; path = "../src/assets/fonts/AvertaStd-Regular.ttf"; sourceTree = "<group>"; };
 		D65D5A5AB1A2494696BE69A5 /* RNFS.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNFS.xcodeproj; path = "../node_modules/react-native-fs/RNFS.xcodeproj"; sourceTree = "<group>"; };
 		D680E0F1078A0D936768449A /* Pods-Barber.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Barber.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Barber/Pods-Barber.debug.xcconfig"; sourceTree = "<group>"; };
-		D6AFED710DAC4C412C51540E /* Pods_Barber_tvOSTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Barber_tvOSTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D6884CE8242BAF4700BC548D /* RCTPushNotification.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTPushNotification.xcodeproj; path = "../node_modules/react-native/Libraries/PushNotificationIOS/RCTPushNotification.xcodeproj"; sourceTree = "<group>"; };
+		D6884D2B242BAF9B00BC548D /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = SDKROOT; };
+		D6884D2E242BB01500BC548D /* Barber.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Barber.entitlements; path = Barber/Barber.entitlements; sourceTree = "<group>"; };
+		D6E07E77241025EB00B6C339 /* RCTCameraRoll.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTCameraRoll.xcodeproj; path = "../node_modules/react-native/Libraries/CameraRoll/RCTCameraRoll.xcodeproj"; sourceTree = "<group>"; };
 		D7A25617A312484896A29F62 /* libRNViewShot.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNViewShot.a; sourceTree = "<group>"; };
 		DAF9675C0EF34544B32D69DD /* AvertaStd-LightItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "AvertaStd-LightItalic.ttf"; path = "../src/assets/fonts/AvertaStd-LightItalic.ttf"; sourceTree = "<group>"; };
 		DDB52C27000E4CC99ED5C4F9 /* RNGestureHandler.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNGestureHandler.xcodeproj; path = "../node_modules/react-native-gesture-handler/ios/RNGestureHandler.xcodeproj"; sourceTree = "<group>"; };
@@ -658,7 +684,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				140ED2AC1D01E1AD002B40FF /* libReact.a in Frameworks */,
-				784F43B501B3446B1719DED4 /* Pods_BarberTests.framework in Frameworks */,
+				9301E871F3CBD451DE97E39B /* libPods-BarberTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -672,6 +698,7 @@
 				428B8C1C22F5A1BF008BDD1E /* FBSDKShareKit.framework in Frameworks */,
 				428B8C1B22F5A1AA008BDD1E /* FBSDKLoginKit.framework in Frameworks */,
 				428B8BC822F59E03008BDD1E /* libRNImagePicker.a in Frameworks */,
+				D6884D2C242BAF9B00BC548D /* UserNotifications.framework in Frameworks */,
 				18B3CD2B22E9F75C009341D4 /* libTPSStripe.a in Frameworks */,
 				188CEDF722AFE0C4009E40D9 /* libz.tbd in Frameworks */,
 				188CEDF522AFE0BA009E40D9 /* SystemConfiguration.framework in Frameworks */,
@@ -679,8 +706,10 @@
 				188CEDF122AFE0AB009E40D9 /* AddressBook.framework in Frameworks */,
 				188CEDEF22AFE096009E40D9 /* libRNGoogleSignin.a in Frameworks */,
 				184BF4A622AF986700357CB1 /* libRCTWebSocket.a in Frameworks */,
+				D6884D2D242BAFA400BC548D /* libRCTPushNotification.a in Frameworks */,
 				ED297163215061F000B7C4FE /* JavaScriptCore.framework in Frameworks */,
 				ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */,
+				0AD6595323AD380C00FE4421 /* libRCTFBSDK.a in Frameworks */,
 				11D1A2F320CAFA9E000508D9 /* libRCTAnimation.a in Frameworks */,
 				146834051AC3E58100842450 /* libReact.a in Frameworks */,
 				00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */,
@@ -692,6 +721,7 @@
 				139105C61AF99C1200B5F7CC /* libRCTSettings.a in Frameworks */,
 				832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */,
 				00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */,
+				D6E07EB6241025FE00B6C339 /* libRCTCameraRoll.a in Frameworks */,
 				188CEDEC22AFE024009E40D9 /* GoogleSignIn.framework in Frameworks */,
 				85A6A61AC1614634A685AC93 /* libBVLinearGradient.a in Frameworks */,
 				E408D1B057E14C88836AC81A /* libRNDatePicker.a in Frameworks */,
@@ -703,7 +733,7 @@
 				AF262E9A761A4CDAAEF57BDF /* libRNViewShot.a in Frameworks */,
 				D739C02466FC463AA73EB0DC /* libRNFS.a in Frameworks */,
 				D71FA63149D54AA2AEA8E712 /* libRNFirebase.a in Frameworks */,
-				53BC08C2A119936DBCBC5685 /* Pods_Barber.framework in Frameworks */,
+				7D25B3F855BAAF09F8194B5F /* libPods-Barber.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -731,7 +761,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2DF0FFEE2056DD460020B375 /* libReact.a in Frameworks */,
-				5AE37D76CBF99C611BD3785B /* Pods_Barber_tvOSTests.framework in Frameworks */,
+				677861F5BB8A8DD80DB0A38C /* libPods-Barber-tvOSTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -861,15 +891,14 @@
 		13B07FAE1A68108700A75B9A /* Barber */ = {
 			isa = PBXGroup;
 			children = (
-				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
+				D6884D2E242BB01500BC548D /* Barber.entitlements */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
-				13B07FB11A68108700A75B9A /* LaunchScreen.xib */,
 				13B07FB71A68108700A75B9A /* main.m */,
 				188CEE4322AFEE5F009E40D9 /* GoogleService-Info.plist */,
-				188CEDED22AFE062009E40D9 /* GoogleSignIn.bundle */,
+				184D95072465F5BF00B6EC8E /* LaunchScreen.storyboard */,
 			);
 			name = Barber;
 			sourceTree = "<group>";
@@ -1036,6 +1065,7 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D6884D2B242BAF9B00BC548D /* UserNotifications.framework */,
 				187292FB22FD969F00518AC2 /* FirebaseCore.framework */,
 				188CEDFA22AFE2C5009E40D9 /* GoogleSignInDependencies.framework */,
 				188CEDF622AFE0C4009E40D9 /* libz.tbd */,
@@ -1050,9 +1080,9 @@
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				ED2971642150620600B7C4FE /* JavaScriptCore.framework */,
 				2D16E6891FA4F8E400B85C8A /* libReact.a */,
-				6B7BFBC3B9E70865B578177D /* Pods_Barber.framework */,
-				D6AFED710DAC4C412C51540E /* Pods_Barber_tvOSTests.framework */,
-				323EE1B97E2D2503D22D6280 /* Pods_BarberTests.framework */,
+				BF9785EF0558A8BFBD9570FC /* libPods-Barber.a */,
+				778AD72EAD7B815F4E2E70E8 /* libPods-Barber-tvOSTests.a */,
+				03A3153675913352CB669CBB /* libPods-BarberTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1086,6 +1116,8 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				D6884CE8242BAF4700BC548D /* RCTPushNotification.xcodeproj */,
+				D6E07E77241025EB00B6C339 /* RCTCameraRoll.xcodeproj */,
 				4250757122F8255700137826 /* RCTFBSDK.xcodeproj */,
 				18B3CD2522E9F750009341D4 /* TPSStripe.xcodeproj */,
 				5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */,
@@ -1163,6 +1195,23 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		D6884CE9242BAF4700BC548D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D6884CFE242BAF4800BC548D /* libRCTPushNotification.a */,
+				D6884D00242BAF4800BC548D /* libRCTPushNotification-tvOS.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		D6E07E78241025EB00B6C339 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D6E07E83241025EC00B6C339 /* libRCTCameraRoll.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		FA225BCC07A88F8EBD31222B /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -1213,7 +1262,7 @@
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				52DE346B1644CD0367B506F1 /* [CP] Embed Pods Frameworks */,
+				7C85653AC25EB867060C2E8D /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -1272,10 +1321,12 @@
 				TargetAttributes = {
 					00E356ED1AD99517003FC87E = {
 						CreatedOnToolsVersion = 6.2;
+						DevelopmentTeam = GFTCWCY48G;
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
 						DevelopmentTeam = GFTCWCY48G;
+						ProvisioningStyle = Automatic;
 					};
 					2D02E47A1E0B4A5D006451C7 = {
 						CreatedOnToolsVersion = 8.2.1;
@@ -1359,6 +1410,10 @@
 					ProjectRef = ADBDB91F1DFEBF0600ED6528 /* RCTBlob.xcodeproj */;
 				},
 				{
+					ProductGroup = D6E07E78241025EB00B6C339 /* Products */;
+					ProjectRef = D6E07E77241025EB00B6C339 /* RCTCameraRoll.xcodeproj */;
+				},
+				{
 					ProductGroup = 4250757222F8255700137826 /* Products */;
 					ProjectRef = 4250757122F8255700137826 /* RCTFBSDK.xcodeproj */;
 				},
@@ -1377,6 +1432,10 @@
 				{
 					ProductGroup = 00C302D41ABCB9D200DB3ED1 /* Products */;
 					ProjectRef = 00C302D31ABCB9D200DB3ED1 /* RCTNetwork.xcodeproj */;
+				},
+				{
+					ProductGroup = D6884CE9242BAF4700BC548D /* Products */;
+					ProjectRef = D6884CE8242BAF4700BC548D /* RCTPushNotification.xcodeproj */;
 				},
 				{
 					ProductGroup = 139105B71AF99BAD00B5F7CC /* Products */;
@@ -1857,6 +1916,27 @@
 			remoteRef = ADBDB9261DFEBF0700ED6528 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		D6884CFE242BAF4800BC548D /* libRCTPushNotification.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRCTPushNotification.a;
+			remoteRef = D6884CFD242BAF4800BC548D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		D6884D00242BAF4800BC548D /* libRCTPushNotification-tvOS.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libRCTPushNotification-tvOS.a";
+			remoteRef = D6884CFF242BAF4800BC548D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		D6E07E83241025EC00B6C339 /* libRCTCameraRoll.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRCTCameraRoll.a;
+			remoteRef = D6E07E82241025EC00B6C339 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
@@ -1872,7 +1952,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
-				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
 				7CCED30A075A401DB346E6C0 /* AvenirNext-Bold.ttf in Resources */,
 				3482468D6F0D480391178547 /* AvertaStandard-Regular.otf in Resources */,
 				AB21059C70A244F6B86D39B7 /* AvertaStd-Black.ttf in Resources */,
@@ -1892,7 +1971,6 @@
 				99269672FF14460AA5ABAA98 /* AvertaStd-SemiboldItalic.ttf in Resources */,
 				780CFEFB591540BBBF3A7B07 /* AvertaStd-Thin.ttf in Resources */,
 				188CEE4422AFEE5F009E40D9 /* GoogleService-Info.plist in Resources */,
-				188CEDEE22AFE062009E40D9 /* GoogleSignIn.bundle in Resources */,
 				5F56EC0A9F354766B9520704 /* AvertaStd-ThinItalic.ttf in Resources */,
 				769016B780FF44FB81EC9534 /* AntDesign.ttf in Resources */,
 				CE545947ABBD4D6C9D0C7649 /* Entypo.ttf in Resources */,
@@ -1905,6 +1983,7 @@
 				33D109856476451E99B96004 /* Foundation.ttf in Resources */,
 				14AD9A2968144F5AAC997B4C /* Ionicons.ttf in Resources */,
 				A806A05A5F80492D946A83B5 /* MaterialCommunityIcons.ttf in Resources */,
+				184D95082465F5BF00B6EC8E /* LaunchScreen.storyboard in Resources */,
 				A3BB71ABE113478995CD3E18 /* MaterialIcons.ttf in Resources */,
 				1D496B91C63F4EFFBB83AB93 /* Octicons.ttf in Resources */,
 				8EC8345F81334BB683DAF3FB /* SimpleLineIcons.ttf in Resources */,
@@ -1943,7 +2022,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
+			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh\n\nif [ \"${CONFIGURATION}\" == \"Debug\" ]; then\n export SKIP_BUNDLING=true\nfi\n";
 		};
 		21123AFE9B8A33FE8A07E573 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1995,26 +2074,22 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		52DE346B1644CD0367B506F1 /* [CP] Embed Pods Frameworks */ = {
+		7C85653AC25EB867060C2E8D /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Barber/Pods-Barber-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/GoogleUtilities/GoogleUtilities.framework",
-				"${BUILT_PRODUCTS_DIR}/Stripe/Stripe.framework",
-				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
+				"${PODS_ROOT}/Target Support Files/Pods-Barber/Pods-Barber-resources.sh",
+				"${PODS_CONFIGURATION_BUILD_DIR}/Stripe/Stripe.bundle",
 			);
-			name = "[CP] Embed Pods Frameworks";
+			name = "[CP] Copy Pods Resources";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleUtilities.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Stripe.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Stripe.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Barber/Pods-Barber-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Barber/Pods-Barber-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		A3EFED51EE197A26C53FB042 /* [CP] Check Pods Manifest.lock */ = {
@@ -2087,24 +2162,13 @@
 		};
 /* End PBXTargetDependency section */
 
-/* Begin PBXVariantGroup section */
-		13B07FB11A68108700A75B9A /* LaunchScreen.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				13B07FB21A68108700A75B9A /* Base */,
-			);
-			name = LaunchScreen.xib;
-			path = Barber;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
-
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 0742ADA199A86965D5C29411 /* Pods-BarberTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				DEVELOPMENT_TEAM = GFTCWCY48G;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -2151,6 +2215,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = GFTCWCY48G;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-fbsdk/ios/RCTFBSDK/**",
@@ -2192,7 +2257,10 @@
 			baseConfigurationReference = 32C18B987DBFB3CC176A8C38 /* Pods-Barber.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CURRENT_PROJECT_VERSION = 1;
+				CODE_SIGN_ENTITLEMENTS = Barber/Barber.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 12;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = GFTCWCY48G;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -2203,21 +2271,43 @@
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/../node_modules/react-native-fbsdk/ios/RCTFBSDK/**",
 					"$(SRCROOT)/../node_modules/react-native-gesture-handler/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
-					"$(SRCROOT)..\node_modules\neact-native-linear-gradientBVLinearGradient",
-					"$(SRCROOT)..\node_modules\neact-native-date-pickeriosRNDatePicker",
-					"$(SRCROOT)..\node_modules\neact-native-preferenceios",
-					"$(SRCROOT)..\node_modules\neact-native-fbsdkiosRCTFBSDK/**",
-					"$(SRCROOT)..\node_modules\neact-native-image-pickerios",
-					"$(SRCROOT)..\node_modules\neact-native-google-signiniosRNGoogleSignin",
-					"$(SRCROOT)..\node_modules\neact-native-vector-iconsRNVectorIconsManager",
-					"$(SRCROOT)..\node_modules\neact-native-camera-kitioslibReactNativeCameraKit",
-					"$(SRCROOT)..\node_modules\neact-native-svgios/**",
-					"$(SRCROOT)..\node_modules\neact-native-view-shotios",
-					"$(SRCROOT)..\node_modules\neact-native-fs/**",
-					"$(SRCROOT)..\node_modules\neact-native-stripeStripeNative/**",
+					"$(SRCROOT)..",
+					ode_modules,
+					"eact-native-linear-gradientBVLinearGradient",
+					"$(SRCROOT)..",
+					ode_modules,
+					"eact-native-date-pickeriosRNDatePicker",
+					"$(SRCROOT)..",
+					ode_modules,
+					"eact-native-preferenceios",
+					"$(SRCROOT)..",
+					ode_modules,
+					"$(SRCROOT)..",
+					ode_modules,
+					"eact-native-image-pickerios",
+					"$(SRCROOT)..",
+					ode_modules,
+					"eact-native-google-signiniosRNGoogleSignin",
+					"$(SRCROOT)..",
+					ode_modules,
+					"eact-native-vector-iconsRNVectorIconsManager",
+					"$(SRCROOT)..",
+					ode_modules,
+					"eact-native-camera-kitioslibReactNativeCameraKit",
+					"$(SRCROOT)..",
+					ode_modules,
+					"eact-native-svgios/**",
+					"$(SRCROOT)..",
+					ode_modules,
+					"eact-native-view-shotios",
+					"$(SRCROOT)..",
+					ode_modules,
+					"eact-native-fs/**",
+					"$(SRCROOT)..",
+					ode_modules,
+					"eact-native-stripeStripeNative/**",
 					"$(SRCROOT)/../node_modules/react-native-firebase/ios/RNFirebase/**",
 				);
 				INFOPLIST_FILE = Barber/Info.plist;
@@ -2229,6 +2319,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.reactjs.native.Barber;
 				PRODUCT_NAME = Barber;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -2238,7 +2329,10 @@
 			baseConfigurationReference = 46E1CAEA1D440FFD47BDFCA8 /* Pods-Barber.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CURRENT_PROJECT_VERSION = 1;
+				CODE_SIGN_ENTITLEMENTS = Barber/Barber.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 12;
 				DEVELOPMENT_TEAM = GFTCWCY48G;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2248,21 +2342,43 @@
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/../node_modules/react-native-fbsdk/ios/RCTFBSDK/**",
 					"$(SRCROOT)/../node_modules/react-native-gesture-handler/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
-					"$(SRCROOT)..\node_modules\neact-native-linear-gradientBVLinearGradient",
-					"$(SRCROOT)..\node_modules\neact-native-date-pickeriosRNDatePicker",
-					"$(SRCROOT)..\node_modules\neact-native-preferenceios",
-					"$(SRCROOT)..\node_modules\neact-native-fbsdkiosRCTFBSDK/**",
-					"$(SRCROOT)..\node_modules\neact-native-image-pickerios",
-					"$(SRCROOT)..\node_modules\neact-native-google-signiniosRNGoogleSignin",
-					"$(SRCROOT)..\node_modules\neact-native-vector-iconsRNVectorIconsManager",
-					"$(SRCROOT)..\node_modules\neact-native-camera-kitioslibReactNativeCameraKit",
-					"$(SRCROOT)..\node_modules\neact-native-svgios/**",
-					"$(SRCROOT)..\node_modules\neact-native-view-shotios",
-					"$(SRCROOT)..\node_modules\neact-native-fs/**",
-					"$(SRCROOT)..\node_modules\neact-native-stripeStripeNative/**",
+					"$(SRCROOT)..",
+					ode_modules,
+					"eact-native-linear-gradientBVLinearGradient",
+					"$(SRCROOT)..",
+					ode_modules,
+					"eact-native-date-pickeriosRNDatePicker",
+					"$(SRCROOT)..",
+					ode_modules,
+					"eact-native-preferenceios",
+					"$(SRCROOT)..",
+					ode_modules,
+					"$(SRCROOT)..",
+					ode_modules,
+					"eact-native-image-pickerios",
+					"$(SRCROOT)..",
+					ode_modules,
+					"eact-native-google-signiniosRNGoogleSignin",
+					"$(SRCROOT)..",
+					ode_modules,
+					"eact-native-vector-iconsRNVectorIconsManager",
+					"$(SRCROOT)..",
+					ode_modules,
+					"eact-native-camera-kitioslibReactNativeCameraKit",
+					"$(SRCROOT)..",
+					ode_modules,
+					"eact-native-svgios/**",
+					"$(SRCROOT)..",
+					ode_modules,
+					"eact-native-view-shotios",
+					"$(SRCROOT)..",
+					ode_modules,
+					"eact-native-fs/**",
+					"$(SRCROOT)..",
+					ode_modules,
+					"eact-native-stripeStripeNative/**",
 					"$(SRCROOT)/../node_modules/react-native-firebase/ios/RNFirebase/**",
 				);
 				INFOPLIST_FILE = Barber/Info.plist;
@@ -2274,6 +2390,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.reactjs.native.Barber;
 				PRODUCT_NAME = Barber;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;

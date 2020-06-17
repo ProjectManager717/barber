@@ -89,12 +89,13 @@ export default class Appointments extends Component {
             justifyContent: "center"
         }}>
             <View style={{
+                width:"100%",
                 height: "100%",
                 alignItems: "center",
                 justifyContent: "center"
             }}>
                 <Image source={item.img} style={{resizeMode: "contain", height: 25, width: 25}}/>
-                <Text style={{fontWeight: "bold", fontSize: 16, color: "white"}}>
+                <Text style={{fontWeight: "bold", fontSize: 16, color: "white",width:"100%",textAlign:"center"}}>
                     {item.title}
                 </Text>
             </View>
@@ -138,7 +139,7 @@ export default class Appointments extends Component {
         if(status==="cancelled")
             Appointmentstatus=5;
         if(status==="noshow")
-            Appointmentstatus=2;
+            Appointmentstatus=5;
         this.setState({showLoading:true})
         var details = {
             appointment_id: appointmentId,
@@ -352,7 +353,7 @@ export default class Appointments extends Component {
                             <View style={{width: "100%", backgroundColor: "#F7001E", height: "100%"}}>
                                 {this.renderRowBox({
                                     img: require("../../../assets/images/x.png"),
-                                    title: "Cancelled!"
+                                    title: "Canceled!"
                                 })}
                             </View>
                         </View>

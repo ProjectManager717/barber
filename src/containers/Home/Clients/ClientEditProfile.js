@@ -198,6 +198,7 @@ export default class ClientEditProfile extends Component {
     };
 
     saveData = () => {
+
         //this.props.navigation.push("PaymentMethod");
         if (this.state.isConnected) {
             if (this.state.userName === "" || this.state.userAddress === "" || this.state.userName === "Enter your Name" || this.state.userAddress === "Enter your address") {
@@ -208,7 +209,7 @@ export default class ClientEditProfile extends Component {
                 let requestBody = new FormData();
                 requestBody.append("client_id", Preference.get("userId"))
                 requestBody.append("address", this.state.userAddress)
-                requestBody.append("username", this.state.userName)
+                requestBody.append("firstname", this.state.userName)
 
                 //requestBody.append("portfolios[]", this.state.userName)
 
@@ -271,7 +272,7 @@ export default class ClientEditProfile extends Component {
             console.log('Response = ', response);
 
             if (response.didCancel) {
-                console.log('User cancelled image picker');
+                console.log('User canceled image picker');
             } else if (response.error) {
                 console.log('ImagePicker Error: ', response.error);
             } else if (response.customButton) {
@@ -373,7 +374,7 @@ export default class ClientEditProfile extends Component {
                         <View style={[styles.row, {height: 200}]}>
                             {this.renderGooglePlacesInput()}
                         </View>
-                        <RedButton label="SAVE" onPress={() => {
+                        <RedButton textStyle={{width:"100%",textAlign:"center"}} label="SAVE" onPress={() => {
                             console.log("onSavePress()")
                             this.saveData()
                         }} style={styles.btnContainer}/>

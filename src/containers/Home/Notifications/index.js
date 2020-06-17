@@ -199,6 +199,8 @@ export default class Notifications extends Component {
                                     fontSize: 13,
                                     fontWeight:"bold",
                                     marginTop: 4,
+                                    width:"100%",
+                                    textAlign:"center",
                                     color: textColorTitle
                                 }}>{item.notification_type}</Text>
                         </View>
@@ -293,6 +295,8 @@ export default class Notifications extends Component {
                                     fontSize: 13,
                                     fontWeight:"bold",
                                     marginTop: 4,
+                                    width:"100%",
+                                    textAlign:"center",
                                     color: textColorTitle
                                 }}>{item.notification_type}</Text>
                         </View>

@@ -281,8 +281,7 @@ class ForgetPasswordScreen extends Component {
         const isValidPasswordConfirm = repassword.length >= 6 && (password === repassword);
         return (
 
-            <View style={styles.container}
-            >
+            <View style={styles.container}>
                 {/*<View style={styles.bottomContainer}/>*/}
                 {this.state.sendMail && <SafeAreaView style={styles.parentContainer}>
                     <View style={styles.closeContainer}>
@@ -293,7 +292,7 @@ class ForgetPasswordScreen extends Component {
                                source={require("../../../assets/images/logo.png")}
                         />
                     </View>
-                    <KeyboardAwareScrollView style={styles.mainContainer}>
+                    <View style={styles.mainContainer}>
                         <View style={[styles.subContainer]}>
                             <Text style={styles.whiteBoldBigText}>
                                 Forgot Password • {this.state.userName}
@@ -309,10 +308,10 @@ class ForgetPasswordScreen extends Component {
                             />
                         </View>
                         <View style={styles.buttonsContainer}>
-                            <RedButton style={styles.loginButton} label="Send Email"
+                            <RedButton textStyle={{width:"100%",textAlign:"center"}} style={[styles.loginButtontext,{width:"100%",textAlign:"center"}]} label="Send Email"
                                        onPress={this.showResetPassword}/>
                         </View>
-                    </KeyboardAwareScrollView>
+                    </View>
                 </SafeAreaView>}
 
                 {this.state.resetPassword && <SafeAreaView style={styles.parentContainer}>
@@ -324,7 +323,7 @@ class ForgetPasswordScreen extends Component {
                                source={require("../../../assets/images/logo.png")}
                         />
                     </View>
-                    <KeyboardAwareScrollView style={styles.mainContainer}>
+                    <View style={styles.mainContainer}>
                         <View style={[styles.subContainer, {margginTop: 10}]}>
                             <Text style={styles.whiteBoldBigText}>
                                 Reset Password • {this.state.userName}
@@ -349,9 +348,9 @@ class ForgetPasswordScreen extends Component {
                             />
                         </View>
                         <View style={styles.buttonsContainer}>
-                            <RedButton style={styles.loginButton} label="Reset" onPress={this.Reset}/>
+                            <RedButton style={styles.loginButton} label="Reset" onPress={this.Reset} textStyle={{width:"100%",textAlign:"center"}} />
                         </View>
-                    </KeyboardAwareScrollView>
+                    </View>
                 </SafeAreaView>}
                 <Modal
                     isVisible={this.state.isVisible}

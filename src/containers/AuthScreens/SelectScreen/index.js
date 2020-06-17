@@ -3,8 +3,8 @@ import { ImageBackground, View, Text, Image } from 'react-native';
 import { SafeAreaView } from 'react-navigation';
 import { SmallWhiteButton } from '../../../components';
 import { styles } from './styles';
-
-import Preference from 'react-native-preference';
+//import {request,check, PERMISSIONS, RESULTS} from 'react-native-permissions';
+import Preference from "react-native-preference";
 
 class SelectScreen extends Component {
   constructor(props) {
@@ -20,11 +20,13 @@ class SelectScreen extends Component {
   onClient = () => {
     this.props.navigation.navigate('InitialScreen',{User:"Client"});
   };
-    
-    componentDidMount(): void {
+
+    componentDidMount() {
+
         this.closeScreen();
+        //this.getPermissions()
     }
-    
+
     closeScreen() {
         if (Preference.get("clientlogin") === true) {
             this.props.navigation.navigate("ClientTabNavigator");
@@ -32,7 +34,7 @@ class SelectScreen extends Component {
             this.props.navigation.navigate("TabNavigator");
         }
     }
-    
+
   render() {
     return (
       <ImageBackground
@@ -43,16 +45,16 @@ class SelectScreen extends Component {
         <SafeAreaView style={styles.container}>
           <View style={styles.mainContainer}>
             <View style={styles.labelContainer}>
-              <Text style={styles.whiteBoldText}>
+              <Text style={[styles.whiteBoldText,{width:"50%",height:20,textAlign:"right"}]}>
                 {'Supreme barbers. '}
               </Text>
-              <Text style={styles.whiteTinyText}>
-                {' Supreme cuts.'}
+              <Text style={[styles.whiteTinyText,{width:"50%",height:20,textAlign:"left"}]}>
+                {'Supreme cuts.'}
               </Text>
             </View>
             <View style={styles.buttonsContainer}>
-              <SmallWhiteButton label="Barber" onPress={this.onBarber} />
-              <SmallWhiteButton label="Client" onPress={this.onClient} />
+              <SmallWhiteButton label="Barber" onPress={this.onBarber} textStyle={{width:60,textAlign:"center"}} />
+              <SmallWhiteButton label="Client" onPress={this.onClient} textStyle={{width:60,textAlign:"center"}}  />
             </View>
           </View>
           <View style={styles.bottomIconContainer}>

@@ -7,12 +7,23 @@ import Preference from "react-native-preference";
 import {Header} from "react-native-elements";
 import CheckBoxSquare from "../../../components/CheckBox";
 import {constants} from "../../../utils/constants";
+import ImagePicker from 'react-native-image-picker';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+
+const options = {
+    title: 'Select Image',
+    storageOptions: {
+        skipBackup: true,
+        path: 'images',
+    },
+};
 
 export default class MobilePaySettings extends Component {
     constructor(props) {
         super(props);
         console.disableYellowBox = true;
         this.state = {
+            phone:'',
             showLoading: false,
             firstName: "",
             lastName: "",
@@ -29,7 +40,10 @@ export default class MobilePaySettings extends Component {
             bankAccountHolderName: "",
             bankRoutingNumber: "",
             bankAccountNumber: "",
-            text: 'Useless Placeholder'
+            ssn_last_4:'',
+            text: 'Useless Placeholder',
+            avatarSource: {uri:"Identity front Image"},
+            avatarSource1:{uri:"Identity back Image"},
         };
     }
 
@@ -52,8 +66,11 @@ export default class MobilePaySettings extends Component {
             this.setState({DOB: txt});
             Preference.set("userDOB",txt)
         }
-        if (itm.hintText === "Personal ID Number") {
+       /* if (itm.hintText === "Personal ID Number") {
             this.setState({personIdNumber: txt});
+        }*/
+        if (itm.hintText === "Phone") {
+            this.setState({phone: txt});
         }
         if (itm.hintText === "Street Address") {
             this.setState({streetAddress: txt});
@@ -79,9 +96,63 @@ export default class MobilePaySettings extends Component {
         if (itm.hintText === "Bank Account Number") {
             this.setState({bankAccountNumber: txt});
         }
+        if (itm.hintText === "Last 4 SSN Number") {
+            this.setState({ssn_last_4: txt});
+        }
+
+    }
+
+
+    selectImage = () => {
+        ImagePicker.showImagePicker(options, (response) => {
+            console.log('Response = ', response);
+
+            if (response.didCancel) {
+                console.log('User canceled image picker');
+            } else if (response.error) {
+                console.log('ImagePicker Error: ', response.error);
+            } else if (response.customButton) {
+                console.log('User tapped custom button: ', response.customButton);
+            } else {
+                const source = {uri: response.uri};
+
+                // You can also display the image using data:
+                // const source = { uri: 'data:image/jpeg;base64,' + response.data };
+
+                this.setState({avatarSource: source});
+            }
+        });
+    }
+
+    selectImage1 = () => {
+        ImagePicker.showImagePicker(options, (response) => {
+            console.log('Response = ', response);
+
+            if (response.didCancel) {
+                console.log('User canceled image picker');
+            } else if (response.error) {
+                console.log('ImagePicker Error: ', response.error);
+            } else if (response.customButton) {
+                console.log('User tapped custom button: ', response.customButton);
+            } else {
+                const source = {uri: response.uri};
+
+                // You can also display the image using data:
+                // const source = { uri: 'data:image/jpeg;base64,' + response.data };
+
+                this.setState({avatarSource1: source});
+            }
+        });
     }
 
     renderRowInput(item) {
+
+       /* if(item.hintText==="Front Identity")
+        {
+            this.selectImage()
+        }else if(item.hintText==="Back Identity"){
+            this.selectImage1()
+        }*/
         return <View style={{flex: 1, flexDirection: 'column', width: "100%"}}>
             <View style={{flexDirection: "row", alignItems: "center"}}>
                 <TextInput
@@ -144,10 +215,45 @@ export default class MobilePaySettings extends Component {
             }
 
             this.setState({showLoading: true})
-            var details = {
+            let requestBody = new FormData();
+            requestBody.append("barberEmail",Preference.get("userEmail"))
+            requestBody.append("firstName", this.state.firstName)
+            requestBody.append("lastName", this.state.lastName)
+            requestBody.append("phone_no", this.state.phone)
+            requestBody.append("accountHolderName",this.state.bankAccountHolderName)
+            requestBody.append("accountNumber", this.state.bankAccountNumber)
+            requestBody.append("routingNumber",this.state.bankRoutingNumber)
+            requestBody.append("dateOfBirthDay", dobSplit[1])
+            requestBody.append("dateOfBirthMonth", dobSplit[0])
+            requestBody.append("dateOfBirthYear", dobSplit[2])
+            requestBody.append("streeAddress", this.state.streetAddress)
+            requestBody.append("city", this.state.city)
+            requestBody.append("country", "US")
+            requestBody.append("state",  this.state.region)
+            requestBody.append("zipcode", this.state.zipCode)
+            //requestBody.append("id_number", this.state.personIdNumber)
+            requestBody.append("ssn_last_4", this.state.ssn_last_4)
+            if(!(this.state.avatarSource.uri===""))
+            {
+                requestBody.append("identity_front", {
+                    uri: this.state.avatarSource.uri,
+                    name: "imageIdentity_back.png",
+                    type: 'image/jpeg'
+                })
+            }
+            if(!(this.state.avatarSource1.uri===""))
+            {
+                requestBody.append("identity_back", {
+                    uri: this.state.avatarSource1.uri,
+                    name: "imageIdentity_back.png",
+                    type: 'image/jpeg'
+                })
+            }
+           /* var details = {
                 barberEmail: Preference.get("userEmail"),
                 firstName: this.state.firstName,
                 lastName: this.state.lastName,
+                phone_no:this.state.phone,
                 accountHolderName: this.state.bankAccountHolderName,
                 accountNumber: this.state.bankAccountNumber,
                 routingNumber: this.state.bankRoutingNumber,
@@ -159,6 +265,8 @@ export default class MobilePaySettings extends Component {
                 country: "US",
                 state: this.state.region,
                 zipcode: this.state.zipCode,
+                id_number: this.state.personIdNumber,
+                ssn_last_4: this.state.ssn_last_4,
             };
             console.log("Credentials::",JSON.stringify(details));
             var formBody = [];
@@ -167,14 +275,14 @@ export default class MobilePaySettings extends Component {
                 var encodedValue = encodeURIComponent(details[property]);
                 formBody.push(encodedKey + "=" + encodedValue);
             }
-            formBody = formBody.join("&");
+            formBody = formBody.join("&");*/
             fetch(constants.BarberAddMobilePaySetting, {
                 method: 'POST',
                 headers: {
+                    'Content-Type': 'multipart/form-data',
                     'Accept': 'application/json',
-                    'Content-Type': 'application/x-www-form-urlencoded'
                 },
-                body: formBody
+                body: requestBody
             }).then(response => response.json())
                 .then(response => {
                     console.log("updateBookingPrefrence-->", "-" + JSON.stringify(response));
@@ -224,8 +332,12 @@ export default class MobilePaySettings extends Component {
             Alert.alert("Missing Field", "Please enter Date of birth.");
             return false;
         }
-        if (this.state.personIdNumber === "") {
+        /*if (this.state.personIdNumber === "") {
             Alert.alert("Missing Field", "Please enter person Id number.");
+            return false;
+        }*/
+        if (this.state.phone === "") {
+            Alert.alert("Missing Field", "Please enter phone number.");
             return false;
         }
         if (this.state.streetAddress === "") {
@@ -261,6 +373,19 @@ export default class MobilePaySettings extends Component {
             Alert.alert("Missing Field", "Please enter bank Account Number.");
             return false;
         }
+        if (this.state.ssn_last_4 === "") {
+            Alert.alert("Missing Field", "Please enter Last 4 SSN Number.");
+            return false;
+        }
+        if (this.state.avatarSource.uri === "") {
+            Alert.alert("Missing Field", "Please attach front identity picture.");
+            return false;
+        }
+        if (this.state.avatarSource1.uri === "") {
+            Alert.alert("Missing Field", "Please attach back identity picture.");
+            return false;
+        }
+
         return true;
     }
 
@@ -291,7 +416,7 @@ export default class MobilePaySettings extends Component {
             />
 
 
-            <ScrollView>
+            <KeyboardAwareScrollView>
                 <View style={{
                     flex: 1, justifyContent: 'center',
                     alignItems: 'center',
@@ -335,11 +460,38 @@ export default class MobilePaySettings extends Component {
                         showIC: false,
                         value: this.state.DOB,
                     })}
-                    {this.renderRowInput({
+                     {this.renderRowInput({
+                        hintText: "Phone",
+                        showIC: false,
+                        value: this.state.phone,
+                    })}
+                   {/* {this.renderRowInput({
                         hintText: "Personal ID Number",
                         showIC: true,
                         value: this.state.personIdNumber,
+                    })}*/}
+                    <TouchableOpacity onPress={()=>{this.selectImage()}} style={{flex: 1, flexDirection: 'column', width: "100%"}}>
+                        <View style={{flexDirection: "row", alignItems: "center"}}>
+                            <Text style={{width:"70%",height: 40, color: "grey", marginStart: 50,textAlignVertical: "center"}}>{this.state.avatarSource.uri}</Text>
+                        </View>
+                        <View style={{height: 0.5, backgroundColor: "#52525D", marginStart: 50}}></View>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={()=>{this.selectImage1()}} style={{flex: 1, flexDirection: 'column', width: "100%"}}>
+                        <View style={{flexDirection: "row", alignItems: "center"}}>
+                            <Text style={{width:"70%",height: 40, color: "grey", marginStart: 50,textAlignVertical: "center"}}>{this.state.avatarSource1.uri}</Text>
+                        </View>
+                        <View style={{height: 0.5, backgroundColor: "#52525D", marginStart: 50}}></View>
+                    </TouchableOpacity>
+                   {/* {this.renderRowInput({
+                        hintText: "Front Identity",
+                        showIC: true,
+                        value: this.state.avatarSource.uri,
                     })}
+                    {this.renderRowInput({
+                        hintText: "Back Identity",
+                        showIC: true,
+                        value: this.state.avatarSource1.uri,
+                    })}*/}
                     <View style={[globalStyles.rowBackground, styles.col, {marginTop: 20, height: 30, width: 320}]}>
                         {this.renderRowMP({
                             title: "ADDRESS",
@@ -408,6 +560,11 @@ export default class MobilePaySettings extends Component {
                         showIC: false,
                         value: this.state.bankAccountNumber,
                     })}
+                     {this.renderRowInput({
+                        hintText: "Last 4 SSN Number",
+                        showIC: false,
+                        value: this.state.ssn_last_4,
+                    })}
                 </View>
                 <TouchableOpacity onPress={() => {
                     this.SaveMobilePay()
@@ -421,7 +578,7 @@ export default class MobilePaySettings extends Component {
                     <Text style={globalStyles.buttonText}>DONE</Text>
                 </TouchableOpacity>
 
-            </ScrollView>
+            </KeyboardAwareScrollView>
             {this.state.showLoading && <View style={{
                 width: "100%",
                 height: "100%",

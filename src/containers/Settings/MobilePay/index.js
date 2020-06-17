@@ -98,7 +98,9 @@ export default class MobilePay extends Component {
                             alignContent: "center",
                             fontSize: 20,
                             fontWeight: "bold",
-                            marginTop: 60
+                            marginTop: 60,
+                            width:"100%",
+                            textAlign:"center",
                         }}>{"GET STARTED TODAY!"}</Text>
                         <Image resizeMode={"contain"} source={require("../../../assets/images/down_arrow.png")}
                                style={{width: 12}}/>

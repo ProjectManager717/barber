@@ -19,6 +19,7 @@ import Preference from "react-native-preference";
 import {AirbnbRating} from "react-native-elements";
 import {constants} from "../../utils/constants";
 import {NavigationActions} from "react-navigation";
+import firebase from 'react-native-firebase'
 
 
 const {height, width} = Dimensions.get("window");
@@ -59,29 +60,45 @@ export default class Home extends Component {
     componentDidMount(): void {
         const {navigation} = this.props;
 
+        this.initDeepLinking()
 
-        if (Platform.OS === 'android') {
-            Linking.getInitialURL().then(url => {
-                if (url) {
-                    this.navigate(url);
-                }
-            }).catch(error => console.log("Deep linking error: " + error));
-            Linking.addEventListener('url', this.handleOpenURL);
-        } else {
-            Linking.addEventListener('url', this.handleOpenURL);
-        }
         this.focusListener = navigation.addListener("didFocus", payload => {
             this.getBarberDetails();
         });
         //this.getBarberDetails();
     }
+
+    initDeepLinking() {
+        if (Platform.OS === 'android') {
+            Linking.getInitialURL().then(url => {
+                if (url) {
+                    this.navigate(url);
+                }
+            })
+        }
+
+        Linking.addEventListener('url', this.handleOpenURL);
+        firebase.links().getInitialLink().then(url => {
+            console.log('initDeepLinking-getInitialLink', JSON.stringify(url))
+            if (url) {
+                this.navigate(url);
+            }
+        })
+        this.firebaseUniversalLinking = firebase.links().onLink(url => {
+            console.log('initDeepLinking-firebase', JSON.stringify(url))
+            if (url) {
+                this.navigate(url);
+            }
+        })
+    }
+
     handleOpenURL = (event) => {
         this.navigate(event.url);
     }
-    componentWillUnmount(): void {
-        Linking.removeEventListener('url', this.handleOpenURL);
-    }
+
     navigate = (url) => {
+        const { navigate } = this.props.navigation;
+
         console.log("Deep linking1: " + JSON.stringify(url))
 
         const route = url.replace('clypr://', '');
@@ -90,14 +107,20 @@ export default class Home extends Component {
         console.log("Deep linking3: " + JSON.stringify(params))
 
         if (params[0] == 'profile') {
-            this.props.navigation.navigate({ routeName: 'Profile' ,
+            navigate({ routeName: 'Profile' ,
                 params:{
                     id: params[1],
                     isShared: true,
                 }
             })
         }
-    };
+    }
+
+    componentWillUnmount(): void {
+        Linking.removeEventListener('url', this.handleOpenURL);
+    }
+
+
     getBarberDetails() {
         this.setState({showLoading: true})
         fetch(constants.BarbersProfile + "/" + Preference.get("userId") + "/profile", {
@@ -220,7 +243,7 @@ export default class Home extends Component {
                         <TopTabs
                             data={[
                                 () => <GraphComp/>,
-                                () => <Clients/>,
+                                () => <Clients props={this.props}/>,
                                 () => <Notifications/>
                             ]}
                         />
@@ -284,7 +307,8 @@ const styles = StyleSheet.create({
     name: {
         fontSize: 18,
         fontWeight: "bold",
-        color: "white"
+        color: "white",
+        width:180,textAlign:"center",
     },
     button: {
         width: width / 2.2,
@@ -295,7 +319,7 @@ const styles = StyleSheet.create({
         height: height / 19,
         alignItems: "center"
     },
-    buttonText: {color: "white", fontSize: 15, fontWeight: "500"},
+    buttonText: {color: "white", fontSize: 15, fontWeight: "500",width:100,textAlign:"center"},
     review: {
         flexDirection: "row",
         justifyContent: "space-between",
