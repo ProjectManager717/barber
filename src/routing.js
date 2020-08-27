@@ -255,7 +255,7 @@ const AuthStack = createStackNavigator({
 }, {
     initialRouteName: 'SplashScreen',
     //initialRouteName: 'TabNavigator',
-    //initialRouteName: 'ClientTabNavigator',
+    // initialRouteName: 'ReceiptUpcoming',
     headerMode: 'none'
 });
 

@@ -1,4 +1,4 @@
-import React, {Component} from "react";
+import React, { Component } from "react";
 import {
     View,
     Switch,
@@ -10,17 +10,17 @@ import {
     ImageBackground,
     FlatList, Dimensions, TextInput
 } from "react-native";
-import {Colors} from "../../../themes";
-import {globalStyles} from "../../../themes/globalStyles";
+import { Colors } from "../../../themes";
+import { globalStyles } from "../../../themes/globalStyles";
 //import { styles } from "./styles";
-import {Header, AirbnbRating} from "react-native-elements";
+import { Header, AirbnbRating } from "react-native-elements";
 import CheckBoxSquare from "../../../components/CheckBox";
-import {constants} from "../../../utils/constants";
+import { constants } from "../../../utils/constants";
 import Preference from "react-native-preference";
 import PopupDialog from 'react-native-popup-dialog';
 var moment = require('moment');
 let appointmentId = "";
-const {height, width} = Dimensions.get("window");
+const { height, width } = Dimensions.get("window");
 export default class ReceiptUpcoming extends Component {
 
     constructor(props) {
@@ -36,17 +36,17 @@ export default class ReceiptUpcoming extends Component {
             barberServices: "",
             subTotal: "",
             ServiceFee: "",
-            tipLeft: "",
+            tipLeft: 0,
             surgePrice: "",
-            totalMain: "",
+            totalMain: 0,
             rating: "",
             goodQuality: false,
             cleanliness: false,
             punctuality: false,
             professional: false,
-            DialogCancelAppointment:false
+            DialogCancelAppointment: false
         }
-        const {navigation} = this.props;
+        const { navigation } = this.props;
         appointmentId = navigation.getParam('appointmentId');
     }
 
@@ -55,7 +55,7 @@ export default class ReceiptUpcoming extends Component {
     }
 
     getRecieptDetails() {
-        this.setState({showLoading: true})
+        this.setState({ showLoading: true })
         fetch(constants.ClientReciept + "?appointment_id=" + appointmentId, {
             method: 'GET',
             headers: {
@@ -65,87 +65,107 @@ export default class ReceiptUpcoming extends Component {
             .then(response => {
                 console.log("getRecieptDetails-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
-                    this.setState({showLoading: false})
+                    this.setState({ showLoading: false })
                     let recieptData = response.Data;
-                    let receptDate=recieptData.date;
-                    receptDate=receptDate.split("T");
+                    let receptDate = recieptData.date;
+                    receptDate = receptDate.split("T");
                     this.setState({
                         invoiceNo: recieptData.invoice_no,
                         invoiceDate: receptDate[0],
                         invoiceTime: moment(recieptData.createdAt).format("LT"),
-                        barberName: recieptData.barber_firstname +" "+recieptData.barber_lastname ,
+                        barberName: recieptData.barber_firstname + " " + recieptData.barber_lastname,
                         barberShopName: recieptData.barber_shop_name,
-                        barberLocation:recieptData.location,
+                        barberLocation: recieptData.location,
                         barberServices: recieptData.selected_services,
                         subTotal: recieptData.total_price,
                         ServiceFee: recieptData.service_fee,
-                        tipLeft: recieptData.tip_price,
+                        //tipLeft: recieptData.tip_price,
                         surgePrice: "",
-                        totalMain: "",
+                        totalMain: 0,
                         rating: recieptData.rating,
                         goodQuality: recieptData.good_quality,
                         cleanliness: recieptData.cleanliness,
                         punctuality: recieptData.punctuality,
                         professional: recieptData.professionol,
                     })
-                    if(recieptData.selected_surge_price===true)
+                    let totalServices=0;
+                    for(let i=0;i<recieptData.selected_services.length;i++)
                     {
-                        let surgePricee=recieptData.total_price/2
-                        let TotalMain=(parseInt(recieptData.total_price)+1)+(parseInt(surgePricee)+parseInt(recieptData.tip_price));
-                        this.setState({surgePrice:surgePricee,totalMain:TotalMain});
-                    }else
+                        totalServices=parseInt(totalServices+recieptData.selected_services[i].price);
+                    }
+                    this.setState({
+                        subTotal: totalServices,
+                    })
+                    let tipPrice=0
+                    if(!!recieptData.tip_price)
                     {
-                        let surgePricee=0;
-                        let TotalMain=(parseInt(recieptData.total_price)+1)+(parseInt(surgePricee)+parseInt(recieptData.tip_price));
-                        this.setState({surgePrice:surgePricee,totalMain:TotalMain});
+                        tipPrice=recieptData.tip_price
+                        this.setState({tipLeft:recieptData.tip_price.toFixed(2)})
+                    }
+
+                    if (recieptData.selected_surge_price === true) {
+                        let surgePricee = totalServices / 2;
+                        let TotalMains =(((parseInt(totalServices) + 1.5) + (parseInt(surgePricee)+(tipPrice)) ));
+                        console.log("totalMain::::", TotalMains)
+
+                        this.setState({ surgePrice: surgePricee, totalMain: TotalMains.toFixed(2) });
+                    } else {
+                        let surgePricee = 0;
+                        let TotalMain =(((parseInt(totalServices) + 1.5) + (parseInt(surgePricee)+((tipPrice)) )));
+                        this.setState({ surgePrice: surgePricee, totalMain: TotalMain.toFixed(2) });
                     }
                 } else {
-                    this.setState({showLoading: false})
+                    this.setState({ showLoading: false })
                     if (response.ResultType === 0) {
                         alert(response.Message);
                     }
                 }
             }).catch(error => {
-            //console.error('Errorr:', error);
-            this.setState({showLoading: false})
-            console.log('Error:', error);
-            alert("Error: " + error);
-        });
+                //console.error('Errorr:', error);
+                this.setState({ showLoading: false })
+                console.log('Error:', error);
+                alert("Error: " + error);
+            });
     }
 
     renderRow(item) {
-        return <View style={{flex: 1, flexDirection: 'row', height: 30}}>
-            <Image style={styles.leftIcon} source={item.ic}/>
+        return <View style={{ flex: 1, flexDirection: 'row', height: 30 }}>
+            <Image style={styles.leftIcon} source={item.ic} />
             <Text style={styles.row_title}>{item.title}</Text>
         </View>;
     }
 
     renderRow2(item) {
-        return <View style={{width: "100%", flexDirection: 'row', height: 30}}>
-            <Text style={[styles.row_title, {
-                width: "75%",
-                justifyContent: "flex-start",
-                marginStart: 10
-            }]}>{item.title}</Text>
-            <Text style={[styles.row_title, {width: "25%", justifyContent: "flex-end",}]}>{item.value}</Text>
-        </View>;
+        return (
+            <View style={{ width: "100%", flexDirection: 'row', height: 30 }}>
+                <View style={{ width: "70%", flexDirection: 'row', height: '100%' }}>
+                    <Text style={[styles.row_title, {
+                        width: "100%",
+                        justifyContent: "flex-start",
+                        marginStart: 10
+                    }]}>{item.title}</Text>
+                </View>
+                <View style={{ width: "30%", flexDirection: 'row', height: '100%' }}>
+                    <Text style={[styles.row_title, { width: "100%", justifyContent: "flex-end", }]}>{item.value}</Text>
+                </View>
+            </View>
+        )
     }
 
 
     renderSeperator() {
-        return <View style={{height: 0.5, backgroundColor: Colors.lightGrey}}></View>
+        return <View style={{ height: 0.5, backgroundColor: Colors.lightGrey }}></View>
     }
 
-    cancelAppointment()
-    {
-        let Appointmentstatus=5;
+    cancelAppointment() {
+        let Appointmentstatus = 5;
 
-        this.setState({showLoading:true})
+        this.setState({ showLoading: true })
         var details = {
             appointment_id: appointmentId,
             appointment_type: Appointmentstatus,
         };
-        console.log("Credentials",JSON.stringify(details));
+        console.log("Credentials", JSON.stringify(details));
         var formBody = [];
         for (var property in details) {
             var encodedKey = encodeURIComponent(property);
@@ -164,20 +184,20 @@ export default class ReceiptUpcoming extends Component {
             .then(response => {
                 console.log("responseAddReviews-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
-                    this.setState({showLoading:false,DialogCancelAppointment:false},()=>{
+                    this.setState({ showLoading: false, DialogCancelAppointment: false }, () => {
                         this.props.navigation.goBack();
                     })
 
 
                 } else {
-                    this.setState({showLoading:false})
+                    this.setState({ showLoading: false })
                     if (response.ResultType === 0) {
                         alert(response.Message);
                     }
                 }
             })
             .catch(error => {
-                this.setState({showLoading:false})
+                this.setState({ showLoading: false })
                 //console.error('Errorr:', error);
                 console.log('Error:', error);
                 //alert("Error: " + error);
@@ -189,12 +209,12 @@ export default class ReceiptUpcoming extends Component {
         return (
             <View style={styles.container}>
                 <Header
-                    statusBarProps={{barStyle: "light-content"}}
+                    statusBarProps={{ barStyle: "light-content" }}
                     barStyle="light-content" // or directly
-                    style={{backgroundColor: "yellow"}}
-                    outerContainerStyles={{backgroundColor: "#1999CE"}}
-                    centerComponent={{text: "RECEIPT", style: {color: "#fff"}}}
-                    rightComponent={{color: "#fff"}}
+                    style={{ backgroundColor: "yellow" }}
+                    outerContainerStyles={{ backgroundColor: "#1999CE" }}
+                    centerComponent={{ text: "RECEIPT", style: { color: "#fff" } }}
+                    rightComponent={{ color: "#fff" }}
                     containerStyle={{
                         backgroundColor: Colors.dark,
                         justifyContent: "space-around"
@@ -204,7 +224,7 @@ export default class ReceiptUpcoming extends Component {
                             this.props.navigation.goBack();
                         }}>
                             <Image
-                                style={{tintColor: 'white', height: 20, resizeMode: 'contain'}}
+                                style={{ tintColor: 'white', height: 20, resizeMode: 'contain' }}
                                 source={require("../../../assets/images/ic_back.png")}
                             />
                         </TouchableOpacity>
@@ -214,21 +234,21 @@ export default class ReceiptUpcoming extends Component {
 
 
                     <View
-                        style={{flex: 1, flexDirection: "column", marginBottom: 150}}>
-                        <View style={{width: "100%", alignItems: "center"}}>
+                        style={{ flex: 1, flexDirection: "column", marginBottom: 150 }}>
+                        <View style={{ width: "100%", alignItems: "center" }}>
                             <Image
                                 source={require("../../../assets/images/logo.png")}
-                                style={{marginTop: 20, resizeMode: 'contain', width: 200}}/>
+                                style={{ marginTop: 20, resizeMode: 'contain', width: 200 }} />
                         </View>
                         <Text style={styles.txtHeader}>UPCOMING</Text>
-                        <View style={{width: "85%", flexDirection: "row", marginStart: 30,marginEnd:30}}>
+                        <View style={{ width: "85%", flexDirection: "row", marginStart: 30, marginEnd: 30 }}>
                             <Text
-                                style={{ color: "white", justifyContent: "flex-start", fontSize: 10}}>Invoice
+                                style={{ color: "white", justifyContent: "flex-start", fontSize: 10 }}>Invoice
                                 No.{this.state.invoiceNo}</Text>
                             <Text style={{
                                 color: "white",
-                                position:"absolute",
-                                right:0,
+                                position: "absolute",
+                                right: 0,
                                 fontSize: 12
                             }}>{this.state.invoiceDate} - {this.state.invoiceTime}</Text>
                         </View>
@@ -249,64 +269,75 @@ export default class ReceiptUpcoming extends Component {
                                 title: this.state.barberLocation,
                                 ic: require("../../../assets/images/location.png"),
                             })}
-                            <FlatList renderItem={({item}) => this.renderRow2({
+                            <FlatList renderItem={({ item }) => this.renderRow2({
                                 title: item.name,
-                                value: "$"+item.price,
+                                value: "$" + item.price,
                             })}
-                                      data={this.state.barberServices}
-                                      keyExtractor={(item, index) => index}
-                                      numColumns={1}
+                                data={this.state.barberServices}
+                                keyExtractor={(item, index) => index}
+                                numColumns={1}
                             />
                             {this.renderSeperator()}
-                            <View style={{width: "100%", flexDirection: 'row', height: 36}}>
-                                <Text style={{
-                                    color: "white",
-                                    alignItems: "flex-start",
-                                    fontSize: 16,
-                                    width: "75%",
-                                    fontWeight: "bold",
-                                    marginStart: 10,
-                                    marginTop: 10
-                                }}>{"Subtotal:"}</Text>
-                                <Text style={{
-                                    color: "white",
-                                    width: "25%",
-                                    alignItems: "flex-end",
-                                    fontSize: 16,
-                                    fontWeight: "bold",
-                                    marginStart: 10,
-                                    marginTop: 10
-                                }}>{"$"+this.state.subTotal+".00"}</Text>
+                            <View style={{ width: "100%", flexDirection: 'row', height: 36 }}>
+                                <View style={{ width: "70%", flexDirection: 'row', height: '100%' }}>
+                                    <Text style={{
+                                        color: "white",
+                                        alignItems: "flex-start",
+                                        fontSize: 16,
+                                        width: "100%",
+                                        fontWeight: "bold",
+                                        marginStart: 10,
+                                        marginTop: 10
+                                    }}>{"Subtotal:"}</Text>
+                                </View>
+                                <View style={{ width: "30%", flexDirection: 'row', height: '100%' }}>
+                                    <Text style={{
+                                        color: "white",
+                                        width: "100%",
+                                        alignItems: "flex-end",
+                                        fontSize: 16,
+                                        fontWeight: "bold",
+                                        marginStart: 10,
+                                        marginTop: 10
+                                    }}>{"$" + this.state.subTotal + ".00"}</Text>
+                                </View>
                             </View>
                             {this.renderRow2({
                                 title: "Service Fee",
-                                value: "$1.00",
+                                value: "$1.50",
                             })}
 
                             {this.renderRow2({
                                 title: "Surge Price",
-                                value:"$"+this.state.surgePrice,
+                                value: "$" + this.state.surgePrice,
                             })}
-                            <View style={{width: "100%", flexDirection: 'row', height: 36}}>
-                                <Text style={{
-                                    color: "white",
-                                    alignItems: "flex-start",
-                                    fontSize: 16,
-                                    width: "75%",
-                                    fontWeight: "bold",
-                                    marginStart: 10,
-                                    marginTop: 5
-                                }}>{"Total:"}</Text>
-                                <Text style={{
-                                    color: "white",
-                                    width: "25%",
-                                    alignItems: "flex-end",
-                                    fontSize: 16,
-                                    fontWeight: "bold",
-                                    marginStart: 10,
-                                    marginTop: 5
-                                }}>{"$"+this.state.totalMain}</Text>
-
+                            {this.renderRow2({
+                                title: "Tip Left",
+                                value: "$" + this.state.tipLeft,
+                            })}
+                            <View style={{ width: "100%", flexDirection: 'row', height: 36 }}>
+                                <View style={{ width: "70%", flexDirection: 'row', height: '100%' }}>
+                                    <Text style={{
+                                        color: "white",
+                                        alignItems: "flex-start",
+                                        fontSize: 16,
+                                        width: "100%",
+                                        fontWeight: "bold",
+                                        marginStart: 10,
+                                        marginTop: 5
+                                    }}>{"Total:"}</Text>
+                                </View>
+                                <View style={{ width: "30%", flexDirection: 'row', height: '100%' }}>
+                                    <Text style={{
+                                        color: "white",
+                                        width: "100%",
+                                        alignItems: "flex-end",
+                                        fontSize: 16,
+                                        fontWeight: "bold",
+                                        marginStart: 10,
+                                        marginTop: 5
+                                    }}>{"$" + this.state.totalMain}</Text>
+                                </View>
                             </View>
 
 
@@ -315,69 +346,73 @@ export default class ReceiptUpcoming extends Component {
                         </View>
                         <TouchableOpacity style={styles.button} onPress={() => {
                             //this.props.navigation.navigate('Profile',);
-                            this.setState({DialogCancelAppointment:true})
+                            this.setState({ DialogCancelAppointment: true })
                         }}>
-                            <Text style={[styles.buttonText,{width:"100%",textAlign:"center"}]}>{"Cancel Appointment"}</Text>
+                            <Text style={[styles.buttonText, { width: "100%", textAlign: "center" }]}>{"Cancel Appointment"}</Text>
                         </TouchableOpacity>
                         <PopupDialog
                             visible={this.state.DialogCancelAppointment}
                             width={0.8}
                             onTouchOutside={() => {
-                                this.setState({DialogCancelAppointment: false});
+                                this.setState({ DialogCancelAppointment: false });
                             }}
 
                             dialog
                             ref={(popupDialog) => {
                                 this.popupDialog = popupDialog;
                             }}>
-                                <View style={{flexDirection: "column", alignItems: "center"}}>
-                                    <View style={{
-                                        width: "100%",
-                                        height: 0,
-                                        marginTop: 3,
-                                        marginBottom: 3,
-                                        backgroundColor: "white",
-                                        flexDirection: "column",
-                                    }}/>
-                                    <Text style={{fontSize: 20, marginTop: 5, color: "black"}}>{"Do you want to cancel?"}</Text>
-                                    <View style={{flexDirection: "row", alignItems: "center",width:"100%",justifyContent:"center",marginTop:30}}>
-                                        <TouchableOpacity
-                                            onPress={() => this.cancelAppointment()}
-                                            style={[globalStyles.button, {
-                                                height: 35,
-                                                width: "40%",
-                                                backgroundColor: "green",
-                                                marginTop: 20,
-                                                marginBottom: 20,
-                                            }]}>
-                                            <Text style={{
-                                                fontSize: 15,
-                                                fontWeight: "bold",
-                                                color: "white",
-                                            }}>{"YES"}</Text>
+                            <View style={{ flexDirection: "column", alignItems: "center" }}>
+                                <View style={{
+                                    width: "100%",
+                                    height: 0,
+                                    marginTop: 3,
+                                    marginBottom: 3,
+                                    backgroundColor: "white",
+                                    flexDirection: "column",
+                                }} />
+                                <Text style={{ fontSize: 20, marginTop: 5, color: "black" }}>{"Do you want to cancel?"}</Text>
+                                <View style={{ flexDirection: "row", alignItems: "center", width: "100%", justifyContent: "center", marginTop: 30 }}>
+                                    <TouchableOpacity
+                                        onPress={() => this.cancelAppointment()}
+                                        style={[globalStyles.button, {
+                                            height: 35,
+                                            width: "40%",
+                                            backgroundColor: "green",
+                                            marginTop: 20,
+                                            marginBottom: 20,
+                                        }]}>
+                                        <Text style={{
+                                            fontSize: 15,
+                                            fontWeight: "bold",
+                                            color: "white",
+                                            width: '100%',
+                                            textAlign: 'center'
+                                        }}>{"YES"}</Text>
 
-                                        </TouchableOpacity>
-                                        <TouchableOpacity
-                                            onPress={() => this.setState({DialogCancelAppointment: false})}
-                                            style={[globalStyles.button, {
-                                                height: 35,
-                                                width: "40%",
-                                                backgroundColor: "red",
-                                                marginTop: 20,
-                                                marginBottom: 20,
-                                                marginStart:20
-                                            }]}>
-                                            <Text style={{
-                                                fontSize: 15,
-                                                fontWeight: "bold",
-                                                color: "white"
-                                            }}>{"NO"}</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        onPress={() => this.setState({ DialogCancelAppointment: false })}
+                                        style={[globalStyles.button, {
+                                            height: 35,
+                                            width: "40%",
+                                            backgroundColor: "red",
+                                            marginTop: 20,
+                                            marginBottom: 20,
+                                            marginStart: 20
+                                        }]}>
+                                        <Text style={{
+                                            fontSize: 15,
+                                            fontWeight: "bold",
+                                            color: "white",
+                                            width: '100%',
+                                            textAlign: 'center'
+                                        }}>{"NO"}</Text>
 
-                                        </TouchableOpacity>
-                                    </View>
-
-
+                                    </TouchableOpacity>
                                 </View>
+
+
+                            </View>
                         </PopupDialog>
 
                     </View>
@@ -392,7 +427,7 @@ export default class ReceiptUpcoming extends Component {
                     justifyContent: "center"
                 }}>
                     <Image resizeMode={"contain"} source={require("../../../assets/images/loading.gif")}
-                           style={{width: 60, height: 60, opacity: 1,}}/>
+                        style={{ width: 60, height: 60, opacity: 1, }} />
                 </View>}
             </View>
         );
@@ -437,7 +472,7 @@ const styles = StyleSheet.create({
         height: height / 19,
         alignItems: "center"
     },
-    buttonText: {color: "white", fontSize: 15, fontWeight: "500"},
+    buttonText: { color: "white", fontSize: 15, fontWeight: "500" },
     row_title: {
         color: Colors.white,
         marginTop: 5,

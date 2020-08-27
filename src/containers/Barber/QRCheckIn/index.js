@@ -49,9 +49,8 @@ export default class QRCheckIn extends Component {
             }
         }).then(response => response.json())
             .then(response => {
-                console.log("getFavoriteBarbers-->", "-" + JSON.stringify(response));
+                console.log("updateappointmentStatus-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
-
                    this.props.navigation.goBack();
                 } else {
                     if (response.ResultType === 0) {
@@ -116,7 +115,7 @@ export default class QRCheckIn extends Component {
                             ratioOverlay: '1:1',            // optional, ratio overlay on the camera and crop the image seamlessly
                             ratioOverlayColor: '#00000077' // optional
                         }}
-                        showFrame={true}
+                        //showFrame={true}
                         scanBarcode={true}
                         laserColor={'#FF3D00'}
                         frameColor={'#00C853'}

@@ -20,6 +20,7 @@ import Dialog, {DialogContent} from 'react-native-popup-dialog';
 import {constants} from "../../../utils/constants";
 import Preference from "react-native-preference";
 import {AirbnbRating} from "react-native-elements";
+import {isIPhoneX} from '../../../utils/Dimensions';
 
 
 const {height, width} = Dimensions.get("window");
@@ -101,6 +102,8 @@ export default class ClientBarberProfile extends Component {
             buttonPayText: "Pay",
             mobilePayActivation: false,
             SelectedCard: "",
+            addTip: true,
+            percentPrice:0,
             dayData: [
                 {
                     id: 1,
@@ -149,49 +152,7 @@ export default class ClientBarberProfile extends Component {
                     id: 3,
                     imagePath: require('../../../assets/images/vp2.png')
                 }],
-            ListData2: [
-                /*{
-                    id: 1,
-                    check: false,
-                    title: "Haircut",
-                    duration: "30",
-                    prize: 20,
-                    selected: "transparent",
-                },
-                {
-                    id: 2,
-                    check: false,
-                    title: "Beard Trim",
-                    duration: "15",
-                    prize: 15,
-                    selected: "transparent",
-                },
-                {
-                    id: 3,
-                    check: false,
-                    title: "Design",
-                    duration: "30",
-                    prize: 20,
-                    selected: "transparent",
-                },
-                {
-                    id: 4,
-                    check: false,
-                    title: "Hot Towel Shape",
-                    duration: "45",
-                    prize: 40,
-                    selected: "transparent",
-                },
-                {
-                    id: 5,
-                    check: false,
-                    title: "Housecall",
-                    duration: "1",
-                    prize: 100,
-                    selected: "transparent",
-                }*/
-
-            ],
+            ListData2: [],
             showFullImage: false
         }
 
@@ -446,6 +407,14 @@ export default class ClientBarberProfile extends Component {
     }
 
     getBarberDetails(dateDay) {
+        let totalPr=0
+        if(this.state.totalPriceService>0)
+        {
+            totalPr=this.state.totalPriceService;
+        }else
+        {
+            totalPr=0
+        }
         console.log("getBarberDetails barberID-->" + barberId);
         console.log("getBarberDetails barberID-->" + dateDay);
         var details = {
@@ -490,7 +459,7 @@ export default class ClientBarberProfile extends Component {
                         barberRating: barberData.average_rating,
                         barberReviews: barberData.total_reviews,
                         barberTotalAmout: 0,
-                        totalPriceService: 0,
+                        totalPriceService: totalPr,
                         stripeActive: barberData.stripe_active,
                         barberMobilePay: barberData.payment_option,
                         Barberbanner: {uri: barberData.banner_image},
@@ -499,7 +468,7 @@ export default class ClientBarberProfile extends Component {
                     }, () => {
                         console.log("stripeActiveCheck:", this.state.stripeActive)
                         if (this.state.ListData2.length < 1) {
-                            this.setState({ListData2: barberData.services,})
+                            this.setState({ListData2: barberData.services})
                         }
                     });
 
@@ -542,6 +511,15 @@ export default class ClientBarberProfile extends Component {
     }
 
     bookApointmentCard(data) {
+        let surgeP=0;
+        let totalP=this.state.totalPriceService
+        if(this.state.surgePriceSelected)
+        {
+            surgeP=totalP/2;
+        }else
+        {
+            surgeP=0;
+        }
         this.setState({showLoading: true});
         var details = {
             client_id: Preference.get("userId"),
@@ -549,8 +527,9 @@ export default class ClientBarberProfile extends Component {
             selected_services: this.state.selectedServices,
             date: this.state.selectedDate,
             selected_slot_id: this.state.selectedSlotIds,
-            total_price: this.state.totalPriceService,
-            service_fee: "1",
+            total_price: this.state.totalPriceService+surgeP,
+            service_fee: "1.50",
+            tip_price:this.state.percentPrice,
             selected_surge_price: false,
             cus_stripe_id: data.cus_stripe_id,
             transaction_id: data.transaction_id,
@@ -604,6 +583,15 @@ export default class ClientBarberProfile extends Component {
     }
 
     bookApointment() {
+        let surgeP=0;
+        let totalP=this.state.totalPriceService
+        if(this.state.surgePriceSelected)
+        {
+            surgeP=totalP/2;
+        }else
+        {
+            surgeP=0;
+        }
         this.setState({showLoading: true});
         var details = {
             client_id: Preference.get("userId"),
@@ -611,8 +599,9 @@ export default class ClientBarberProfile extends Component {
             selected_services: this.state.selectedServices,
             date: this.state.selectedDate,
             selected_slot_id: this.state.selectedSlotIds,
-            total_price: this.state.totalPriceService,
-            service_fee: "1",
+            total_price: this.state.totalPriceService+surgeP,
+            service_fee: "1.50",
+            tip_price:this.state.percentPrice,
             selected_surge_price: false,
             cus_stripe_id: "",
             transaction_id: "",
@@ -710,63 +699,79 @@ export default class ClientBarberProfile extends Component {
         if (item.slot_status === 0) {
             //var m = moment(new Date(2011, 2, 12, 0, 0, 0));
             //m.add(item.id * 30, "minutes");
-            if (item.surge_price === true) {
-                return (<View>
-                    <TouchableOpacity onPress={() => this.itemSelect(index)}>
-                        <View style={{
-                            height: 20,
-                            flexDirection: "row",
-                            borderRadius: 10,
-                            borderWidth: 1,
-                            borderColor: item.slot_detail.selected,
-                            marginStart: 10,
-                        }} cellKey={item.id}>
-                            <Image resizeMode={"contain"} source={require("../../../assets/images/dollar_surge.png")}
-                                   style={{width: 12, height: 12, marginStart: 5, marginTop: 2}}/>
-                            <Text style={{
-                                textAlignVertical: "top",
-                                height: 40,
-                                marginStart: 4,
-                                marginEnd: 7,
-                                fontFamily: "AvertaStd-Regular",
-                                color: "#01E8F1",
-                                fontSize: 12,
-                                fontWeight: "bold",
-                            }}>
-                                {this.showTime(item.slot_detail.start_time)}
-                            </Text>
-                        </View>
-                    </TouchableOpacity>
-                </View>)
-            } else {
-                return (<View>
-                    <TouchableOpacity onPress={() => this.itemSelect(index)}>
-                        <View style={{
-                            height: 20,
-                            flexDirection: "row",
-                            borderRadius: 10,
-                            borderWidth: 1,
-                            alignItems: "center",
-                            borderColor: item.slot_detail.selected,
-                            marginStart: 3,
-                        }} cellKey={item.slot_detail._id}>
-                            <Text style={{
-                                textAlignVertical: "top",
-                                marginLeft: 10,
-                                marginRight: 10,
-                                width: 50,
-                                textAlign: "center",
-                                fontFamily: "AvertaStd-Regular",
-                                color: Colors.white,
-                                fontSize: 11,
-                                fontWeight: "bold",
-                            }}>
-                                {this.showTime(item.slot_detail.start_time)}
-                            </Text>
-                        </View>
-                    </TouchableOpacity>
-                </View>)
+            let currentTime = moment().format('YYYY-MM-DD h:mm a');
+           // let date1 = new Date(this.state.selectedDate + " " + item.slot_detail.start_time + ":00")
+            let slotTime = moment(this.state.selectedDate + " " + item.slot_detail.start_time + ":00").format('YYYY-MM-DD h:mm a');
+            //console.log("SlotTime condition:",JSON.stringify(currentTime.isBefore(slotTime))); // true
+            //console.log("SlotTime condition1:", JSON.stringify(currentTime)); // Mon May 12 2014 08:45:00
+            //console.log("SlotTime condition2:", JSON.stringify(slotTime)); // Mon May 12 2014 09:00:00
+            if (currentTime < slotTime) {
+                //console.log("SlotTime condition--->: ","True"); // Mon May 12 2014 09:00:00
+                if (item.surge_price === true) {
+                    return (<View>
+                        <TouchableOpacity onPress={() => this.itemSelect(index)}>
+                            <View style={{
+                                height: 20,
+                                flexDirection: "row",
+                                borderRadius: 10,
+                                borderWidth: 1,
+                                borderColor: item.slot_detail.selected,
+                                marginStart: 10,
+                                alignItems: 'center'
+                            }} cellKey={item.id}>
+                                <Image resizeMode={"contain"}
+                                       source={require("../../../assets/images/dollar_surge.png")}
+                                       style={{width: 12, height: 12, marginStart: 5, marginTop: 2}}/>
+                                <Text style={{
+                                    textAlignVertical: "top",
+                                    // height: 40,
+                                    marginStart: 4,
+                                    marginEnd: 7,
+                                    marginTop: 2,
+                                    fontFamily: "AvertaStd-Regular",
+                                    color: "#01E8F1",
+                                    fontSize: 12,
+                                    fontWeight: "bold",
+                                }}>
+                                    {this.showTime(item.slot_detail.start_time)}
+                                </Text>
+                            </View>
+                        </TouchableOpacity>
+                    </View>)
+                } else {
+                    return (<View>
+                        <TouchableOpacity onPress={() => this.itemSelect(index)}>
+                            <View style={{
+                                height: 20,
+                                flexDirection: "row",
+                                borderRadius: 10,
+                                borderWidth: 1,
+                                alignItems: "center",
+                                borderColor: item.slot_detail.selected,
+                                marginStart: 3,
+                            }} cellKey={item.slot_detail._id}>
+                                <Text style={{
+                                    textAlignVertical: "top",
+                                    marginLeft: 10,
+                                    marginRight: 10,
+                                    width: 50,
+                                    textAlign: "center",
+                                    fontFamily: "AvertaStd-Regular",
+                                    color: Colors.white,
+                                    fontSize: 11,
+                                    fontWeight: "bold",
+                                }}>
+                                    {this.showTime(item.slot_detail.start_time)}
+                                </Text>
+                            </View>
+                        </TouchableOpacity>
+                    </View>)
+                }
+            }else
+            {
+                console.log("SlotTime condition--->: ","false"); // Mon May 12 2014 09:00:00
             }
+
         } else {
             return (<View>
                 <View style={{
@@ -798,8 +803,7 @@ export default class ClientBarberProfile extends Component {
     }
 
     showTime(time) {
-        console.log("SlotDATime : ", time);
-
+        //console.log("SlotDATime : ", time);
         return moment(time, "HH:mm").format("hh:mm a");
     }
 
@@ -817,64 +821,83 @@ export default class ClientBarberProfile extends Component {
     }
 
     checkSurgePriceSelected() {
-        if (this.state.serviceTypeSelected === true && this.state.serviceDaySelected === true && this.state.serviceTimeSelected === true) {
-            if (this.state.surgePriceSelected === true)
-                this.props.navigation.navigate('SurgePricingRate', {
-                    client_id: Preference.get("userId"),
-                    barber_id: barberId,
-                    barberImage: this.state.barberProfileImage,
-                    barberName: this.state.barberName,
-                    barberShopName: this.state.barberShopName,
-                    appointmentPrice: this.state.totalPriceService,
-                    selected_services: this.state.selectedServices,
-                    date: this.state.selectedDate,
-                    selected_slot_id: this.state.selectedSlotIds,
-                    total_price: this.state.totalPriceService,
-                    service_fee: "1",
-                    selected_surge_price: true,
-                    barberMobilePay: this.state.barberMobilePay
-                });
-            else {
-                if (this.state.mobilePayActivation === true) {
-                    if (this.state.barberMobilePay === "inShop") {
-                        this.bookApointment();
-                    } else {
-                        if (this.state.savedCard.length < 1) {
-                            this.props.navigation.navigate("PaymentMethodClient", {
-                                client_id: Preference.get("userId"),
-                                barber_id: barberId,
-                                barberImage: this.state.barberProfileImage,
-                                barberName: this.state.barberName,
-                                barberShopName: this.state.barberShopName,
-                                appointmentPrice: this.state.totalPriceService,
-                                selected_services: this.state.selectedServices,
-                                date: this.state.selectedDate,
-                                selected_slot_id: this.state.selectedSlotIds,
-                                total_price: this.state.totalPriceService,
-                                service_fee: "1",
-                                selected_surge_price: false,
-                            })
+            //alert("TotalPriceAppoinment:"+ this.state.totalPriceService)
+            console.log("MobileSurgePrice: ", this.state.surgePriceSelected)
+            if (this.state.serviceTypeSelected === true && this.state.serviceDaySelected === true && this.state.serviceTimeSelected === true) {
+                if (this.state.surgePriceSelected === true)
+                    this.props.navigation.navigate('SurgePricingRate', {
+                        client_id: Preference.get("userId"),
+                        barber_id: barberId,
+                        barberImage: this.state.barberProfileImage,
+                        barberName: this.state.barberName,
+                        tip_price:this.state.percentPrice,
+                        barberShopName: this.state.barberShopName,
+                        appointmentPrice: this.state.totalPriceService,
+                        selected_services: this.state.selectedServices,
+                        date: this.state.selectedDate,
+                        selected_slot_id: this.state.selectedSlotIds,
+                        total_price: this.state.totalPriceService,
+                        service_fee: "1.5",
+                        //selected_surge_price:this.state.surgePriceSelected,
+                        selected_surge_price: true,
+                        barberMobilePay: this.state.barberMobilePay
+                    });
+                else {
+                    if (this.state.mobilePayActivation === true) {
+                        if (this.state.barberMobilePay === "inShop") {
+                            this.bookApointment();
                         } else {
-                            this.PaymentFlow();
+                            if (this.state.savedCard.length < 1) {
+                                this.props.navigation.navigate("PaymentMethodClient", {
+                                    client_id: Preference.get("userId"),
+                                    barber_id: barberId,
+                                    barberImage: this.state.barberProfileImage,
+                                    barberName: this.state.barberName,
+                                    tip_price:this.state.percentPrice,
+                                    barberShopName: this.state.barberShopName,
+                                    appointmentPrice: this.state.totalPriceService,
+                                    selected_services: this.state.selectedServices,
+                                    date: this.state.selectedDate,
+                                    selected_slot_id: this.state.selectedSlotIds,
+                                    total_price: this.state.totalPriceService,
+                                    service_fee: "1.5",
+                                    selected_surge_price: false,
+                                })
+                            } else {
+                                this.PaymentFlow();
+                            }
                         }
+                    } else {
+                        this.bookApointment();
                     }
-                } else {
-                    this.bookApointment();
                 }
+            } else {
+                alert("Please select Service,Time and Day for further procedure.");
             }
-        } else {
-            alert("Please select Service,Time and Day for further procedure.");
-        }
     }
 
     PaymentFlow() {
         let selectedcard = this.state.SelectedCard;
+        let surgeP=0;
+        let totalP=this.state.totalPriceService
+        if(this.state.surgePriceSelected)
+        {
+            surgeP=totalP/2;
+        }else
+        {
+            surgeP=0;
+        }
+        let tipPrice=0
+        if(!!this.state.percentPrice)
+        {
+            tipPrice=this.state.percentPrice
+        }
         if (this.state.isConnected) {
             this.setState({showLoading: true})
             var details = {
                 barberID: barberId,
                 clientID: Preference.get("userId"),
-                amount: this.state.totalPriceService * 100,
+                amount: (this.state.totalPriceService+1.50+surgeP+tipPrice) * 100,
                 card_id: selectedcard.id,
             };
             console.log("CARD Email----->" + JSON.stringify(details));
@@ -955,31 +978,34 @@ export default class ClientBarberProfile extends Component {
         //console.log("IDforService--t-->"+ JSON.stringify(totalTime));
     }
 
-    selectday(indx) {
+    selectday(indx,item) {
         //alert("dayselected " + indx);
         let monthDaysData = this.state.monthDays;
         //console.log("Dateselected is",monthDaysData[indx].dateOfDay)
-        this.setState({selectedDate: monthDaysData[indx].dateOfDay});
-        for (let s = 0; s < monthDaysData.length; s++) {
-            console.log("slectDay-loop" + s);
-            if (s === indx) {
-                console.log("slectDay-loop-index-true" + s);
-                monthDaysData[s].dayColor = "green";
-                monthDaysData[s].bottomColor = "green";
-            } else {
-                console.log("slectDay-loop-index-false" + s);
-                monthDaysData[s].dayColor = "#ffffff";
-                monthDaysData[s].bottomColor = "transparent";
+        this.setState({selectedDate: monthDaysData[indx].dateOfDay},()=>{
+            console.log("SlectedDateofDAy:" , this.state.selectedDate +"--"+
+                JSON.stringify(item));
+            for (let s = 0; s < monthDaysData.length; s++) {
+                console.log("slectDay-loop" + s);
+                if (s === indx) {
+                    console.log("slectDay-loop-index-true" + s);
+                    monthDaysData[s].dayColor = "green";
+                    monthDaysData[s].bottomColor = "green";
+                } else {
+                    console.log("slectDay-loop-index-false" + s);
+                    monthDaysData[s].dayColor = "#ffffff";
+                    monthDaysData[s].bottomColor = "transparent";
+                }
             }
-        }
-        console.log("NEWMonthdata1 ", JSON.stringify(monthDaysData));
-        this.setState({monthDays: monthDaysData}, () => {
-            console.log("NEWMonthdata ", JSON.stringify(this.state.monthDays));
+            console.log("NEWMonthdata1 ", JSON.stringify(monthDaysData));
+            this.setState({monthDays: monthDaysData}, () => {
+                console.log("NEWMonthdata ", JSON.stringify(this.state.monthDays));
+            });
+            console.log("selectedDateIs", JSON.stringify(monthDaysData[indx].dateOfDay));
+            this.getDaySlots(monthDaysData[indx].dateOfDay)
+            //alert("dayselected " + this.state.selectedDate);
         });
 
-        console.log("selectedDateIs", JSON.stringify(monthDaysData[indx].dateOfDay));
-        this.getDaySlots(monthDaysData[indx].dateOfDay)
-        //alert("dayselected " + this.state.selectedDate);
     }
 
     async setMonth() {
@@ -1093,11 +1119,46 @@ export default class ClientBarberProfile extends Component {
         //var dayOfWeek = new Date("2020-06-14").getDay();
         console.log("WEEK DAAYSs" + dayOfWeek)
         //return dayOfWeek;
-        return isNaN(dayOfWeek) ? null : [ 'Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat','Sun'][dayOfWeek];
+        return isNaN(dayOfWeek) ? null : ['Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun'][dayOfWeek];
     }
 
     showImageInLarge(imagePath) {
         this.setState({imageInFull: imagePath, showFullImage: true})
+    }
+
+    setAddTip() {
+        if (this.state.addTip === false) {
+            this.setState({addTip: true});
+            this.setPercentage(this.state.percentage)
+        }
+        else
+            this.setState({addTip: false,percentPrice:0})
+    }
+
+    setPercentage(per)
+    {
+        let percentprice=0;
+        //appointmentPrice=30;
+        appointmentPrice=this.state.totalPriceService
+        this.setState({percentage:per,DialogVisiblePercent:false});
+        if(per=="10%")
+        {
+            percentprice=(appointmentPrice*10)/100;
+        }
+        if(per=="20%")
+        {
+            percentprice=(appointmentPrice*20)/100;
+        }
+        if(per=="25%")
+        {
+            percentprice=(appointmentPrice*25)/100;
+        }
+        if(per=="50%")
+        {
+            percentprice=(appointmentPrice*50)/100;
+        }
+        console.log("PercentPrice---->",percentprice);
+        this.setState({percentPrice:percentprice})
     }
 
     render() {
@@ -1383,7 +1444,7 @@ export default class ClientBarberProfile extends Component {
                                         alignItems: "center", height: 60, marginStart: 20, marginEnd: 20,
                                         borderBottomWidth: 2,
                                         borderBottomColor: item.bottomColor
-                                    }} onPress={() => this.selectday(index)}>
+                                    }} onPress={() => this.selectday(index,item)}>
                                         <Text style={{color: item.dayColor, fontSize: 15}}>{item.weekDay}</Text>
                                         <Text
                                             style={{
@@ -1417,6 +1478,68 @@ export default class ClientBarberProfile extends Component {
                                 <Text style={{color: "white", fontSize: 15}}>{"Fully Booked"}</Text>
                             </View>}
                         </View>}
+                        <View style={{
+                                flexDirection: "row",
+                                width: "90%",
+                                height: 50,
+                                marginLeft:20,
+                                marginTop: 20,
+                                justifyContent: "center",
+                                alignItems: "center",
+
+                            }}>
+                                <View style={{flexDirection: "column", width: "60%",}}>
+                                    <View style={{flexDirection: "row", marginTop: 10}}>
+                                        <CheckBoxSquare rightText={"Add a Tip"} isChecked={this.state.addTip} onClick={() => this.setAddTip()}
+                                                        style={{marginTop: 4,width:140}}/>
+                                        {/*<Text style={{color: "white", marginStart: 10, fontSize: 15,}}></Text>*/}
+                                    </View>
+                                    <Text style={{
+                                        fontSize: 11,
+                                        fontFamily: "AvertaStd-RegularItalic",
+                                        marginStart: 20,
+                                        color: "grey"
+                                    }}>(100% goes to your
+                                        barber)</Text>
+                                </View>
+                                <View style={{flexDirection: "row", width: "40%",alignItems:"center",justifyContent:"center"}}>
+                                    <Text style={{
+                                        color: "white",
+                                        fontSize: 20,
+                                        fontWeight: "bold",
+                                        marginStart: 0,width:"50%"
+                                    }}>${this.state.percentPrice>0?this.state.percentPrice.toFixed(2):0}</Text>
+                                    <TouchableOpacity onPress={() => this.setState({DialogVisiblePercent: true})} style={{
+                                        flexDirection: "row",
+                                        backgroundColor: "#474857",
+                                        marginStart: 20,
+                                        borderRadius: 20,
+                                        height: 25,
+                                        width: 50,
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                    }}>
+                                        <Text style={{
+                                            color: "white",
+                                            fontSize: 13,
+                                            marginStart: 10
+                                        }}>{this.state.percentage}</Text>
+                                        <Image
+                                            resizeMode={"contain"}
+                                            style={{
+                                                height: 7,
+                                                width: 7,
+                                                marginStart: 5,
+                                                marginEnd: 10
+                                            }}
+                                            source={require("../../../assets/images/arrow_down.png")}/>
+                                    </TouchableOpacity>
+                                </View>
+
+
+                            </View>
+
+
                         <View
                             style={{
                                 flexDirection: "column",
@@ -1435,7 +1558,7 @@ export default class ClientBarberProfile extends Component {
                                 }}>
                                     <View style={{
                                         flexDirection: "column",
-                                        height: "100%",
+                                        // height: "100%",
                                         width: "100%",
                                         marginStart: 25,
                                     }}>
@@ -1447,18 +1570,19 @@ export default class ClientBarberProfile extends Component {
                                         }}>Subtotal:</Text>
                                         <Text
                                             style={{
-                                                fontSize: 35,
+                                                fontSize: 33,
                                                 fontWeight: "bold",
                                                 textAlign: "left",
                                                 color: "white",
                                             }}
-                                        >${this.state.totalPriceService + 1}</Text>
-                                        <Text style={{color: "white", fontFamily: "AvertaStd-Thin", fontSize: 12}}>Service
+                                        >${(this.state.totalPriceService + 1.50+this.state.percentPrice).toFixed(2)}</Text>
+                                        <Text style={{color: "white", fontFamily: "AvertaStd-Thin", fontSize: 12,marginBottom:5,}}>Service
                                             Fee:
                                             <Text style={{
-                                                fontWeight: "900",
+                                                // fontWeight: "900",
+
                                                 color: "white"
-                                            }}>{" $1.00"}</Text>
+                                            }}>{" $1.50"}</Text>
                                         </Text>
                                     </View>
                                 </View>
@@ -1533,8 +1657,8 @@ export default class ClientBarberProfile extends Component {
                                         fontSize: 16,
                                         color: "white",
                                         fontWeight: "bold",
-                                        width:"100%",
-                                        textAlign:"center"
+                                        width: "100%",
+                                        textAlign: "center"
                                     }}>{this.state.buttonPayText}</Text>
                                 </TouchableOpacity>
 
@@ -1578,6 +1702,32 @@ export default class ClientBarberProfile extends Component {
                                     horizontal={false}/>
                             </DialogContent>
                         </Dialog>
+                        <Dialog
+                        visible={this.state.DialogVisiblePercent}
+                        onTouchOutside={() => {
+                            this.setState({DialogVisiblePercent: false});
+                        }}
+                        width={0.6}>
+                        <DialogContent>
+                            <Text style={{
+                                fontSize: 18,
+                                color: "black",
+                                fontWeight: "bold",
+                                marginBottom: 10,
+                                marginTop: 10
+                            }}>{"Please select Percentage"}</Text>
+                            <Text onPress={() =>this.setPercentage("10%")}
+                                  style={{fontSize: 18, color: "black", marginBottom: 10, marginTop: 10}}>{"10%"}</Text>
+                            <Text onPress={() =>this.setPercentage("20%")}
+                                  style={{fontSize: 18, color: "black", marginBottom: 10, marginTop: 10}}>{"20%"}</Text>
+                            <Text onPress={() => this.setPercentage("25%")}
+                                  style={{fontSize: 18, color: "black", marginBottom: 10, marginTop: 10}}>{"25%"}</Text>
+                            <Text onPress={() =>this.setPercentage("50%")}
+                                  style={{fontSize: 18, color: "black", marginBottom: 10, marginTop: 10}}>{"50%"}</Text>
+                        </DialogContent>
+                    </Dialog>
+
+
                     </View>}
                     {this.state.showFullImage && <View style={{
                         width: width,
@@ -1604,11 +1754,17 @@ export default class ClientBarberProfile extends Component {
                     </View>}
                     <TouchableOpacity
                         onPress={() => Alert.alert("This barber has Cancelation & No-Show Policies activated.", Policy)}
-                        style={{width: "100%", height: 20, backgroundColor: "white"}}>
+                        style={{
+                            width: "100%",
+                            height: 40,
+                            backgroundColor: "white",
+                            paddingBottom: isIPhoneX() ? 10 : 0
+                        }}>
+
                         <Text style={{
                             width: "100%",
                             fontSize: 12,
-                            colors: "blue",
+                            color: "blue",
                             textAlign: "center"
                         }}>{"Cancelation & No-Show Policy"}</Text>
                     </TouchableOpacity>
@@ -1679,8 +1835,8 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: "bold",
         color: "white",
-        width:"100%",
-        textAlign:"center"
+        width: "100%",
+        textAlign: "center"
     },
     button: {
         width: width / 2.2,

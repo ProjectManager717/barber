@@ -123,7 +123,7 @@ class SignUpScreen extends Component {
     //3
     async getToken() {
         console.log("fcmToken getting inside");
-        fcmToken = await Preference.get('fcmToken');
+        //fcmToken = await Preference.get('fcmToken');
         console.log("fcmToken getting inside",JSON.stringify(fcmToken));
         if (!fcmToken) {
             fcmToken = await firebase.messaging().getToken();
@@ -177,6 +177,7 @@ class SignUpScreen extends Component {
             }
         }
     };
+
 
     _signIn = async () => {
         //Prompts a modal to let the user sign in into your application.
@@ -340,6 +341,7 @@ class SignUpScreen extends Component {
             webClientId: "264908010858-90qei6m96daq2doi543gnahouvunl4v4.apps.googleusercontent.com",
             iosClientId: '264908010858-imh71lfsb360c40oq6c7hrgqdkhuqu3b.apps.googleusercontent.com',
         });
+        this.checkPermission();
     }
 
     facebokLogin = async () => {
@@ -578,6 +580,7 @@ class SignUpScreen extends Component {
                         username: userInfo.instaUserName,
                         email: userInfo.email,
                         password: userInfo.password,
+                        device_token:fcmToken
                     };
                     var formBody = [];
                     for (var property in details) {
@@ -586,6 +589,7 @@ class SignUpScreen extends Component {
                         formBody.push(encodedKey + "=" + encodedValue);
                     }
                     formBody = formBody.join("&");
+                    console.log("SendingData: ", JSON.stringify(formBody))
                     fetch(constants.ClientSignUp, {
                         method: 'POST',
                         headers: {
@@ -637,6 +641,7 @@ class SignUpScreen extends Component {
                         username: userInfo.instaUserName,
                         email: userInfo.email,
                         password: userInfo.password,
+                        device_token:fcmToken
                     };
                     var formBody = [];
                     for (var property in details) {
@@ -645,6 +650,7 @@ class SignUpScreen extends Component {
                         formBody.push(encodedKey + "=" + encodedValue);
                     }
                     formBody = formBody.join("&");
+                    console.log("SendingData: ", JSON.stringify(formBody))
                     fetch(constants.BarberSignUp, {
                         method: 'POST',
                         headers: {

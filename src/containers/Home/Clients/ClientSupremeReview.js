@@ -8,6 +8,7 @@ import {Colors} from "../../../themes";
 //import { globalStyles } from "../../../themes/globalStyles";
 import {Dimensions} from "react-native";
 import {constants} from "../../../utils/constants";
+var moment = require('moment');
 
 const {width} = Dimensions.get("window");
 let ratings = Math.floor(Math.random() * 5 + 1);
@@ -40,8 +41,10 @@ export default class ClientSupremeReview extends Component {
             .then(response => {
                 console.log("ClientBarbersReviews-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
-                    this.setState({showLoading: false, reviews: response.Data});
-                    console.log("dataSource:::", JSON.stringify(response.Data))
+                    let reviews=response.Data;
+                    const sortedActivities  = reviews.sort((a,b) => new moment(b.createdAt).format('YYYYMMDD')- new moment(a.createdAt).format('YYYYMMDD'))
+                    //const sortedActivities = reviews.sort((a, b) =>  a.createdAt -b.createdAt)
+                    this.setState({showLoading: false, reviews: sortedActivities});
                     let ratingpoints = 0;
                     for (let w = 0; w < response.Data.length; w++) {
                         ratingpoints = ratingpoints + response.Data[w].rating;
@@ -71,7 +74,10 @@ export default class ClientSupremeReview extends Component {
         return (
             <View style={styles.row_item}>
                 <View style={[globalStyles.rowBackground, {marginTop: 40}]}>
-                    <Text style={styles.client_name}>{item.client_id.firstname + " " + item.client_id.lastname}</Text>
+                    <View>
+                        <Text style={styles.client_name}>{item.client_id.firstname+" "+item.client_id.lastname}</Text>
+                        <Text style={{marginLeft: 110,color:"grey",fontSize:11}}  >{moment(item.createdAt).format("l")}</Text>
+                    </View>
                     <View style={styles.rating_container}>
                         <AirbnbRating
                             showRating={false}

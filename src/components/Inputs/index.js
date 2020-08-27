@@ -2,6 +2,7 @@ import React from 'react';
 import { Image, TextInput, View } from 'react-native';
 import { styles } from './styles';
 import { Colors } from '../../themes';
+import _ from 'lodash'
 
 export const Input = ({
   style,
@@ -11,7 +12,7 @@ export const Input = ({
   value,
   secureTextEntry,
   isValid,
-  keyboardType
+  keyboardType,
 }) => {
   const input = isValid ? [styles.input, { fontWeight: 'bold' }] : styles.input;
   return (
@@ -26,6 +27,7 @@ export const Input = ({
         placeholderTextColor={Colors.border}
         underlineColorAndroid="transparent"
         value={value}
+        autoCapitalize={false}
         secureTextEntry={secureTextEntry}
         keyboardType={keyboardType}
       />

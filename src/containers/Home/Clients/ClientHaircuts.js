@@ -53,22 +53,15 @@ export default class ClientHaircuts extends Component {
 
     componentDidMount(): void {
         const {navigation} = this.props;
-        let mon = getmonthh + 1;
-        if (parseInt(mon) < 10) {
-            mon = "0" + mon;
-        }
-        let mn = getyear + "-" + mon;
+        let mn = moment().format("YYYY-MM");
+        console.log("CurrentMonth", JSON.stringify(mn))
         this.setState({selectedMonth: mn})
         this.getAllAppointments(mn);
-        this.focusListener = navigation.addListener("didFocus", payload => {
-            let mon = getmonthh + 1;
-            if (parseInt(mon) < 10) {
-                mon = "0" + mon;
-            }
-            let mn = getyear + "-" + mon;
+        /*this.focusListener = navigation.addListener("didFocus", payload => {
+            let mn = moment().format("YYYY-MM");
             this.setState({selectedMonth: mn})
             this.getAllAppointments(mn);
-        });
+        });*/
         //this.getAllAppointments(getyear+"-"+getmonthh);
         //this.optionSelected("all",);
     }
@@ -86,9 +79,8 @@ export default class ClientHaircuts extends Component {
                 console.log("responsegetAllAppointments-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
                     this.setState({showLoading: false});
-                    let allAppointment = response.Data;
-                    this.setState({allAppointments: allAppointment})
-                    this.optionSelected("all", allAppointment)
+                    this.setState({allAppointments: response.Data})
+                    this.optionSelected("all", response.Data)
                 } else {
                     this.setState({showLoading: false})
                     if (response.ResultType === 0) {
@@ -104,32 +96,19 @@ export default class ClientHaircuts extends Component {
     }
 
     decreaseMonth() {
-        let selectmonth = this.state.selectedMonth;
-        console.log("Monthis", selectmonth);
-        selectmonth = selectmonth.split("-");
-        if (selectmonth[1] === "1") {
-            selectmonth[1] = "12";
-            selectmonth[0] = parseInt(selectmonth[0]) - 1;
-        } else {
-            selectmonth[1] = parseInt(selectmonth[1]) - 1;
-        }
-        let mainMonth = selectmonth[0] + "-" + selectmonth[1];
-        this.setState({selectedMonth: mainMonth});
-        this.getAllAppointments(mainMonth);
+        let selectmonth = this.state.selectedMonth+"-01";
+        selectmonth=moment(selectmonth).subtract(1, 'months').format('YYYY-MM');
+       //console.log("Monthis", selectmonth);
+        this.setState({selectedMonth: selectmonth});
+        this.getAllAppointments(selectmonth);
     }
 
     increaseMonth() {
-        let selectmonth = this.state.selectedMonth;
-        selectmonth = selectmonth.split("-")
-        if (selectmonth[1] === "12") {
-            selectmonth[1] = "1";
-            selectmonth[0] = parseInt(selectmonth[0]) + 1;
-        } else {
-            selectmonth[1] = parseInt(selectmonth[1]) + 1;
-        }
-        let mainMonth = selectmonth[0] + "-" + selectmonth[1];
-        this.setState({selectedMonth: mainMonth});
-        this.getAllAppointments(mainMonth);
+        let selectmonth = this.state.selectedMonth+"-01";
+        selectmonth=moment(selectmonth).add(1, 'months').format('YYYY-MM');
+        //console.log("Monthis", selectmonth);
+        this.setState({selectedMonth: selectmonth});
+        this.getAllAppointments(selectmonth);
         this.checkDayReciept = this.checkDayReciept.bind(this);
     }
 
@@ -199,11 +178,12 @@ export default class ClientHaircuts extends Component {
             this.setState({allAppointmentsCalender: details});
         }
         if (item === "all") {
-            this.setState({allBack: "#7131FD", alltext: "white"});
-            this.setState({cancelledBack: "transparent", cancelledtext: "grey"});
-            this.setState({completeBack: "transparent", completetext: "grey"});
-            this.setState({upcomingBack: "transparent", upcomingtext: "grey"});
-            this.setState({red: "red", green: "#00D200", blue: "#1999CE"})
+            this.setState({allBack: "#7131FD", alltext: "white",
+                cancelledBack: "transparent", cancelledtext: "grey",
+                completeBack: "transparent", completetext: "grey",
+                upcomingBack: "transparent", upcomingtext: "grey",
+                red: "red", green: "#00D200", blue: "#1999CE"
+            });
             let details = new Object();
             for (let i = 0; i < Data.length; i++) {
                 let data = Data[i].date;
@@ -235,16 +215,15 @@ export default class ClientHaircuts extends Component {
             let appointdate = data[0];
             if (appointdate === day.dateString) {
                 if (allbookings[j].appointment_type==="completed") {
-                    this.props.navigation.navigate("Receipt",{appointmentId:allbookings[j]._id});
+                    this.props.navigation.push("Receipt",{appointmentId:allbookings[j]._id});
                     break;
                 }else {
                     if (allbookings[j].appointment_type==="cancelled") {
-                        this.props.navigation.navigate("ReceiptCancelled",{appointmentId:allbookings[j]._id});
+                        this.props.navigation.push("ReceiptCancelled",{appointmentId:allbookings[j]._id});
                         break;
-                    }
-
-                     else if(allbookings[j].appointment_type==="confirmed"){
-                        this.props.navigation.navigate("ReceiptUpcoming",{appointmentId:allbookings[j]._id})
+                    } else if(allbookings[j].appointment_type==="confirmed"){
+                        this.props.navigation.push("ReceiptUpcoming",{appointmentId:allbookings[j]._id})
+                        break;
                     }
                 }
             }
@@ -356,7 +335,7 @@ export default class ClientHaircuts extends Component {
                                 <Text style={{
                                     color: this.state.completetext,
                                     fontSize: 10,
-                                }}>{"COMPLETE"}</Text>
+                                }}>{"COMPLETED"}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
                                 onPress={() => this.optionSelected("cancelled", this.state.allAppointments)}

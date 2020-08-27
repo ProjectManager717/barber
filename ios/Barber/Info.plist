@@ -45,7 +45,7 @@
 	<key>FacebookDisplayName</key>
 	<string>CLYPR</string>
 	<key>FirebaseAppDelegateProxyEnabled</key>
-	<false/>
+	<string>NO</string>
 	<key>FirebaseScreenReportingEnabled</key>
 	<false/>
 	<key>LSApplicationCategoryType</key>

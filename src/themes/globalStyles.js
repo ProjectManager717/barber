@@ -17,7 +17,7 @@ export const globalStyles = {
   buttonText: {
     color: "white",
     fontSize: 15,
-    marginTop:4,
+    marginTop:3,
     fontFamily: "AvertaStd-ExtraBold",
     alignSelf:"center",
     fontWeight: "500" },

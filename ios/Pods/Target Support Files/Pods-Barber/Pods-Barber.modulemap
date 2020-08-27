@@ -1,6 +1,0 @@
-framework module Pods_Barber {
-  umbrella header "Pods-Barber-umbrella.h"
-
-  export *
-  module * { export * }
-}

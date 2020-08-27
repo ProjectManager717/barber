@@ -41,10 +41,12 @@ continueUserActivity:(NSUserActivity *)userActivity
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+  NSURL *jsCodeLocation;
+  
   [FIROptions defaultOptions].deepLinkURLScheme = @"CLYPR";
   [FIRApp configure];
   [[UNUserNotificationCenter currentNotificationCenter] setDelegate:self];
-  //[RNFirebaseNotifications configure];
+  [RNFirebaseNotifications configure];
   
   // Setup Notifications
   if ([UNUserNotificationCenter class] != nil) {
@@ -71,8 +73,6 @@ continueUserActivity:(NSUserActivity *)userActivity
   
   // Facebook sdk setup
   [[FBSDKApplicationDelegate sharedInstance] application:application didFinishLaunchingWithOptions:launchOptions];
-  
-  NSURL *jsCodeLocation;
 
   jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
 

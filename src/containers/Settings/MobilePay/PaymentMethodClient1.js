@@ -25,7 +25,7 @@ stripe.setOptions({
     publishableKey: 'pk_test_U4Ri0H7rP3PClZwTI5Z2r78J',
     androidPayMode: 'test', // Android only
 })
-let client_id, barber_id,barberImage,barberName,barberShopName,appointmentPrice, selected_services, date, selected_slot_id, total_price, service_fee, selected_surge_price;
+let client_id, barber_id,barberImage,barberName,barberShopName,appointmentPrice, selected_services, date, selected_slot_id, total_price, service_fee, selected_surge_price,tip_price=0;
 let cus_stripe_id,transaction_id,balance_transaction,destination,destination_payment,source_transaction,stripedate,created;
 export default class PaymentMethodClient1 extends Component {
 
@@ -39,7 +39,7 @@ export default class PaymentMethodClient1 extends Component {
         barberName = navigation.getParam('barberName');
         barberShopName = navigation.getParam('barberShopName');
         appointmentPrice = navigation.getParam('appointmentPrice');
-
+        tip_price=navigation.getParam('tip_price'),
         selected_services = navigation.getParam('selected_services');
         date = navigation.getParam('date');
         selected_slot_id = navigation.getParam('selected_slot_id');
@@ -213,6 +213,7 @@ export default class PaymentMethodClient1 extends Component {
             selected_slot_id: selected_slot_id,
             total_price: total_price,
             service_fee: "1",
+            tip_price:tip_price,
             selected_surge_price: false,
             cus_stripe_id: cus_stripe_id,
             transaction_id:transaction_id,
@@ -238,14 +239,14 @@ export default class PaymentMethodClient1 extends Component {
 
                 if (response.ResultType === 1) {
                     Alert.alert("Success!", "Appointment is Booked successfully.");
-                    this.props.navigation.navigate('ClientLeaveReview', {
-                        barber_id: barber_id,
-                        barberImage: barberImage,
-                        barberName: barberName,
-                        barberShopName: barberShopName,
-                        appointmentPrice: appointmentPrice,
-                        appointmentId:response.Data._id
-                    });
+                    // this.props.navigation.navigate('ClientLeaveReview', {
+                    //     barber_id: barber_id,
+                    //     barberImage: barberImage,
+                    //     barberName: barberName,
+                    //     barberShopName: barberShopName,
+                    //     appointmentPrice: appointmentPrice,
+                    //     appointmentId:response.Data._id
+                    // });
                 } else {
                     if (response.ResultType === 0) {
                         alert(response.Message);

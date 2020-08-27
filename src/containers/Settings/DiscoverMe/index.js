@@ -123,7 +123,7 @@ export default class DiscoverMe extends Component {
                         this.setState({twoWeek: true})
                     if (prefrence.get_discovered_promotion_duration === "3")
                         this.setState({threeWeek: true})
-                      this.setState({price:prefrence.get_discovered_total})
+                      //this.setState({price:prefrence.get_discovered_total})
 
                 } else {
                     this.setState({showLoading: false});

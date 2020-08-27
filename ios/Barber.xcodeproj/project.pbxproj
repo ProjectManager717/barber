@@ -14,6 +14,7 @@
 		00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302E41ABCB9EE00DB3ED1 /* libRCTVibration.a */; };
 		00E356F31AD99517003FC87E /* BarberTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* BarberTests.m */; };
 		038E9AF1E1594B13A9B2EF44 /* AvertaStd-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 709DF313FA7D4161B7B2FD8B /* AvertaStd-BoldItalic.ttf */; };
+		0A4599A824D9BF7300C9C21A /* FBSDKLoginKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A4599A724D9BF7300C9C21A /* FBSDKLoginKit.framework */; };
 		0AD6595323AD380C00FE4421 /* libRCTFBSDK.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4250757622F8255800137826 /* libRCTFBSDK.a */; };
 		0F4DE90504FD45A2A2711B96 /* AvertaStd-BlackItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6C1D384772214852850062F3 /* AvertaStd-BlackItalic.ttf */; };
 		11D1A2F320CAFA9E000508D9 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
@@ -59,7 +60,6 @@
 		3FA10C6F400B467DB13CC8D5 /* libRNSVG.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B4F180164CE4293B6A0A773 /* libRNSVG.a */; };
 		4250757722F8256100137826 /* libRCTFBSDK.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4250757622F8255800137826 /* libRCTFBSDK.a */; };
 		428B8BC822F59E03008BDD1E /* libRNImagePicker.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 188CED7C22AFDABD009E40D9 /* libRNImagePicker.a */; };
-		428B8C1B22F5A1AA008BDD1E /* FBSDKLoginKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 184BF45B22AF920100357CB1 /* FBSDKLoginKit.framework */; };
 		428B8C1C22F5A1BF008BDD1E /* FBSDKShareKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 184BF45922AF91FF00357CB1 /* FBSDKShareKit.framework */; };
 		428B8C1D22F5A1D4008BDD1E /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 184BF45A22AF920000357CB1 /* FBSDKCoreKit.framework */; };
 		428B8C1E22F5A1E2008BDD1E /* Bolts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 184BF46C22AF938500357CB1 /* Bolts.framework */; };
@@ -565,6 +565,7 @@
 		0966DE251D964F859C07337D /* AvertaStd-SemiboldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "AvertaStd-SemiboldItalic.ttf"; path = "../src/assets/fonts/AvertaStd-SemiboldItalic.ttf"; sourceTree = "<group>"; };
 		0979F200267B40B2B1EF1D1F /* RNVectorIcons.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNVectorIcons.xcodeproj; path = "../node_modules/react-native-vector-icons/RNVectorIcons.xcodeproj"; sourceTree = "<group>"; };
 		098E2F43E376486BBD3C28BA /* libRNVectorIcons.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNVectorIcons.a; sourceTree = "<group>"; };
+		0A4599A724D9BF7300C9C21A /* FBSDKLoginKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKLoginKit.framework; path = ../../../Documents/FacebookSDK/FBSDKLoginKit.framework; sourceTree = "<group>"; };
 		0A9A0F6BFDBE9FE69FAE9F68 /* Pods-Barber-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Barber-tvOSTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Barber-tvOSTests/Pods-Barber-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
 		0D27837CEBE548A56891FCF3 /* Pods-BarberTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BarberTests.release.xcconfig"; path = "Target Support Files/Pods-BarberTests/Pods-BarberTests.release.xcconfig"; sourceTree = "<group>"; };
 		0E72E959C8624382A0321863 /* libRNVectorIcons-tvOS.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = "libRNVectorIcons-tvOS.a"; sourceTree = "<group>"; };
@@ -692,13 +693,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D6884D2C242BAF9B00BC548D /* UserNotifications.framework in Frameworks */,
 				4250757722F8256100137826 /* libRCTFBSDK.a in Frameworks */,
 				428B8C1E22F5A1E2008BDD1E /* Bolts.framework in Frameworks */,
 				428B8C1D22F5A1D4008BDD1E /* FBSDKCoreKit.framework in Frameworks */,
 				428B8C1C22F5A1BF008BDD1E /* FBSDKShareKit.framework in Frameworks */,
-				428B8C1B22F5A1AA008BDD1E /* FBSDKLoginKit.framework in Frameworks */,
 				428B8BC822F59E03008BDD1E /* libRNImagePicker.a in Frameworks */,
-				D6884D2C242BAF9B00BC548D /* UserNotifications.framework in Frameworks */,
 				18B3CD2B22E9F75C009341D4 /* libTPSStripe.a in Frameworks */,
 				188CEDF722AFE0C4009E40D9 /* libz.tbd in Frameworks */,
 				188CEDF522AFE0BA009E40D9 /* SystemConfiguration.framework in Frameworks */,
@@ -725,6 +725,7 @@
 				188CEDEC22AFE024009E40D9 /* GoogleSignIn.framework in Frameworks */,
 				85A6A61AC1614634A685AC93 /* libBVLinearGradient.a in Frameworks */,
 				E408D1B057E14C88836AC81A /* libRNDatePicker.a in Frameworks */,
+				0A4599A824D9BF7300C9C21A /* FBSDKLoginKit.framework in Frameworks */,
 				669180078EEE4D34AFC44447 /* libRNPreferenceManager.a in Frameworks */,
 				B9A7A40C349C4DB38DA1759D /* libRNGestureHandler.a in Frameworks */,
 				626B23EFF8414106B7D1C31B /* libRNVectorIcons.a in Frameworks */,
@@ -1065,6 +1066,7 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				0A4599A724D9BF7300C9C21A /* FBSDKLoginKit.framework */,
 				D6884D2B242BAF9B00BC548D /* UserNotifications.framework */,
 				187292FB22FD969F00518AC2 /* FirebaseCore.framework */,
 				188CEDFA22AFE2C5009E40D9 /* GoogleSignInDependencies.framework */,
@@ -2266,7 +2268,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
-					"$(HOME)/Documents/FacebookSDK",
+					"~/Documents/FacebookSDK",
 					"$(PROJECT_DIR)/google_signin_sdk_4_4_0",
 				);
 				HEADER_SEARCH_PATHS = (
@@ -2337,7 +2339,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
-					"$(HOME)/Documents/FacebookSDK",
+					"~/Documents/FacebookSDK",
 					"$(PROJECT_DIR)/google_signin_sdk_4_4_0",
 				);
 				HEADER_SEARCH_PATHS = (

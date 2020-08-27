@@ -1,41 +1,49 @@
 {
   "project_info": {
-    "project_number": "264908010858",
-    "firebase_url": "https://clypr-da866.firebaseio.com",
-    "project_id": "clypr-da866",
-    "storage_bucket": "clypr-da866.appspot.com"
+    "project_number": "212651275284",
+    "firebase_url": "https://clypr-barber-c7b91.firebaseio.com",
+    "project_id": "clypr-barber-c7b91",
+    "storage_bucket": "clypr-barber-c7b91.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:264908010858:android:fb61ef5d2e1a9eda04e113",
+        "mobilesdk_app_id": "1:212651275284:android:11d6bac969ed4fa1262301",
         "android_client_info": {
-          "package_name": "com.barber"
+          "package_name": "com.app.rn.barber"
         }
       },
       "oauth_client": [
         {
-          "client_id": "264908010858-90qei6m96daq2doi543gnahouvunl4v4.apps.googleusercontent.com",
+          "client_id": "212651275284-tdmipsfadh3hkmcbri629h3330hkthpf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.rn.barber",
+            "certificate_hash": "fad6b0c30954224fd6dc7a0a5d38e7598f26ab23"
+          }
+        },
+        {
+          "client_id": "212651275284-misr3qfdg29bh690dpjev4jnfl2clirv.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBdNaiSDAl5wEckzL81Qkj9XfKp_x5wv4o"
+          "current_key": "AIzaSyCaCsTwh6NGBhqm1ZSU0UZLeIElubnPmpc"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "264908010858-90qei6m96daq2doi543gnahouvunl4v4.apps.googleusercontent.com",
+              "client_id": "212651275284-misr3qfdg29bh690dpjev4jnfl2clirv.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "264908010858-imh71lfsb360c40oq6c7hrgqdkhuqu3b.apps.googleusercontent.com",
+              "client_id": "212651275284-umg1behlhii0hk19igk6h19igetlrv3p.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.reactjs.native.CLYPR"
+                "bundle_id": "com.reactjs.native.Barber"
               }
             }
           ]

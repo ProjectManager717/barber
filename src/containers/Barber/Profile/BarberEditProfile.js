@@ -500,7 +500,7 @@ export default class BarberEditProfile extends Component {
                 query={{
                     // available options: https://developers.google.com/places/web-service/autocomplete
                    // key: 'AIzaSyD5YuagFFL0m0IcjCIvbThN25l0m2jMm2w',
-                     key: 'AIzaSyD5YuagFFL0m0IcjCIvbThN25l0m2jMm2w',
+                     key: 'AIzaSyBUIZHod11AXolobDrvC-XEwOdoobRnLgs',
                     language: 'en', // language of the results
                     types: '(cities)' // default: 'geocode'
                 }}

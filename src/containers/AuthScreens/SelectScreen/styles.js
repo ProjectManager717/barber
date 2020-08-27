@@ -21,7 +21,8 @@ export const styles = StyleSheet.create({
   whiteTinySmallText: {
     ...Metric.font.h5Tiny,
     color: Colors.white,
-    textAlign: 'center'
+    textAlign: 'center',
+    marginBottom:5
   },
   whiteBoldText: {
     ...Metric.font.h3Bold1,

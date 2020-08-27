@@ -147,7 +147,7 @@ export default class ClientHome extends Component {
             <View style={{flexDirection: "column", marginStart: 10}}>
                 <Text
                     style={{fontSize: 15, color: "white"}}
-                >{item.client_data.username + " " + item.client_data.lastname}</Text>
+                >{item.client_data.firstname + " " + item.client_data.lastname}</Text>
                 <View style={{
                     flexDirection: "row",
                     marginTop: 5,
@@ -181,7 +181,7 @@ export default class ClientHome extends Component {
                     backgroundColor: "#626371"
                 }}>
 
-                <Text style={{marginTop: 3, color: "white", fontSize: 10, fontWeight: "bold"}}>{"$"+parseFloat(clientTip).toFixed(2)}</Text>
+                <Text style={{marginTop: 3, color: "white", fontSize: 10, fontWeight: "bold",width:"100%",textAlign:"center"}}>{"$"+parseFloat(clientTip).toFixed(2)}</Text>
             </TouchableOpacity>
 
         </View>

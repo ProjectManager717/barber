@@ -278,7 +278,7 @@ export default class Notifications extends Component {
                                 marginStart: 10,
                                 marginEnd: 10
                             }}/>
-                            <Text style={{color: "#95A2B5", fontSize: 12}}>{"$"+item.price}</Text>
+                            <Text style={{color: "#95A2B5", fontSize: 12}}>{"$"+item.price.toFixed(2)}</Text>
                         </View>
                     </View>
 

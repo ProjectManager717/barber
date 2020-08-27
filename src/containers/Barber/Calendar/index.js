@@ -37,95 +37,7 @@ export default class Calendar extends Component {
             selectedMonth: "",
             showMonth: "",
             month: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
-            listData: [
-                {
-                    id: 1,
-                    service: "Haircut & Beard",
-                    clientName: "Sergio Ramos",
-                    duration: '30 mins',
-                    price: '$30.00',
-                    imagep: require("../../../assets/images/completed.png"),
-                    imgText: "COMPLETED",
-                    imgTextcolor: Colors.green,
-                    bitSet: 0,
-                    bgc: Colors.green,
-                },
-                {
-                    id: 2,
-                    service: "Haircut",
-                    clientName: "Sir Alex Ferguson",
-                    duration: '30 mins',
-                    price: '$25.00',
-                    imagep: require("../../../assets/images/progress.png"),
-                    imgText: "IN PROGRESS",
-                    imgTextcolor: Colors.purple,
-                    bitSet: 0,
-                    bgc: Colors.purple,
-                },
-                {
-                    id: 3,
-                    service: "Haircut, Beard & Shave",
-                    clientName: "Leo Messi",
-                    duration: '1 hr',
-                    price: '$45.00',
-                    imagep: require("../../../assets/images/confirmed.png"),
-                    imgText: "CONFIRMED",
-                    imgTextcolor: Colors.magenta,
-                    bitSet: 1,
-                    bgc: Colors.magenta,
-                },
-                {
-                    id: 4,
-                    bgc: Colors.magenta,
-                },
-                {
-                    id: 5,
-                    bitSet: 2
-                },
-                {
-                    id: 6,
-                },
-                {
-                    id: 7,
-                    service: "Haircut & Beard",
-                    clientName: "Anthony Martial",
-                    duration: '30 mins',
-                    price: '$30.00',
-                    imagep: require("../../../assets/images/pending.png"),
-                    imgText: "PENDING",
-                    imgTextcolor: Colors.yellow,
-                    bitSet: 0,
-                    bgc: Colors.yellow,
-                },
-                {
-                    id: 8,
-                    service: "Haircut & Beard",
-                    clientName: "Anthony Martial",
-                    duration: '45 mins',
-                    price: '$28.00',
-                    imagep: require("../../../assets/images/cancelled.png"),
-                    imgText: "CANCELED",
-                    imgTextcolor: Colors.red,
-                    bitSet: 3,
-                    bgc: Colors.red,
-                },
-                {
-                    id: 9,
-                    bgc: Colors.red
-                },
-                {
-                    id: 10,
-                    service: "Haircut & Beard",
-                    clientName: "Anthony Martial",
-                    duration: '30 mins',
-                    price: '$30.00',
-                    imagep: require("../../../assets/images/noShow.png"),
-                    imgText: "NO SHOW",
-                    imgTextcolor: Colors.grey,
-                    bitSet: 0,
-                    bgc: Colors.grey,
-                },
-            ],
+            listData: [],
             calenderSlots: [],
         };
     }
@@ -176,7 +88,7 @@ export default class Calendar extends Component {
 
     componentDidMount = () => {
         let items = [];
-        for (i = 0; i < 7; i++) {
+        for (let i = 0; i < 7; i++) {
             var weekDate = this.startOfWeek(new Date());
             var newDate = weekDate.addDays(i);
             items.push(this.renderWeekDay({k: i, d: newDate}));
@@ -207,7 +119,7 @@ export default class Calendar extends Component {
         //console.log("Real_date-----> ",JSON.stringify(this.state.monthDays));
     }
 
-    itemSelect(colorItem, item, services) {
+    itemSelect(colorItem, item, services, surgePrice) {
         let endSlot = item.selected_slot_id.length - 1;
         if (/*colorItem !== "#DF00FF" &&*/ colorItem !== "yellow") {
             this.props.navigation.navigate("Appointments", {
@@ -216,6 +128,7 @@ export default class Calendar extends Component {
                 client_Image: item.client_image,
                 BannerImage: item.banner_image,
                 clientName: item.client_firstname,
+                surgePrice: surgePrice,
                 createdAt: item.createdAt,
                 startTime: item.selected_slot_id[0].start_time,
                 endtTime: item.selected_slot_id[endSlot].end_time,
@@ -238,14 +151,38 @@ export default class Calendar extends Component {
             }
         }).then(response => response.json())
             .then(response => {
-                console.log("responseCalenderSlots-->", "-" + JSON.stringify(response));
+                //console.log("responseCalenderSlots-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
                     this.setState({showLoading: false})
-                    console.log("responseCalenderSlots--->", JSON.stringify(response.Data.appointments));
+                    console.log("responseCalenderSlotss--->", JSON.stringify(response.Data.appointments));
                     if (response.Message === "No Appointment found against this Barber") {
                         this.setState({calenderSlots: []})
                     } else {
-                        this.setState({calenderSlots: response.Data.appointments})
+
+
+                        let bookings = response.Data.appointments;
+                        let newBookings=[];
+                        bookings.map((item, index) => {
+                            if (item.selected_slot_id.length > 0) {
+                                //bookings.splice(index, 1);
+                                newBookings.push(item);
+                            }
+                        })
+                        console.log("TimeSorting: ", JSON.stringify(newBookings))
+                        if (newBookings.length > 1) {
+                            //console.log("ClenderItem: ", JSON.stringify(a.selected_slot_id[0].start_time))
+                            const sortedActivities = newBookings.sort(function (a, b) {
+                                console.log("ClenderItem: ", JSON.stringify(a.selected_slot_id[0].start_time))
+                                return new moment("2014-02-27T" + a.selected_slot_id[0].start_time) - new moment("2014-02-27T" + b.selected_slot_id[0].start_time);
+                            })
+                            this.setState({calenderSlots: sortedActivities})
+                        } else {
+                            this.setState({calenderSlots: newBookings})
+                        }
+
+
+                        //const sortedActivities = reviews.sort((a, b) =>  a.createdAt -b.createdAt)
+                        //this.setState({calenderSlots: sortedActivities})
                     }
 
                     /*if (this.state.calenderSlots.length < 1) {
@@ -361,7 +298,9 @@ export default class Calendar extends Component {
                     period = "hr";
                 }
                 let servicesSelected = "";
+                let totalPriceServices = 0;
                 for (let f = 0; f < item.selected_services.length; f++) {
+                    totalPriceServices = totalPriceServices + item.selected_services[f].price
                     if (f === item.selected_services.length - 1) {
                         servicesSelected += item.selected_services[f].name;
                     } else {
@@ -369,6 +308,18 @@ export default class Calendar extends Component {
                     }
 
                 }
+                let surgePrice = 0;
+                let tipPrice = 0;
+                if (!!item.tip_price) {
+                    tipPrice = item.tip_price;
+                }
+                if (item.selected_surge_price === true) {
+                    surgePrice = parseInt(totalPriceServices) / 2;
+                    item.total_price = (parseInt(totalPriceServices) + surgePrice + tipPrice).toFixed(2);
+                } else {
+                    item.total_price =( parseInt(totalPriceServices) + tipPrice).toFixed(2);
+                }
+
                 let clientName = item.client_firstname + " " + item.client_lastname;
                 if (timeofSlots === 0) {
                     console.log("calenderSlots-time > " + item.total_time);
@@ -427,7 +378,8 @@ export default class Calendar extends Component {
                 }
                 if (timeofSlots === 15 || timeofSlots === 30) {
                     console.log("calenderSlots-time > " + timeofSlots);
-                    return <TouchableWithoutFeedback onPress={() => this.itemSelect(bgc, item, servicesSelected)}>
+                    return <TouchableWithoutFeedback
+                        onPress={() => this.itemSelect(bgc, item, servicesSelected, surgePrice)}>
                         <View style={{height: 70, flexDirection: "row"}} cellKey={item.id}>
                             <Text style={{
                                 textAlignVertical: "top",
@@ -439,7 +391,7 @@ export default class Calendar extends Component {
                                 color: Colors.white,
                                 fontSize: 10
                             }}>
-                                {m.format("HH:mm A")}
+                                {m.format("h:mm A")}
                             </Text>
                             <View style={{width: 6, backgroundColor: bgc}}/>
                             <View style={{
@@ -461,9 +413,8 @@ export default class Calendar extends Component {
                                     }}>
                                         <View style={{flexDirection: "row",}}>
                                             <Text style={{
-                                                fontWeight: "bold", color: "white",
-                                                fontSize: 11
-                                            }}>{servicesSelected}</Text>
+                                                fontWeight: "bold", color: "white", fontSize: 11, textAlign: "auto",
+                                            }}>{servicesSelected + "  "}</Text>
                                             <Text style={{marginStart: 8, marginTop: 1, color: "white", fontSize: 10}}>
                                                 {clientName}
                                             </Text>
@@ -506,6 +457,7 @@ export default class Calendar extends Component {
                                     justifyContent: "center",
                                     position: "absolute",
                                     right: 0,
+                                    borderRadius: 5,
                                     backgroundColor: bgcEnd
                                 }}>
                                     <Image resizeMode={"cover"}
@@ -516,7 +468,9 @@ export default class Calendar extends Component {
                                         color: [imgTextcolor],
                                         fontSize: 7,
                                         fontWeight: "bold",
-                                        marginTop: 5
+                                        marginTop: 5,
+                                        width: "100%",
+                                        textAlign: "center"
                                     }}>{imgText}</Text>
                                 </View>
 
@@ -527,7 +481,7 @@ export default class Calendar extends Component {
                 }
                 if (timeofSlots === 45) {
                     console.log("calenderSlots-time > " + item.total_time);
-                    return <TouchableOpacity onPress={() => this.itemSelect(bgc, item, servicesSelected)}>
+                    return <TouchableOpacity onPress={() => this.itemSelect(bgc, item, servicesSelected, surgePrice)}>
                         <View style={{height: 140, flexDirection: "row"}} cellKey={item.id}>
                             <View style={{flexDirection: "column"}}>
                                 <Text
@@ -540,7 +494,7 @@ export default class Calendar extends Component {
                                         fontSize: 10
                                     }}
                                 >
-                                    {m.format("HH:mm A")}
+                                    {m.format("h:mm A")}
                                 </Text>
 
                                 <Text
@@ -552,7 +506,7 @@ export default class Calendar extends Component {
                                         fontSize: 10
                                     }}
                                 >
-                                    {n.format("HH:mm A")}
+                                    {n.format("h:mm A")}
                                 </Text>
                             </View>
                             <View style={{height: 105, width: 6, backgroundColor: bgc}}/>
@@ -577,9 +531,8 @@ export default class Calendar extends Component {
                                     }}>
                                         <View style={{flexDirection: "row",}}>
                                             <Text style={{
-                                                fontWeight: "bold", color: "white",
-                                                fontSize: 11
-                                            }}>{servicesSelected}</Text>
+                                                fontWeight: "bold", color: "white", fontSize: 11, textAlign: "auto"
+                                            }}>{servicesSelected + "  "}</Text>
                                             <Text style={{marginStart: 8, marginTop: 1, color: "white", fontSize: 10}}>
                                                 {clientName}
                                             </Text>
@@ -616,6 +569,7 @@ export default class Calendar extends Component {
                                     justifyContent: "center",
                                     position: "absolute",
                                     right: 0,
+                                    borderRadius: 5,
                                     backgroundColor: bgcEnd
                                 }}>
                                     <Image resizeMode={"cover"}
@@ -626,7 +580,9 @@ export default class Calendar extends Component {
                                         color: [imgTextcolor],
                                         fontSize: 7,
                                         fontWeight: "bold",
-                                        marginTop: 5
+                                        marginTop: 5,
+                                        width: "100%",
+                                        textAlign: "center"
                                     }}>{imgText}</Text>
                                 </View>
                             </View>
@@ -636,7 +592,7 @@ export default class Calendar extends Component {
                 }
                 if (timeofSlots === 60) {
                     console.log("calenderSlots-time > " + item.total_time);
-                    return <TouchableOpacity onPress={() => this.itemSelect(bgc, item, servicesSelected)}>
+                    return <TouchableOpacity onPress={() => this.itemSelect(bgc, item, servicesSelected, surgePrice)}>
                         <View style={{height: 140, flexDirection: "row"}} cellKey={item.id}>
                             <View style={{flexDirection: "column"}}>
                                 <Text
@@ -649,7 +605,7 @@ export default class Calendar extends Component {
                                         fontSize: 10
                                     }}
                                 >
-                                    {m.format("HH:mm A")}
+                                    {m.format("h:mm A")}
                                 </Text>
 
                                 <Text
@@ -661,7 +617,7 @@ export default class Calendar extends Component {
                                         fontSize: 10
                                     }}
                                 >
-                                    {n.format("HH:mm A")}
+                                    {n.format("h:mm A")}
                                 </Text>
                             </View>
 
@@ -686,9 +642,8 @@ export default class Calendar extends Component {
                                     }}>
                                         <View style={{flexDirection: "row",}}>
                                             <Text style={{
-                                                fontWeight: "bold", color: "white",
-                                                fontSize: 11
-                                            }}>{servicesSelected}</Text>
+                                                fontWeight: "bold", color: "white", fontSize: 11, textAlign: "auto",
+                                            }}>{servicesSelected + "  "}</Text>
                                             <Text style={{marginStart: 8, marginTop: 1, color: "white", fontSize: 10}}>
                                                 {clientName}
                                             </Text>
@@ -725,6 +680,7 @@ export default class Calendar extends Component {
                                     justifyContent: "center",
                                     position: "absolute",
                                     right: 0,
+                                    borderRadius: 5,
                                     backgroundColor: bgcEnd
                                 }}>
                                     <Image resizeMode={"cover"}
@@ -735,7 +691,9 @@ export default class Calendar extends Component {
                                         color: [imgTextcolor],
                                         fontSize: 7,
                                         fontWeight: "bold",
-                                        marginTop: 5
+                                        marginTop: 5,
+                                        width: "100%",
+                                        textAlign: "center"
                                     }}>{imgText}</Text>
                                 </View>
                             </View>
@@ -745,7 +703,7 @@ export default class Calendar extends Component {
                 }
                 if (timeofSlots === 75) {
                     console.log("calenderSlots-time > " + item.total_time);
-                    return <TouchableOpacity onPress={() => this.itemSelect(bgc, item, servicesSelected)}>
+                    return <TouchableOpacity onPress={() => this.itemSelect(bgc, item, servicesSelected, surgePrice)}>
                         <View style={{height: 175, flexDirection: "row"}} cellKey={item.id}>
                             <View style={{flexDirection: "column"}}>
                                 <Text
@@ -758,7 +716,7 @@ export default class Calendar extends Component {
                                         fontSize: 10
                                     }}
                                 >
-                                    {m.format("HH:mm A")}
+                                    {m.format("h:mm A")}
                                 </Text>
 
                                 <Text
@@ -771,7 +729,7 @@ export default class Calendar extends Component {
                                         fontSize: 10
                                     }}
                                 >
-                                    {n.format("HH:mm A")}
+                                    {n.format("h:mm A")}
                                 </Text>
                                 <Text
                                     style={{
@@ -782,7 +740,7 @@ export default class Calendar extends Component {
                                         fontSize: 10
                                     }}
                                 >
-                                    {o.format("HH:mm A")}
+                                    {o.format("h:mm A")}
                                 </Text>
                             </View>
                             <View style={{height: 175, width: 6, backgroundColor: bgc}}/>
@@ -806,9 +764,8 @@ export default class Calendar extends Component {
                                     }}>
                                         <View style={{flexDirection: "row",}}>
                                             <Text style={{
-                                                fontWeight: "bold", color: "white",
-                                                fontSize: 11
-                                            }}>{servicesSelected}</Text>
+                                                fontWeight: "bold", color: "white", fontSize: 11, textAlign: "auto",
+                                            }}>{servicesSelected + "  "}</Text>
                                             <Text style={{marginStart: 8, marginTop: 1, color: "white", fontSize: 10}}>
                                                 {clientName}
                                             </Text>
@@ -846,6 +803,7 @@ export default class Calendar extends Component {
                                     justifyContent: "center",
                                     position: "absolute",
                                     right: 0,
+                                    borderRadius: 5,
                                     backgroundColor: bgcEnd
                                 }}>
                                     <Image resizeMode={"cover"}
@@ -856,7 +814,9 @@ export default class Calendar extends Component {
                                         color: [imgTextcolor],
                                         fontSize: 7,
                                         fontWeight: "bold",
-                                        marginTop: 5
+                                        marginTop: 5,
+                                        width: "100%",
+                                        textAlign: "center"
                                     }}>{imgText}</Text>
                                 </View>
 

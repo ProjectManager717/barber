@@ -407,7 +407,7 @@ export default class Subscription extends Component {
                                             marginLeft: 10,
                                             width:"100%",
                                             textAlign:"left",
-                                        }}>{"Pay per month($30 subscription) "} </Text>
+                                        }}>{"Pay per month ($30 subscription) "} </Text>
                                     </View>
 
                                     <Image resizeMode={"contain"} source={this.state.supreme.supremeImage}

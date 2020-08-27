@@ -435,9 +435,11 @@ export default class MobilePaySettings extends Component {
                         justifyContent: "center",
                         alignItems: "center",
                         fontSize: 13,
-                        fontWeight: "bold"
+                        fontWeight: "bold",
+                        width:"100%",
+                        textAlign:"center"
                     }}>
-                        You agree to CLYPR Terms and Services </Text>
+                        You agree to CLYPR Terms and Conditions </Text>
 
                     <View style={[globalStyles.rowBackground, styles.col, {marginTop: 20, height: 30, width: 320}]}>
                         {this.renderRowMP({

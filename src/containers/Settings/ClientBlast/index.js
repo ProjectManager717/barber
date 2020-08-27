@@ -124,7 +124,7 @@ export default class ClientBlast extends Component {
                         <View>
                             <Text style={{
                                 color: "white",
-                                fontSize: 12,
+                                fontSize: 14,
                                 marginTop: 10,
                                 marginLeft: 5
                             }}>{"This message will be sent to all of your clients. \n Let them know of any upcoming sales, vacations, or reminders"} </Text>
@@ -133,7 +133,7 @@ export default class ClientBlast extends Component {
                             height: 40,
                             width: 230,
                             position: "absolute",
-                            bottom: 50,
+                            bottom: 100,
                         }]}>
                             <Text style={globalStyles.buttonText}>SEND</Text>
                         </TouchableOpacity>

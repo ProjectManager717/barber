@@ -215,7 +215,7 @@ export default class ClientBarberSearch extends Component {
                 getDefaultValue={() => this.state.Address}
                 query={{
                     // available options: https://developers.google.com/places/web-service/autocomplete
-                    key: 'AIzaSyD5YuagFFL0m0IcjCIvbThN25l0m2jMm2w',
+                    key: 'AIzaSyBUIZHod11AXolobDrvC-XEwOdoobRnLgs',
                     language: 'en', // language of the results
                     types: '(cities)' // default: 'geocode'
                 }}

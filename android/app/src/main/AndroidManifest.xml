@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools"
-          package="com.barber">
+          package="com.app.rn.barber">
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
@@ -79,18 +79,14 @@
         <service android:name="io.invertase.firebase.messaging.RNFirebaseBackgroundMessagingService"/>
 
         <!-- firebase notification start -->
-
         <!-- Set custom default icon. This is used when no icon is set for incoming notification messages.
-        See README(https://goo.gl/l4GJaQ) for more. -->
+               See README(https://goo.gl/l4GJaQ) for more. -->
         <meta-data
-                android:name="com.google.firebase.messaging.default_notification_icon"
-                android:resource="@drawable/ic_notification"/>
-        <!-- Set color used with incoming notification messages. This is used when no color is set for the incoming
-            notification message. See README(https://goo.gl/6BKBk7) for more. -->
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_stat_ic_stat_ic_notification" />
         <meta-data
-                android:name="com.google.firebase.messaging.default_notification_color"
-                android:resource="@color/colorAccent"/>
-
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/red" />
         <!-- From Android 8.0 (API level 26) and higher, notification channels are supported and recommended.
         FCM provides a default notification channel with basic settings. -->
         <meta-data

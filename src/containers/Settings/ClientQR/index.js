@@ -48,8 +48,8 @@ export default class ClientQR extends Component {
                     }
                 />
                 <View style={{ flexDirection: "column", alignItems: "center",}}>
-                    <Text style={{color: "white", fontSize: 16, fontWeight: "bold", marginTop: 20}}>Your Barber Scan
-                        Your Code</Text>
+                    <Text style={{color: "white", fontSize: 16, fontWeight: "bold", marginTop: 20,width:"100%",textAlign:"center"}}>Your barber will scan
+                        your code</Text>
                     <View  style={{margin: 30,overflow:"hidden"}}>
                         {/*<Image source={require("../../../assets/images/QR_code.png")}
                                 style={{width:250,height:250}}/>*/}

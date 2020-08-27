@@ -29,6 +29,48 @@ const {height, width} = Dimensions.get("window");
 
 let  Params,  barberId = "",  client_id="", barberImage = "", barberName = "", barberShopName = "",appointmentPrice=0,appointmentId;
 export default class ClientLeaveReview extends Component {
+    
+    constructor(props) {
+        super(props);
+        const {params}=this.props.navigation.state;
+        console.log("PARAMS",params);
+        Params=params;
+        console.log("PARAMS",JSON.stringify(Params));
+
+        /*const {navigation} = this.props;
+        barberId = navigation.getParam('barber_id');
+        client_id=navigation.getParam('client_id');
+        appointmentPrice = parseInt(navigation.getParam('appointmentPrice'));
+        appointmentId= navigation.getParam('appointmentId');*/
+        barberId =Params.barber_id;
+        client_id=Params.client_id;
+        appointmentPrice = Params.appointmentPrice;
+        appointmentId= Params.appointmentId
+        this.state = {
+            BarberDetails:[],
+            showLoading: false,
+            addTip: true,
+            DialogVisible: false,
+            percentage: "0%",
+            rating:0,
+            goodQuality:false,
+            cleanliness:false,
+            punctuality:false,
+            professional:false,
+            addComment:"",
+            percentPrice:0,
+            unselected: require("../../../assets/images/greentick.png"),
+            unselected2: require("../../../assets/images/greentick.png"),
+            unselected3: require("../../../assets/images/greentick.png"),
+            unselected4: require("../../../assets/images/greentick.png"),
+        };
+
+    }
+    componentDidMount(): void {
+        this.getBarberDetails();
+    }
+
+
     rightAction() {
         //this.props.navigation.goBack();
         const goToIntoScreen = StackActions.reset({
@@ -74,46 +116,6 @@ export default class ClientLeaveReview extends Component {
         }else {
             this.setState({unselected4: require("../../../assets/images/greentick.png"),professional:false});
         }
-    }
-
-    constructor(props) {
-        super(props);
-        const {params}=this.props.navigation.state;
-        console.log("PARAMS",params);
-        Params=params;
-        console.log("PARAMS",JSON.stringify(Params));
-
-        /*const {navigation} = this.props;
-        barberId = navigation.getParam('barber_id');
-        client_id=navigation.getParam('client_id');
-        appointmentPrice = parseInt(navigation.getParam('appointmentPrice'));
-        appointmentId= navigation.getParam('appointmentId');*/
-        barberId =Params.barber_id;
-        client_id=Params.client_id;
-        appointmentPrice = Params.appointmentPrice;
-        appointmentId= Params.appointmentId
-        this.state = {
-            BarberDetails:[],
-            showLoading: false,
-            addTip: true,
-            DialogVisible: false,
-            percentage: "0%",
-            rating:0,
-            goodQuality:false,
-            cleanliness:false,
-            punctuality:false,
-            professional:false,
-            addComment:"",
-            percentPrice:0,
-            unselected: require("../../../assets/images/greentick.png"),
-            unselected2: require("../../../assets/images/greentick.png"),
-            unselected3: require("../../../assets/images/greentick.png"),
-            unselected4: require("../../../assets/images/greentick.png"),
-        };
-
-    }
-    componentDidMount(): void {
-        this.getBarberDetails();
     }
 
     getBarberDetails() {
@@ -470,7 +472,7 @@ export default class ClientLeaveReview extends Component {
 
 
                             </View>
-                            <View style={{
+                            {/* <View style={{
                                 flexDirection: "row",
                                 width: "90%",
                                 height: 50,
@@ -484,7 +486,6 @@ export default class ClientLeaveReview extends Component {
                                     <View style={{flexDirection: "row", marginTop: 10}}>
                                         <CheckBoxSquare rightText={"Add a Tip"} isChecked={this.state.addTip} onClick={() => this.setAddTip()}
                                                         style={{marginTop: 4,width:140}}/>
-                                        {/*<Text style={{color: "white", marginStart: 10, fontSize: 15,}}></Text>*/}
                                     </View>
                                     <Text style={{
                                         fontSize: 11,
@@ -529,7 +530,7 @@ export default class ClientLeaveReview extends Component {
                                 </View>
 
 
-                            </View>
+                            </View> */}
                             <TouchableOpacity onPress={() => this.addReview()}
                                               style={[globalStyles.button, {
                                                   height: 35,
@@ -637,7 +638,9 @@ const styles = StyleSheet.create({
     name: {
         fontSize: 15,
         fontWeight: "bold",
-        color: "white"
+        color: "white",
+        width:"100%",
+        textAlign:"center"
     },
     button: {
         width: width / 2.2,

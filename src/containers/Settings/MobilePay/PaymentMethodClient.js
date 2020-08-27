@@ -26,10 +26,10 @@ stripe.setOptions({
     publishableKey: 'pk_test_U4Ri0H7rP3PClZwTI5Z2r78J',
     androidPayMode: 'test', // Android only
 })
-let client_id, barber_id, barberImage, barberName, barberShopName, appointmentPrice, selected_services, date,
-    selected_slot_id, total_price, service_fee, selected_surge_price;
+let client_id, barber_id, barberImage, barberName, barberShopName, appointmentPrice=0, selected_services, date,
+    selected_slot_id, total_price=0, service_fee, selected_surge_price,tip_price=0;
 let cus_stripe_id, transaction_id, balance_transaction, destination, destination_payment, source_transaction,
-    stripedate, created;
+    stripedate, created,surgeprice=0;
 export default class PaymentMethodClient1 extends Component {
 
 
@@ -41,15 +41,25 @@ export default class PaymentMethodClient1 extends Component {
         barberImage = navigation.getParam('barberImage');
         barberName = navigation.getParam('barberName');
         barberShopName = navigation.getParam('barberShopName');
-        appointmentPrice = navigation.getParam('appointmentPrice');
-
+        tip_price=navigation.getParam('tip_price'),
+        selected_surge_price = navigation.getParam('selected_surge_price');
+        total_price = navigation.getParam('total_price');
+        if(selected_surge_price)
+        {
+            surgeprice = parseInt(total_price) / 2;
+        }
         selected_services = navigation.getParam('selected_services');
         date = navigation.getParam('date');
         selected_slot_id = navigation.getParam('selected_slot_id');
-        total_price = navigation.getParam('total_price');
-        service_fee = navigation.getParam('service_fee');
-        selected_surge_price = navigation.getParam('selected_surge_price');
 
+        service_fee = navigation.getParam('service_fee');
+        console.log("TipPricez: ", tip_price)
+        appointmentPrice =parseFloat(total_price)+parseFloat(service_fee)+parseFloat(surgeprice)+parseFloat(tip_price);
+        // alert("total_price:"+total_price+"\n"+
+        //     "selected_surge_price:"+selected_surge_price+"\n"+
+        //     "surgeprice:"+surgeprice+"\n"+
+        //     "appointmentPrice:"+appointmentPrice+"\n"
+        // )
         console.log("Data transfered::", JSON.stringify(selected_services))
         console.log("Data transfered::", JSON.stringify(selected_slot_id))
         this.state = {
@@ -225,9 +235,10 @@ export default class PaymentMethodClient1 extends Component {
             selected_services: selected_services,
             date: date,
             selected_slot_id: selected_slot_id,
-            total_price: total_price,
-            service_fee: "1",
-            selected_surge_price: false,
+            total_price: total_price+surgeprice  ,
+            service_fee: "1.50",
+            tip_price:tip_price,
+            selected_surge_price: selected_surge_price,
             cus_stripe_id: data.cus_stripe_id,
             transaction_id: data.transaction_id,
             balance_transaction: data.balance_transaction,
@@ -284,12 +295,15 @@ export default class PaymentMethodClient1 extends Component {
         let selectedcard = this.state.SelectedCard;
         if (this.state.isConnected) {
             this.setState({showLoading: true})
+
             var details = {
                 barberID: barber_id,
                 clientID: client_id,
-                amount: appointmentPrice * 100,
+                amount: (appointmentPrice) * 100,
                 card_id: selectedcard.cardInfo.id,
             };
+
+
             console.log("CARD Email----->" + JSON.stringify(details));
             console.log("APi URL ----->" + JSON.stringify(constants.PaymentFLow));
             var formBody = [];

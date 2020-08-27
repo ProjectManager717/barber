@@ -47,9 +47,11 @@ export default class Reviews extends Component {
             .then(response => {
                 console.log("ClientBarbersReviews-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
-                    this.setState({showLoading: false, reviews: response.Data});
                     console.log("dataSource:::", JSON.stringify(response.Data));
-
+                    let reviews=response.Data;
+                    const sortedActivities  = reviews.sort((a,b) => new moment(b.createdAt).format('YYYYMMDD')- new moment(a.createdAt).format('YYYYMMDD'))
+                    //const sortedActivities = reviews.sort((a, b) =>  a.createdAt -b.createdAt)
+                    this.setState({showLoading: false, reviews: sortedActivities});
 
 
                     let ratingpoints=0;
@@ -142,7 +144,7 @@ export default class Reviews extends Component {
                     </View>
                 </View>}
                 {(this.state.reviews.length > 0) && <FlatList
-                    data={this.state.reviews.reverse()}
+                    data={this.state.reviews}
                     renderItem={({item}) => this.renderItem(item)}
                     numColumns={1}
                     keyExtractor={(item, index) => index}

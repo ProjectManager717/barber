@@ -44,11 +44,13 @@ export default class ClientEditProfile extends Component {
             avatarSource: require("../../../assets/images/personImage.jpg"),
             userName: "",
             userAddress: "",
+            userAddress2:"",
             editLocation: false,
             editName: false,
             isConnected: true,
             places: [],
             DialogVisible: false,
+            googleAddressSelected:false,
         }
 
     }
@@ -106,6 +108,12 @@ export default class ClientEditProfile extends Component {
             <GooglePlacesAutocomplete
                 ref={(instance) => { this.locationRef = instance }}
                 placeholder='Enter Address'
+                // textInputProps={{
+                //     onChangeText: (text) => { 
+                //         this.setState({userAddress2:text,googleAddressSelected:false});
+
+                //      }
+                // }}
                 minLength={2} // minimum length of text to search
                 autoFocus={false}
                 returnKeyType={'search'} // Can be left out for default return key https://facebook.github.io/react-native/docs/textinput.html#returnkeytype
@@ -119,14 +127,15 @@ export default class ClientEditProfile extends Component {
 
                     this.state.places.push(details);
                     this.setState({userAddress: details.formatted_address});
-                    this.setState({places: this.state.places});
+                    this.setState({places: this.state.places,googleAddressSelected:true});
                     console.log("hello2" + JSON.stringify(this.state.places));
                 }}
 
                 getDefaultValue={() => this.state.userAddress}
                 query={{
                     // available options: https://developers.google.com/places/web-service/autocomplete
-                    key: 'AIzaSyD5YuagFFL0m0IcjCIvbThN25l0m2jMm2w',
+                    //key: 'AIzaSyD5YuagFFL0m0IcjCIvbThN25l0m2jMm2w',//old key AIzaSyBUIZHod11AXolobDrvC-XEwOdoobRnLgs
+                    key: 'AIzaSyBUIZHod11AXolobDrvC-XEwOdoobRnLgs',
                     language: 'en', // language of the results
                     types: '(cities)' // default: 'geocode'
                 }}
@@ -204,11 +213,18 @@ export default class ClientEditProfile extends Component {
             if (this.state.userName === "" || this.state.userAddress === "" || this.state.userName === "Enter your Name" || this.state.userAddress === "Enter your address") {
                 alert("Please enter full data.");
             } else {
+                let address="";
+                if(this.state.googleAddressSelected)
+                {
+                    address=this.state.userAddress
+                }else{
+                    address=this.state.userAddress2
+                }
                 this.setState({showLoading: true})
 
                 let requestBody = new FormData();
                 requestBody.append("client_id", Preference.get("userId"))
-                requestBody.append("address", this.state.userAddress)
+                requestBody.append("address", address)
                 requestBody.append("firstname", this.state.userName)
 
                 //requestBody.append("portfolios[]", this.state.userName)

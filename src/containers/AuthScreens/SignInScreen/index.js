@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
     ImageBackground,
     Text,
@@ -11,18 +11,18 @@ import {
     Alert,
     AsyncStorage
 } from 'react-native';
-import {NavigationActions, SafeAreaView, StackActions} from 'react-navigation';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {styles} from './styles';
-import {CloseButton, ImageButton, Input, RedButton} from '../../../components';
-import {checkEmail} from '../../../utils';
+import { NavigationActions, SafeAreaView, StackActions } from 'react-navigation';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { styles } from './styles';
+import { CloseButton, ImageButton, Input, RedButton } from '../../../components';
+import { checkEmail } from '../../../utils';
 import Preference from 'react-native-preference';
-import {constants} from "../../../utils/constants";
+import { constants } from "../../../utils/constants";
 import firebase from 'react-native-firebase';
 import NotificationPopup from 'react-native-push-notification-popup';
 
 //import * as constants from "../../../utils/constants";
-import {LoginButton, AccessToken, GraphRequest, GraphRequestManager} from 'react-native-fbsdk';
+import { LoginButton, AccessToken, GraphRequest, GraphRequestManager } from 'react-native-fbsdk';
 
 const FBSDK = require('react-native-fbsdk');
 const {
@@ -44,7 +44,7 @@ class SignInScreen extends Component {
     constructor(props) {
         super(props);
         console.disableYellowBox = true;
-        const {navigation} = this.props;
+        const { navigation } = this.props;
         itemId = navigation.getParam('User');
         console.log("gettingUSersignIn--->" + itemId);
         this.state = {
@@ -77,8 +77,9 @@ class SignInScreen extends Component {
             //It is mandatory to call this method before attempting to call signIn()
             scopes: ['https://www.googleapis.com/auth/userinfo.profile'],
             // Repleace with your webClientId generated from Firebase console
-            webClientId: "264908010858-90qei6m96daq2doi543gnahouvunl4v4.apps.googleusercontent.com",
-            iosClientId: '264908010858-imh71lfsb360c40oq6c7hrgqdkhuqu3b.apps.googleusercontent.com',
+            //webClientId: "264908010858-90qei6m96daq2doi543gnahouvunl4v4.apps.googleusercontent.com",//old
+            webClientId: "212651275284-misr3qfdg29bh690dpjev4jnfl2clirv.apps.googleusercontent.com",//new
+            //iosClientId: '264908010858-imh71lfsb360c40oq6c7hrgqdkhuqu3b.apps.googleusercontent.com',
         });
         this.checkPermission();
     }
@@ -134,7 +135,7 @@ class SignInScreen extends Component {
             console.log('Google --> ', "yessss");
             const userInfo = await GoogleSignin.signIn();
             console.log('Google User Info --> ', userInfo);
-            this.setState({userInfo: userInfo});
+            this.setState({ userInfo: userInfo });
             this.socialLoginGoogle(userInfo);
 
         } catch (error) {
@@ -169,7 +170,7 @@ class SignInScreen extends Component {
                     var encodedValue = encodeURIComponent(details[property]);
                     formBody.push(encodedKey + "=" + encodedValue);
                 }
-                this.setState({showLoading: true});
+                this.setState({ showLoading: true });
                 formBody = formBody.join("&");
                 fetch(constants.ClientSocialLogin, {
                     method: 'POST',
@@ -181,7 +182,7 @@ class SignInScreen extends Component {
                 }).then(response => response.json())
                     .then(response => {
                         console.log("responseClientlogin-->", "-" + JSON.stringify(response));
-                        this.setState({showLoading: false});
+                        this.setState({ showLoading: false });
                         if (response.ResultType === 1) {
                             Preference.set({
                                 AlertNotification: response.Data.alert_notification,
@@ -200,7 +201,7 @@ class SignInScreen extends Component {
                         }
                     })
                     .catch(error => {
-                        this.setState({showLoading: false});
+                        this.setState({ showLoading: false });
                         //console.error('Errorr:', error);
                         console.log('Error:', error);
                         alert("Error: " + error);
@@ -226,7 +227,7 @@ class SignInScreen extends Component {
                     var encodedValue = encodeURIComponent(details[property]);
                     formBody.push(encodedKey + "=" + encodedValue);
                 }
-                this.setState({showLoading: true});
+                this.setState({ showLoading: true });
                 formBody = formBody.join("&");
                 fetch(constants.BarberSocialLogin, {
                     method: 'POST',
@@ -238,7 +239,7 @@ class SignInScreen extends Component {
                 }).then(response => response.json())
                     .then(response => {
                         console.log("responseBarberlogin-->", "-" + JSON.stringify(response));
-                        this.setState({showLoading: false});
+                        this.setState({ showLoading: false });
                         if (response.ResultType === 1) {
                             Preference.set({
                                 AlertNotification: response.Data.alert_notification,
@@ -258,7 +259,7 @@ class SignInScreen extends Component {
                         }
                     })
                     .catch(error => {
-                        this.setState({showLoading: false});
+                        this.setState({ showLoading: false });
                         //console.error('Errorr:', error);
                         console.log('Error:', error);
                         alert("Error: " + error);
@@ -277,7 +278,7 @@ class SignInScreen extends Component {
         //if they already signed in and null otherwise.
         try {
             const userInfo = await GoogleSignin.signInSilently();
-            this.setState({userInfo});
+            this.setState({ userInfo });
         } catch (error) {
             //console.error('Errorr:', error);
             console.log('Error:', error);
@@ -307,8 +308,8 @@ class SignInScreen extends Component {
                 if (this.state.email === "" || this.state.password === "") {
                     alert("Please fill all fields");
                 } else {
-                    this.setState({showLoading: true});
-                    const {email, password} = this.state;
+                    this.setState({ showLoading: true });
+                    const { email, password } = this.state;
                     var details = {
                         email: email,
                         password: password,
@@ -321,6 +322,8 @@ class SignInScreen extends Component {
                         formBody.push(encodedKey + "=" + encodedValue);
                     }
                     formBody = formBody.join("&");
+                    console.log("DataSend: ", JSON.stringify(constants.ClientLogin))
+                    console.log("DataSend: ", JSON.stringify(formBody))
                     fetch(constants.ClientLogin, {
                         method: 'POST',
                         headers: {
@@ -334,7 +337,7 @@ class SignInScreen extends Component {
                             if (response.ResultType === 1) {
                                 if (response.Data.is_active === 1) {
 
-                                    this.setState({showLoading: false});
+                                    this.setState({ showLoading: false });
                                     Preference.set({
                                         AlertNotification: response.Data.alert_notification,
                                         clientlogin: true,
@@ -350,7 +353,7 @@ class SignInScreen extends Component {
 
 
                                 } else if (response.Data.is_active === 0) {
-                                    this.setState({showLoading: false});
+                                    this.setState({ showLoading: false });
                                     Preference.set({
                                         clientlogin: false,
                                         userEmail: response.Data.email,
@@ -362,14 +365,14 @@ class SignInScreen extends Component {
                                     this.props.navigation.navigate("SMSScreen");
                                 }
                             } else {
-                                this.setState({showLoading: false});
+                                this.setState({ showLoading: false });
                                 if (response.ResultType === 0) {
                                     alert(response.Message);
                                 }
                             }
                         })
                         .catch(error => {
-                            this.setState({showLoading: false});
+                            this.setState({ showLoading: false });
                             //console.error('Errorr:', error);
                             console.log('Error:', error);
                             alert("Error: " + error);
@@ -386,8 +389,8 @@ class SignInScreen extends Component {
                 if (this.state.email === "" || this.state.password === "") {
                     alert("Please fill all fields");
                 } else {
-                    this.setState({showLoading: true});
-                    const {email, password} = this.state;
+                    this.setState({ showLoading: true });
+                    const { email, password } = this.state;
                     var details = {
                         email: email,
                         password: password,
@@ -412,7 +415,7 @@ class SignInScreen extends Component {
                             console.log("responseBarberlogin-->", "-" + JSON.stringify(response));
                             if (response.ResultType === 1) {
                                 if (response.Data.is_active === 1) {
-                                    this.setState({showLoading: false});
+                                    this.setState({ showLoading: false });
                                     Preference.set({
                                         AlertNotification: response.Data.alert_notification,
                                         barberlogin: true,
@@ -430,7 +433,7 @@ class SignInScreen extends Component {
                             }
 
                             if (response.Data.is_active === 0) {
-                                this.setState({showLoading: false});
+                                this.setState({ showLoading: false });
                                 Preference.set({
                                     barberlogin: false,
                                     userEmail: response.Data.email,
@@ -441,14 +444,14 @@ class SignInScreen extends Component {
                                 });
                                 this.props.navigation.navigate("SMSScreen");
                             } else {
-                                this.setState({showLoading: false});
+                                this.setState({ showLoading: false });
                                 if (response.ResultType === 0) {
                                     alert(response.Message);
                                 }
                             }
                         })
                         .catch(error => {
-                            this.setState({showLoading: false});
+                            this.setState({ showLoading: false });
                             //console.error('Errorr:', error);
                             console.log('Error:', error);
                             alert("Error: " + error);
@@ -470,11 +473,12 @@ class SignInScreen extends Component {
                 console.log("OSfor this APP1: ", Platform.OS)
                 result = await LoginManager.logInWithReadPermissions(['email', 'public_profile']);
             } else {
-                result = await LoginManager.logInWithPermissions(['email', 'public_profile']);
+                result = await LoginManager.logInWithReadPermissions(['email', 'public_profile']);
+                //result = await LoginManager.logInWithPermissions(['email', 'public_profile']);
             }
 
             //result = await LoginManager.logInWithPermissions(['email', 'public_profile']);
-            console.log("OSfor this APP1: ",JSON.stringify(result))
+            console.log("OSfor this APP1: ", JSON.stringify(result))
             if (result.isCancelled) {
                 alert("Login was cancelled");
             } else {
@@ -524,7 +528,7 @@ class SignInScreen extends Component {
     async FBGraphRequest(fields, callback) {
         const accessData = await AccessToken.getCurrentAccessToken();
         // Create a graph request asking for user information
-        this.setState({accessToken: accessData.accessToken});
+        this.setState({ accessToken: accessData.accessToken });
         const infoRequest = new GraphRequest('/me', {
             accessToken: accessData.accessToken,
             parameters: {
@@ -542,7 +546,7 @@ class SignInScreen extends Component {
             alert(JSON.stringify(error))
         } else {
             //alert(JSON.stringify(result))
-            this.setState({dataFacebook: result});
+            this.setState({ dataFacebook: result });
             this.signinFacebook(this.state.dataFacebook, this.state.accessToken);
         }
     }
@@ -684,14 +688,14 @@ class SignInScreen extends Component {
 
             const goToIntoScreen = StackActions.reset({
                 index: 0,
-                actions: [NavigationActions.navigate({routeName: 'ClientTabNavigator'})],
+                actions: [NavigationActions.navigate({ routeName: 'ClientTabNavigator' })],
             });
             this.props.navigation.dispatch(goToIntoScreen);
             // this.props.navigation.navigate("ClientTabNavigator");
         } else {
             const goToIntoScreen = StackActions.reset({
                 index: 0,
-                actions: [NavigationActions.navigate({routeName: 'TabNavigator'})],
+                actions: [NavigationActions.navigate({ routeName: 'TabNavigator' })],
             });
             this.props.navigation.dispatch(goToIntoScreen);
             // this.props.navigation.navigate("TabNavigator");
@@ -699,37 +703,37 @@ class SignInScreen extends Component {
     }
 
     onChangeText = (key, value) => {
-        this.setState({[key]: value});
+        this.setState({ [key]: value });
     };
 
     signupClicked() {
-        this.props.navigation.navigate('SignUpScreen', {User: this.state.userName});
+        this.props.navigation.navigate('SignUpScreen', { User: this.state.userName });
         //this.props.navigation.navigate("SignUpScreen");
     }
 
     onForgot = () => {
         //alert('forgot');
-        this.props.navigation.push("ForgetPasswordScreen", {User: itemId});
+        this.props.navigation.push("ForgetPasswordScreen", { User: itemId });
     };
 
     render() {
-        const {email, password} = this.state;
+        const { email, password } = this.state;
         const isValidEmail = checkEmail(email);
         const isValidPassword = password.length >= 6;
         return (
             <View style={styles.container}>
-                <NotificationPopup ref={ref => this.popup = ref}/>
-                <View style={styles.bottomContainer}/>
+                <NotificationPopup ref={ref => this.popup = ref} />
+                <View style={styles.bottomContainer} />
                 <KeyboardAwareScrollView >
-                    <View style={[styles.closeContainer,{marginTop:50}]}>
-                        <CloseButton onPress={this.onClose}/>
+                    <View style={[styles.closeContainer, { marginTop: 50 }]}>
+                        <CloseButton onPress={this.onClose} />
                     </View>
-                    <View style={{width: "100%", height: "10%", justifyContent: 'center', alignItems: "center"}}>
-                        <Image style={{resizeMode: "contain", width: 150, height: 100}}
-                               source={require("../../../assets/images/logo.png")}
+                    <View style={{ width: "100%", height: "10%", justifyContent: 'center', alignItems: "center" }}>
+                        <Image style={{ resizeMode: "contain", width: 150, height: 100 }}
+                            source={require("../../../assets/images/logo.png")}
                         />
                     </View>
-                    <View style={[styles.mainContainer,{marginTop:20}]}>
+                    <View style={[styles.mainContainer, { marginTop: 20 }]}>
                         <View style={styles.subContainer}>
                             <Text style={styles.whiteBoldBigText}>
                                 Login • {this.state.userName}
@@ -741,6 +745,7 @@ class SignInScreen extends Component {
                                 placeholder="Email"
                                 onChangeText={(text) => this.onChangeText('email', text)}
                                 keyboardType="email-address"
+                                autoCapitalize={false}
                                 isValid={isValidEmail}
                             />
                             <Input
@@ -754,17 +759,17 @@ class SignInScreen extends Component {
                             />
                         </View>
                         <View style={styles.forgotPasswordContainer}>
-                            <Text style={[styles.whiteText,{width:70,textAlign:"center"}]}>
+                            <Text style={[styles.whiteText, { width: 70, textAlign: "center" }]}>
                                 {`Can't login? `}
                             </Text>
                             <TouchableOpacity onPress={this.onForgot}>
-                                <Text style={[styles.redText,{width:130,textAlign:"center"}]}>
+                                <Text style={[styles.redText, { width: 130, textAlign: "center" }]}>
                                     {'Forgot password! '}
                                 </Text>
                             </TouchableOpacity>
                         </View>
                         <View style={styles.buttonsContainer}>
-                            <RedButton style={styles.loginButton} label="Login" textStyle={{width:60,textAlign:"center"}} onPress={this.onLogin}/>
+                            <RedButton style={styles.loginButton} label="Login" textStyle={{ width: 60, textAlign: "center" }} onPress={this.onLogin} />
                             <ImageButton
                                 onPress={this.facebokLogin}
                                 iconSource={require('../../../assets/icon_facebook.png')}
@@ -780,7 +785,7 @@ class SignInScreen extends Component {
                         </View>
 
                     </View>
-                   {/* <View style={{flex: 1}}>
+                    {/* <View style={{flex: 1}}>
                     </View>*/}
 
 
@@ -794,17 +799,17 @@ class SignInScreen extends Component {
                         justifyContent: "center"
                     }}>
                         <Image resizeMode={"contain"} source={require("../../../assets/images/loading.gif")}
-                               style={{width: 60, height: 60, opacity: 1,}}/>
+                            style={{ width: 60, height: 60, opacity: 1, }} />
                     </View>}
 
 
                 </KeyboardAwareScrollView>
                 <View style={styles.bottomButtonContainer}>
-                    <Text style={[styles.grayText,{width:160,textAlign:"center"}]}>
+                    <Text style={[styles.grayText, { width: 160, textAlign: "center" }]}>
                         {`Don't have an account? `}
                     </Text>
                     <TouchableOpacity onPress={() => this.signupClicked()}>
-                        <Text style={[styles.redText,{width:50,textAlign:"center"}]}>
+                        <Text style={[styles.redText, { width: 50, textAlign: "center" }]}>
                             {'Sign Up!'}
                         </Text>
                     </TouchableOpacity>

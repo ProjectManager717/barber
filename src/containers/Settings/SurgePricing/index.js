@@ -335,15 +335,15 @@ export default class SurgePricing extends Component {
                         <View style={{flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
                             {this.renderRowSurge2({
                                 hint: "Radius Limit :",
-                                value: this.state.radiousLimit
+                                value: this.state.radiousLimit+"  ",
                             })}
                             {this.renderRowSurge2({
                                 hint: "Duration :",
-                                value: this.state.duration
+                                value: this.state.duration+"  ",
                             })}
                             {this.renderRowSurge2({
                                 hint: "Price :",
-                                value: this.state.price
+                                value: this.state.price+"  ",
                             })}
                             <TouchableOpacity onPress={() => this.setState({DialogVisible: true})}>
                                 <Image style={styles.leftIcon2} source={require("../../../assets/images/edit.png")}/>
@@ -370,9 +370,9 @@ export default class SurgePricing extends Component {
                                         backgroundColor: "black",
                                     }}/>
                                     {/* <Text>Radious Limit</Text>*/}
-                                    <View style={{flexDirection: "row"}}>
-                                        <Text style={{fontSize: 15, color: "black", marginTop: 12}}>Radius
-                                            Limit :</Text>
+                                    <View style={{flexDirection: "row",width:"100%"}}>
+                                        <Text style={{fontSize: 15, color: "black", marginTop: 14,textAlign:"center",width:"48%",}}>Radius Limit </Text>
+                                        <Text style={{ color: "black",width:"2%"}}> {":"}</Text>
                                         <TextInput
                                             onChangeText={(text) => this.setState({radiousLimit: text})}
                                             value={this.state.radiousLimit}
@@ -391,10 +391,10 @@ export default class SurgePricing extends Component {
                                         marginBottom: 5,
                                         backgroundColor: "black"
                                     }}/>
-                                    <View style={{flexDirection: "row"}}>
-                                        <Text style={{fontSize: 15, color: "black", marginTop: 12}}>Duration :</Text>
+                                    <View style={{flexDirection: "row",width:"100%"}}>
+                                        <Text style={{fontSize: 15, color: "black", marginTop: 14,textAlign:"center",width:"48%",}}>Duration</Text>
+                                        <Text style={{ color: "black",width:"2%"}}> {":"}</Text>
                                         <TextInput
-                                            style={styles.input}
                                             onChangeText={(text) => this.setState({duration: text})}
                                             value={this.state.duration}
                                             fontSize={17}
@@ -410,10 +410,10 @@ export default class SurgePricing extends Component {
                                         marginBottom: 5,
                                         backgroundColor: "black"
                                     }}/>
-                                    <View style={{flexDirection: "row"}}>
-                                        <Text style={{fontSize: 15, color: "black", marginTop: 12}}>Price :</Text>
+                                    <View style={{flexDirection: "row",width:"100%"}}>
+                                        <Text style={{fontSize: 15, color: "black", marginTop: 14,textAlign:"center",width:"48%",}}>Price </Text>
+                                        <Text style={{ color: "black",width:"2%"}}> {":"}</Text>
                                         <TextInput
-                                            style={styles.input}
                                             onChangeText={(text) => this.setState({price: text})}
                                             value={this.state.price}
                                             fontSize={17}

@@ -10,7 +10,8 @@ import {constants} from "../../../utils/constants";
 import {SafeAreaView} from "react-navigation";
 var moment = require("moment");
 
-let appointmentId="",clr = "",BannerImage="" ,clientName = "", createdAt = "", startTime = "", endTime = "", price = "", services = "",client_image="",
+let appointmentId="",clr = "",BannerImage="" ,surgePrice="",
+    clientName = "", createdAt = "", startTime = "", endTime = "", price = "", services = "",client_image="",
     totalServices = "";
 export default class Appointments extends Component {
 
@@ -20,9 +21,11 @@ export default class Appointments extends Component {
         const {navigation} = this.props;
         appointmentId = navigation.getParam('appointmentId');
         clr = navigation.getParam('bgc');
+        surgePrice=navigation.getParam('surgePrice')
         clientName = navigation.getParam('clientName');
         createdAt = navigation.getParam('createdAt');
         startTime = navigation.getParam('startTime');
+        console.log("startTime:", JSON.stringify(startTime));
         endTime = navigation.getParam('endtTime');
         price = navigation.getParam('price');
         var m = moment(new Date(createdAt));
@@ -184,6 +187,8 @@ export default class Appointments extends Component {
     }
 
     render() {
+        let startTimee = startTime.toString().split(":");
+        let endTimee = endTime.toString().split(":");
         return (
             <View style={styles.container}>
                 <Header
@@ -358,16 +363,20 @@ export default class Appointments extends Component {
                             </View>
                         </View>
                         }
-                        {this.renderRowapp({
+                        {
+                            this.renderRowapp({
                             ic: require("../../../assets/images/calender.png"),
                             text1: createdAt,
-                            text2: startTime + " - " + endTime,
+                            text2: moment(new Date(2011, 2, 12, startTimee[0], startTimee[1], 0)).format("hh:mm A") + " - "
+                                + moment(new Date(2011, 2, 12, endTimee[0], endTimee[1], 0)).format("hh:mm A") ,
                         })}
-                        <TouchableOpacity onPress={() => this.props.navigation.navigate("Receipt")}>
+                        <TouchableOpacity onPress={() => this.props.navigation.navigate("Receipt",{
+                            appointmentId:appointmentId
+                        })}>
                             {this.renderRowapp({
                                 ic: require("../../../assets/images/surg_price.png"),
                                 text1: "$"+price,
-                                text2: "SURGE PRICE : $0"
+                                text2: "SURGE PRICE : $"+surgePrice
                             })}
                         </TouchableOpacity>
                         <View style={{height: 0.5, backgroundColor: "#52525D", marginStart: 90, marginTop: 10}}></View>
