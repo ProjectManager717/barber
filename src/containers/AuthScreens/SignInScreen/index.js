@@ -4,12 +4,11 @@ import {
     Text,
     View,
     TouchableOpacity,
-    NetInfo,
     Platform,
     ActivityIndicator,
     Image,
     Alert,
-    AsyncStorage
+    AsyncStorage,
 } from 'react-native';
 import { NavigationActions, SafeAreaView, StackActions } from 'react-navigation';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -20,9 +19,16 @@ import Preference from 'react-native-preference';
 import { constants } from "../../../utils/constants";
 import firebase from 'react-native-firebase';
 import NotificationPopup from 'react-native-push-notification-popup';
+import _ from 'lodash'
 
 //import * as constants from "../../../utils/constants";
 import { LoginButton, AccessToken, GraphRequest, GraphRequestManager } from 'react-native-fbsdk';
+import appleAuth, {
+    AppleButton,
+    AppleAuthRequestOperation,
+    AppleAuthRequestScope,
+    AppleAuthCredentialState,
+} from '@invertase/react-native-apple-authentication';
 
 const FBSDK = require('react-native-fbsdk');
 const {
@@ -34,7 +40,7 @@ import {
     GoogleSignin,
     GoogleSigninButton,
     statusCodes,
-} from 'react-native-google-signin';
+} from '@react-native-community/google-signin';
 
 
 let itemId = "";
@@ -136,7 +142,7 @@ class SignInScreen extends Component {
             const userInfo = await GoogleSignin.signIn();
             console.log('Google User Info --> ', userInfo);
             this.setState({ userInfo: userInfo });
-            this.socialLoginGoogle(userInfo);
+            this.socialLoginGoogle(userInfo,"google");
 
         } catch (error) {
             console.log('Message1122', error.message);
@@ -152,13 +158,36 @@ class SignInScreen extends Component {
         }
     };
 
-    socialLoginGoogle(userInfo) {
+    onAppleButtonPress = async () => {
+        console.log('onAppleButtonPress')
+        // performs login request
+        const appleAuthRequestResponse = await appleAuth.performRequest({
+            requestedOperation: appleAuth.Operation.LOGIN,
+            requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME],
+        });
+        console.log('appleAuthRequestResponse:', JSON.stringify(appleAuthRequestResponse))
+
+        if (_.isNil(appleAuthRequestResponse.email)) {
+            Alert.alert('Email Required!', 'Please allow to share your email');
+        } else {
+            this.socialLoginGoogle({
+                user: {
+                    email: appleAuthRequestResponse.email,
+                    givenName: appleAuthRequestResponse.fullName.givenName,
+                    familyName: appleAuthRequestResponse.fullName.familyName
+                },
+                idToken: appleAuthRequestResponse.user,
+            },"apple")
+        }
+    }
+
+    socialLoginGoogle(userInfo,src) {
         if (itemId === "Client") {
             if (this.state.isConnected) {
                 var details = {
 
                     email: userInfo.user.email,
-                    authType: "google",
+                    authType: src,
                     authId: userInfo.idToken,
                     firstName: userInfo.user.givenName,
                     lastName: userInfo.user.familyName,
@@ -471,7 +500,8 @@ class SignInScreen extends Component {
             console.log("OSfor this APP: ", Platform.OS)
             if (Platform.OS === "ios") {
                 console.log("OSfor this APP1: ", Platform.OS)
-                result = await LoginManager.logInWithReadPermissions(['email', 'public_profile']);
+                //LoginManager.logInWithReadPermissions
+                result = await LoginManager.logInWithPermissions(['email', 'public_profile']);
             } else {
                 result = await LoginManager.logInWithReadPermissions(['email', 'public_profile']);
                 //result = await LoginManager.logInWithPermissions(['email', 'public_profile']);
@@ -769,7 +799,7 @@ class SignInScreen extends Component {
                             </TouchableOpacity>
                         </View>
                         <View style={styles.buttonsContainer}>
-                            <RedButton style={styles.loginButton} label="Login" textStyle={{ width: 60, textAlign: "center" }} onPress={this.onLogin} />
+                            <RedButton style={styles.loginButton} label="Login" textStyle={{ textAlign: "center", width: "100%" }} onPress={this.onLogin} />
                             <ImageButton
                                 onPress={this.facebokLogin}
                                 iconSource={require('../../../assets/icon_facebook.png')}
@@ -783,7 +813,14 @@ class SignInScreen extends Component {
                                 style={styles.imgBtnContainer}
                             />
                         </View>
-
+                        {Platform.OS === 'ios' &&
+                            <AppleButton
+                                buttonStyle={AppleButton.Style.WHITE}
+                                buttonType={AppleButton.Type.LOGIN}
+                                style={{ width: '90%', height: 40, marginTop: 20, alignSelf: 'center' }}
+                                onPress={() => this.onAppleButtonPress()}
+                            />
+                        }
                     </View>
                     {/* <View style={{flex: 1}}>
                     </View>*/}

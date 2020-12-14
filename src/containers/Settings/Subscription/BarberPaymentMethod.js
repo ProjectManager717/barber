@@ -20,9 +20,8 @@ import PopupDialog from 'react-native-popup-dialog';
 import stripe from 'tipsi-stripe'
 
 stripe.setOptions({
-    //publishableKey: 'pk_test_5f4q3aLF1SgN7kQdEV6WBSnn',
-    publishableKey: 'pk_test_U4Ri0H7rP3PClZwTI5Z2r78J',
-    androidPayMode: 'test', // Android only
+    publishableKey: constants.StripeKey,
+    //androidPayMode: 'test', // Android only
 })
 let client_id, barber_id, barberImage, barberName, barberShopName, appointmentPrice, selected_services, date,
     selected_slot_id, total_price, service_fee, selected_surge_price;

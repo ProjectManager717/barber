@@ -21,7 +21,9 @@
             android:icon="@drawable/clypr_logo"
             android:roundIcon="@drawable/clypr_logo"
             android:allowBackup="false"
+            android:requestLegacyExternalStorage="true"
             android:usesCleartextTraffic="true"
+            tools:ignore="GoogleAppIndexingWarning"
             android:theme="@style/AppTheme">
         <meta-data
                 android:name="com.google.android.geo.API_KEY"
@@ -31,7 +33,7 @@
                 android:name=".MainActivity"
                 android:label="@string/app_name"
                 android:launchMode="singleTask"
-                android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+                android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
                 android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -81,7 +83,7 @@
         <!-- firebase notification start -->
         <!-- Set custom default icon. This is used when no icon is set for incoming notification messages.
                See README(https://goo.gl/l4GJaQ) for more. -->
-        <meta-data
+       <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/ic_stat_ic_stat_ic_notification" />
         <meta-data

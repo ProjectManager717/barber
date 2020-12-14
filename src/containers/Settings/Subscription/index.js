@@ -1,18 +1,52 @@
-import React, {Component} from "react";
-import {View, Switch, Text, StyleSheet, Image, ScrollView, TouchableOpacity, TouchableHighlight,TouchableWithoutFeedback} from "react-native";
-import {Colors} from "../../../themes";
-import {globalStyles} from "../../../themes/globalStyles";
+import React, { Component } from "react";
+import {
+    View,
+    Switch,
+    Text,
+    StyleSheet,
+    Image,
+    ScrollView,
+    TouchableOpacity,
+    TouchableHighlight,
+    TouchableWithoutFeedback,
+    Platform,
+    Alert
+} from "react-native";
+import { Colors } from "../../../themes";
+import { globalStyles } from "../../../themes/globalStyles";
+import PopupDialog from 'react-native-popup-dialog';
 //import { styles } from "./styles";
-import {Header} from "react-native-elements";
+import { Header } from "react-native-elements";
 import CheckBoxSquare from "../../../components/CheckBox";
 
 import Preference from "react-native-preference";
-import {constants} from "../../../utils/constants";
+import { constants } from "../../../utils/constants";
+import RNIap, {
+    Product,
+    ProductPurchase,
+    PurchaseError,
+    acknowledgePurchaseAndroid,
+    purchaseErrorListener,
+    purchaseUpdatedListener,
+} from 'react-native-iap';
+
+const itemSkus = Platform.select({
+    ios: [
+        'products.clypr.supreme'
+    ],
+    android: [
+        'com.example.productId'
+    ]
+});
+
+let purchaseUpdateSubscription;
+let purchaseErrorSubscription;
 
 export default class Subscription extends Component {
     state = {
-        showLoading:false,
-        SubscriptionInfo:[],
+        showLoading: false,
+        SubscriptionInfo: [],
+        SubscriptionPopUp: false,
         basic: {
             basicBgColor: "#686975",
             basicBorderColor: "white",
@@ -32,13 +66,185 @@ export default class Subscription extends Component {
         },
         SelectedBasic: false,
         SelectedSupreme: false,
+        productList: [],
 
     }
 
-    componentDidMount(): void {
-         this.SubscriptionInfo();
+    purchaseUpdatedListenerCount = 0
+    purchaseErrorListenerCount = 0
+
+    async componentDidMount(): void {
+        if (Platform.OS == 'ios') {
+            try {
+                const result = await RNIap.initConnection();
+                console.log('initInAppPurchase', 'result', result);
+            } catch (err) {
+                console.log('initInAppPurchase', 'error', err.code, err.message);
+            }
+
+            purchaseUpdateSubscription = purchaseUpdatedListener(async (purchase) => {
+                console.log('initInAppPurchase', 'purchaseUpdatedListener', JSON.stringify(purchase));
+                if (this.purchaseUpdatedListenerCount > 1) {
+                    return
+                }
+                this.purchaseUpdatedListenerCount = this.purchaseUpdatedListenerCount + 1
+                if (purchase && purchase.transactionReceipt) {
+                    //call API
+                }
+            });
+
+            purchaseErrorSubscription = purchaseErrorListener((error) => {
+                console.log('initInAppPurchase', 'purchaseErrorListener', error);
+                if (this.purchaseErrorListenerCount > 1) {
+                    return
+                }
+                this.purchaseErrorListenerCount = this.purchaseErrorListenerCount + 1
+                let message = ''
+                if (error.code == 'E_ALREADY_OWNED') {
+                    message = 'You already own this item.'
+                } else if (error.code == 'E_USER_CANCELLED') {
+                    message = 'Payment is Cancelled.'
+                } else if (error.code == 'PROMISE_BUY_ITEM') {
+                    message = 'This item is not currently available.'
+                } else {
+                    message = 'Unable to purchase this item. Please try later.'
+                }
+                Alert.alert('Alert', message);
+            });
+        }
+    }
+
+
+    componentWillUnmount(): void {
+        if (purchaseUpdateSubscription) {
+            purchaseUpdateSubscription.remove();
+            purchaseUpdateSubscription = null;
+        }
+        if (purchaseErrorSubscription) {
+            purchaseErrorSubscription.remove();
+            purchaseErrorSubscription = null;
+        }
+    }
+
+    PaymentFlow() {
+        //let selectedcard=this.state.SelectedCard;
+        if (this.state.isConnected) {
+            this.setState({ showLoading: true })
+            var details = {
+                barberEmail: Preference.get("userEmail"),
+                accountSubscriptionType: 2,
+                supremeBarber: true,
+                cardID: "",
+            };
+            //console.log("CARD Email----->"+JSON.stringify(details));
+            //console.log("APi URL ----->"+JSON.stringify(constants.PaymentFLow));
+            var formBody = [];
+            for (var property in details) {
+                var encodedKey = encodeURIComponent(property);
+                var encodedValue = encodeURIComponent(details[property]);
+                formBody.push(encodedKey + "=" + encodedValue);
+            }
+            formBody = formBody.join("&");
+            fetch(constants.BarberPaymentFlow, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: formBody
+            }).then(response => response.json())
+                .then(response => {
+                    console.log("responsePaymentCard-->", "-" + JSON.stringify(response));
+                    this.setState({ showLoading: false })
+                    if (response.ResultType === 1) {
+                        if (Preference.get("newUser") === true) {
+                            alert("Supreme Subscription Activated");
+                            this.props.navigation.navigate("Settings");
+                        }
+                        else {
+                            alert("Supreme Subscription Activated");
+
+                            this.props.navigation.navigate("Subscription");
+
+                        }
+
+                    } else {
+                        if (response.ResultType === 0) {
+                            alert(response.Message);
+
+                        }
+                    }
+                })
+                .catch(error => {
+                    //console.error('Errorr:', error);
+                    console.log('Error:', error);
+                    this.setState({ showLoading: false })
+                    alert("Error: " + error);
+                });
+
+        } else {
+            alert("Please connect Internet");
+        }
 
     }
+
+
+
+    getItems = async (): void => {
+        try {
+            console.log('itemSkus[0]', itemSkus[0]);
+            const products: Product[] = await RNIap.getProducts(itemSkus);
+            console.log('Products[0]', products[0]);
+            this.setState({ productList: products });
+            this.requestPurchase(itemSkus[0]);
+        } catch (err) {
+            console.log('getItems || purchase error => ', err);
+        }
+    };
+    getSubscriptions = async (): void => {
+        try {
+            const products = await RNIap.getSubscriptions(itemSkus);
+            console.log('Products => ', products);
+            this.setState({ productList: products });
+        } catch (err) {
+            console.log('getSubscriptions error => ', err);
+        }
+    };
+    getAvailablePurchases = async (): void => {
+        try {
+            const purchases = await RNIap.getAvailablePurchases();
+            console.info('Available purchases => ', purchases);
+            if (purchases && purchases.length > 0) {
+                this.setState({
+                    availableItemsMessage: `Got ${purchases.length} items.`,
+                    receipt: purchases[0].transactionReceipt,
+                });
+            }
+        } catch (err) {
+            console.warn(err.code, err.message);
+            console.log('getAvailablePurchases error => ', err);
+        }
+    };
+    requestPurchase = async (sku): void => {
+        try {
+            RNIap.requestPurchase(sku);
+        } catch (err) {
+            console.log('requestPurchase error => ', err);
+        }
+    };
+    requestSubscription = async (sku) => {
+        try {
+            //await this.getItems();
+            const result = await RNIap.requestPurchase(sku);
+            console.log("requestSubscription-result", result)
+        } catch (err) {
+            console.log('requestSubscription-error => ', err);
+        }
+    };
+    purchaseConfirmed = () => {
+        alert("Subscription purchased Succesfully");
+        //you can code here for what changes you want to do in db on purchase successfull
+    };
 
     _selectedBasic() {
         this.setState({
@@ -60,7 +266,7 @@ export default class Subscription extends Component {
                 supremeCheck: require("../../../assets/images/radio_unselected.png"),
             },
             SelectedBasic: true,
-            SelectedSupreme:false,
+            SelectedSupreme: false,
 
         });
     }
@@ -89,31 +295,44 @@ export default class Subscription extends Component {
         });
     }
 
-      Onsubmit() {
+    Onsubmit() {
+        //alert("You are already a Supreme User");
         if (Preference.get("newUser") === true) {
             if (this.state.SelectedBasic === true) {
                 Preference.set("userPackage", "basic");
-                 this.CancelSubscription();
+                this.CancelSubscription();
                 this.props.navigation.navigate("BookingPreferences");
             } else if (this.state.SelectedSupreme === true) {
-                if(this.state.SubscriptionInfo.account_subscription_type===2&&this.state.SubscriptionInfo.supreme_barber===true){
+                if (this.state.SubscriptionInfo.account_subscription_type === 2 && this.state.SubscriptionInfo.supreme_barber === true) {
                     alert("You are already a Supreme User");
                     this.props.navigation.navigate("BookingPreferences");
                     Preference.set("userPackage", "supreme");
-                }else{
-                    this.props.navigation.navigate("BarberPaymentMethod")}
+                } else {
+                    //this.props.navigation.navigate("BarberPaymentMethod")}
+                    if (Platform.OS == "ios") {
+                        this.setState({ SubscriptionPopUp: true })
+                    } else {
+                        this.props.navigation.navigate("BarberPaymentMethod")
+                    }
+                }
+
             }
         } else {
             if (this.state.SelectedBasic === true) {
                 Preference.set("userPackage", "basic");
-                 this.CancelSubscription();
+                this.CancelSubscription();
                 this.props.navigation.goBack()
             } else if (this.state.SelectedSupreme === true) {
-                if(this.state.SubscriptionInfo.account_subscription_type===2&&this.state.SubscriptionInfo.supreme_barber===true){
+                if (this.state.SubscriptionInfo.account_subscription_type === 2 && this.state.SubscriptionInfo.supreme_barber === true) {
                     alert("You are already a Supreme User");
                     Preference.set("userPackage", "supreme");
-                }else{
-                    this.props.navigation.navigate("BarberPaymentMethod")}
+                } else {
+                    if (Platform.OS == "ios") {
+                        this.setState({ SubscriptionPopUp: true })
+                    } else {
+                        this.props.navigation.navigate("BarberPaymentMethod")
+                    }
+                }
 
             }
         }
@@ -121,69 +340,70 @@ export default class Subscription extends Component {
 
     }
 
-    SubscriptionInfo(){
+    SubscriptionInfo() {
 
-            this.setState({showLoading:true});
-            var details = {
-                barberID:Preference.get("userId")
-            };
-            console.log("userid----->"+JSON.stringify(details));
-
-            var formBody = [];
-            for (var property in details) {
-                var encodedKey = encodeURIComponent(property);
-                var encodedValue = encodeURIComponent(details[property]);
-                formBody.push(encodedKey + "=" + encodedValue);
-            }
-            formBody = formBody.join("&");
-            fetch(constants.BarberSubscriptionInfo, {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: formBody
-            }).then(response => response.json())
-                .then(response => {
-                    console.log("responsePaymentCard-->", "-" + JSON.stringify(response));
-                    this.setState({showLoading:false});
-                    if (response.ResultType === 1) {
-                        this.setState({SubscriptionInfo:response.Data},()=>{
-                            console.log("SUBCRIPTIOn INfo"+JSON.stringify(this.state.SubscriptionInfo))})
-                        if (this.state.SubscriptionInfo.supreme_barber===true &&this.state.SubscriptionInfo.account_subscription_type===2 ){
-                            this._selectedSupreme();
-                        }
-                        else {
-                            this._selectedBasic();
-                        }
-
-
-                    } else {
-                        if (response.ResultType === 0) {
-                            alert(response.Message);
-
-                        }
-                    }
-                })
-                .catch(error => {
-                    //console.error('Errorr:', error);
-                    console.log('Error:', error);
-                    this.setState({showLoading:false})
-                    alert("Error: "+error);
-                });
-
-        }
-
-
-    CancelSubscription(){
-
-        this.setState({showLoading:true});
+        this.setState({ showLoading: true });
         var details = {
-            barberEmail:Preference.get("userEmail"),
-            accountSubscriptionType:1,
-            supremeBarber:false
+            barberID: Preference.get("userId")
         };
-        console.log("userid----->"+JSON.stringify(details));
+        console.log("userid----->" + JSON.stringify(details));
+
+        var formBody = [];
+        for (var property in details) {
+            var encodedKey = encodeURIComponent(property);
+            var encodedValue = encodeURIComponent(details[property]);
+            formBody.push(encodedKey + "=" + encodedValue);
+        }
+        formBody = formBody.join("&");
+        fetch(constants.BarberSubscriptionInfo, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: formBody
+        }).then(response => response.json())
+            .then(response => {
+                console.log("responsePaymentCard-->", "-" + JSON.stringify(response));
+                this.setState({ showLoading: false });
+                if (response.ResultType === 1) {
+                    this.setState({ SubscriptionInfo: response.Data }, () => {
+                        console.log("SUBCRIPTIOn INfo" + JSON.stringify(this.state.SubscriptionInfo))
+                    })
+                    if (this.state.SubscriptionInfo.supreme_barber === true && this.state.SubscriptionInfo.account_subscription_type === 2) {
+                        this._selectedSupreme();
+                    }
+                    else {
+                        this._selectedBasic();
+                    }
+
+
+                } else {
+                    if (response.ResultType === 0) {
+                        alert(response.Message);
+
+                    }
+                }
+            })
+            .catch(error => {
+                //console.error('Errorr:', error);
+                console.log('Error:', error);
+                this.setState({ showLoading: false })
+                alert("Error: " + error);
+            });
+
+    }
+
+
+    CancelSubscription() {
+
+        this.setState({ showLoading: true });
+        var details = {
+            barberEmail: Preference.get("userEmail"),
+            accountSubscriptionType: 1,
+            supremeBarber: false
+        };
+        console.log("userid----->" + JSON.stringify(details));
 
         var formBody = [];
         for (var property in details) {
@@ -202,10 +422,10 @@ export default class Subscription extends Component {
         }).then(response => response.json())
             .then(response => {
                 console.log("responsePaymentCard-->", "-" + JSON.stringify(response));
-                this.setState({showLoading:false});
+                this.setState({ showLoading: false });
                 if (response.ResultType === 1) {
                     alert("Basic Subscription Activated");
-                   this.SubscriptionInfo();
+                    this.SubscriptionInfo();
 
 
                 } else {
@@ -218,7 +438,7 @@ export default class Subscription extends Component {
             .catch(error => {
                 //console.error('Errorr:', error);
                 console.log('Error:', error);
-                this.setState({showLoading:false});
+                this.setState({ showLoading: false });
                 //alert("Error: "+error);
             });
 
@@ -229,158 +449,82 @@ export default class Subscription extends Component {
     render() {
         return (<View style={styles.container}>
 
-                <Header
-                    statusBarProps={{barStyle: "light-content"}}
-                    barStyle="light-content" // or directly
-                    style={{backgroundColor: "yellow"}}
-                    outerContainerStyles={{backgroundColor: "#1999CE"}}
-                    centerComponent={{text: "SUBSCRIPTION", style: {color: "#fff"}}}
-                    rightComponent={{color: "#fff"}}
-                    containerStyle={{
-                        backgroundColor: Colors.dark,
-                        justifyContent: "space-around"
-                    }}
-                    leftComponent={
-                        <TouchableOpacity onPress={() => {
-                            this.props.navigation.goBack();
-                        }}>
-                            <Image
-                                style={{tintColor: 'white', height: 20, resizeMode: 'contain'}}
-                                source={require("../../../assets/images/ic_back.png")}
-                            />
-                        </TouchableOpacity>
-                    }
-                />
-                <ScrollView>
-                    <View style={{
-                        flex: 1,
-                        justifyContent: 'center',
-                        alignItems: 'center',
+            <Header
+                statusBarProps={{ barStyle: "light-content" }}
+                barStyle="light-content" // or directly
+                style={{ backgroundColor: "yellow" }}
+                outerContainerStyles={{ backgroundColor: "#1999CE" }}
+                centerComponent={{ text: "SUBSCRIPTION", style: { color: "#fff" } }}
+                rightComponent={{ color: "#fff" }}
+                containerStyle={{
+                    backgroundColor: Colors.dark,
+                    justifyContent: "space-around"
+                }}
+                leftComponent={
+                    <TouchableOpacity onPress={() => {
+                        this.props.navigation.goBack();
                     }}>
                         <Image
-                            source={require("../../../assets/images/logo.png")}
-                            style={{
-                                marginTop: 9,
-                                resizeMode: 'contain',
-                                width: 180
-                            }}/>
+                            style={{ tintColor: 'white', height: 20, resizeMode: 'contain' }}
+                            source={require("../../../assets/images/ic_back.png")}
+                        />
+                    </TouchableOpacity>
+                }
+            />
+            <ScrollView>
+                <View style={{
+                    flex: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }}>
+                    <Image
+                        source={require("../../../assets/images/logo.png")}
+                        style={{
+                            marginTop: 9,
+                            resizeMode: 'contain',
+                            width: 180
+                        }} />
+                    <View style={{
+                        flexDirection: "column",
+                        width: "100%",
+                        alignItems: "center"
+                    }}>
                         <View style={{
-                            flexDirection: "column",
-                            width: "100%",
-                            alignItems: "center"
+                            width: "30%",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            end: 85,
+                            backgroundColor: this.state.basic.basicBgColor,
+                            height: 25,
+                            marginTop: 20,
+                            borderColor: this.state.basic.basicBorderColor,
+                            borderBottomWidth: 0,
+                            borderWidth: 0.5,
+                            borderTopRightRadius: 15,
+                            borderTopLeftRadius: 15
                         }}>
+                            <Text style={{
+                                fontWeight: "bold",
+                                fontSize: 17,
+                                color: "white",
+                                width: "100%",
+                                textAlign: "center",
+                                //backgroundColor: "yellow",
+                            }}>{"BASIC"}</Text>
+                        </View>
+                        <TouchableWithoutFeedback onPress={() => this._selectedBasic()}>
                             <View style={{
-                                width: "30%",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                end: 85,
-                                backgroundColor: this.state.basic.basicBgColor,
-                                height: 25,
-                                marginTop: 20,
-                                borderColor: this.state.basic.basicBorderColor,
-                                borderBottomWidth: 0,
+                                backgroundColor: this.state.basic.mainBgColor,
+                                width: "90%",
+                                marginStart: 20,
+                                marginEnd: 20,
+                                borderRadius: 5,
+                                marginBottom: 5,
                                 borderWidth: 0.5,
-                                borderTopRightRadius: 15,
-                                borderTopLeftRadius: 15
+                                borderColor: this.state.basic.mainBorderColor,
                             }}>
-                                <Text style={{
-                                    fontWeight: "bold",
-                                    fontSize: 17,
-                                    color: "white",
-                                    width:"100%",
-                                    textAlign:"center",
-                                    //backgroundColor: "yellow",
-                                }}>{"BASIC"}</Text>
-                            </View>
-                            <TouchableWithoutFeedback onPress={() => this._selectedBasic()}>
-                                <View style={{
-                                    backgroundColor: this.state.basic.mainBgColor,
-                                    width: "90%",
-                                    marginStart: 20,
-                                    marginEnd: 20,
-                                    borderRadius: 5,
-                                    marginBottom: 5,
-                                    borderWidth: 0.5,
-                                    borderColor: this.state.basic.mainBorderColor,
-                                }}>
-                                    <Text
-                                        style={{
-                                            color: "white",
-                                            marginStart: 30,
-                                            marginTop: 15,
-                                            fontSize: 14,
-                                            textAlignVertical: "top",
-                                            marginBottom: 15,
-                                            marginEnd: 40,
-                                            fontFamily: "AvertaStd-Thin"
-                                        }}
-                                    >Join the CLYPR team and bulid up your clientele! Have your own profile and let your
-                                        clients book using your schedule.</Text>
-                                    <View style={{marginLeft: 10, flexDirection: "row", marginBottom: 10}}>
-                                        <Image source={this.state.basic.basicCheck}
-                                               style={{
-                                                   width: 10,
-                                                   height: 10,
-                                                   marginTop: 5,
-                                                   resizeMode: "contain",
-                                               }}
-                                        />
-                                        <Text style={{
-                                            color: "white",
-                                            fontWeight: "bold",
-                                            marginLeft: 10,width:"100%",
-                                            textAlign:"left",
-                                        }}>Pay by appointment ($0.15 each) </Text>
-                                    </View>
-
-                                    <Image resizeMode={"contain"} source={this.state.basic.basicImage}
-                                           style={{
-                                               width: 50,
-                                               height: 50,
-                                               position: "absolute",
-                                               right: 0,
-                                               top: 0
-                                           }}
-                                    />
-                                </View>
-                            </TouchableWithoutFeedback>
-
-                            <View style={{
-                                width: "30%",
-                                alignItems: "center",
-                                end: 85,
-                                justifyContent: "center",
-                                backgroundColor: this.state.supreme.supremeBgColor,
-                                height: 27,
-                                marginTop: 20,
-                                borderColor: this.state.supreme.supremeBorderColor,
-                                borderWidth: 0.5,
-                                borderBottomWidth: 0,
-                                borderTopRightRadius: 15,
-                                borderTopLeftRadius: 15
-                            }}>
-                                <Text style={{
-                                    fontWeight: "bold",
-                                    fontSize: 17,
-                                    width:"100%",
-                                    textAlign:"center",
-                                    color: this.state.supreme.supremeTextColor
-                                }}>SUPREME</Text>
-
-                            </View>
-                            <TouchableWithoutFeedback onPress={() => this._selectedSupreme()}>
-                                <View style={{
-                                    backgroundColor: this.state.supreme.supremeMainBgColor,
-                                    width: "90%",
-                                    marginStart: 20,
-                                    marginEnd: 20,
-                                    justifyContent: 'center',
-                                    borderRadius: 5,
-                                    marginBottom: 20,
-                                    borderWidth: 0.5,
-                                    borderColor: this.state.supreme.supremeMainBorderColor,
-                                }}>
-                                    <Text style={{
+                                <Text
+                                    style={{
                                         color: "white",
                                         marginStart: 30,
                                         marginTop: 15,
@@ -389,74 +533,202 @@ export default class Subscription extends Component {
                                         marginBottom: 15,
                                         marginEnd: 40,
                                         fontFamily: "AvertaStd-Thin"
-                                    }}>Unlock all the awesome features CLYPR has to offer! Such as Surge Pricing,
-                                        HouseCalls, and much more! 1 flat rate and you can cut as many heads as you
-                                        want.</Text>
-                                    <View style={{marginLeft: 10, flexDirection: "row", marginBottom: 10}}>
-                                        <Image source={this.state.supreme.supremeCheck}
-                                               style={{
-                                                   width: 10,
-                                                   height: 10,
-                                                   marginTop: 5,
-                                                   resizeMode: "contain",
-                                               }}
-                                        />
-                                        <Text style={{
-                                            color: "white",
-                                            fontWeight: "bold",
-                                            marginLeft: 10,
-                                            width:"100%",
-                                            textAlign:"left",
-                                        }}>{"Pay per month ($30 subscription) "} </Text>
-                                    </View>
-
-                                    <Image resizeMode={"contain"} source={this.state.supreme.supremeImage}
-                                           style={{
-                                               width: 52,
-                                               height: 52,
-                                               position: "absolute",
-                                               right: 0,
-                                               top: 0
-                                           }}
+                                    }}
+                                >Join the CLYPR team and bulid up your clientele! Have your own profile and let your
+                                        clients book using your schedule.</Text>
+                                <View style={{ marginLeft: 10, flexDirection: "row", marginBottom: 10 }}>
+                                    <Image source={this.state.basic.basicCheck}
+                                        style={{
+                                            width: 10,
+                                            height: 10,
+                                            marginTop: 5,
+                                            resizeMode: "contain",
+                                        }}
                                     />
-
+                                    <Text style={{
+                                        color: "white",
+                                        fontWeight: "bold",
+                                        marginLeft: 10, width: "100%",
+                                        textAlign: "left",
+                                    }}>Pay by appointment ($0.15 each) </Text>
                                 </View>
-                            </TouchableWithoutFeedback>
 
-                            <TouchableOpacity onPress={() => this.Onsubmit()}
-                                              style={[globalStyles.button, {
-                                                  marginTop: 100,
-                                                  height: 40,
-                                                  width: 260,
+                                <Image resizeMode={"contain"} source={this.state.basic.basicImage}
+                                    style={{
+                                        width: 50,
+                                        height: 50,
+                                        position: "absolute",
+                                        right: 0,
+                                        top: 0
+                                    }}
+                                />
+                            </View>
+                        </TouchableWithoutFeedback>
 
-                                                  bottom: 40
-                                              }]}>
-                                <Text style={globalStyles.buttonText}>SUBMIT</Text>
-
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => this.CancelSubscription()}
-                                              style={{bottom: 20, marginBottom: 40}}>
-                                <Text style={{color: "grey", fontSize: 12}}>I'd Like to Cancel My Membership</Text>
-                            </TouchableOpacity>
+                        <View style={{
+                            width: "30%",
+                            alignItems: "center",
+                            end: 85,
+                            justifyContent: "center",
+                            backgroundColor: this.state.supreme.supremeBgColor,
+                            height: 27,
+                            marginTop: 20,
+                            borderColor: this.state.supreme.supremeBorderColor,
+                            borderWidth: 0.5,
+                            borderBottomWidth: 0,
+                            borderTopRightRadius: 15,
+                            borderTopLeftRadius: 15
+                        }}>
+                            <Text style={{
+                                fontWeight: "bold",
+                                fontSize: 17,
+                                width: "100%",
+                                textAlign: "center",
+                                color: this.state.supreme.supremeTextColor
+                            }}>SUPREME</Text>
 
                         </View>
+                        <TouchableWithoutFeedback onPress={() => this._selectedSupreme()}>
+                            <View style={{
+                                backgroundColor: this.state.supreme.supremeMainBgColor,
+                                width: "90%",
+                                marginStart: 20,
+                                marginEnd: 20,
+                                justifyContent: 'center',
+                                borderRadius: 5,
+                                marginBottom: 20,
+                                borderWidth: 0.5,
+                                borderColor: this.state.supreme.supremeMainBorderColor,
+                            }}>
+                                <Text style={{
+                                    color: "white",
+                                    marginStart: 30,
+                                    marginTop: 15,
+                                    fontSize: 14,
+                                    textAlignVertical: "top",
+                                    marginBottom: 15,
+                                    marginEnd: 40,
+                                    fontFamily: "AvertaStd-Thin"
+                                }}>Unlock all the awesome features CLYPR has to offer! Such as Surge Pricing,
+                                    HouseCalls, and much more! 1 flat rate and you can cut as many heads as you
+                                        want.</Text>
+                                <View style={{ marginLeft: 10, flexDirection: "row", marginBottom: 10 }}>
+                                    <Image source={this.state.supreme.supremeCheck}
+                                        style={{
+                                            width: 10,
+                                            height: 10,
+                                            marginTop: 5,
+                                            resizeMode: "contain",
+                                        }}
+                                    />
+                                    <Text style={{
+                                        color: "white",
+                                        fontWeight: "bold",
+                                        marginLeft: 10,
+                                        width: "100%",
+                                        textAlign: "left",
+                                    }}>{"Pay per month ($30 subscription) "} </Text>
+                                </View>
 
+                                <Image resizeMode={"contain"} source={this.state.supreme.supremeImage}
+                                    style={{
+                                        width: 52,
+                                        height: 52,
+                                        position: "absolute",
+                                        right: 0,
+                                        top: 0
+                                    }}
+                                />
+
+                            </View>
+                        </TouchableWithoutFeedback>
+
+                        <TouchableOpacity onPress={() => this.Onsubmit()}
+                            style={[globalStyles.button, {
+                                marginTop: 100,
+                                height: 40,
+                                width: 260,
+                                bottom: 40
+                            }]}>
+                            <Text style={globalStyles.buttonText}>SUBMIT</Text>
+
+                        </TouchableOpacity>
+                        <PopupDialog
+                            visible={this.state.SubscriptionPopUp}
+                            width={0.7}
+
+                            onTouchOutside={() => {
+                                this.setState({ SubscriptionPopUp: false });
+                            }}>
+                            <View style={{ flexDirection: "column", backgroundColor: Colors.white }}>
+                                <TouchableOpacity onPress={() => this.setState({ SubscriptionPopUp: false })} style={{ width: 30, height: 30, position: "absolute", right: 20, top: 20, zIndex: 9999 }} >
+                                    <Image source={require("../../../assets/images/cancelled.png")} style={{ width: 20, height: 20 }} />
+                                </TouchableOpacity>
+                                <View style={{
+                                    width: "100%",
+                                    height: 0,
+                                    marginTop: 3,
+                                    marginBottom: 3,
+                                    backgroundColor: "white",
+                                    flexDirection: "column",
+                                }} />
+
+
+                                <Text style={{
+                                    fontSize: 18,
+                                    marginTop: 5,
+                                    marginBottom: 20,
+                                    fontWeight: "bold",
+                                    textAlign: "center",
+                                    color: "black"
+                                }}>Select Option</Text>
+
+
+
+                                <View style={{ flexDirection: "column", marginBottom: 30, height: 100 }}>
+                                    <TouchableOpacity style={{ width: "100%", height: 50 }} onPress={() => {
+                                        this.setState({ SubscriptionPopUp: false }, () => {
+                                            this.props.navigation.navigate("BarberPaymentMethod")
+                                        })
+                                    }} >
+                                        <Text style={{ width: "100%", fontSize: 18, marginStart: 20 }}>Stripe</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={{ width: "100%", height: 50 }} onPress={() => {
+                                        this.requestSubscription("supreme.package.clypr");
+                                        this.setState({ SubscriptionPopUp: false }, () => {
+
+                                        })
+                                    }} >
+                                        <Text style={{ width: "100%", fontSize: 18, marginStart: 20, marginTop: 5 }}>Apple Pay</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        </PopupDialog>
+
+
+                        <TouchableOpacity onPress={() => this.CancelSubscription()}
+                            style={{ bottom: 20, marginBottom: 40 }}>
+                            <Text style={{ color: "grey", fontSize: 12 }}>I'd Like to Cancel My Membership</Text>
+                        </TouchableOpacity>
 
                     </View>
-                </ScrollView>
-                {this.state.showLoading && <View style={{
-                    width: "100%",
-                    height: "100%",
-                    backgroundColor: "transparent",
-                    position: "absolute",
-                    opacity: 1,
-                    alignItems: "center",
-                    justifyContent: "center"
-                }}>
-                    <Image resizeMode={"contain"} source={require("../../../assets/images/loading.gif")}
-                           style={{width: 60, height: 60, opacity: 1,}}/>
-                </View>}
-            </View>
+
+
+                </View>
+            </ScrollView>
+            {this.state.showLoading && <View style={{
+                width: "100%",
+                height: "100%",
+                backgroundColor: "transparent",
+                position: "absolute",
+                opacity: 1,
+                alignItems: "center",
+                justifyContent: "center"
+            }}>
+                <Image resizeMode={"contain"} source={require("../../../assets/images/loading.gif")}
+                    style={{ width: 60, height: 60, opacity: 1, }} />
+            </View>}
+        </View>
         );
     }
 }

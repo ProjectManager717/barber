@@ -31,6 +31,7 @@
 			<array>
 				<string>clypr.page.link</string>
 				<string>CLYPR</string>
+				<string>com.googleusercontent.apps.212651275284-umg1behlhii0hk19igk6h19igetlrv3p</string>
 				<string>com.googleusercontent.apps.264908010858-90qei6m96daq2doi543gnahouvunl4v4</string>
 				<string>com.googleusercontent.apps.264908010858-bqe8r5rjhqfmqg4dah4a7l1q4ob3qick</string>
 				<string>com.googleusercontent.apps.264908010858-imh71lfsb360c40oq6c7hrgqdkhuqu3b</string>
@@ -73,9 +74,11 @@
 		</dict>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>CLYPR uses camera to take profile picture</string>
+	<string>CLYPR uses camera to take your picture to complete the profile</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>CLYPR uses your location to show you the near by barbers shops.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>So that CLYPR uses your location</string>
+	<string>CLYPR uses your location to show you the near by barbers shops.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>CLYPR uses photos to choose profile picture and save screenshots</string>
 	<key>NSPhotoLibraryUsageDescription</key>
@@ -120,7 +123,6 @@
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
-		<string>location</string>
 		<string>remote-notification</string>
 	</array>
 	<key>UILaunchStoryboardName</key>

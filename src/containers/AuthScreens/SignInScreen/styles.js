@@ -67,7 +67,8 @@ export const styles = StyleSheet.create({
   imgBtnContainer: {
     width: Metric.buttonHeight,
     height: Metric.buttonHeight,
-    borderRadius: Metric.buttonHeight / 2
+    borderRadius: Metric.buttonHeight / 2,
+    marginLeft:5
   },
   iconStyle: {
     width: Metric.buttonHeight - 10,

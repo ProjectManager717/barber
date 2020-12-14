@@ -1,15 +1,22 @@
-import React, {Component} from 'react';
-import {ImageBackground, View, Text, NetInfo, Image, TouchableOpacity, Linking, Platform,} from 'react-native';
-import {NavigationActions, SafeAreaView, StackActions} from 'react-navigation';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {styles} from './styles';
-import {CloseButton, Input, RedButton, ImageButton} from '../../../components';
-import {checkEmail} from '../../../utils';
-import {constants} from "../../../utils/constants";
+import React, { Component } from 'react';
+import { ImageBackground, View, Text, Image, TouchableOpacity, Linking, Platform, } from 'react-native';
+import { NavigationActions, SafeAreaView, StackActions } from 'react-navigation';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { styles } from './styles';
+import { CloseButton, Input, RedButton, ImageButton } from '../../../components';
+import { checkEmail } from '../../../utils';
+import { constants } from "../../../utils/constants";
 import Preference from "react-native-preference";
-import {AccessToken, GraphRequest, GraphRequestManager} from "react-native-fbsdk";
+import { AccessToken, GraphRequest, GraphRequestManager } from "react-native-fbsdk";
 import firebase from "react-native-firebase";
-import {GoogleSignin, statusCodes} from "react-native-google-signin";
+import { GoogleSignin, statusCodes } from '@react-native-community/google-signin';
+import _ from 'lodash'
+import appleAuth, {
+    AppleButton,
+    AppleAuthRequestOperation,
+    AppleAuthRequestScope,
+    AppleAuthCredentialState,
+} from '@invertase/react-native-apple-authentication';
 
 const FBSDK = require('react-native-fbsdk');
 const {
@@ -64,11 +71,11 @@ const InputDataBarber = [{
 }];
 let INPUTS_DATA = {};
 let itemId = "";
-let fcmToken="";
+let fcmToken = "";
 class SignUpScreen extends Component {
     constructor(props) {
         super(props);
-        const {navigation} = this.props;
+        const { navigation } = this.props;
         const itemId = navigation.getParam('User');
         console.log("gettingUSersignup--->" + itemId);
 
@@ -82,7 +89,7 @@ class SignUpScreen extends Component {
                 confirmPassword: '',
                 userName: undefined,
                 fieldUsename: false,
-                isConnected: false,
+                isConnected: true,
             }
         };
         this.checkFieldsBarber = this.checkFieldsBarber.bind(this);
@@ -105,11 +112,6 @@ class SignUpScreen extends Component {
         this.signinFacebook = this.signinFacebook.bind(this);
     }
 
-    _handleConnectivityChange = (isConnected) => {
-        this.setState({
-            isConnected,
-        });
-    };
     async checkPermission() {
         const enabled = await firebase.messaging().hasPermission();
         if (enabled) {
@@ -124,13 +126,13 @@ class SignUpScreen extends Component {
     async getToken() {
         console.log("fcmToken getting inside");
         //fcmToken = await Preference.get('fcmToken');
-        console.log("fcmToken getting inside",JSON.stringify(fcmToken));
+        console.log("fcmToken getting inside", JSON.stringify(fcmToken));
         if (!fcmToken) {
             fcmToken = await firebase.messaging().getToken();
-            console.log("fcmToken getting inside Got",JSON.stringify(fcmToken));
+            console.log("fcmToken getting inside Got", JSON.stringify(fcmToken));
             if (fcmToken) {
                 // user has a device token
-                console.log("fcmToken: ",fcmToken);
+                console.log("fcmToken: ", fcmToken);
                 Preference.set('fcmToken', fcmToken);
             }
         }
@@ -149,34 +151,28 @@ class SignUpScreen extends Component {
         }
     }
 
-    _signIn1 = async () => {
-        //Prompts a modal to let the user sign in into your application.
-        try {
+    onAppleButtonPress = async () => {
+        console.log('onAppleButtonPress')
+        // performs login request
+        const appleAuthRequestResponse = await appleAuth.performRequest({
+            requestedOperation: appleAuth.Operation.LOGIN,
+            requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME],
+        });
+        console.log('appleAuthRequestResponse:', JSON.stringify(appleAuthRequestResponse))
 
-            await GoogleSignin.hasPlayServices({
-                //Check if device has Google Play Services installed.
-                //Always resolves to true on iOS.
-                showPlayServicesUpdateDialog: true,
-            });
-            console.log('Google --> ', "yessss");
-            const userInfo = await GoogleSignin.signIn();
-            console.log('Google User Info --> ', userInfo);
-            this.setState({userInfo: userInfo});
-            this.socialLoginGoogle(userInfo);
-
-        } catch (error) {
-            console.log('Message', error.message);
-            if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-                console.log('User Cancelled the Login Flow');
-            } else if (error.code === statusCodes.IN_PROGRESS) {
-                console.log('Signing In');
-            } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-                console.log('Play Services Not Available or Outdated');
-            } else {
-                console.log('Some Other Error Happened' + error.code);
-            }
+        if (_.isNil(appleAuthRequestResponse.email)) {
+            Alert.alert('Email Required!', 'Please allow to share your email');
+        } else {
+            this.socialLoginGoogle({
+                user: {
+                    email: appleAuthRequestResponse.email,
+                    givenName: appleAuthRequestResponse.fullName.givenName,
+                    familyName: appleAuthRequestResponse.fullName.familyName
+                },
+                idToken: appleAuthRequestResponse.user,
+            }, "apple")
         }
-    };
+    }
 
 
     _signIn = async () => {
@@ -192,7 +188,7 @@ class SignUpScreen extends Component {
             const userInfo = await GoogleSignin.signIn();
             console.log('Google User Info --> ', userInfo);
             // this.setState({userInfo: userInfo});
-            this.socialLoginGoogle(userInfo);
+            this.socialLoginGoogle(userInfo, "google");
 
         } catch (error) {
             console.log('Message1122', error);
@@ -208,16 +204,16 @@ class SignUpScreen extends Component {
         }
     };
 
-    socialLoginGoogle(userInfo) {
+    socialLoginGoogle(userInfo, src) {
         if (itemId === "Client") {
             if (this.state.isConnected) {
                 var details = {
                     email: userInfo.user.email,
-                    authType: "google",
+                    authType: src,
                     authId: userInfo.idToken,
                     firstName: userInfo.user.givenName,
                     lastName: userInfo.user.familyName,
-                    device_token:fcmToken
+                    device_token: fcmToken
                 };
                 var formBody = [];
                 for (var property in details) {
@@ -225,7 +221,7 @@ class SignUpScreen extends Component {
                     var encodedValue = encodeURIComponent(details[property]);
                     formBody.push(encodedKey + "=" + encodedValue);
                 }
-                this.setState({showLoading:true});
+                this.setState({ showLoading: true });
                 formBody = formBody.join("&");
                 fetch(constants.ClientSocialLogin, {
                     method: 'POST',
@@ -237,7 +233,7 @@ class SignUpScreen extends Component {
                 }).then(response => response.json())
                     .then(response => {
                         console.log("responseClientlogin-->", "-" + JSON.stringify(response));
-                        this.setState({showLoading:false});
+                        this.setState({ showLoading: false });
                         if (response.ResultType === 1) {
                             Preference.set({
                                 clientlogin: true,
@@ -255,10 +251,10 @@ class SignUpScreen extends Component {
                         }
                     })
                     .catch(error => {
-                        this.setState({showLoading:false});
+                        this.setState({ showLoading: false });
                         //console.error('Errorr:', error);
                         console.log('Error:', error);
-                        alert("Error: "+error);
+                        alert("Error: " + error);
                     });
                 //Keyboard.dismiss();
             } else {
@@ -273,7 +269,7 @@ class SignUpScreen extends Component {
                     authId: userInfo.idToken,
                     firstName: userInfo.user.givenName,
                     lastName: userInfo.user.familyName,
-                    device_token:fcmToken
+                    device_token: fcmToken
                 };
                 var formBody = [];
                 for (var property in details) {
@@ -281,7 +277,7 @@ class SignUpScreen extends Component {
                     var encodedValue = encodeURIComponent(details[property]);
                     formBody.push(encodedKey + "=" + encodedValue);
                 }
-                this.setState({showLoading:true});
+                this.setState({ showLoading: true });
                 formBody = formBody.join("&");
                 fetch(constants.BarberSocialLogin, {
                     method: 'POST',
@@ -293,7 +289,7 @@ class SignUpScreen extends Component {
                 }).then(response => response.json())
                     .then(response => {
                         console.log("responseBarberlogin-->", "-" + JSON.stringify(response));
-                        this.setState({showLoading:false});
+                        this.setState({ showLoading: false });
                         if (response.ResultType === 1) {
                             Preference.set({
                                 barberlogin: true,
@@ -311,10 +307,10 @@ class SignUpScreen extends Component {
                         }
                     })
                     .catch(error => {
-                        this.setState({showLoading:false});
+                        this.setState({ showLoading: false });
                         //console.error('Errorr:', error);
                         console.log('Error:', error);
-                        alert("Error: "+error);
+                        alert("Error: " + error);
                     });
                 //Keyboard.dismiss();
             } else {
@@ -324,15 +320,6 @@ class SignUpScreen extends Component {
 
     }
     componentDidMount(): void {
-        NetInfo.isConnected.addEventListener(
-            'change',
-            this._handleConnectivityChange
-        );
-        NetInfo.isConnected.fetch().done(
-            (isConnected) => {
-                this.setState({isConnected});
-            }
-        );
 
         GoogleSignin.configure({
             //It is mandatory to call this method before attempting to call signIn()
@@ -347,8 +334,8 @@ class SignUpScreen extends Component {
     facebokLogin = async () => {
         let result;
         try {
-            if(Platform.OS==="ios"){  result = await LoginManager.logInWithReadPermissions(['email', 'public_profile']);}
-            else{  result = await LoginManager.logInWithPermissions(['email', 'public_profile']);}
+            if (Platform.OS === "ios") { result = await LoginManager.logInWithReadPermissions(['email', 'public_profile']); }
+            else { result = await LoginManager.logInWithPermissions(['email', 'public_profile']); }
 
             if (result.isCancelled) {
                 alert("Login was canceled");
@@ -399,7 +386,7 @@ class SignUpScreen extends Component {
     async FBGraphRequest(fields, callback) {
         const accessData = await AccessToken.getCurrentAccessToken();
         // Create a graph request asking for user information
-        this.setState({accessToken: accessData.accessToken});
+        this.setState({ accessToken: accessData.accessToken });
         const infoRequest = new GraphRequest('/me', {
             accessToken: accessData.accessToken,
             parameters: {
@@ -417,11 +404,11 @@ class SignUpScreen extends Component {
             alert(JSON.stringify(error))
         } else {
             //alert(JSON.stringify(result))
-            this.setState({dataFacebook: result});
+            this.setState({ dataFacebook: result });
             this.signinFacebook(this.state.dataFacebook, this.state.accessToken);
         }
-    }   moveToHome() {
-        if (itemId === "Client"){
+    } moveToHome() {
+        if (itemId === "Client") {
 
             const goToIntoScreen = StackActions.reset({
                 index: 0,
@@ -443,11 +430,11 @@ class SignUpScreen extends Component {
             if (this.state.isConnected) {
                 var details = {
                     email: data.email,
-                    authType: "google",
+                    authType: "facebook",
                     authId: accessToken,
                     firstName: data.first_name,
                     lastName: data.last_name,
-                    device_token:fcmToken
+                    device_token: fcmToken
                 };
                 var formBody = [];
                 for (var property in details) {
@@ -490,7 +477,7 @@ class SignUpScreen extends Component {
                     .catch(error => {
                         //console.error('Errorr:', error);
                         console.log('Error:', error);
-                        alert("Error: "+error);
+                        alert("Error: " + error);
                     });
                 //Keyboard.dismiss();
             } else {
@@ -505,7 +492,7 @@ class SignUpScreen extends Component {
                     authId: accessToken,
                     firstName: data.first_name,
                     lastName: data.last_name,
-                    device_token:fcmToken
+                    device_token: fcmToken
                 };
                 var formBody = [];
                 for (var property in details) {
@@ -532,7 +519,7 @@ class SignUpScreen extends Component {
                                 userId: response.Data.id,
                                 userType: "Barber",
                                 userToken: response.Data.token,
-                                MobilePayActivation:response.Data.mobile_pay_activation,
+                                MobilePayActivation: response.Data.mobile_pay_activation,
                             });
                             if (response.Data.firstTimeSignUp === true) {
                                 this.props.navigation.navigate("SMSScreen");
@@ -548,7 +535,7 @@ class SignUpScreen extends Component {
                     .catch(error => {
                         //console.error('Errorr:', error);
                         console.log('Error:', error);
-                        alert("Error: "+error);
+                        alert("Error: " + error);
                     });
                 //Keyboard.dismiss();
             } else {
@@ -568,135 +555,129 @@ class SignUpScreen extends Component {
     }
     onSignUp() {
         if (this.state.userName === "Client") {
-            if (this.state.isConnected) {
-                if (!this.checkFieldsClient()) {
-                    //alert("Please enter correct data");
-                    return false;
-                } else {
-                    this.setState({showLoading: true});
-                    const {userInfo} = this.state;
-                    var details = {
-                        firstname: userInfo.fullName,
-                        username: userInfo.instaUserName,
-                        email: userInfo.email,
-                        password: userInfo.password,
-                        device_token:fcmToken
-                    };
-                    var formBody = [];
-                    for (var property in details) {
-                        var encodedKey = encodeURIComponent(property);
-                        var encodedValue = encodeURIComponent(details[property]);
-                        formBody.push(encodedKey + "=" + encodedValue);
-                    }
-                    formBody = formBody.join("&");
-                    console.log("SendingData: ", JSON.stringify(formBody))
-                    fetch(constants.ClientSignUp, {
-                        method: 'POST',
-                        headers: {
-                            'Accept': 'application/json',
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        },
-                        body: formBody
-                    }).then(response => response.json())
-                        .then(response => {
-                            console.log("responseClientsignup-->", "-" + JSON.stringify(response));
-                            if (response.ResultType === 1) {
-                                this.setState({showLoading: false});
-                                Preference.set({
-                                    clientlogin: false,
-                                    userEmail: response.Data.email,
-                                    userName: response.Data.username,
-                                    userId: response.Data.id,
-                                    userType: "Client",
-                                    userToken: response.Data.token,
-                                    newUser: true
-                                });
-                                this.moveToSMSScreen();
-                            } else {
-                                this.setState({showLoading: false});
-                                if (response.ResultType === 0) {
-                                    alert(response.Message);
-                                }
-                            }
-                        })
-                        .catch(error => {
-                            this.setState({showLoading: false});
-                            console.log('Error:', error);
-                            alert("Error: " + error);
-                        });
-                }
+            if (!this.checkFieldsClient()) {
+                //alert("Please enter correct data");
+                return false;
             } else {
-                alert("Please connect Internet.")
+                this.setState({ showLoading: true });
+                const { userInfo } = this.state;
+                var details = {
+                    firstname: userInfo.fullName,
+                    username: userInfo.instaUserName,
+                    email: userInfo.email,
+                    password: userInfo.password,
+                    device_token: fcmToken
+                };
+                var formBody = [];
+                for (var property in details) {
+                    var encodedKey = encodeURIComponent(property);
+                    var encodedValue = encodeURIComponent(details[property]);
+                    formBody.push(encodedKey + "=" + encodedValue);
+                }
+                formBody = formBody.join("&");
+                console.log("SendingData: ", JSON.stringify(formBody))
+                fetch(constants.ClientSignUp, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: formBody
+                }).then(response => response.json())
+                    .then(response => {
+                        console.log("responseClientsignup-->", "-" + JSON.stringify(response));
+                        if (response.ResultType === 1) {
+                            this.setState({ showLoading: false });
+                            Preference.set({
+                                clientlogin: false,
+                                userEmail: response.Data.email,
+                                userName: response.Data.username,
+                                userId: response.Data.id,
+                                userType: "Client",
+                                userToken: response.Data.token,
+                                newUser: true
+                            });
+                            this.moveToSMSScreen();
+                        } else {
+                            this.setState({ showLoading: false });
+                            if (response.ResultType === 0) {
+                                alert(response.Message);
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        this.setState({ showLoading: false });
+                        console.log('Error:', error);
+                        alert("Error: " + error);
+                    });
             }
+
         } else {
-            if (this.state.isConnected) {
-                if (!this.checkFieldsBarber()) {
-                    //alert("Please enter correct data");
-                    return false;
-                } else {
-                    this.setState({showLoading: true});
-                    const {userInfo} = this.state;
-                    var details = {
-                        firstname: userInfo.fullName,
-                        username: userInfo.instaUserName,
-                        email: userInfo.email,
-                        password: userInfo.password,
-                        device_token:fcmToken
-                    };
-                    var formBody = [];
-                    for (var property in details) {
-                        var encodedKey = encodeURIComponent(property);
-                        var encodedValue = encodeURIComponent(details[property]);
-                        formBody.push(encodedKey + "=" + encodedValue);
-                    }
-                    formBody = formBody.join("&");
-                    console.log("SendingData: ", JSON.stringify(formBody))
-                    fetch(constants.BarberSignUp, {
-                        method: 'POST',
-                        headers: {
-                            'Accept': 'application/json',
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        },
-                        body: formBody
-                    }).then(response => response.json())
-                        .then(response => {
-                            console.log("responseBarbersignup-->", "-" + JSON.stringify(response));
-                            if (response.ResultType === 1) {
-                                this.setState({showLoading: false});
-                                Preference.set({
-                                    barberlogin: false,
-                                    userEmail: response.Data.email,
-                                    userName: response.Data.username,
-                                    userId: response.Data.id,
-                                    userMobilePay: false,
-                                    userType: "Barber",
-                                    userToken: response.Data.token,
-                                    newUser: true,
-                                    MobilePayActivation:response.Data.mobile_pay_activation,
-                                });
-                                this.moveToSMSScreen();
-                            } else {
-                                this.setState({showLoading: false});
-                                if (response.ResultType === 0) {
-                                    alert(response.Message);
-                                }
-                            }
-                        })
-                        .catch(error => {
-                            this.setState({showLoading: false});
-                            //console.error('Error:', error);
-                            console.log('Error:', error);
-                            alert("Error: " + error);
-                        });
-                }
+            if (!this.checkFieldsBarber()) {
+                //alert("Please enter correct data");
+                return false;
             } else {
-                alert("Please connect Internet.")
+                this.setState({ showLoading: true });
+                const { userInfo } = this.state;
+                var details = {
+                    firstname: userInfo.fullName,
+                    username: userInfo.instaUserName,
+                    email: userInfo.email,
+                    password: userInfo.password,
+                    device_token: fcmToken
+                };
+                var formBody = [];
+                for (var property in details) {
+                    var encodedKey = encodeURIComponent(property);
+                    var encodedValue = encodeURIComponent(details[property]);
+                    formBody.push(encodedKey + "=" + encodedValue);
+                }
+                formBody = formBody.join("&");
+                console.log("SendingData: ", JSON.stringify(formBody))
+                fetch(constants.BarberSignUp, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: formBody
+                }).then(response => response.json())
+                    .then(response => {
+                        console.log("responseBarbersignup-->", "-" + JSON.stringify(response));
+                        if (response.ResultType === 1) {
+                            this.setState({ showLoading: false });
+                            Preference.set({
+                                barberlogin: false,
+                                userEmail: response.Data.email,
+                                userName: response.Data.username,
+                                userId: response.Data.id,
+                                userMobilePay: false,
+                                userType: "Barber",
+                                userToken: response.Data.token,
+                                newUser: true,
+                                MobilePayActivation: response.Data.mobile_pay_activation,
+                            });
+                            this.moveToSMSScreen();
+                        } else {
+                            this.setState({ showLoading: false });
+                            if (response.ResultType === 0) {
+                                alert(response.Message);
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        this.setState({ showLoading: false });
+                        //console.error('Error:', error);
+                        console.log('Error:', error);
+                        alert("Error: " + error);
+                    });
             }
+
         }
 
     }
 
-   moveToSMSScreen() {
+    moveToSMSScreen() {
 
         this.props.navigation.navigate("SMSScreen");
     }
@@ -709,10 +690,10 @@ class SignUpScreen extends Component {
     };
 
     onChangeText = (key, value) => {
-        const {userInfo} = this.state;
-        const updatedUserInfo = {...userInfo};
+        const { userInfo } = this.state;
+        const updatedUserInfo = { ...userInfo };
         updatedUserInfo[key] = value;
-        this.setState({userInfo: updatedUserInfo});
+        this.setState({ userInfo: updatedUserInfo });
     };
 
     /*onSignUp = () => {
@@ -787,7 +768,7 @@ class SignUpScreen extends Component {
     }*/
 
     renderInputsClient = () => {
-        const {userInfo} = this.state;
+        const { userInfo } = this.state;
         const isValidFullName = !!userInfo.fullName.length;
         const isValidInstaUsername = !!userInfo.instaUserName.length;
         const isValidEmail = checkEmail(userInfo.email);
@@ -795,21 +776,21 @@ class SignUpScreen extends Component {
         const isValidPasswordConfirm = userInfo.confirmPassword.length >= 6 && (userInfo.password === userInfo.confirmPassword);
         const inputsValid = [isValidFullName, isValidEmail, isValidPassword, isValidPasswordConfirm];
         return INPUTS_DATA.map((item, index) => (<Input
-                iconSource={INPUTS_DATA[index].iconSource}
-                style={styles.inputContainer}
-                placeholder={INPUTS_DATA[index].placeholder}
-                value={userInfo[INPUTS_DATA[index].key]}
-                onChangeText={(text) => this.onChangeText(INPUTS_DATA[index].key, text)}
-                isValid={inputsValid[index]}
-                keyboardType={INPUTS_DATA[index].keyboardType}
-                secureTextEntry={INPUTS_DATA[index].secureTextEntry}
-                key={`key-${index}`}
-            />
+            iconSource={INPUTS_DATA[index].iconSource}
+            style={styles.inputContainer}
+            placeholder={INPUTS_DATA[index].placeholder}
+            value={userInfo[INPUTS_DATA[index].key]}
+            onChangeText={(text) => this.onChangeText(INPUTS_DATA[index].key, text)}
+            isValid={inputsValid[index]}
+            keyboardType={INPUTS_DATA[index].keyboardType}
+            secureTextEntry={INPUTS_DATA[index].secureTextEntry}
+            key={`key-${index}`}
+        />
         ));
     };
 
     renderInputsBarber = () => {
-        const {userInfo} = this.state;
+        const { userInfo } = this.state;
         const isValidFullName = !!userInfo.fullName.length;
         const isValidInstaUsername = !!userInfo.instaUserName.length;
         const isValidEmail = checkEmail(userInfo.email);
@@ -817,16 +798,16 @@ class SignUpScreen extends Component {
         const isValidPasswordConfirm = userInfo.confirmPassword.length >= 6 && (userInfo.password === userInfo.confirmPassword);
         const inputsValid = [isValidFullName, isValidInstaUsername, isValidEmail, isValidPassword, isValidPasswordConfirm];
         return INPUTS_DATA.map((item, index) => (<Input
-                iconSource={INPUTS_DATA[index].iconSource}
-                style={styles.inputContainer}
-                placeholder={INPUTS_DATA[index].placeholder}
-                value={userInfo[INPUTS_DATA[index].key]}
-                onChangeText={(text) => this.onChangeText(INPUTS_DATA[index].key, text)}
-                isValid={inputsValid[index]}
-                keyboardType={INPUTS_DATA[index].keyboardType}
-                secureTextEntry={INPUTS_DATA[index].secureTextEntry}
-                key={`key-${index}`}
-            />
+            iconSource={INPUTS_DATA[index].iconSource}
+            style={styles.inputContainer}
+            placeholder={INPUTS_DATA[index].placeholder}
+            value={userInfo[INPUTS_DATA[index].key]}
+            onChangeText={(text) => this.onChangeText(INPUTS_DATA[index].key, text)}
+            isValid={inputsValid[index]}
+            keyboardType={INPUTS_DATA[index].keyboardType}
+            secureTextEntry={INPUTS_DATA[index].secureTextEntry}
+            key={`key-${index}`}
+        />
         ));
     };
 
@@ -838,11 +819,11 @@ class SignUpScreen extends Component {
                 <KeyboardAwareScrollView>
                     <View style={styles.parentContainer}>
                         <View style={styles.closeContainer}>
-                            <CloseButton onPress={this.onClose}/>
+                            <CloseButton onPress={this.onClose} />
                         </View>
-                        <View style={{width:"100%",height:"10%",justifyContent:'center',alignItems:"center"}}  >
-                            <Image style={{resizeMode:"contain",width:150,height:100}}
-                                   source={require("../../../assets/images/logo.png")}
+                        <View style={{ width: "100%", height: "10%", justifyContent: 'center', alignItems: "center" }}  >
+                            <Image style={{ resizeMode: "contain", width: 150, height: 100 }}
+                                source={require("../../../assets/images/logo.png")}
                             />
                         </View>
                         <View
@@ -852,21 +833,21 @@ class SignUpScreen extends Component {
                             {this.state.userName === "Client" && <View style={styles.subContainer}>
                                 <Text style={styles.whiteBoldBigText}>Register • {this.state.userName}</Text>
                                 {this.renderInputsClient()}
-                                <RedButton label="Sign Up" onPress={()=>this.onSignUp()} textStyle={{width:"100%",textAlign:"center"}} style={styles.buttonContainer}/>
+                                <RedButton label="Sign Up" onPress={() => this.onSignUp()} textStyle={{ width: "100%", textAlign: "center" }} style={styles.buttonContainer} />
                             </View>}
                             {this.state.userName === "Barber" && <View style={styles.subContainer}>
                                 <Text style={styles.whiteBoldBigText}>Register • {this.state.userName}</Text>
                                 {this.renderInputsBarber()}
-                                <RedButton label="Sign Up" onPress={()=>this.onSignUp()} textStyle={{width:"100%",textAlign:"center"}} style={[styles.buttonContainer]}/>
+                                <RedButton label="Sign Up" onPress={() => this.onSignUp()} textStyle={{ width: "100%", textAlign: "center" }} style={[styles.buttonContainer]} />
 
                             </View>}
                             <View style={styles.termsContainer}>
-                                <Text style={[styles.whiteText,{width:"60%",textAlign:"right"}]}>
+                                <Text style={[styles.whiteText, { width: "60%", textAlign: "right" }]}>
                                     {'By Signing Up, you agree to our '}
                                 </Text>
-                                <TouchableOpacity onPress={()=>{ Linking.openURL('https://clypr.co/terms-of-service')}}
-                                style={{width:"40%",textAlign:"left"}}>
-                                    <Text style={[styles.redText,{width:"100%",textAlign:"center"}]}>
+                                <TouchableOpacity onPress={() => { Linking.openURL('https://clypr.co/terms-of-service') }}
+                                    style={{ width: "40%", textAlign: "left" }}>
+                                    <Text style={[styles.redText, { width: "100%", textAlign: "center" }]}>
                                         {'Terms and Conditions'}
                                     </Text>
                                 </TouchableOpacity>
@@ -880,12 +861,20 @@ class SignUpScreen extends Component {
                                         iconSource={require('../../../assets/icon_facebook.png')}
                                         onPress={this.facebokLogin}
                                     />
-                                    <View style={styles.space}/>
+                                    <View style={styles.space} />
                                     <ImageButton
                                         onPress={this._signIn}
                                         iconSource={require('../../../assets/icon_gmail.png')}
                                     />
                                 </View>
+                                {Platform.OS === 'ios' &&
+                                    <AppleButton
+                                        buttonStyle={AppleButton.Style.WHITE}
+                                        buttonType={AppleButton.Type.CONTINUE}
+                                        style={{ width: '90%', height: 40, marginTop: 20, alignSelf: 'center' }}
+                                        onPress={() => this.onAppleButtonPress()}
+                                    />
+                                }
                             </View>
                         </View>
 
@@ -901,7 +890,7 @@ class SignUpScreen extends Component {
                     justifyContent: "center"
                 }}>
                     <Image resizeMode={"contain"} source={require("../../../assets/images/loading.gif")}
-                           style={{width: 60, height: 60, opacity: 1,}}/>
+                        style={{ width: 60, height: 60, opacity: 1, }} />
                 </View>}
             </SafeAreaView>
 

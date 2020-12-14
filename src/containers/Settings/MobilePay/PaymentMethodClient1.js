@@ -21,9 +21,8 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import stripe from 'tipsi-stripe'
 
 stripe.setOptions({
-    //publishableKey: 'pk_test_5f4q3aLF1SgN7kQdEV6WBSnn',
-    publishableKey: 'pk_test_U4Ri0H7rP3PClZwTI5Z2r78J',
-    androidPayMode: 'test', // Android only
+    publishableKey: constants.StripeKey,
+    //androidPayMode: 'test', // Android only
 })
 let client_id, barber_id,barberImage,barberName,barberShopName,appointmentPrice, selected_services, date, selected_slot_id, total_price, service_fee, selected_surge_price,tip_price=0;
 let cus_stripe_id,transaction_id,balance_transaction,destination,destination_payment,source_transaction,stripedate,created;
@@ -222,7 +221,8 @@ export default class PaymentMethodClient1 extends Component {
             destination_payment: destination_payment ,
             source_transaction: source_transaction,
             payment_date: stripedate,
-            payment_created : created
+            payment_created : created,
+            //charge_id:data.charge_id
         };
         console.log("Outputdata::::" + JSON.stringify(details));
         fetch(constants.ClientBookAppointment, {

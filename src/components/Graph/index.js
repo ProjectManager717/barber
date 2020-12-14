@@ -551,7 +551,7 @@ class lGraphComp extends Component {
                         <Image source={require("../../assets/images/dollar.png")}
                             style={{ width: 25, height: 25, marginLeft: 15 }} />
                         <View style={{ flex: 1, marginLeft: 10 }}>
-                            <Text style={[styles.label]}>TOTAL AVAILABLE</Text>
+                            <Text style={[styles.label]}>AVAILABLE SOON</Text>
                             <Text style={[styles.label, {
                                 fontWeight: 'bold',
                                 fontSize: 15
@@ -562,7 +562,7 @@ class lGraphComp extends Component {
                         <Image source={require("../../assets/images/dollar.png")}
                             style={{ width: 25, height: 25, marginLeft: 15 }} />
                         <View style={{ flex: 1, marginLeft: 10 }}>
-                            <Text style={[styles.label]}>TOTAL REVENUE</Text>
+                            <Text style={[styles.label]}>READY FOR CASHOUT</Text>
                             <Text style={[styles.label, {
                                 fontWeight: 'bold',
                                 fontSize: 15

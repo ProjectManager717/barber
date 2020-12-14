@@ -57,7 +57,7 @@ export default class SurgePricingRate extends Component {
             date: date,
             selected_slot_id: selected_slot_id,
             total_price: total_price + surgeprice,
-            service_fee: "1.50",
+            service_fee: "2.00",
             tip_price:tip_price,
             selected_surge_price: true,
             cus_stripe_id: "",
@@ -126,7 +126,7 @@ export default class SurgePricingRate extends Component {
                 date: date,
                 selected_slot_id: selected_slot_id,
                 total_price: total_price,
-                service_fee: "1.50",
+                service_fee: "2.00",
                 selected_surge_price: selected_surge_price,
             })
         } else {

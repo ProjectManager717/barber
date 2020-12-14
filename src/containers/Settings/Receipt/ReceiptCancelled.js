@@ -96,11 +96,11 @@ export default class ReceiptCancelled extends Component {
                     }
                     if (recieptData.selected_surge_price === true) {
                         let surgePricee = totalPriceServices / 2
-                        let TotalMain = (parseInt(totalPriceServices) + 1.5) + (parseInt(surgePricee) );
+                        let TotalMain = (parseFloat(totalPriceServices) + 2) + (parseFloat(surgePricee)+parseFloat(this.state.tipLeft) );
                         this.setState({ surgePrice: surgePricee, totalMain: TotalMain });
                     } else {
                         let surgePricee = 0;
-                        let TotalMain = (parseInt(totalPriceServices) + 1.5) + (parseInt(surgePricee));
+                        let TotalMain = (parseFloat(totalPriceServices) +2) + (parseFloat(surgePricee)+parseFloat(this.state.tipLeft));
                         this.setState({ surgePrice: surgePricee, totalMain: TotalMain });
                     }
                 } else {
@@ -246,7 +246,12 @@ export default class ReceiptCancelled extends Component {
                             </View>
                             {this.renderRow2({
                                 title: "Service Fee",
-                                value: "$1.50",
+                                value: "$2.00",
+                            })}
+
+                            {this.renderRow2({
+                                title: "Tip Left",
+                                value: "$" +this.state.tipLeft,
                             })}
 
                             {this.renderRow2({

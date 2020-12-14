@@ -7,7 +7,6 @@ import {
     Image,
     ScrollView,
     Platform,
-    NetInfo,
     TextInput,
     BackHandler
 } from "react-native";
@@ -39,8 +38,8 @@ Date.prototype.addDays = function (days) {
 let BreakStart = moment("2020/10/13 00:00").format("YYYY/MM/DD HH:mm")//new Date().setHours(12, 0, 0);
 //BreakStart= BreakStart.setHours(13,0,0)
 let BreakEnd = moment("2020/10/13 13:00").format("YYYY/MM/DD HH:mm")//new Date().setHours(13, 0, 0);
-console.log("startBreakTimeShow :",BreakStart);
-console.log("startBreakTimeShow1 :",BreakEnd);
+console.log("startBreakTimeShow :", BreakStart);
+console.log("startBreakTimeShow1 :", BreakEnd);
 
 export default class ChooseTimings extends Component {
     constructor() {
@@ -60,7 +59,7 @@ export default class ChooseTimings extends Component {
             date: new Date().setHours(13, 0, 0),
             daySelected: "",
             showBreakTimeDialog: false,
-            breakStart: startDate,
+            breakStart: new Date(),
             breakEnd: new Date(),
             showVacationDialog: false,
 
@@ -153,9 +152,8 @@ export default class ChooseTimings extends Component {
         // let endBreakDay = this.state.breakEnd;
         // endBreakDay.setHours(1,0,0);
         // //endBreakDay.setMinutes("00");
-        // this.setState({breakEnd: endBreakDay})  
-        
-        
+        // this.setState({breakEnd: endBreakDay})
+
 
         this.backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
             //this.goBack(); // works best when the goBack is async
@@ -370,40 +368,45 @@ export default class ChooseTimings extends Component {
             if (day === workingdayz[j].day) {
                 let startT = workingdayz[j].working_from;
                 let startTime1 = startT.split(":");
-                console.log("SetTime Splited time:::-->" + startTime1);
+                console.log("SetTime Splited time Duty start:::-->" + startTime1);
                 let startimeDay = this.state.startTime;
+
                 startimeDay.setHours(startTime1[0]);
                 startimeDay.setMinutes(startTime1[1]);
-                this.setState({startTime: startimeDay},()=>{
-                    //console.log("OutputforTime:",this.state.startTime +"--"+this.state.breakStart)
-                });
-                console.log("SetTime:::-->" + startTime1);
 
-                let endT= workingdayz[j].working_to;
+                let endT = workingdayz[j].working_to;
                 let endTime1 = endT.split(":");
-                console.log("SetTime Splited time:::-->" + endTime1);
                 let endtimeDay = this.state.endTime;
                 endtimeDay.setHours(endTime1[0]);
                 endtimeDay.setMinutes(endTime1[1]);
-                this.setState({endTime: endtimeDay})
-                console.log("SetTime:::-->" + this.state.endTime);
+                // this.setState({endTime: endtimeDay},()=>{
+                //     console.log("OutputforTimeSet set:",this.state.breakStart +"--"+this.state.breakEnd)
+                // })
                 workingdayz[j].selected = true;
-                console.log("OutputforTimeSet before:",this.state.breakStart +"--"+this.state.breakEnd)
-                
+
+
                 let startbreak = workingdayz[j].break_from;
+                let startimeDayBreak = this.state.breakStart;
                 startbreak = startbreak.split(":");
-                console.log("OutputforTimeSet before:",JSON.stringify(startbreak))
-                startimeDay.setHours(startbreak[0]);
-                //console.log("OutputforTimeSet before:",JSON.stringify(startimeDay))
+                console.log("OutputforTimeSet before:", JSON.stringify(startbreak))
+                startimeDayBreak.setHours(startbreak[0]);
 
                 let endbreak = workingdayz[j].break_to;
+                let endtimeDayBreak = this.state.breakEnd;
                 endbreak = endbreak.split(":");
-                console.log("OutputforTimeSet before:",JSON.stringify(endbreak))
-                endtimeDay.setHours(endbreak[0]);
+                console.log("OutputforTimeSet before:", JSON.stringify(endbreak))
+                endtimeDayBreak.setHours(endbreak[0]);
+                console.log("OutputforTimeSett Duty time:",startimeDay + "--" + endtimeDay)
+                console.log("OutputforTimeSett BreakTime:", startimeDayBreak + "--" + endtimeDayBreak)
 
-
-                this.setState({breakStart: startimeDay, breakEnd: endtimeDay},()=>{
-                    console.log("OutputforTimeSet after:",this.state.breakStart +"--"+this.state.breakEnd)
+                this.setState({
+                    startTime: startimeDay,
+                    endTime: endtimeDay,
+                    breakStart: startimeDayBreak,
+                    breakEnd: endtimeDayBreak
+                }, () => {
+                    console.log("OutputforTimeSett Duty time:",startimeDay + "--" + endtimeDay)
+                    console.log("OutputforTimeSett BreakTime:", startimeDayBreak + "--" + endtimeDayBreak)
                 })
             } else {
                 workingdayz[j].selected = false;
@@ -412,7 +415,7 @@ export default class ChooseTimings extends Component {
             console.log("WorkingDayData", JSON.stringify(this.state.workingDays))
         }
         let items = [];
-        for (i = 0; i < 7; i++) {
+        for (let i = 0; i < 7; i++) {
             items.push(this.renderWeekDay({k: i}));
         }
         this.setState({
@@ -576,19 +579,19 @@ export default class ChooseTimings extends Component {
             workdays[0].break_to = dateString2;
         }
         if (index === "Thurs") {
-            workdays[0].break_from =  dateString1;
+            workdays[0].break_from = dateString1;
             workdays[0].break_to = dateString2;
         }
         if (index === "Fri") {
-            workdays[0].break_from =  dateString1;
+            workdays[0].break_from = dateString1;
             workdays[0].break_to = dateString2;
         }
         if (index === "Sat") {
-            workdays[0].break_from =  dateString1;
+            workdays[0].break_from = dateString1;
             workdays[0].break_to = dateString2;
         }
         if (index === "Sun") {
-            workdays[0].break_from =  dateString1;
+            workdays[0].break_from = dateString1;
             workdays[0].break_to = dateString2;
         }
         this.setState({workingDays: workdays, showBreakTimeDialog: false});
@@ -733,8 +736,8 @@ export default class ChooseTimings extends Component {
                                     fontSize: 13,
                                     marginBottom: 10,
                                     marginStart: 20,
-                                    width:"100%",
-                                    textAlign:"center"
+                                    width: "100%",
+                                    textAlign: "center"
                                 }}>{"START"}</Text>
                                 <DatePicker
                                     date={this.state.breakStart}
@@ -764,8 +767,8 @@ export default class ChooseTimings extends Component {
                                     fontSize: 13,
                                     marginBottom: 10,
                                     marginStart: 20,
-                                    width:"100%",
-                                    textAlign:"center",
+                                    width: "100%",
+                                    textAlign: "center",
                                 }}>{"END"}</Text>
                                 <DatePicker
                                     date={this.state.breakEnd}
@@ -794,8 +797,8 @@ export default class ChooseTimings extends Component {
                                 fontSize: 15,
                                 fontWeight: "bold",
                                 color: "white",
-                                width:"100%",
-                                textAlign:"center"
+                                width: "100%",
+                                textAlign: "center"
                             }}>{"Save"}</Text>
                         </TouchableOpacity>
                     </View>
@@ -940,8 +943,8 @@ export default class ChooseTimings extends Component {
                                 fontSize: 15,
                                 fontWeight: "bold",
                                 color: "white",
-                                width:"100%",
-                                textAlign:"center"
+                                width: "100%",
+                                textAlign: "center"
                             }}>{"Save"}</Text>
                         </TouchableOpacity>
                     </View>

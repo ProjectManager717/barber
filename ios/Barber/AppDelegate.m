@@ -6,6 +6,8 @@
  */
 
 #import "AppDelegate.h"
+#import <React/RCTBridge.h>
+
 #import <Firebase.h>
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
@@ -41,8 +43,10 @@ continueUserActivity:(NSUserActivity *)userActivity
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-  NSURL *jsCodeLocation;
-  
+RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
+  RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
+                                                              moduleName:@"Barber"
+                                            initialProperties:nil];
   [FIROptions defaultOptions].deepLinkURLScheme = @"CLYPR";
   [FIRApp configure];
   [[UNUserNotificationCenter currentNotificationCenter] setDelegate:self];
@@ -74,13 +78,8 @@ continueUserActivity:(NSUserActivity *)userActivity
   // Facebook sdk setup
   [[FBSDKApplicationDelegate sharedInstance] application:application didFinishLaunchingWithOptions:launchOptions];
 
-  jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
+  rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
 
-  RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
-                                                      moduleName:@"Barber"
-                                               initialProperties:nil
-                                                   launchOptions:launchOptions];
-  rootView.backgroundColor = [UIColor blackColor];
 
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
   UIViewController *rootViewController = [UIViewController new];
@@ -91,6 +90,14 @@ continueUserActivity:(NSUserActivity *)userActivity
 //  UIView* launchScreenView = [[[NSBundle mainBundle] loadNibNamed:@"LaunchScreen" owner:self options:nil] objectAtIndex:0];
 //  launchScreenView.frame = self.window.bounds;
 //  rootView.loadingView = launchScreenView;
+  
+  
+//  for (NSString *familyName in [UIFont familyNames]){
+//      NSLog(@"Family name: %@", familyName);
+//      for (NSString *fontName in [UIFont fontNamesForFamilyName:familyName]) {
+//          NSLog(@"--Font name: %@", fontName);
+//      }
+//  }
   return YES;
 }
 
@@ -111,6 +118,15 @@ fetchCompletionHandler:(nonnull void (^)(UIBackgroundFetchResult))completionHand
   
   [[RNFirebaseMessaging instance] didReceiveRemoteNotification:response.notification.request.content.userInfo];
   completionHandler();
+}
+
+- (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
+{
+#if DEBUG
+  return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
+#else
+  return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
+#endif
 }
 
 @end

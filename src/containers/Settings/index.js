@@ -1,18 +1,24 @@
-import React, {Component} from "react";
-import {View, Switch, Text, StyleSheet, Image, ScrollView, TouchableOpacity, Linking, Platform} from "react-native";
-import {Colors} from "../../themes";
-import {globalStyles} from "../../themes/globalStyles";
-import {constants} from "../../utils/constants";
-import {NavigationActions, StackActions} from "react-navigation";
+import React, { Component } from "react";
+import { View, Switch, Text, StyleSheet, Image, ScrollView, TouchableOpacity, Linking, Platform } from "react-native";
+import { Colors } from "../../themes";
+import { globalStyles } from "../../themes/globalStyles";
+import { constants } from "../../utils/constants";
+import { NavigationActions, StackActions } from "react-navigation";
 //import { styles } from "./styles";
-import {Header} from "react-native-elements";
+import { Header } from "react-native-elements";
 import Preference from 'react-native-preference';
 import {
     GoogleSignin,
     GoogleSigninButton,
     statusCodes,
-} from 'react-native-google-signin';
+} from '@react-native-community/google-signin';
 import firebase from "react-native-firebase";
+import appleAuth, {
+    AppleButton,
+    AppleAuthRequestOperation,
+    AppleAuthRequestScope,
+    AppleAuthCredentialState,
+} from '@invertase/react-native-apple-authentication';
 
 const now = new Date();
 var moment = require('moment');
@@ -32,15 +38,15 @@ export default class Settings extends Component {
     }
 
     renderRow(item) {
-        return <View style={{flex: 1, flexDirection: 'row', height: 36}}>
-            <Image style={styles.leftIcon} source={item.ic}/>
+        return <View style={{ flex: 1, flexDirection: 'row', height: 36 }}>
+            <Image style={styles.leftIcon} source={item.ic} />
             <Text style={styles.row_title}>{item.title}</Text>
-            <Image style={styles.right_arrow} source={require("../../assets/images/ic_forward_arrow.png")}/>
+            <Image style={styles.right_arrow} source={require("../../assets/images/ic_forward_arrow.png")} />
         </View>;
     }
 
     renderSeperator() {
-        return <View style={{marginLeft: 40, height: 0.5, backgroundColor: Colors.lightGrey}}></View>
+        return <View style={{ marginLeft: 40, height: 0.5, backgroundColor: Colors.lightGrey }}></View>
     }
 
     _signOut = async () => {
@@ -52,6 +58,11 @@ export default class Settings extends Component {
                 userInfo: null,
                 data: ''
             }); // Remove the user from your app's state as well
+
+            await appleAuth.performRequest({
+                requestedOperation: AppleAuthRequestOperation.LOGOUT
+              })
+
         } catch (error) {
             //console.error('Errorr:', error);
             console.log('Error:', error);
@@ -82,7 +93,7 @@ export default class Settings extends Component {
                 console.log("getFavoriteBarbers-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
                     //this.createNotificationListeners();
-                    this.setState({notificationAlert: response.Data.notification_alert}, () => {
+                    this.setState({ notificationAlert: response.Data.notification_alert }, () => {
                         console.log("NOTiIFICATIONS" + this.state.notificationAlert);
                     })
                 } else {
@@ -91,21 +102,21 @@ export default class Settings extends Component {
                     }
                 }
             }).catch(error => {
-            //console.error('Errorr:', error);
-            console.log('Error:', error);
-            alert("Error: " + error);
-        });
+                //console.error('Errorr:', error);
+                console.log('Error:', error);
+                alert("Error: " + error);
+            });
 
     }
 
     NoticationToggle() {
         if (this.state.notificationAlert === true)
-            this.setState({notificationAlert: false}, () => {
+            this.setState({ notificationAlert: false }, () => {
                 this.Notifications();
             });
 
         else {
-            this.setState({notificationAlert: true}, () => {
+            this.setState({ notificationAlert: true }, () => {
                 this.Notifications();
             });
 
@@ -116,13 +127,13 @@ export default class Settings extends Component {
         return (
             <View style={styles.container}>
                 <Header
-                    statusBarProps={{barStyle: "light-content"}}
+                    statusBarProps={{ barStyle: "light-content" }}
                     barStyle="light-content" // or directly
-                    style={{backgroundColor: "yellow"}}
-                    outerContainerStyles={{backgroundColor: "#1999CE"}}
-                    leftComponent={{color: "#fff"}}
-                    centerComponent={{text: "SETTINGS", style: {color: "#fff"}}}
-                    rightComponent={{color: "#fff"}}
+                    style={{ backgroundColor: "yellow" }}
+                    outerContainerStyles={{ backgroundColor: "#1999CE" }}
+                    leftComponent={{ color: "#fff" }}
+                    centerComponent={{ text: "SETTINGS", style: { color: "#fff" } }}
+                    rightComponent={{ color: "#fff" }}
                     containerStyle={{
                         backgroundColor: Colors.dark,
                         justifyContent: "space-around"
@@ -150,23 +161,23 @@ export default class Settings extends Component {
                         <TouchableOpacity onPress={() => {
                             this.props.navigation.navigate("Share")
                         }}>
-                            {this.renderRow({title: "Share Profile", ic: require("../../assets/images/share.png")})}
+                            {this.renderRow({ title: "Share Profile", ic: require("../../assets/images/share.png") })}
                         </TouchableOpacity>
                     </View>
                     <Text style={styles.txtHeader}>NOTIFICATIONS</Text>
                     <View style={[globalStyles.rowBackground, styles.row]}>
-                        <View style={{flex: 1, flexDirection: 'row', height: 36}}>
+                        <View style={{ flex: 1, flexDirection: 'row', height: 36 }}>
                             <Image style={styles.leftIcon}
-                                   source={require("../../assets/images/ic_setting_alert.png")}/>
+                                source={require("../../assets/images/ic_setting_alert.png")} />
                             <Text style={styles.row_title}>Alert</Text>
                             <Switch onChange={() => this.NoticationToggle()} value={this.state.notificationAlert}
-                                    style={{
-                                        transform: [{scaleX: .8}, {scaleY: .8}],
-                                        position: 'absolute',
-                                        right: 14,
-                                        alignSelf: 'center',
-                                        tintColor: 'white'
-                                    }}/>
+                                style={{
+                                    transform: [{ scaleX: .8 }, { scaleY: .8 }],
+                                    position: 'absolute',
+                                    right: 14,
+                                    alignSelf: 'center',
+                                    tintColor: 'white'
+                                }} />
                         </View>
                     </View>
                     <Text style={styles.txtHeader}>PAYMENT</Text>
@@ -218,7 +229,7 @@ export default class Settings extends Component {
                         <TouchableOpacity onPress={() => {
                             this.props.navigation.navigate('DiscoverMe');
                         }}>
-                            {this.renderRow({title: "Discover Me", ic: require("../../assets/images/ic_siren.png")})}
+                            {this.renderRow({ title: "Discover Me", ic: require("../../assets/images/ic_siren.png") })}
                         </TouchableOpacity>
 
                     </View>
@@ -266,7 +277,7 @@ export default class Settings extends Component {
                         <TouchableOpacity onPress={() => {
                             Linking.openURL('https://www.facebook.com/teamCLYPR')
                         }}>
-                            {this.renderRow({title: "Facebook", ic: require("../../assets/images/ic_settings_fb.png")})}
+                            {this.renderRow({ title: "Facebook", ic: require("../../assets/images/ic_settings_fb.png") })}
                         </TouchableOpacity>
                         {this.renderSeperator()}
                         <TouchableOpacity onPress={() => {
@@ -309,13 +320,14 @@ export default class Settings extends Component {
                             })}
                         </TouchableOpacity>
                     </View>
-                    <TouchableOpacity style={[globalStyles.button, {marginTop: 30, marginBottom: 30}]} onPress={() => {
+                    <TouchableOpacity style={[globalStyles.button, { marginTop: 30, marginBottom: 30 }]} onPress={() => {
                         Preference.clear();
                         this._signOut();
                         LoginManager.logOut();
+                        
                         const goToIntoScreen = StackActions.reset({
                             index: 0,
-                            actions: [NavigationActions.navigate({routeName: 'SelectScreen'})],
+                            actions: [NavigationActions.navigate({ routeName: 'SelectScreen' })],
                         });
                         this.props.navigation.dispatch(goToIntoScreen);
                     }}>
@@ -328,12 +340,12 @@ export default class Settings extends Component {
                         alignItems: "center",
                     }}
                     >
-                        <Text style={{color: "grey", fontFamily: "AvertaStd-Thin"}}>{"CLYPR Technologies V1.0"}</Text>
-                        <View style={{flexDirection: "row", marginTop: 5, marginBottom: 10}}>
-                            <Text style={{color: "white", fontWeight: "bold", fontStyle: "italic"}}> Made in
+                        <Text style={{ color: "grey", fontFamily: "AvertaStd-Thin" }}>{"CLYPR Technologies V1.0"}</Text>
+                        <View style={{ flexDirection: "row", marginTop: 5, marginBottom: 10 }}>
+                            <Text style={{ color: "white", fontWeight: "bold", fontStyle: "italic" }}> Made in
                                 Miami </Text>
                             <Image resizeMode={"contain"} source={require("../../assets/images/beach.png")}
-                                   style={{height: 20, width: 20, marginStart: 10}}
+                                style={{ height: 20, width: 20, marginStart: 10 }}
 
                             />
                         </View>

@@ -1,28 +1,29 @@
 import React, {Component} from 'react';
-import {ImageBackground, View} from 'react-native';
+import {ImageBackground, View, Text, TouchableOpacity} from 'react-native';
 import {SafeAreaView} from 'react-navigation';
 import {styles} from './styles';
 import {WhiteButton, RedButton} from '../../../components';
-
+let itemId;
 class InitialScreen extends Component {
     constructor(props) {
         super(props);
         const {navigation} = this.props;
-        const itemId = navigation.getParam('User', 'NO-ID');
+        itemId = navigation.getParam('User', 'NO-ID');
         console.log("gettingUSer--->" + itemId);
         this.state = {
             userName: undefined,
         };
-        this.state.userName=itemId;
+        this.state.userName = itemId;
     }
 
     onSignUp = () => {
-        this.props.navigation.navigate('SignUpScreen', {User:this.state.userName});
+        this.props.navigation.navigate('SignUpScreen', {User: this.state.userName});
     };
 
     onSignIn = () => {
-        this.props.navigation.navigate('SignInScreen', {User:this.state.userName});
+        this.props.navigation.navigate('SignInScreen', {User: this.state.userName});
     };
+
     /*componentDidMount(){
         this.getEvents();
     }
@@ -58,10 +59,19 @@ class InitialScreen extends Component {
                     <View style={styles.mainContainer}>
                         <View style={styles.buttonsContainer}>
 
-                            <WhiteButton label="Sign Up" onPress={this.onSignUp} textStyle={{width:"100%",textAlign:"center"}}/>
-                            <RedButton label="Login" onPress={this.onSignIn} textStyle={{width:"100%",textAlign:"center"}}/>
+                            <WhiteButton label="Sign Up" onPress={this.onSignUp}
+                                         textStyle={{width: "100%", textAlign: "center"}}/>
+                            <RedButton label="Login" onPress={this.onSignIn}
+                                       textStyle={{width: "100%", textAlign: "center"}}/>
                         </View>
+                        {itemId=="Client" &&<TouchableOpacity onPress={()=>{
+                            this.props.navigation.push("ClientBarberSearch")
+                        }} style={{width: 200, height: 50, marginTop: 50}}>
+                            <Text style={{width: "100%", textAlign: "center", fontSize: 18, color: "white",fontStyle:"italic"}}>{"Not Now"}</Text>
+                        </TouchableOpacity>}
                     </View>
+
+
                 </SafeAreaView>
             </ImageBackground>
         )

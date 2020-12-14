@@ -52,6 +52,7 @@ export const constants = {
     ClientBarbersSearch: Base_url + clientPath1 + "clientSearchBarber",
     ClientProfileData: Base_url + clientPath1,
     ClientBarbersProfileSlots: Base_url + path2 + "getSlots",
+    ClientBarbersProfileSlotsWithOutLogin: Base_url + path2 + "getSlotsGuestUser",
     getDaySlots: Base_url + path2 + "onlySlots",
     ClientBookAppointment: Base_url + path2 + "oppointment",
     ClientAddFavoriteBarber: Base_url + clientPath1 + "favoriteBarber",
@@ -86,6 +87,9 @@ export const constants = {
     ClientNotificationAlert:Base_url+clientPath1+"notificationAlert",
     ServiceDelete:Base_url+path2+"service_delete",
     ClientUpdateAppointmentStatus: Base_url + clientPath1 + "updateAppointmentStatus",
-    BarberCashOut:Base_url+path3+"stripes/payout"
+    BarberCashOut:Base_url+path3+"stripes/payout",
+
+     StripeKey:"pk_live_BXlctkFE5BDLwdwxP67IFm1D",//Live account
+     //StripeKey : 'pk_test_U4Ri0H7rP3PClZwTI5Z2r78J',//testing account*/
 
 };

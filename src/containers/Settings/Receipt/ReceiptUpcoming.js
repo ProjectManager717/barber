@@ -105,13 +105,16 @@ export default class ReceiptUpcoming extends Component {
 
                     if (recieptData.selected_surge_price === true) {
                         let surgePricee = totalServices / 2;
-                        let TotalMains =(((parseInt(totalServices) + 1.5) + (parseInt(surgePricee)+(tipPrice)) ));
+
+                        let TotalMains =(((parseInt(totalServices) + 2) + (parseInt(surgePricee)+(tipPrice)) ));
+
                         console.log("totalMain::::", TotalMains)
 
                         this.setState({ surgePrice: surgePricee, totalMain: TotalMains.toFixed(2) });
                     } else {
                         let surgePricee = 0;
-                        let TotalMain =(((parseInt(totalServices) + 1.5) + (parseInt(surgePricee)+((tipPrice)) )));
+
+                        let TotalMain =(((parseInt(totalServices) + 2) + (parseInt(surgePricee)+((tipPrice)) )));
                         this.setState({ surgePrice: surgePricee, totalMain: TotalMain.toFixed(2) });
                     }
                 } else {
@@ -182,7 +185,7 @@ export default class ReceiptUpcoming extends Component {
             body: formBody
         }).then(response => response.json())
             .then(response => {
-                console.log("responseAddReviews-->", "-" + JSON.stringify(response));
+                console.log("responseCancelAppointment-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
                     this.setState({ showLoading: false, DialogCancelAppointment: false }, () => {
                         this.props.navigation.goBack();
@@ -304,7 +307,7 @@ export default class ReceiptUpcoming extends Component {
                             </View>
                             {this.renderRow2({
                                 title: "Service Fee",
-                                value: "$1.50",
+                                value: "$2.00",
                             })}
 
                             {this.renderRow2({

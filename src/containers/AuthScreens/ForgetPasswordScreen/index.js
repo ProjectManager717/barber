@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ImageBackground, Text, View, TouchableOpacity, NetInfo, Dimensions, Keyboard, Image } from 'react-native';
+import { ImageBackground, Text, View, TouchableOpacity, Dimensions, Keyboard, Image } from 'react-native';
 import { SafeAreaView } from 'react-navigation';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { styles } from './styles';
@@ -42,15 +42,6 @@ class ForgetPasswordScreen extends Component {
 
     componentDidMount(): void {
         var code = this.getRandomNumber().toString()
-        NetInfo.isConnected.addEventListener(
-            'change',
-            this._handleConnectivityChange
-        );
-        NetInfo.isConnected.fetch().done(
-            (isConnected) => {
-                this.setState({ isConnected });
-            }
-        );
         this.setState({ forgetpassword_pin: code })
     }
 

@@ -1022,8 +1022,7 @@ export default class BarberEditProfile extends Component {
                                                     backgroundColor: "white",
                                                     flexDirection: "column",
                                                 }}/>
-                                                <Text style={{fontSize: 16, marginTop: 5, color: "black"}}>Barber Shop
-                                                    Name</Text>
+                                                <Text style={{fontSize: 16, marginTop: 5, color: "black"}}>Barber Shop Name</Text>
                                                 <TextInput Color={"white"} placeholder={"Enter Shop Name"}
                                                            placeholderTextColor={"grey"}
                                                            onChangeText={(text) => {

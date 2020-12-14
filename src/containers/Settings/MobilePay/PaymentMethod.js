@@ -21,9 +21,8 @@ import PopupDialog from 'react-native-popup-dialog';
 import stripe from 'tipsi-stripe'
 
 stripe.setOptions({
-    //publishableKey: 'pk_test_5f4q3aLF1SgN7kQdEV6WBSnn',
-    publishableKey: 'pk_test_U4Ri0H7rP3PClZwTI5Z2r78J',
-    androidPayMode: 'test', // Android only
+    publishableKey: constants.StripeKey,
+    //androidPayMode: 'test', // Android only
 })
 let ListData = [];
 export default class PaymentMethod extends Component {
@@ -172,6 +171,10 @@ export default class PaymentMethod extends Component {
 
                         }
                         this.setState({CardData: allCards}, () => {
+                            if(this.state.CardData.length>0)
+                            {
+                                this.setState({selectedCardData: allCards[0]})
+                            }
                             console.log("AllcardsData--", JSON.stringify(this.state.CardData))
                         })
 

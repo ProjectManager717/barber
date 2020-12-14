@@ -1,47 +1,31 @@
 package com.app.rn.barber;
 
 import android.app.Application;
+import android.content.Context;
+import com.facebook.react.PackageList;
 
 import com.facebook.react.ReactApplication;
 
-import io.invertase.firebase.RNFirebasePackage;
-import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
+
+
+import com.facebook.react.ReactNativeHost;
+import com.facebook.react.ReactPackage;
+import com.facebook.soloader.SoLoader;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.List;
+import io.invertase.firebase.messaging.RNFirebaseMessagingPackage; // <-- Add this line
 import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage;
 import io.invertase.firebase.links.RNFirebaseLinksPackage;
 
 
-import com.rnfs.RNFSPackage;
-import fr.greweb.reactnativeviewshot.RNViewShotPackage;
-import com.horcrux.svg.SvgPackage;
-import com.wix.RNCameraKit.RNCameraKitPackage;
-import co.apptailor.googlesignin.RNGoogleSigninPackage;
-import com.imagepicker.ImagePickerPackage;
-import com.gettipsi.stripe.StripeReactPackage;
+import androidx.multidex.MultiDexApplication;
 
-import im.shimo.react.preference.PreferencePackage;
-import com.henninghall.date_picker.DatePickerPackage;
-import com.facebook.CallbackManager;
-import com.facebook.FacebookSdk;
-import com.facebook.reactnative.androidsdk.FBSDKPackage;
-import com.facebook.appevents.AppEventsLogger;
 
-import com.BV.LinearGradient.LinearGradientPackage;
-import com.oblador.vectoricons.VectorIconsPackage;
-
-import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
-
-import com.facebook.react.ReactNativeHost;
-import com.facebook.react.ReactPackage;
-import com.facebook.react.shell.MainReactPackage;
-import com.facebook.soloader.SoLoader;
-
-import java.util.Arrays;
-import java.util.List;
-
-//import android.support.multidex.MultiDex;
-import android.content.Context;
-
-public class MainApplication extends Application implements ReactApplication {
+public class MainApplication extends MultiDexApplication implements ReactApplication {
 
     private static CallbackManager mCallbackManager = CallbackManager.Factory.create();
 
@@ -58,26 +42,14 @@ public class MainApplication extends Application implements ReactApplication {
 
         @Override
         protected List<ReactPackage> getPackages() {
-            return Arrays.<ReactPackage>asList(
-                    new MainReactPackage(),
-                    new RNFirebasePackage(),
-                    new RNFirebaseLinksPackage(),
-                    new RNFirebaseMessagingPackage(),
-                    new RNFirebaseNotificationsPackage(),
-                    new StripeReactPackage(),
-                    new RNFSPackage(),
-                    new RNViewShotPackage(),
-                    new SvgPackage(),
-                    new RNCameraKitPackage(),
-                    new RNGoogleSigninPackage(),
-                    new ImagePickerPackage(),
-                    new FBSDKPackage(mCallbackManager),
-                    new PreferencePackage(),
-                    new DatePickerPackage(),
-                    new LinearGradientPackage(),
-                    new VectorIconsPackage(),
-                    new RNGestureHandlerPackage()
-            );
+            @SuppressWarnings("UnnecessaryLocalVariable")
+            List<ReactPackage> packages = new PackageList(this).getPackages();
+            // Packages that cannot be autolinked yet can be added manually here, for example:
+            // packages.add(new MyReactNativePackage());
+            packages.add(new RNFirebaseMessagingPackage()); // <-- Add this line
+            packages.add(new RNFirebaseNotificationsPackage()); // <-- Add this line
+            packages.add(new RNFirebaseLinksPackage());
+            return packages;
         }
 
         @Override
@@ -96,9 +68,63 @@ public class MainApplication extends Application implements ReactApplication {
     public void onCreate() {
         super.onCreate();
         SoLoader.init(this, /* native exopackage */ false);
+        initializeFlipper(this);
+        //initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
         FacebookSdk.setApplicationId("300952084145848");
         FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(this);
+    }
+
+
+    /**
+     * Loads Flipper in React Native templates. Call this in the onCreate method with something like
+     * initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
+     *
+     * @param context
+     * @param reactInstanceManager
+     */
+    /*private static void initializeFlipper(Context context, ReactInstanceManager reactInstanceManager) {
+        if (BuildConfig.DEBUG) {
+            try {
+        *//*
+         We use reflection here to pick up the class that initializes Flipper,
+        since Flipper library is not available in release mode
+        *//*
+                Class<?> aClass = Class.forName("com.rndiffapp.ReactNativeFlipper");
+                aClass
+                        .getMethod("initializeFlipper", Context.class, ReactInstanceManager.class)
+                        .invoke(null, context, reactInstanceManager);
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            }
+        }
+    }*/
+
+    private static void initializeFlipper(Context context) {
+        if (BuildConfig.DEBUG) {
+            try {
+        /*
+         We use reflection here to pick up the class that initializes Flipper,
+        since Flipper library is not available in release mode
+        */
+                Class<?> aClass = Class.forName("com.facebook.flipper.ReactNativeFlipper");
+                aClass.getMethod("initializeFlipper", Context.class).invoke(null, context);
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override

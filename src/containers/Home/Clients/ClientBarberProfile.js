@@ -21,8 +21,10 @@ import {constants} from "../../../utils/constants";
 import Preference from "react-native-preference";
 import {AirbnbRating} from "react-native-elements";
 import {isIPhoneX} from '../../../utils/Dimensions';
+import {NavigationActions, StackActions} from "react-navigation";
 
-
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 const {height, width} = Dimensions.get("window");
 var moment = require("moment");
 let Policy = "By booking now, you are \n" +
@@ -103,7 +105,7 @@ export default class ClientBarberProfile extends Component {
             mobilePayActivation: false,
             SelectedCard: "",
             addTip: true,
-            percentPrice:0,
+            percentPrice: 0,
             dayData: [
                 {
                     id: 1,
@@ -136,7 +138,7 @@ export default class ClientBarberProfile extends Component {
                     selected: "transparent",
                     surgePrice: false,
                 }],
-            savedCard: ["************4242", "************4242", "************4242"],
+            savedCard: [],
             DialogVisible: false,
             month: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
             ListData: [
@@ -153,16 +155,22 @@ export default class ClientBarberProfile extends Component {
                     imagePath: require('../../../assets/images/vp2.png')
                 }],
             ListData2: [],
-            showFullImage: false
+            showFullImage: false,
+            clientLogin: false
         }
-
     }
 
     rightAction() {
         //this.props.navigation.navigate('BarberEditProfile');
         //this.props.navigation.push('Share');
-        Share.share({message: "Share Profile"}).then(result => {
-        }).catch(errorMessage => console.log(errorMsg));
+        if (this.state.clientLogin) {
+            Share.share({message: "Share Profile"}).then(result => {
+            }).catch(errorMessage => console.log(errorMsg));
+        } else {
+            Alert.alert("Authentication", "Please login to share the details.")
+
+        }
+
     }
 
     leftAction() {
@@ -170,6 +178,10 @@ export default class ClientBarberProfile extends Component {
     }
 
     componentDidMount() {
+        this.setState({clientLogin: Preference.get('clientlogin')}, () => {
+            console.log("clientLogin", this.state.clientLogin)
+        })
+
         let items = [];
         for (let i = 0; i < 7; i++) {
             var weekDate = this.startOfWeek(new Date());
@@ -190,14 +202,6 @@ export default class ClientBarberProfile extends Component {
         ////////////////////////////////////////////////////////////////////Calender
         //this.setMonthDays(getmonthh, getYear);
         this.setMonth();
-    }
-
-    getDateToday() {
-        let date = new Date();
-        let setMonth = date.getMonth() + 1;
-        let dateSelected = date.getFullYear() + "-" + setMonth + "-" + date.getDate();
-        console.log("TodayDate--->", dateSelected);
-        return dateSelected;
     }
 
     startOfWeek(date) {
@@ -307,7 +311,6 @@ export default class ClientBarberProfile extends Component {
                 }
             }).catch(error => {
             this.setState({showLoading: false})
-            //console.error('Errorr:', error);
             console.log('Error:', error);
             alert("Error: " + error);
         });
@@ -348,7 +351,7 @@ export default class ClientBarberProfile extends Component {
                 }
             }).catch(error => {
             this.setState({showLoading: false})
-            //console.error('Errorr:', error);
+
             console.log('Error:', error);
             alert("Error: " + error);
         });
@@ -400,20 +403,17 @@ export default class ClientBarberProfile extends Component {
                 }
             }).catch(error => {
             this.setState({showLoading: false})
-            //console.error('Errorr:', error);
             console.log('Error:', error);
             alert("Error: " + error);
         });
     }
 
     getBarberDetails(dateDay) {
-        let totalPr=0
-        if(this.state.totalPriceService>0)
-        {
-            totalPr=this.state.totalPriceService;
-        }else
-        {
-            totalPr=0
+        let totalPr = 0
+        if (this.state.totalPriceService > 0) {
+            totalPr = this.state.totalPriceService;
+        } else {
+            totalPr = 0
         }
         console.log("getBarberDetails barberID-->" + barberId);
         console.log("getBarberDetails barberID-->" + dateDay);
@@ -441,6 +441,7 @@ export default class ClientBarberProfile extends Component {
         }).then(response => response.json())
             .then(response => {
                 console.log("ClientBarbersProfileSlots-->", "-" + JSON.stringify(response));
+
                 if (response.ResultType === 1) {
                     this.setState({showLoading: false})
                     let barberData = response.Data;
@@ -448,6 +449,8 @@ export default class ClientBarberProfile extends Component {
                         this.setState({barberFav: false})
                     else
                         this.setState({barberFav: true})
+
+
                     this.setState({
                         barberProfileImage: {uri: barberData.user_image},
                         barberInsta: barberData.username,
@@ -467,6 +470,7 @@ export default class ClientBarberProfile extends Component {
                         savedCard: barberData.card_list
                     }, () => {
                         console.log("stripeActiveCheck:", this.state.stripeActive)
+                        // console.log("SavedCards:", this.state.savedCard)
                         if (this.state.ListData2.length < 1) {
                             this.setState({ListData2: barberData.services})
                         }
@@ -504,21 +508,19 @@ export default class ClientBarberProfile extends Component {
                 }
             }).catch(error => {
             this.setState({showLoading: false})
-            //console.error('Errorr:', error);
+
             console.log('Error:', error);
-            alert("Error: " + error);
+            //alert("Error: " + error);
         });
     }
 
     bookApointmentCard(data) {
-        let surgeP=0;
-        let totalP=this.state.totalPriceService
-        if(this.state.surgePriceSelected)
-        {
-            surgeP=totalP/2;
-        }else
-        {
-            surgeP=0;
+        let surgeP = 0;
+        let totalP = this.state.totalPriceService
+        if (this.state.surgePriceSelected) {
+            surgeP = totalP / 2;
+        } else {
+            surgeP = 0;
         }
         this.setState({showLoading: true});
         var details = {
@@ -527,9 +529,9 @@ export default class ClientBarberProfile extends Component {
             selected_services: this.state.selectedServices,
             date: this.state.selectedDate,
             selected_slot_id: this.state.selectedSlotIds,
-            total_price: this.state.totalPriceService+surgeP,
-            service_fee: "1.50",
-            tip_price:this.state.percentPrice,
+            total_price: this.state.totalPriceService + surgeP,
+            service_fee: "2.00",
+            tip_price: this.state.percentPrice,
             selected_surge_price: false,
             cus_stripe_id: data.cus_stripe_id,
             transaction_id: data.transaction_id,
@@ -538,7 +540,8 @@ export default class ClientBarberProfile extends Component {
             destination_payment: data.destination_payment,
             source_transaction: data.source_transaction,
             payment_date: data.date,
-            payment_created: data.created
+            payment_created: data.created,
+            charge_id:data.charge_id
         };
         console.log("Outputdata::::" + JSON.stringify(details));
         fetch(constants.ClientBookAppointment, {
@@ -571,26 +574,24 @@ export default class ClientBarberProfile extends Component {
                        });*/
                 } else {
                     if (response.ResultType === 0) {
-                        alert(response.Message);
+                        Alert.alert("Error", response.Message);
                     }
                 }
             }).catch(error => {
             this.setState({showLoading: false})
-            //console.error('Errorr:', error);
+
             console.log('Error:', error);
-            alert("Error: " + error);
+            //alert("Error: " + error);
         });
     }
 
     bookApointment() {
-        let surgeP=0;
-        let totalP=this.state.totalPriceService
-        if(this.state.surgePriceSelected)
-        {
-            surgeP=totalP/2;
-        }else
-        {
-            surgeP=0;
+        let surgeP = 0;
+        let totalP = this.state.totalPriceService
+        if (this.state.surgePriceSelected) {
+            surgeP = totalP / 2;
+        } else {
+            surgeP = 0;
         }
         this.setState({showLoading: true});
         var details = {
@@ -599,9 +600,9 @@ export default class ClientBarberProfile extends Component {
             selected_services: this.state.selectedServices,
             date: this.state.selectedDate,
             selected_slot_id: this.state.selectedSlotIds,
-            total_price: this.state.totalPriceService+surgeP,
-            service_fee: "1.50",
-            tip_price:this.state.percentPrice,
+            total_price: this.state.totalPriceService + surgeP,
+            service_fee: "2.00",
+            tip_price: this.state.percentPrice,
             selected_surge_price: false,
             cus_stripe_id: "",
             transaction_id: "",
@@ -634,7 +635,7 @@ export default class ClientBarberProfile extends Component {
                 }
             }).catch(error => {
             this.setState({showLoading: false})
-            //console.error('Errorr:', error);
+
             console.log('Error:', error);
             alert("Error: " + error);
         });
@@ -700,7 +701,7 @@ export default class ClientBarberProfile extends Component {
             //var m = moment(new Date(2011, 2, 12, 0, 0, 0));
             //m.add(item.id * 30, "minutes");
             let currentTime = moment().format('YYYY-MM-DD h:mm a');
-           // let date1 = new Date(this.state.selectedDate + " " + item.slot_detail.start_time + ":00")
+            // let date1 = new Date(this.state.selectedDate + " " + item.slot_detail.start_time + ":00")
             let slotTime = moment(this.state.selectedDate + " " + item.slot_detail.start_time + ":00").format('YYYY-MM-DD h:mm a');
             //console.log("SlotTime condition:",JSON.stringify(currentTime.isBefore(slotTime))); // true
             //console.log("SlotTime condition1:", JSON.stringify(currentTime)); // Mon May 12 2014 08:45:00
@@ -767,9 +768,8 @@ export default class ClientBarberProfile extends Component {
                         </TouchableOpacity>
                     </View>)
                 }
-            }else
-            {
-                console.log("SlotTime condition--->: ","false"); // Mon May 12 2014 09:00:00
+            } else {
+                console.log("SlotTime condition--->: ", "false"); // Mon May 12 2014 09:00:00
             }
 
         } else {
@@ -821,83 +821,80 @@ export default class ClientBarberProfile extends Component {
     }
 
     checkSurgePriceSelected() {
-            //alert("TotalPriceAppoinment:"+ this.state.totalPriceService)
-            console.log("MobileSurgePrice: ", this.state.surgePriceSelected)
-            if (this.state.serviceTypeSelected === true && this.state.serviceDaySelected === true && this.state.serviceTimeSelected === true) {
-                if (this.state.surgePriceSelected === true)
-                    this.props.navigation.navigate('SurgePricingRate', {
-                        client_id: Preference.get("userId"),
-                        barber_id: barberId,
-                        barberImage: this.state.barberProfileImage,
-                        barberName: this.state.barberName,
-                        tip_price:this.state.percentPrice,
-                        barberShopName: this.state.barberShopName,
-                        appointmentPrice: this.state.totalPriceService,
-                        selected_services: this.state.selectedServices,
-                        date: this.state.selectedDate,
-                        selected_slot_id: this.state.selectedSlotIds,
-                        total_price: this.state.totalPriceService,
-                        service_fee: "1.5",
-                        //selected_surge_price:this.state.surgePriceSelected,
-                        selected_surge_price: true,
-                        barberMobilePay: this.state.barberMobilePay
-                    });
-                else {
-                    if (this.state.mobilePayActivation === true) {
-                        if (this.state.barberMobilePay === "inShop") {
-                            this.bookApointment();
-                        } else {
-                            if (this.state.savedCard.length < 1) {
-                                this.props.navigation.navigate("PaymentMethodClient", {
-                                    client_id: Preference.get("userId"),
-                                    barber_id: barberId,
-                                    barberImage: this.state.barberProfileImage,
-                                    barberName: this.state.barberName,
-                                    tip_price:this.state.percentPrice,
-                                    barberShopName: this.state.barberShopName,
-                                    appointmentPrice: this.state.totalPriceService,
-                                    selected_services: this.state.selectedServices,
-                                    date: this.state.selectedDate,
-                                    selected_slot_id: this.state.selectedSlotIds,
-                                    total_price: this.state.totalPriceService,
-                                    service_fee: "1.5",
-                                    selected_surge_price: false,
-                                })
-                            } else {
-                                this.PaymentFlow();
-                            }
-                        }
-                    } else {
+        //alert("TotalPriceAppoinment:"+ this.state.totalPriceService)
+        console.log("MobileSurgePrice: ", this.state.surgePriceSelected)
+        if (this.state.serviceTypeSelected === true && this.state.serviceDaySelected === true && this.state.serviceTimeSelected === true) {
+            if (this.state.surgePriceSelected === true)
+                this.props.navigation.navigate('SurgePricingRate', {
+                    client_id: Preference.get("userId"),
+                    barber_id: barberId,
+                    barberImage: this.state.barberProfileImage,
+                    barberName: this.state.barberName,
+                    tip_price: this.state.percentPrice,
+                    barberShopName: this.state.barberShopName,
+                    appointmentPrice: this.state.totalPriceService,
+                    selected_services: this.state.selectedServices,
+                    date: this.state.selectedDate,
+                    selected_slot_id: this.state.selectedSlotIds,
+                    total_price: this.state.totalPriceService,
+                    service_fee: "2.00",
+                    //selected_surge_price:this.state.surgePriceSelected,
+                    selected_surge_price: true,
+                    barberMobilePay: this.state.barberMobilePay
+                });
+            else {
+                if (this.state.mobilePayActivation === true) {
+                    if (this.state.barberMobilePay === "inShop") {
                         this.bookApointment();
+                    } else {
+                        if (this.state.savedCard.length < 1) {
+                            this.props.navigation.navigate("PaymentMethodClient", {
+                                client_id: Preference.get("userId"),
+                                barber_id: barberId,
+                                barberImage: this.state.barberProfileImage,
+                                barberName: this.state.barberName,
+                                tip_price: this.state.percentPrice,
+                                barberShopName: this.state.barberShopName,
+                                appointmentPrice: this.state.totalPriceService,
+                                selected_services: this.state.selectedServices,
+                                date: this.state.selectedDate,
+                                selected_slot_id: this.state.selectedSlotIds,
+                                total_price: this.state.totalPriceService,
+                                service_fee: "2.00",
+                                selected_surge_price: false,
+                            })
+                        } else {
+                            this.PaymentFlow();
+                        }
                     }
+                } else {
+                    this.bookApointment();
                 }
-            } else {
-                alert("Please select Service,Time and Day for further procedure.");
             }
+        } else {
+            alert("Please select Service,Time and Day for further procedure.");
+        }
     }
 
     PaymentFlow() {
         let selectedcard = this.state.SelectedCard;
-        let surgeP=0;
-        let totalP=this.state.totalPriceService
-        if(this.state.surgePriceSelected)
-        {
-            surgeP=totalP/2;
-        }else
-        {
-            surgeP=0;
+        let surgeP = 0;
+        let totalP = this.state.totalPriceService
+        if (this.state.surgePriceSelected) {
+            surgeP = totalP / 2;
+        } else {
+            surgeP = 0;
         }
-        let tipPrice=0
-        if(!!this.state.percentPrice)
-        {
-            tipPrice=this.state.percentPrice
+        let tipPrice = 0
+        if (!!this.state.percentPrice) {
+            tipPrice = this.state.percentPrice
         }
         if (this.state.isConnected) {
             this.setState({showLoading: true})
             var details = {
                 barberID: barberId,
                 clientID: Preference.get("userId"),
-                amount: (this.state.totalPriceService+1.50+surgeP+tipPrice) * 100,
+                amount: (this.state.totalPriceService + 2.00 + surgeP + tipPrice) * 100,
                 card_id: selectedcard.id,
             };
             console.log("CARD Email----->" + JSON.stringify(details));
@@ -924,12 +921,12 @@ export default class ClientBarberProfile extends Component {
                         this.bookApointmentCard(response.Data)
                     } else {
                         if (response.ResultType === 0) {
-                            alert(response.Message);
+                            Alert.alert("Transaction not completed", "Please enter a valid Debit/Credit Card.")
+                            //Alert.alert("Error",response.Message);
                         }
                     }
                 })
                 .catch(error => {
-                    //console.error('Errorr:', error);
                     console.log('Error:', error);
                     this.setState({showLoading: false})
                     //alert("Error: "+error);
@@ -978,12 +975,12 @@ export default class ClientBarberProfile extends Component {
         //console.log("IDforService--t-->"+ JSON.stringify(totalTime));
     }
 
-    selectday(indx,item) {
+    selectday(indx, item) {
         //alert("dayselected " + indx);
         let monthDaysData = this.state.monthDays;
         //console.log("Dateselected is",monthDaysData[indx].dateOfDay)
-        this.setState({selectedDate: monthDaysData[indx].dateOfDay},()=>{
-            console.log("SlectedDateofDAy:" , this.state.selectedDate +"--"+
+        this.setState({selectedDate: monthDaysData[indx].dateOfDay}, () => {
+            console.log("SlectedDateofDAy:", this.state.selectedDate + "--" +
                 JSON.stringify(item));
             for (let s = 0; s < monthDaysData.length; s++) {
                 console.log("slectDay-loop" + s);
@@ -1110,8 +1107,113 @@ export default class ClientBarberProfile extends Component {
         let mon = this.state.month[getmonth];
         console.log("daysDataOutput:", JSON.stringify(daysData));
         this.setState({monthDays: daysData, selectedDate: daysData[0].dateOfDay});
-        this.getBarberDetails(daysData[0].dateOfDay);
+        if (Preference.get("clientlogin"))
+            this.getBarberDetails(daysData[0].dateOfDay);
+        else
+            this.getBarberDetailsWithOutClientID(daysData[0].dateOfDay);
         //this.selectday(0);
+    }
+
+    getBarberDetailsWithOutClientID(dateDay) {
+        let totalPr = 0
+        if (this.state.totalPriceService > 0) {
+            totalPr = this.state.totalPriceService;
+        } else {
+            totalPr = 0
+        }
+        console.log("getBarberDetails barberID-->" + barberId);
+        console.log("getBarberDetails barberID-->" + dateDay);
+        var details = {
+            barber_id: barberId,
+            check_date: dateDay,
+            //client_id: Preference.get("userId"),
+        };
+        var formBody = [];
+        for (var property in details) {
+            var encodedKey = encodeURIComponent(property);
+            var encodedValue = encodeURIComponent(details[property]);
+            formBody.push(encodedKey + "=" + encodedValue);
+        }
+        formBody = formBody.join("&");
+        console.log("formData:" + JSON.stringify(formBody));
+        this.setState({showLoading: true})
+        fetch(constants.ClientBarbersProfileSlotsWithOutLogin, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: formBody,
+        }).then(response => response.json())
+            .then(response => {
+                console.log("ClientBarbersProfileSlots-->", "-" + JSON.stringify(response));
+                if (response.ResultType === 1) {
+                    this.setState({showLoading: false})
+                    let barberData = response.Data;
+                    if (barberData.favorite_bit === 0)
+                        this.setState({barberFav: false})
+                    else
+                        this.setState({barberFav: true})
+                    this.setState({
+                        barberProfileImage: {uri: barberData.user_image},
+                        barberInsta: barberData.username,
+                        barberName: barberData.firstname + " " + barberData.lastname,
+                        barberShopName: barberData.shop_name,
+                        ListData: barberData.portoflios,
+                        //ListData2: barberData.services,
+                        //barberTimeSlots: barberData.slots,
+                        barberRating: barberData.average_rating,
+                        barberReviews: barberData.total_reviews,
+                        barberTotalAmout: 0,
+                        totalPriceService: totalPr,
+                        stripeActive: barberData.stripe_active,
+                        barberMobilePay: "mobilePay",//barberData.payment_option,
+                        Barberbanner: {uri: barberData.banner_image},
+                        mobilePayActivation: barberData.mobile_pay_activation,
+                        //savedCard: barberData.card_list
+                    }, () => {
+                        console.log("stripeActiveCheck:", this.state.stripeActive)
+                        if (this.state.ListData2.length < 1) {
+                            this.setState({ListData2: barberData.services})
+                        }
+                    });
+
+
+                    let PortfolioImages = this.state.ListData;
+                    for (let i = 0; i < PortfolioImages.length; i++) {
+                        console.log("ImagesDataURl", PortfolioImages[i].portfolio_image);
+                        PortfolioImages[i].portfolio_image = constants.portfolioImagePath + PortfolioImages[i].portfolio_image;
+                    }
+                    this.setState({ListData: PortfolioImages})
+                    //this.setState({barberData: response.Data});
+
+                    if (this.state.barberMobilePay === "mobilePay") {
+                        this.setState({buttonPayText: "PAY"}, () => {
+                            if (this.state.mobilePayActivation) {
+                                this.setState({buttonPayText: "PAY"})
+                            } else {
+                                this.setState({buttonPayText: "RESERVE"})
+                            }
+                        })
+                    } else {
+                        this.setState({buttonPayText: "RESERVE"})
+                    }
+
+
+                    console.log("Slotsdata::", this.state.barberTimeSlots);
+                    //this.setState({barberData: response.Data});
+                } else {
+                    this.setState({showLoading: false})
+                    if (response.ResultType === 0) {
+                        alert(response.Message);
+                    }
+                }
+            }).catch(error => {
+            this.setState({showLoading: false})
+            console.log('Error:', error);
+            alert("Error: " + error);
+        });
+
     }
 
     getDayOfWeek(date) {
@@ -1130,40 +1232,34 @@ export default class ClientBarberProfile extends Component {
         if (this.state.addTip === false) {
             this.setState({addTip: true});
             this.setPercentage(this.state.percentage)
-        }
-        else
-            this.setState({addTip: false,percentPrice:0})
+        } else
+            this.setState({addTip: false, percentPrice: 0})
     }
 
-    setPercentage(per)
-    {
-        let percentprice=0;
+    setPercentage(per) {
+        let percentprice = 0;
         //appointmentPrice=30;
-        appointmentPrice=this.state.totalPriceService
-        this.setState({percentage:per,DialogVisiblePercent:false});
-        if(per=="10%")
-        {
-            percentprice=(appointmentPrice*10)/100;
+        let appointmentPrice = this.state.totalPriceService
+        this.setState({percentage: per, DialogVisiblePercent: false});
+        if (per == "10%") {
+            percentprice = (appointmentPrice * 10) / 100;
         }
-        if(per=="20%")
-        {
-            percentprice=(appointmentPrice*20)/100;
+        if (per == "20%") {
+            percentprice = (appointmentPrice * 20) / 100;
         }
-        if(per=="25%")
-        {
-            percentprice=(appointmentPrice*25)/100;
+        if (per == "25%") {
+            percentprice = (appointmentPrice * 25) / 100;
         }
-        if(per=="50%")
-        {
-            percentprice=(appointmentPrice*50)/100;
+        if (per == "50%") {
+            percentprice = (appointmentPrice * 50) / 100;
         }
-        console.log("PercentPrice---->",percentprice);
-        this.setState({percentPrice:percentprice})
+        console.log("PercentPrice---->", percentprice);
+        this.setState({percentPrice: percentprice})
     }
 
     render() {
         return (
-            <View>
+            <View style={{height: windowHeight, backgroundColor: colors.themeBackground}}>
                 <ScrollView>
                     {!(this.state.showFullImage) && <View style={styles.container}>
                         <Header
@@ -1172,12 +1268,21 @@ export default class ClientBarberProfile extends Component {
                             bgIcon={this.state.Barberbanner}
                             rightIcon={require("../../../assets/images/share.png")}
                             leftIcon={require("../../../assets/images/ic_back.png")}/>
-                        {this.state.barberFav && <TouchableOpacity onPress={() => this.setFavorite()}
-                                                                   style={{position: "absolute", top: 40, right: 60}}>
+                        {(this.state.barberFav && this.state.clientLogin) &&
+                        <TouchableOpacity onPress={() => this.setFavorite()}
+                                          style={{position: "absolute", top: 40, right: 60}}>
                             <Image source={require("../../../assets/images/star.png")}
                                    style={{width: 20, height: 20,}}/>
                         </TouchableOpacity>}
-                        {!this.state.barberFav && <TouchableOpacity onPress={() => this.setFavorite()}
+                        {!this.state.barberFav && <TouchableOpacity onPress={() => {
+                            if (this.state.clientLogin)
+                                this.setFavorite()
+                            else {
+                                Alert.alert("Authentiation!", "Please login to add favorite.")
+                            }
+
+                        }
+                        }
                                                                     style={{position: "absolute", top: 40, right: 60}}>
                             <Image source={require("../../../assets/images/star-unselected.png")}
                                    style={{width: 20, height: 20,}}/>
@@ -1303,6 +1408,8 @@ export default class ClientBarberProfile extends Component {
                                    style={{position: "absolute", width: 35, height: 35, right: 10, top: 50}}/>}
                         </View>
                         <View style={{height: 15}}/>
+
+
                         <View style={[{
                             backgroundColor: "grey",
                             color: "white",
@@ -1364,14 +1471,23 @@ export default class ClientBarberProfile extends Component {
                                                                 uncheckedCheckBoxColor={"#272727"}/>
                                                 <Text style={{color: "white", fontSize: 12}}>   {item.name} </Text>
                                             </View>
-                                            <View style={[{flexDirection: "row", width: "25%", alignItems: "center"}]}>
+                                            <View style={[{
+                                                flexDirection: "row",
+                                                width: "25%",
+                                                alignItems: "center"
+                                            }]}>
                                                 <Text style={{
                                                     color: "white",
                                                     fontSize: 12
                                                 }}>{item.duration + " mins"}</Text>
                                             </View>
-                                            <View style={[{flexDirection: "row", width: "25%", alignItems: "center"}]}>
-                                                <Text style={{color: "white", fontSize: 12}}>{"$" + item.price}</Text>
+                                            <View style={[{
+                                                flexDirection: "row",
+                                                width: "25%",
+                                                alignItems: "center"
+                                            }]}>
+                                                <Text
+                                                    style={{color: "white", fontSize: 12}}>{"$" + item.price}</Text>
                                             </View>
                                         </TouchableOpacity>
                                         <View style={{height: 0.5, backgroundColor: "#868791"}}/>
@@ -1388,101 +1504,93 @@ export default class ClientBarberProfile extends Component {
                                 }}/>}
 
                             {this.state.ListData2.length < 1 &&
-                            <View style={{width: "100%", height: 60, alignItems: "center", justifyContent: "center"}}>
+                            <View
+                                style={{width: "100%", height: 60, alignItems: "center", justifyContent: "center"}}>
                                 <Text style={{fontSize: 15, color: "white"}}>{"You don't have any Services"}</Text>
                             </View>}
 
 
                         </View>
-                        {this.state.ListData2.length > 0 && <View Style={{flexDirection: "column"}}>
-                            <View style={{flexDirection: "row", width: "100%", height: 40}}>
+                        {this.state.clientLogin && <View>
+                            {this.state.ListData2.length > 0 && <View Style={{flexDirection: "column"}}>
+                                <View style={{flexDirection: "row", width: "100%", height: 40}}>
 
-                                <Text
-                                    style={{
-                                        fontFamily: "AvertaStd-Semibold",
-                                        alignSelf: "center",
-                                        marginTop: 5,
-                                        color: Colors.red1,
-                                        textAlign: "center",
-                                        width: "100%"
-                                    }}>
-                                    {this.state.showMonth}
-                                </Text>
-                                <TouchableOpacity onPress={() => this.decreaseMonth()}
-                                                  style={{position: "absolute", top: 15, left: 20}}>
-                                    <Image style={{height: 13, width: 13,}}
-                                           source={require("../../../assets/images/left_calender.png")}/>
-                                </TouchableOpacity>
-                                <TouchableOpacity onPress={() => this.increaseMonth()}
-                                                  style={{position: "absolute", top: 15, right: 20}}>
-                                    <Image style={{height: 13, width: 13,}}
-                                           source={require("../../../assets/images/right_arrow_calender.png")}/>
-                                </TouchableOpacity>
-                            </View>
-                            {/*<Text
-                                style={{
-                                    fontFamily: "AvertaStd-Semibold",
-                                    alignSelf: "center",
-                                    marginTop: 12,
-                                    color: Colors.red1
-                                }}
-                            >{this.state.month[getmonth] + " " + getYear}</Text>*/}
-                            {/*<View style={styles.calendar_weekly_header}>
-                            {this.state.dataSource}
-                        </View>*/}
-                            <FlatList
-                                data={this.state.monthDays}
-                                keyExtractor={(item, index) => index}
-                                showsHorizontalScrollIndicator={false}
-                                numColumns={1}
-                                horizontal={true}
-                                extraData={this.state}
-                                renderItem={({item, index}) => <View
-                                    style={{justifyContent: "center", alignItems: "center"}}>
-                                    <TouchableOpacity style={{
-                                        width: "100%", justifyContent: "center",
-                                        alignItems: "center", height: 60, marginStart: 20, marginEnd: 20,
-                                        borderBottomWidth: 2,
-                                        borderBottomColor: item.bottomColor
-                                    }} onPress={() => this.selectday(index,item)}>
-                                        <Text style={{color: item.dayColor, fontSize: 15}}>{item.weekDay}</Text>
-                                        <Text
-                                            style={{
-                                                color: item.dayColor,
-                                                fontWeight: "bold",
-                                                fontSize: 12,
-                                                width: "100%",
-                                                textAlign: "center"
-                                            }}>{item.day}</Text>
-
+                                    <Text
+                                        style={{
+                                            fontFamily: "AvertaStd-Semibold",
+                                            alignSelf: "center",
+                                            marginTop: 5,
+                                            color: Colors.red1,
+                                            textAlign: "center",
+                                            width: "100%"
+                                        }}>
+                                        {this.state.showMonth}
+                                    </Text>
+                                    <TouchableOpacity onPress={() => this.decreaseMonth()}
+                                                      style={{position: "absolute", top: 15, left: 20}}>
+                                        <Image style={{height: 13, width: 13,}}
+                                               source={require("../../../assets/images/left_calender.png")}/>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity onPress={() => this.increaseMonth()}
+                                                      style={{position: "absolute", top: 15, right: 20}}>
+                                        <Image style={{height: 13, width: 13,}}
+                                               source={require("../../../assets/images/right_arrow_calender.png")}/>
                                     </TouchableOpacity>
                                 </View>
-                                }/>
-                            <View style={{height: 0.5, width: "100%", backgroundColor: "grey", marginBottom: 10}}/>
-                            {(this.state.barberTimeSlots.length > 0) && <FlatList
-                                /* data={this.state.dayData}*/
-                                data={this.state.barberTimeSlots}
-                                /* data={this.state.listData}*/
-                                renderItem={({item, index}) => this.renderItem(item, index)}
-                                numColumns={1}
-                                extraData={this.state}
-                                showsHorizontalScrollIndicator={false}
-                                keyExtractor={(item, index) => index}
-                                horizontal={true}/>}
-                            {!(this.state.barberTimeSlots.length > 0) && <View style={{
-                                width: "100%",
-                                justifyContent: "center",
-                                alignItems: "center",
-                                backgroundColor: "transparent"
-                            }}>
-                                <Text style={{color: "white", fontSize: 15}}>{"Fully Booked"}</Text>
+
+                                <FlatList
+                                    data={this.state.monthDays}
+                                    keyExtractor={(item, index) => index}
+                                    showsHorizontalScrollIndicator={false}
+                                    numColumns={1}
+                                    horizontal={true}
+                                    extraData={this.state}
+                                    renderItem={({item, index}) => <View
+                                        style={{justifyContent: "center", alignItems: "center"}}>
+                                        <TouchableOpacity style={{
+                                            width: "100%", justifyContent: "center",
+                                            alignItems: "center", height: 60, marginStart: 20, marginEnd: 20,
+                                            borderBottomWidth: 2,
+                                            borderBottomColor: item.bottomColor
+                                        }} onPress={() => this.selectday(index, item)}>
+                                            <Text style={{color: item.dayColor, fontSize: 15}}>{item.weekDay}</Text>
+                                            <Text
+                                                style={{
+                                                    color: item.dayColor,
+                                                    fontWeight: "bold",
+                                                    fontSize: 12,
+                                                    width: "100%",
+                                                    textAlign: "center"
+                                                }}>{item.day}</Text>
+
+                                        </TouchableOpacity>
+                                    </View>
+                                    }/>
+                                <View style={{height: 0.5, width: "100%", backgroundColor: "grey", marginBottom: 10}}/>
+                                {(this.state.barberTimeSlots.length > 0) && <FlatList
+                                    /* data={this.state.dayData}*/
+                                    data={this.state.barberTimeSlots}
+                                    /* data={this.state.listData}*/
+                                    renderItem={({item, index}) => this.renderItem(item, index)}
+                                    numColumns={1}
+                                    extraData={this.state}
+                                    showsHorizontalScrollIndicator={false}
+                                    keyExtractor={(item, index) => index}
+                                    horizontal={true}/>}
+                                {!(this.state.barberTimeSlots.length > 0) && <View style={{
+                                    width: "100%",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    backgroundColor: "transparent"
+                                }}>
+                                    <Text style={{color: "white", fontSize: 15}}>{"Fully Booked"}</Text>
+                                </View>}
                             </View>}
-                        </View>}
-                        <View style={{
+                            <View style={{
                                 flexDirection: "row",
                                 width: "90%",
                                 height: 50,
-                                marginLeft:20,
+                                marginLeft: 20,
                                 marginTop: 20,
                                 justifyContent: "center",
                                 alignItems: "center",
@@ -1490,8 +1598,9 @@ export default class ClientBarberProfile extends Component {
                             }}>
                                 <View style={{flexDirection: "column", width: "60%",}}>
                                     <View style={{flexDirection: "row", marginTop: 10}}>
-                                        <CheckBoxSquare rightText={"Add a Tip"} isChecked={this.state.addTip} onClick={() => this.setAddTip()}
-                                                        style={{marginTop: 4,width:140}}/>
+                                        <CheckBoxSquare rightText={"Add a Tip"} isChecked={this.state.addTip}
+                                                        onClick={() => this.setAddTip()}
+                                                        style={{marginTop: 4, width: 140}}/>
                                         {/*<Text style={{color: "white", marginStart: 10, fontSize: 15,}}></Text>*/}
                                     </View>
                                     <Text style={{
@@ -1502,23 +1611,29 @@ export default class ClientBarberProfile extends Component {
                                     }}>(100% goes to your
                                         barber)</Text>
                                 </View>
-                                <View style={{flexDirection: "row", width: "40%",alignItems:"center",justifyContent:"center"}}>
+                                <View style={{
+                                    flexDirection: "row",
+                                    width: "40%",
+                                    alignItems: "center",
+                                    justifyContent: "center"
+                                }}>
                                     <Text style={{
                                         color: "white",
                                         fontSize: 20,
                                         fontWeight: "bold",
-                                        marginStart: 0,width:"50%"
-                                    }}>${this.state.percentPrice>0?this.state.percentPrice.toFixed(2):0}</Text>
-                                    <TouchableOpacity onPress={() => this.setState({DialogVisiblePercent: true})} style={{
-                                        flexDirection: "row",
-                                        backgroundColor: "#474857",
-                                        marginStart: 20,
-                                        borderRadius: 20,
-                                        height: 25,
-                                        width: 50,
-                                        justifyContent: "center",
-                                        alignItems: "center",
-                                    }}>
+                                        marginStart: 0, width: "50%"
+                                    }}>${this.state.percentPrice > 0 ? this.state.percentPrice.toFixed(2) : 0}</Text>
+                                    <TouchableOpacity onPress={() => this.setState({DialogVisiblePercent: true})}
+                                                      style={{
+                                                          flexDirection: "row",
+                                                          backgroundColor: "#474857",
+                                                          marginStart: 20,
+                                                          borderRadius: 20,
+                                                          height: 25,
+                                                          width: 50,
+                                                          justifyContent: "center",
+                                                          alignItems: "center",
+                                                      }}>
                                         <Text style={{
                                             color: "white",
                                             fontSize: 13,
@@ -1540,132 +1655,159 @@ export default class ClientBarberProfile extends Component {
                             </View>
 
 
-                        <View
-                            style={{
-                                flexDirection: "column",
-                                height: 100,
-                                width: "100%",
-                                marginTop: 10
-                            }}>
-                            <View style={{
-                                flexDirection: "row",
-                                width: "100%",
-                                height: "100%",
-                                backgroundColor: "#010221"
-                            }}>
+                            <View
+                                style={{
+                                    flexDirection: "column",
+                                    height: 100,
+                                    width: "100%",
+                                    marginTop: 10
+                                }}>
                                 <View style={{
-                                    flexDirection: "row", width: "40%", justifyContent: "center", alignItems: "center",
+                                    flexDirection: "row",
+                                    width: "100%",
+                                    height: "100%",
+                                    backgroundColor: "#010221"
                                 }}>
                                     <View style={{
-                                        flexDirection: "column",
-                                        // height: "100%",
-                                        width: "100%",
-                                        marginStart: 25,
+                                        flexDirection: "row",
+                                        width: "40%",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                    }}>
+                                        <View style={{
+                                            flexDirection: "column",
+                                            // height: "100%",
+                                            width: "100%",
+                                            marginStart: 25,
+                                        }}>
+                                            <Text style={{
+                                                fontSize: 16, color: "white",
+                                                fontFamily: "AvertaStd-Thin",
+                                                marginTop: 10
+
+                                            }}>Subtotal:</Text>
+                                            <Text
+                                                style={{
+                                                    fontSize: 33,
+                                                    fontWeight: "bold",
+                                                    textAlign: "left",
+                                                    color: "white",
+                                                }}
+                                            >${(this.state.totalPriceService + 2.00 + this.state.percentPrice).toFixed(2)}</Text>
+                                            <Text style={{
+                                                color: "white",
+                                                fontFamily: "AvertaStd-Thin",
+                                                fontSize: 12,
+                                                marginBottom: 5,
+                                            }}>Service
+                                                Fee:
+                                                <Text style={{
+                                                    // fontWeight: "900",
+
+                                                    color: "white"
+                                                }}>{" $2.00"}</Text>
+                                            </Text>
+                                        </View>
+                                    </View>
+                                    {(this.state.buttonPayText == "PAY") && (this.state.savedCard.length < 1) &&<TouchableOpacity
+                                    onPress={()=>{//alert("Add new card & Pay")
+                                    this.checkSurgePriceSelected()
+                                }}
+                                    style={{
+                                        flexDirection: "row",
+                                        width: "40%",
+                                        height: "100%",
+                                        justifyContent: "center",
+                                        alignItems: "center"
                                     }}>
                                         <Text style={{
-                                            fontSize: 16, color: "white",
-                                            fontFamily: "AvertaStd-Thin",
-                                            marginTop: 10
-
-                                        }}>Subtotal:</Text>
-                                        <Text
-                                            style={{
-                                                fontSize: 33,
-                                                fontWeight: "bold",
-                                                textAlign: "left",
-                                                color: "white",
-                                            }}
-                                        >${(this.state.totalPriceService + 1.50+this.state.percentPrice).toFixed(2)}</Text>
-                                        <Text style={{color: "white", fontFamily: "AvertaStd-Thin", fontSize: 12,marginBottom:5,}}>Service
-                                            Fee:
-                                            <Text style={{
-                                                // fontWeight: "900",
-
-                                                color: "white"
-                                            }}>{" $1.50"}</Text>
-                                        </Text>
-                                    </View>
-                                </View>
-                                {(this.state.buttonPayText == "PAY") && (this.state.savedCard.length > 0) &&
-                                <TouchableOpacity onPress={() => this.showDialog()} style={{
-                                    flexDirection: "row",
-                                    width: "40%",
-                                    height: "100%",
-                                    justifyContent: "center",
-                                    alignItems: "center"
-                                }}>
-                                    {this.state.selectedCardImage === "Visa" &&
-                                    <Image resizeMode={"contain"} source={require("../../../assets/images/visa.png")}
-                                           style={{width: 25}}/>}
-                                    {this.state.selectedCardImage === "Discover" && <Image resizeMode={"contain"}
-                                                                                           source={require("../../../assets/images/discover.png")}
-                                                                                           style={{width: 25}}/>}
-                                    {this.state.selectedCardImage === "MasterCard" &&
-                                    <Image resizeMode={"contain"} source={require("../../../assets/images/master.png")}
-                                           style={{width: 25}}/>}
-                                    {this.state.selectedCardImage === "American Express" &&
-                                    <Image resizeMode={"contain"}
-                                           source={require("../../../assets/images/american.png")}
-                                           style={{width: 25}}/>}
-                                    {this.state.selectedCardImage === "UnionPay" && <Image resizeMode={"contain"}
-                                                                                           source={require("../../../assets/images/unionpay.png")}
-                                                                                           style={{width: 25}}/>}
-                                    {this.state.selectedCardImage === "Diners Club" && <Image resizeMode={"contain"}
-                                                                                              source={require("../../../assets/images/dinnerclub.png")}
-                                                                                              style={{width: 25}}/>}
-                                    {this.state.selectedCardImage === "JCB" &&
-                                    <Image resizeMode={"contain"} source={require("../../../assets/images/jcb.png")}
-                                           style={{width: 25}}/>}
-
-                                    <Text style={{
-                                        textAlign: "center",
-                                        fontSize: 17,
-                                        marginStart: 5,
-                                        color: "white"
-                                    }}>{this.state.selectedCardNum}</Text>
-                                    <Image
-                                        style={{
+                                            textAlign: "center",
+                                            fontSize: 14,
                                             marginStart: 5,
-                                        }} resizeMode={"contain"}
-                                        source={require("../../../assets/images/arrow_down.png")}/>
-                                </TouchableOpacity>}
-                                {(this.state.buttonPayText == "RESERVE") && <View style={{
-                                    width: "40%",
-                                    height: "100%",
-                                    justifyContent: "center",
-                                    alignItems: "center"
-                                }}>
-                                    <Text style={{
-                                        fontSize: 18,
-                                        color: "white",
-                                        fontStyle: 'italic'
-                                    }}>{" Pay in Store "}</Text>
-                                </View>}
+                                            color: "white"
+                                        }}>{'Add new Card & Pay'}</Text>
+                                        </TouchableOpacity>}
+                                    {(this.state.buttonPayText == "PAY") && (this.state.savedCard.length > 0) &&
+                                    <TouchableOpacity onPress={() => this.showDialog()} style={{
+                                        flexDirection: "row",
+                                        width: "40%",
+                                        height: "100%",
+                                        justifyContent: "center",
+                                        alignItems: "center"
+                                    }}>
+                                        {this.state.selectedCardImage === "Visa" &&
+                                        <Image resizeMode={"contain"}
+                                               source={require("../../../assets/images/visa.png")}
+                                               style={{width: 25}}/>}
+                                        {this.state.selectedCardImage === "Discover" && <Image resizeMode={"contain"}
+                                                                                               source={require("../../../assets/images/discover.png")}
+                                                                                               style={{width: 25}}/>}
+                                        {this.state.selectedCardImage === "MasterCard" &&
+                                        <Image resizeMode={"contain"}
+                                               source={require("../../../assets/images/master.png")}
+                                               style={{width: 25}}/>}
+                                        {this.state.selectedCardImage === "American Express" &&
+                                        <Image resizeMode={"contain"}
+                                               source={require("../../../assets/images/american.png")}
+                                               style={{width: 25}}/>}
+                                        {this.state.selectedCardImage === "UnionPay" && <Image resizeMode={"contain"}
+                                                                                               source={require("../../../assets/images/unionpay.png")}
+                                                                                               style={{width: 25}}/>}
+                                        {this.state.selectedCardImage === "Diners Club" && <Image resizeMode={"contain"}
+                                                                                                  source={require("../../../assets/images/dinnerclub.png")}
+                                                                                                  style={{width: 25}}/>}
+                                        {this.state.selectedCardImage === "JCB" &&
+                                        <Image resizeMode={"contain"} source={require("../../../assets/images/jcb.png")}
+                                               style={{width: 25}}/>}
 
-                                <TouchableOpacity onPress={() => {
-                                    this.checkSurgePriceSelected()
-                                }} style={{
-                                    backgroundColor: "red",
-                                    width: "20%",
-                                    height: "100%",
-                                    position: "absolute",
-                                    right: 0,
-                                    alignItems: "center",
-                                    justifyContent: "center"
-                                }}>
-                                    <Text style={{
-                                        fontSize: 16,
-                                        color: "white",
-                                        fontWeight: "bold",
-                                        width: "100%",
-                                        textAlign: "center"
-                                    }}>{this.state.buttonPayText}</Text>
-                                </TouchableOpacity>
+                                        <Text style={{
+                                            textAlign: "center",
+                                            fontSize: 17,
+                                            marginStart: 5,
+                                            color: "white"
+                                        }}>{this.state.selectedCardNum}</Text>
+                                        <Image
+                                            style={{
+                                                marginStart: 5,
+                                            }} resizeMode={"contain"}
+                                            source={require("../../../assets/images/arrow_down.png")}/>
+                                    </TouchableOpacity>}
+                                    {(this.state.buttonPayText == "RESERVE") && <View style={{
+                                        width: "40%",
+                                        height: "100%",
+                                        justifyContent: "center",
+                                        alignItems: "center"
+                                    }}>
+                                        <Text style={{
+                                            fontSize: 18,
+                                            color: "white",
+                                            fontStyle: 'italic'
+                                        }}>{" Pay in Store "}</Text>
+                                    </View>}
 
+                                    <TouchableOpacity onPress={() => {
+                                        this.checkSurgePriceSelected()
+                                    }} style={{
+                                        backgroundColor: "red",
+                                        width: "20%",
+                                        height: "100%",
+                                        position: "absolute",
+                                        right: 0,
+                                        alignItems: "center",
+                                        justifyContent: "center"
+                                    }}>
+                                        <Text style={{
+                                            fontSize: 16,
+                                            color: "white",
+                                            fontWeight: "bold",
+                                            width: "100%",
+                                            textAlign: "center"
+                                        }}>{this.state.buttonPayText}</Text>
+                                    </TouchableOpacity>
+
+                                </View>
                             </View>
-
-
-                        </View>
+                        </View>}
 
                         <Dialog
                             visible={this.state.DialogVisible}
@@ -1703,29 +1845,49 @@ export default class ClientBarberProfile extends Component {
                             </DialogContent>
                         </Dialog>
                         <Dialog
-                        visible={this.state.DialogVisiblePercent}
-                        onTouchOutside={() => {
-                            this.setState({DialogVisiblePercent: false});
-                        }}
-                        width={0.6}>
-                        <DialogContent>
-                            <Text style={{
-                                fontSize: 18,
-                                color: "black",
-                                fontWeight: "bold",
-                                marginBottom: 10,
-                                marginTop: 10
-                            }}>{"Please select Percentage"}</Text>
-                            <Text onPress={() =>this.setPercentage("10%")}
-                                  style={{fontSize: 18, color: "black", marginBottom: 10, marginTop: 10}}>{"10%"}</Text>
-                            <Text onPress={() =>this.setPercentage("20%")}
-                                  style={{fontSize: 18, color: "black", marginBottom: 10, marginTop: 10}}>{"20%"}</Text>
-                            <Text onPress={() => this.setPercentage("25%")}
-                                  style={{fontSize: 18, color: "black", marginBottom: 10, marginTop: 10}}>{"25%"}</Text>
-                            <Text onPress={() =>this.setPercentage("50%")}
-                                  style={{fontSize: 18, color: "black", marginBottom: 10, marginTop: 10}}>{"50%"}</Text>
-                        </DialogContent>
-                    </Dialog>
+                            visible={this.state.DialogVisiblePercent}
+                            onTouchOutside={() => {
+                                this.setState({DialogVisiblePercent: false});
+                            }}
+                            width={0.6}>
+                            <DialogContent>
+                                <Text style={{
+                                    fontSize: 18,
+                                    color: "black",
+                                    fontWeight: "bold",
+                                    marginBottom: 10,
+                                    marginTop: 10
+                                }}>{"Please select Percentage"}</Text>
+                                <Text onPress={() => this.setPercentage("10%")}
+                                      style={{
+                                          fontSize: 18,
+                                          color: "black",
+                                          marginBottom: 10,
+                                          marginTop: 10
+                                      }}>{"10%"}</Text>
+                                <Text onPress={() => this.setPercentage("20%")}
+                                      style={{
+                                          fontSize: 18,
+                                          color: "black",
+                                          marginBottom: 10,
+                                          marginTop: 10
+                                      }}>{"20%"}</Text>
+                                <Text onPress={() => this.setPercentage("25%")}
+                                      style={{
+                                          fontSize: 18,
+                                          color: "black",
+                                          marginBottom: 10,
+                                          marginTop: 10
+                                      }}>{"25%"}</Text>
+                                <Text onPress={() => this.setPercentage("50%")}
+                                      style={{
+                                          fontSize: 18,
+                                          color: "black",
+                                          marginBottom: 10,
+                                          marginTop: 10
+                                      }}>{"50%"}</Text>
+                            </DialogContent>
+                        </Dialog>
 
 
                     </View>}
@@ -1752,7 +1914,7 @@ export default class ClientBarberProfile extends Component {
                         </TouchableOpacity>
 
                     </View>}
-                    <TouchableOpacity
+                    {this.state.clientLogin && <TouchableOpacity
                         onPress={() => Alert.alert("This barber has Cancelation & No-Show Policies activated.", Policy)}
                         style={{
                             width: "100%",
@@ -1767,8 +1929,41 @@ export default class ClientBarberProfile extends Component {
                             color: "blue",
                             textAlign: "center"
                         }}>{"Cancelation & No-Show Policy"}</Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity>}
                 </ScrollView>
+                {!Preference.get('clientlogin') &&<View style={{width: "100%", height: 100, position: "absolute", bottom: 0, alignItems: "center",backgroundColor:colors.themeBackground}}>
+                    <View style={{
+                        width: "80%",
+                        flexDirection: "row",
+                        alignItems: 'center',
+                        justifyContent: "space-between",
+                        backgroundColor:Colors.themeBackground,
+                        marginTop: 10
+                    }}>
+                        <TouchableOpacity onPress={()=>{
+                            //this.props.navigation.goBack();
+                            const goToIntoScreen = StackActions.reset({
+                                index: 0,
+                                actions: [NavigationActions.navigate({ routeName: 'SelectScreen' })],
+                            });
+                            this.props.navigation.dispatch(goToIntoScreen);
+                        }} style={{width: "40%", backgroundColor: Colors.red, height: 40, borderRadius: 20,alignItems:"center",justifyContent:"center"}}>
+                            <Text style={{color:"white"}}>Sign Up</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            onPress={()=>{
+                                //this.props.navigation.goBack();
+                                const goToIntoScreen = StackActions.reset({
+                                    index: 0,
+                                    actions: [NavigationActions.navigate({ routeName: 'SelectScreen' })],
+                                });
+                                this.props.navigation.dispatch(goToIntoScreen);
+                            }}
+                            style={{width: "40%", backgroundColor: "white", height: 40, borderRadius: 20,alignItems:"center",justifyContent:"center"}}>
+                            <Text>Login</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>}
                 {this.state.showLoading && <View style={{
                     width: "100%",
                     height: "100%",
