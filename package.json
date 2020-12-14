@@ -48,7 +48,7 @@
     "react-native-svg": "^9.5.1",
     "react-native-vector-icons": "^6.7.0",
     "react-native-view-shot": "^3.1.2",
-    "react-native-webview": "^10.9.0",
+    "react-native-webview": "^11.0.0",
     "react-navigation": "^3.3.2",
     "tipsi-stripe": "^7.5.3"
   },
