@@ -29,13 +29,26 @@ import RNIap, {
     purchaseErrorListener,
     purchaseUpdatedListener,
 } from 'react-native-iap';
+import moment from "moment";
+
+const BASIC_SUB = "basic.membership.clypr"
+const SUPREME_SUB = "supreme.membership.clypr"
 
 const itemSkus = Platform.select({
     ios: [
-        'products.clypr.supreme'
+        'supreme.membership.clypr'
     ],
     android: [
         'com.example.productId'
+    ]
+});
+
+const itemSubs = Platform.select({
+    ios: [
+        'test.sub'
+    ],
+    android: [
+        'test.sub'
     ]
 });
 
@@ -43,6 +56,9 @@ let purchaseUpdateSubscription;
 let purchaseErrorSubscription;
 
 export default class Subscription extends Component {
+
+    purchaseUpdatedListenerCount = 0
+    purchaseErrorListenerCount = 0
     state = {
         showLoading: false,
         SubscriptionInfo: [],
@@ -70,32 +86,47 @@ export default class Subscription extends Component {
 
     }
 
-    purchaseUpdatedListenerCount = 0
-    purchaseErrorListenerCount = 0
-
     async componentDidMount(): void {
+        // setTimeout(() => {
+        //     this.forceUpdate()
+        // }, 5000);
+        this.getItems()
+        // this.SubscriptionInfo();
         if (Platform.OS == 'ios') {
             try {
                 const result = await RNIap.initConnection();
                 console.log('initInAppPurchase', 'result', result);
+
             } catch (err) {
                 console.log('initInAppPurchase', 'error', err.code, err.message);
             }
 
-            purchaseUpdateSubscription = purchaseUpdatedListener(async (purchase) => {
-                console.log('initInAppPurchase', 'purchaseUpdatedListener', JSON.stringify(purchase));
-                if (this.purchaseUpdatedListenerCount > 1) {
-                    return
-                }
-                this.purchaseUpdatedListenerCount = this.purchaseUpdatedListenerCount + 1
-                if (purchase && purchase.transactionReceipt) {
-                    //call API
-                }
-            });
+            // purchaseUpdateSubscription = purchaseUpdatedListener(async (purchase) => {
+
+            //     if (this.purchaseUpdatedListenerCount >= 1) {
+            //         // console.log('initInAppPurchase', 'result>1', "purchaseUdatedListener");
+            //         return
+            //     }
+
+            //     this.purchaseUpdatedListenerCount = this.purchaseUpdatedListenerCount + 1
+            //     console.log('initInAppPurchase', 'result', "bye-count", this.purchaseUpdatedListenerCount);
+            //     if (purchase && purchase.transactionReceipt) {
+            //         console.log('initInAppPurchase', "purchase", purchase);
+            //         alert(purchase.productId + "      " + purchase.transactionReceipt)
+            //         if (purchase.productId == "basic.membership.clypr") {
+            //             this.PaymentFlow(1, false)
+            //         }
+            //         else if (purchase.productId == "supreme.membership.clypr") {
+            //             this.PaymentFlow(2, true)
+            //         }
+            //     }
+
+            // });
 
             purchaseErrorSubscription = purchaseErrorListener((error) => {
+                
                 console.log('initInAppPurchase', 'purchaseErrorListener', error);
-                if (this.purchaseErrorListenerCount > 1) {
+                if (this.purchaseErrorListenerCount >= 1) {
                     return
                 }
                 this.purchaseErrorListenerCount = this.purchaseErrorListenerCount + 1
@@ -106,7 +137,16 @@ export default class Subscription extends Component {
                     message = 'Payment is Cancelled.'
                 } else if (error.code == 'PROMISE_BUY_ITEM') {
                     message = 'This item is not currently available.'
-                } else {
+                }
+                else if(error.code=="E_UNKNOWN"&&error.responseCode==0){
+                    this.setState({ showLoading: false });
+                    message = 'Cannot connect to iTunes Store'
+                }
+                else if(error.code=="E_USER_CANCELLED"&&error.responseCode==2){
+                    this.setState({ showLoading: false });
+                    // message = 'Cannot connect to iTunes Store'
+                }
+                else {
                     message = 'Unable to purchase this item. Please try later.'
                 }
                 Alert.alert('Alert', message);
@@ -126,90 +166,31 @@ export default class Subscription extends Component {
         }
     }
 
-    PaymentFlow() {
-        //let selectedcard=this.state.SelectedCard;
-        if (this.state.isConnected) {
-            this.setState({ showLoading: true })
-            var details = {
-                barberEmail: Preference.get("userEmail"),
-                accountSubscriptionType: 2,
-                supremeBarber: true,
-                cardID: "",
-            };
-            //console.log("CARD Email----->"+JSON.stringify(details));
-            //console.log("APi URL ----->"+JSON.stringify(constants.PaymentFLow));
-            var formBody = [];
-            for (var property in details) {
-                var encodedKey = encodeURIComponent(property);
-                var encodedValue = encodeURIComponent(details[property]);
-                formBody.push(encodedKey + "=" + encodedValue);
-            }
-            formBody = formBody.join("&");
-            fetch(constants.BarberPaymentFlow, {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: formBody
-            }).then(response => response.json())
-                .then(response => {
-                    console.log("responsePaymentCard-->", "-" + JSON.stringify(response));
-                    this.setState({ showLoading: false })
-                    if (response.ResultType === 1) {
-                        if (Preference.get("newUser") === true) {
-                            alert("Supreme Subscription Activated");
-                            this.props.navigation.navigate("Settings");
-                        }
-                        else {
-                            alert("Supreme Subscription Activated");
-
-                            this.props.navigation.navigate("Subscription");
-
-                        }
-
-                    } else {
-                        if (response.ResultType === 0) {
-                            alert(response.Message);
-
-                        }
-                    }
-                })
-                .catch(error => {
-                    //console.error('Errorr:', error);
-                    console.log('Error:', error);
-                    this.setState({ showLoading: false })
-                    alert("Error: " + error);
-                });
-
-        } else {
-            alert("Please connect Internet");
-        }
-
-    }
-
-
 
     getItems = async (): void => {
         try {
-            console.log('itemSkus[0]', itemSkus[0]);
-            const products: Product[] = await RNIap.getProducts(itemSkus);
-            console.log('Products[0]', products[0]);
+            // console.log('itemSkus[0]', itemSkus[0]);
+            const products: Product[] = await RNIap.getProducts([BASIC_SUB, SUPREME_SUB]);
+            // console.log('Products[0]', products[0]);
             this.setState({ productList: products });
-            this.requestPurchase(itemSkus[0]);
         } catch (err) {
+            this.setState({ showLoading: true });
+            alert(err)
             console.log('getItems || purchase error => ', err);
         }
     };
+
     getSubscriptions = async (): void => {
         try {
-            const products = await RNIap.getSubscriptions(itemSkus);
+            const products = await RNIap.getSubscriptions(itemSubs);
             console.log('Products => ', products);
             this.setState({ productList: products });
         } catch (err) {
             console.log('getSubscriptions error => ', err);
         }
     };
+
+
     getAvailablePurchases = async (): void => {
         try {
             const purchases = await RNIap.getAvailablePurchases();
@@ -226,25 +207,107 @@ export default class Subscription extends Component {
         }
     };
     requestPurchase = async (sku): void => {
+        
         try {
+            this.purchaseUpdatedListenerCount = 0
+            this.purchaseErrorListenerCount = 0
             RNIap.requestPurchase(sku);
         } catch (err) {
             console.log('requestPurchase error => ', err);
         }
     };
     requestSubscription = async (sku) => {
+        console.log("request purchase called", sku)
         try {
-            //await this.getItems();
-            const result = await RNIap.requestPurchase(sku);
-            console.log("requestSubscription-result", result)
+            this.setState({ showLoading: true });
+            await this.getItems();
+            const purchase = await RNIap.requestPurchase(sku);
+            this.setState({ showLoading: false });
+            console.log("requestSubscription-result", purchase/* .productId */)
+           
+            // if (purchase && purchase.transactionReceipt) {
+            //     this.setState({ showLoading: false });
+            //     // console.log('initInAppPurchase', "purchase", purchase);
+            //     // alert(purchase.productId + "      " + purchase.transactionReceipt)
+            //     if (purchase.productId == "basic.membership.clypr") {
+            //         this.PaymentFlow(1, false)
+            //     }
+            //     else if (purchase.productId == "supreme.membership.clypr") {
+            //         this.PaymentFlow(2, true)
+            //     }
+            // }
         } catch (err) {
+            this.setState({ showLoading: false });
             console.log('requestSubscription-error => ', err);
         }
     };
     purchaseConfirmed = () => {
-        alert("Subscription purchased Succesfully");
+
+        //alert("Subscription purchased Succesfully");
         //you can code here for what changes you want to do in db on purchase successfull
     };
+
+
+
+    PaymentFlow(type, select) {
+        //let selectedcard=this.state.SelectedCard;
+        let date = new Date()
+        console.log("current Date", moment(date).add(1, 'months').format("YYYY-MM-DD HH:MM"))
+
+        // this.setState({ showLoading: true })
+        var details = {
+            barberEmail: Preference.get("userEmail"),
+            accountSubscriptionType: type/* this.state.SelectedSupreme? *//* 2,:1, */,
+            supremeBarber: select /* this.state.SelectedSupreme?  *//* true *//* :false */,
+            exp_on: moment(date).add(1, 'months').format("YYYY-MM-DD HH:MM")
+            //cardID: "",
+        };
+        console.log("CARD Email----->" + JSON.stringify(details));
+        console.log("APi URL ----->"+JSON.stringify(constants.PaymentFLow));
+        var formBody = [];
+        for (var property in details) {
+            var encodedKey = encodeURIComponent(property);
+            var encodedValue = encodeURIComponent(details[property]);
+            formBody.push(encodedKey + "=" + encodedValue);
+        }
+        formBody = formBody.join("&");
+        fetch(constants.BarberPaymentFlow, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: formBody
+        }).then(response => response.json())
+            .then(response => {
+                console.log("responsePaymentCard-->", "-" + JSON.stringify(response));
+                this.setState({ showLoading: false });
+                this.SubscriptionInfo();
+                // this.setState({ showLoading: false })
+                // if (response.ResultType === 1) {
+                //     if (Preference.get("newUser") === true) {
+                //         //alert("Supreme Subscription Activated");
+                //         this.props.navigation.navigate("Settings");
+                //     }
+                //     else {
+                //         //alert("Supreme Subscription Activated");
+                //         this._selectedSupreme();
+                //         //this.props.navigation.navigate("");
+                //     }
+                // } else {
+                //     if (response.ResultType === 0) {
+                //         Alert.alert(null,response.Message);
+                //     }
+                // }
+            })
+            .catch(error => {
+                //console.error('Errorr:', error);
+                console.log('Error:', error);
+                this.setState({ showLoading: false })
+                alert("Error: " + error);
+            });
+
+    }
 
     _selectedBasic() {
         this.setState({
@@ -310,7 +373,7 @@ export default class Subscription extends Component {
                 } else {
                     //this.props.navigation.navigate("BarberPaymentMethod")}
                     if (Platform.OS == "ios") {
-                        this.setState({ SubscriptionPopUp: true })
+                        //this.setState({ SubscriptionPopUp: true })
                     } else {
                         this.props.navigation.navigate("BarberPaymentMethod")
                     }
@@ -328,7 +391,9 @@ export default class Subscription extends Component {
                     Preference.set("userPackage", "supreme");
                 } else {
                     if (Platform.OS == "ios") {
-                        this.setState({ SubscriptionPopUp: true })
+                        //alert("hello");
+                        this.getItems();
+                        //this.setState({ SubscriptionPopUp: true })
                     } else {
                         this.props.navigation.navigate("BarberPaymentMethod")
                     }
@@ -366,27 +431,25 @@ export default class Subscription extends Component {
             .then(response => {
                 console.log("responsePaymentCard-->", "-" + JSON.stringify(response));
                 this.setState({ showLoading: false });
-                if (response.ResultType === 1) {
+                
+                // if (response.ResultType === 1) {
                     this.setState({ SubscriptionInfo: response.Data }, () => {
                         console.log("SUBCRIPTIOn INfo" + JSON.stringify(this.state.SubscriptionInfo))
+                        if (this.state.SubscriptionInfo.supreme_barber === true && this.state.SubscriptionInfo.account_subscription_type === 2) {
+                            this._selectedSupreme();
+                        }
+                        else if (this.state.SubscriptionInfo.supreme_barber === false && this.state.SubscriptionInfo.account_subscription_type === 1) {
+                            this._selectedBasic();
+                        }
                     })
-                    if (this.state.SubscriptionInfo.supreme_barber === true && this.state.SubscriptionInfo.account_subscription_type === 2) {
-                        this._selectedSupreme();
-                    }
-                    else {
-                        this._selectedBasic();
-                    }
+                // } else {
+                //     if (response.ResultType === 0) {
+                //         alert(response.Message);
 
-
-                } else {
-                    if (response.ResultType === 0) {
-                        alert(response.Message);
-
-                    }
-                }
+                //     }
+                // }
             })
             .catch(error => {
-                //console.error('Errorr:', error);
                 console.log('Error:', error);
                 this.setState({ showLoading: false })
                 alert("Error: " + error);
@@ -436,10 +499,8 @@ export default class Subscription extends Component {
                 }
             })
             .catch(error => {
-                //console.error('Errorr:', error);
                 console.log('Error:', error);
                 this.setState({ showLoading: false });
-                //alert("Error: "+error);
             });
 
     }
@@ -484,6 +545,10 @@ export default class Subscription extends Component {
                             resizeMode: 'contain',
                             width: 180
                         }} />
+                    <Text style={{ fontSize: 14, color: "white" }}>{"Current Subscription:"}</Text>
+                    <Text style={{ fontSize: 17, color: "white", marginBottom: 10 }}>{this.state.SubscriptionInfo.supreme_barber ? "Supreme Membership" : "Basic Membership"}</Text>
+                    <Text style={{ fontSize: 14, color: "white" }}>{"Next Renewal Date:"}</Text>
+                    <Text style={{ fontSize: 17, color: "white", marginBottom: 10 }}>{moment(this.state.SubscriptionInfo.exp_on).format("LL")}</Text>
                     <View style={{
                         flexDirection: "column",
                         width: "100%",
@@ -550,7 +615,7 @@ export default class Subscription extends Component {
                                         fontWeight: "bold",
                                         marginLeft: 10, width: "100%",
                                         textAlign: "left",
-                                    }}>Pay by appointment ($0.15 each) </Text>
+                                    }}>Pay per month ($1 subscription) </Text>
                                 </View>
 
                                 <Image resizeMode={"contain"} source={this.state.basic.basicImage}
@@ -627,7 +692,7 @@ export default class Subscription extends Component {
                                         marginLeft: 10,
                                         width: "100%",
                                         textAlign: "left",
-                                    }}>{"Pay per month ($30 subscription) "} </Text>
+                                    }}>{"Pay per month ($5 subscription) "} </Text>
                                 </View>
 
                                 <Image resizeMode={"contain"} source={this.state.supreme.supremeImage}
@@ -642,17 +707,25 @@ export default class Subscription extends Component {
 
                             </View>
                         </TouchableWithoutFeedback>
-
-                        <TouchableOpacity onPress={() => this.Onsubmit()}
+                        {/* {
+                            this.state.SubscriptionInfo.supreme_barber === false ? */}
+                        <TouchableOpacity
+                            onPress={() => {
+                                if (Platform.OS === "ios") {
+                                    this.requestSubscription(this.state.SelectedSupreme ? SUPREME_SUB : BASIC_SUB)
+                                }
+                                else this.Onsubmit()
+                            }}
                             style={[globalStyles.button, {
                                 marginTop: 100,
                                 height: 40,
                                 width: 260,
                                 bottom: 40
                             }]}>
-                            <Text style={globalStyles.buttonText}>SUBMIT</Text>
+                            <Text style={globalStyles.buttonText}>{Platform.OS === "ios" ? "Pay now" : "SUBMIT"}</Text>
 
                         </TouchableOpacity>
+
                         <PopupDialog
                             visible={this.state.SubscriptionPopUp}
                             width={0.7}
@@ -685,21 +758,20 @@ export default class Subscription extends Component {
 
 
 
-                                <View style={{ flexDirection: "column", marginBottom: 30, height: 100 }}>
-                                    <TouchableOpacity style={{ width: "100%", height: 50 }} onPress={() => {
+                                <View style={{ flexDirection: "column", marginBottom: 30, height: 50 }}>
+                                    {/* <TouchableOpacity style={{ width: "100%", height: 50 }} onPress={() => {
                                         this.setState({ SubscriptionPopUp: false }, () => {
                                             this.props.navigation.navigate("BarberPaymentMethod")
                                         })
                                     }} >
                                         <Text style={{ width: "100%", fontSize: 18, marginStart: 20 }}>Stripe</Text>
-                                    </TouchableOpacity>
+                                    </TouchableOpacity> */}
                                     <TouchableOpacity style={{ width: "100%", height: 50 }} onPress={() => {
-                                        this.requestSubscription("supreme.package.clypr");
                                         this.setState({ SubscriptionPopUp: false }, () => {
 
                                         })
                                     }} >
-                                        <Text style={{ width: "100%", fontSize: 18, marginStart: 20, marginTop: 5 }}>Apple Pay</Text>
+                                        <Text style={{ width: "100%", fontSize: 18, marginStart: 20, marginTop: 5 }}>Pay Now</Text>
                                     </TouchableOpacity>
                                 </View>
                             </View>

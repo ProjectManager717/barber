@@ -17,7 +17,8 @@ import {Header} from "react-native-elements";
 import Preference from "react-native-preference";
 import {constants} from "../../../utils/constants";
 import PopupDialog from 'react-native-popup-dialog';
-import stripe from 'tipsi-stripe'
+import stripe from 'tipsi-stripe';
+import moment from "moment";
 
 stripe.setOptions({
     publishableKey: constants.StripeKey,
@@ -226,14 +227,16 @@ export default class BarberPaymentMethod extends Component {
 
 
      PaymentFlow(){
+        
          let selectedcard=this.state.SelectedCard;
          if (this.state.isConnected) {
              this.setState({showLoading:true})
                  var details = {
                     barberEmail:Preference.get("userEmail"),
-                     accountSubscriptionType:2,
-                     supremeBarber:true,
+                    accountSubscriptionType:2,
+                    supremeBarber:true,
                     cardID:selectedcard.cardInfo.id,
+                    
                  };
                  console.log("CARD Email----->"+JSON.stringify(details));
                  console.log("APi URL ----->"+JSON.stringify(constants.PaymentFLow));
@@ -258,16 +261,11 @@ export default class BarberPaymentMethod extends Component {
                          if (response.ResultType === 1) {
                              if (Preference.get("newUser") === true) {
                                  alert("Supreme Subscription Activated");
-
                                  this.props.navigation.navigate("BookingPreferences");
-
-
                              }
                              else{
                                       alert("Supreme Subscription Activated");
-
                                       this.props.navigation.navigate("Subscription");
-
                              }
 
                          } else {

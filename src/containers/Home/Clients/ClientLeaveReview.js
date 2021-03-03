@@ -29,48 +29,6 @@ const {height, width} = Dimensions.get("window");
 
 let  Params,  barberId = "",  client_id="", barberImage = "", barberName = "", barberShopName = "",appointmentPrice=0,appointmentId;
 export default class ClientLeaveReview extends Component {
-    
-    constructor(props) {
-        super(props);
-        const {params}=this.props.navigation.state;
-        console.log("PARAMS",params);
-        Params=params;
-        console.log("PARAMS",JSON.stringify(Params));
-
-        /*const {navigation} = this.props;
-        barberId = navigation.getParam('barber_id');
-        client_id=navigation.getParam('client_id');
-        appointmentPrice = parseInt(navigation.getParam('appointmentPrice'));
-        appointmentId= navigation.getParam('appointmentId');*/
-        barberId =Params.barber_id;
-        client_id=Params.client_id;
-        appointmentPrice = Params.appointmentPrice;
-        appointmentId= Params.appointmentId
-        this.state = {
-            BarberDetails:[],
-            showLoading: false,
-            addTip: true,
-            DialogVisible: false,
-            percentage: "0%",
-            rating:0,
-            goodQuality:false,
-            cleanliness:false,
-            punctuality:false,
-            professional:false,
-            addComment:"",
-            percentPrice:0,
-            unselected: require("../../../assets/images/greentick.png"),
-            unselected2: require("../../../assets/images/greentick.png"),
-            unselected3: require("../../../assets/images/greentick.png"),
-            unselected4: require("../../../assets/images/greentick.png"),
-        };
-
-    }
-    componentDidMount(): void {
-        this.getBarberDetails();
-    }
-
-
     rightAction() {
         //this.props.navigation.goBack();
         const goToIntoScreen = StackActions.reset({
@@ -116,6 +74,46 @@ export default class ClientLeaveReview extends Component {
         }else {
             this.setState({unselected4: require("../../../assets/images/greentick.png"),professional:false});
         }
+    }
+
+    constructor(props) {
+        super(props);
+        const {params}=this.props.navigation.state;
+        console.log("PARAMS",params);
+        Params=params;
+        console.log("PARAMS",JSON.stringify(Params));
+
+        /*const {navigation} = this.props;
+        barberId = navigation.getParam('barber_id');
+        client_id=navigation.getParam('client_id');
+        appointmentPrice = parseInt(navigation.getParam('appointmentPrice'));
+        appointmentId= navigation.getParam('appointmentId');*/
+        barberId =Params.barber_id;
+        client_id=Params.client_id;
+        appointmentPrice = Params.appointmentPrice;
+        appointmentId= Params.appointmentId
+        this.state = {
+            BarberDetails:[],
+            showLoading: false,
+            addTip: true,
+            DialogVisible: false,
+            percentage: "0%",
+            rating:0,
+            goodQuality:false,
+            cleanliness:false,
+            punctuality:false,
+            professional:false,
+            addComment:"",
+            percentPrice:0,
+            unselected: require("../../../assets/images/greentick.png"),
+            unselected2: require("../../../assets/images/greentick.png"),
+            unselected3: require("../../../assets/images/greentick.png"),
+            unselected4: require("../../../assets/images/greentick.png"),
+        };
+
+    }
+    componentDidMount(): void {
+        this.getBarberDetails();
     }
 
     getBarberDetails() {

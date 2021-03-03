@@ -5,7 +5,8 @@ import {globalStyles} from "../../../themes/globalStyles";
 //import { styles } from "./styles";
 import {Header} from "react-native-elements";
 import CheckBoxSquare from "../../../components/CheckBox";
-import QRCode from 'react-native-qrcode';
+import QRCode from 'react-native-qrcode-svg';
+
 
 let qrCode;
 export default class ClientQR extends Component {
@@ -37,7 +38,7 @@ export default class ClientQR extends Component {
                         justifyContent: "space-around"
                     }}
                     rightComponent={
-                        <TouchableOpacity onPress={() => {
+                        <TouchableOpacity style={{marginRight:20}} onPress={() => {
                             this.props.navigation.goBack();
                         }}>
                             <Image
@@ -53,11 +54,22 @@ export default class ClientQR extends Component {
                     <View  style={{margin: 30,overflow:"hidden"}}>
                         {/*<Image source={require("../../../assets/images/QR_code.png")}
                                 style={{width:250,height:250}}/>*/}
-                        {this.state.showQR &&<QRCode
+                        {/* {this.state.showQR &&<QRCode
                             value={this.state.text}
-                            size={180}
+                            size={120}
                             bgColor='black'
-                            fgColor='#fffff0'/>}
+                            fgColor='#fffff0'/>} */}
+                            {this.state.showQR &&<QRCode
+                                value={this.state.text}
+                                color={'#000000'}
+                                backgroundColor={'white'}
+                                size={180}
+                                //logo={require('../../../embed_logo_file_path')} // or logo={{uri: base64logo}}
+                                //logoMargin={2}
+                                //logoSize={20}
+                                //logoBorderRadius={10}
+                                //logoBackgroundColor={‘transparent’}
+                                />}
                     </View>
                 </View>
             </View>

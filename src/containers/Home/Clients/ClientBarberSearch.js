@@ -9,6 +9,7 @@ import {
     TouchableOpacity,
     TouchableWithoutFeedback,
     View,
+    Linking
 } from "react-native";
 
 var moment = require("moment");
@@ -144,7 +145,7 @@ export default class ClientBarberSearch extends Component {
                 console.log("TopRatedBarbers-->", "-" + JSON.stringify(response));
                 if (response.ResultType === 1) {
                     if (response.Data.length < 1) {
-                        this.setState({topRatedText: "THERE IS NOT ANY TOP RATED BARBERS IN YOUR AREA"})
+                        this.setState({topRatedText: "THERE ARE NOT ANY TOP RATED BARBERS IN YOUR AREA"})
                     }
                     this.setState({TopRatedBarbers: response.Data});
                 } else {
@@ -330,12 +331,14 @@ export default class ClientBarberSearch extends Component {
                                        style={{width: 20, height: 20, marginTop: 10}}/>}
                             </View>
                             <TouchableOpacity
-                                onPress={() => this.props.navigation.push("ClientBarberProfile", {
+                                onPress={() => {
+                              
+                                    this.props.navigation.push("ClientBarberProfile", {
                                     barberId: item.barber_id,
                                     barberRating: item.average_rating,
                                     barberReviews: item.total_reviews,
                                     barberMobilePay: item.mobilePayEnabled
-                                })}
+                                })}}
                                 style={{width: "100%", alignItems: "flex-end"}}>
                                 <View style={{
                                     marginTop: 20,

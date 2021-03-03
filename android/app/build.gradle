@@ -76,7 +76,7 @@ project.ext.react = [
         bundleAssetName    : "index.android.bundle",
         entryFile          : "index.js",
         enableHermes       : false,
-        bundleInDebug      : true, // set false if you want to load js from server
+        bundleInDebug      : false, // set false if you want to load js from server
         bundleInRelease    : true,
 ]
 
@@ -131,7 +131,7 @@ android {
         applicationId "com.app.rn.barber"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 15
+        versionCode 18
         versionName "2.0"
         multiDexEnabled true
     }

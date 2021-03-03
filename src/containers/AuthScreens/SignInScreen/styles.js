@@ -62,7 +62,7 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between'
   },
   loginButton: {
-    width: Metric.width - Metric.marginHorizontal * 5 - Metric.buttonHeight * 2
+    width: "70%"
   },
   imgBtnContainer: {
     width: Metric.buttonHeight,

@@ -1,6 +1,7 @@
 //const Base_url = "http://ec2-3-14-204-57.us-east-2.compute.amazonaws.com:5000";
-/*const Base_url = "https://appcrates.net:8088";*/
-const Base_url = "https://clyprstatistics.com";
+//const Base_url = "https://appcrates.net:8088";
+// const Base_url = "https://clyprstatistics.com";
+const Base_url = "http://clyprstatistics.com:5000";
 const barberPath = "/api/auth/";
 const clientPath = "/api/clientAuth/";
 const clientPath1 = "/api/clients/";
@@ -89,7 +90,7 @@ export const constants = {
     ClientUpdateAppointmentStatus: Base_url + clientPath1 + "updateAppointmentStatus",
     BarberCashOut:Base_url+path3+"stripes/payout",
 
-     StripeKey:"pk_live_BXlctkFE5BDLwdwxP67IFm1D",//Live account
-     //StripeKey : 'pk_test_U4Ri0H7rP3PClZwTI5Z2r78J',//testing account*/
+     //StripeKey:"pk_live_BXlctkFE5BDLwdwxP67IFm1D",//Live account
+     StripeKey : 'pk_test_U4Ri0H7rP3PClZwTI5Z2r78J',//testing account*/
 
 };

@@ -20,6 +20,16 @@ import appleAuth, {
     AppleAuthCredentialState,
 } from '@invertase/react-native-apple-authentication';
 
+let inviteBarber="Yo Barbers!\nThere's this dope new barber app that will take your craft to the next level. It let's you set your own schedule, charge your own prices, and even handles all your payments and reviews! Stop messing with those other booking apps and get ready to boss up! Download CLYPR today and try it out now!\n"
++"iOS: https://apps.apple.com/pk/app/clypr-supreme-barber-booking/id1463922784 \n"
++"Android: https://play.google.com/store/apps/details?id=com.app.rn.barber";
+
+let inviteClient="Yo!"
++"I'm using this dope new barber app to handle all of my barber appointments and it SAVES ME SO MUCH TIME! I simply search for my barber on the app, check their schedule, and reserve my appointment. It's that simple. I never have to wait at the barbershop again! Plus I leave my barber a review when they're done and I pay digitally. No more ATM's!\n"
++"Stop wasting your time waiting at the barbershop and start doing more with your valuable time! Download CLYPR today and try it out now!\n"
++"iOS: https://apps.apple.com/pk/app/clypr-supreme-barber-booking/id1463922784 \n"
++"Android: https://play.google.com/store/apps/details?id=com.app.rn.barber";
+
 const now = new Date();
 var moment = require('moment');
 const FBSDK = require('react-native-fbsdk');
@@ -237,10 +247,10 @@ export default class Settings extends Component {
                     <View style={[globalStyles.rowBackground, styles.row]}>
                         <TouchableOpacity onPress={() => {
                             if (Platform.OS === "ios") {
-                                return Linking.openURL('sms:&body=Invite Barbers')
+                                return Linking.openURL('sms:&body='+inviteBarber)
 
                             } else {
-                                return Linking.openURL('sms:?body=Invite Barbers')
+                                return Linking.openURL('sms:?body='+inviteBarber)
                             }
                         }}>
                             {this.renderRow({
@@ -251,10 +261,10 @@ export default class Settings extends Component {
                         {this.renderSeperator()}
                         <TouchableOpacity onPress={() => {
                             if (Platform.OS === "ios") {
-                                return Linking.openURL('sms:&body=Invite Clients')
+                                return Linking.openURL('sms:&body='+inviteClient)
 
                             } else {
-                                return Linking.openURL('sms:?body=Invite Clients')
+                                return Linking.openURL('sms:?body='+inviteClient)
                             }
                         }}>
                             {this.renderRow({
@@ -321,7 +331,11 @@ export default class Settings extends Component {
                         </TouchableOpacity>
                     </View>
                     <TouchableOpacity style={[globalStyles.button, { marginTop: 30, marginBottom: 30 }]} onPress={() => {
+                       // alert("dsfhjfgjshd"+Preference.get("userEmail")+Preference.get("userName"))
+                       let appleEmail=Preference.get("appleLoginEmail"),appleGivenName=Preference.get("appleLoginGivenName"),appleFamilyName=Preference.get("appleLoginfamilyName")
+                        
                         Preference.clear();
+                        Preference.set({"appleLoginEmail":appleEmail,"appleLoginGivenName":appleGivenName,"appleLoginFamilyName":appleFamilyName})
                         this._signOut();
                         LoginManager.logOut();
                         

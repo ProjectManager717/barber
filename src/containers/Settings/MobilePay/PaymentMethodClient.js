@@ -53,7 +53,7 @@ export default class PaymentMethodClient1 extends Component {
 
         service_fee = navigation.getParam('service_fee');
         console.log("TipPricez: ", tip_price)
-        appointmentPrice =parseFloat(total_price)+parseFloat(service_fee)+parseFloat(surgeprice)+parseFloat(tip_price);
+        appointmentPrice =parseFloat(total_price)+parseFloat(surgeprice)+parseFloat(tip_price);
         // alert("total_price:"+total_price+"\n"+
         //     "selected_surge_price:"+selected_surge_price+"\n"+
         //     "surgeprice:"+surgeprice+"\n"+
@@ -301,6 +301,7 @@ export default class PaymentMethodClient1 extends Component {
                 clientID: client_id,
                 amount: (appointmentPrice) * 100,
                 card_id: selectedcard.cardInfo.id,
+                service_amount:parseFloat(service_fee) 
             };
 
 

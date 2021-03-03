@@ -1,4 +1,4 @@
-import React, {Component} from "react";
+import React, { Component } from "react";
 import {
     View,
     Text,
@@ -9,21 +9,20 @@ import {
     ImageBackground,
     ScrollView,
     Switch,
-    AsyncStorage,
     Linking
 } from "react-native";
 import firebase from 'react-native-firebase'
 
 var moment = require("moment");
-import {Header, AirbnbRating} from "react-native-elements";
+import { Header, AirbnbRating } from "react-native-elements";
 
-import {Colors} from "../../../themes";
-import {styles} from "./styles";
-import {globalStyles} from "../../../themes/globalStyles";
+import { Colors } from "../../../themes";
+import { styles } from "./styles";
+import { globalStyles } from "../../../themes/globalStyles";
 import ClientQR from "../../Settings/ClientQR";
 import Preference from "react-native-preference";
-import {constants} from "../../../utils/constants";
-import {SafeAreaView} from "react-navigation";
+import { constants } from "../../../utils/constants";
+import { SafeAreaView } from "react-navigation";
 
 let getmonth = new Date().getMonth();
 getmonth = parseInt(getmonth) + 1;
@@ -45,7 +44,7 @@ export default class ClientHome extends Component {
     }
 
     async componentDidMount(): void {
-        const {navigation} = this.props;
+        const { navigation } = this.props;
         this.focusListener = navigation.addListener("didFocus", payload => {
             this.getRecentBookings();
         });
@@ -94,8 +93,9 @@ export default class ClientHome extends Component {
         console.log("Deep linking3: " + JSON.stringify(params))
 
         if (params[0] == 'profile') {
-            navigate({ routeName: 'Profile' ,
-                params:{
+            navigate({
+                routeName: 'Profile',
+                params: {
                     id: params[1],
                     isShared: true,
                 }
@@ -107,11 +107,11 @@ export default class ClientHome extends Component {
         Linking.removeEventListener('url', this.handleOpenURL);
     }
 
-    checkPendingReviews()
-    {console.log("CPReviewsResponse-->", "-" + "Inside");
+    checkPendingReviews() {
+        console.log("CPReviewsResponse-->", "-" + "Inside");
         //this.setState({showLoading: true});
         var details = {
-            client_id:Preference.get("userId")
+            client_id: Preference.get("userId")
         };
         var formBody = [];
         for (var property in details) {
@@ -125,17 +125,16 @@ export default class ClientHome extends Component {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type':'application/x-www-form-urlencoded'
+                'Content-Type': 'application/x-www-form-urlencoded'
             },
             body: formBody
         }).then(response => response.json())
             .then(response => {
                 console.log("CPReviewsResponse-->", "-" + JSON.stringify(response));
-                this.setState({showLoading: false});
+                this.setState({ showLoading: false });
                 if (response.ResultType === 1) {
-                    if(!response.Data.Review_Status)
-                    {
-                        this.props.navigation.push("ClientLeaveReview",{
+                    if (!response.Data.Review_Status) {
+                        this.props.navigation.push("ClientLeaveReview", {
                             barber_id: response.Data.Barber_ID,
                             client_id: response.Data.Client_ID,
                             appointmentId: response.Data.Appointment_ID,
@@ -149,19 +148,19 @@ export default class ClientHome extends Component {
                     }
                 }
             }).catch(error => {
-            this.setState({showLoading: false});
-            //console.error('Errorr:', error);
-            console.log('CPReviewsResponse Error:', error);
-            //alert("Error: " + error);
-        });
+                this.setState({ showLoading: false });
+                //console.error('Errorr:', error);
+                console.log('CPReviewsResponse Error:', error);
+                //alert("Error: " + error);
+            });
     }
 
     getDateTime = (item) => {
         // 2020-01-06 07:00
         const date = item.date.split('T')
 
-        if(date.length > 0){
-            if(item.selected_slot_id[0]?.start_time){
+        if (date.length > 0) {
+            if (item.selected_slot_id[0]?.start_time) {
                 dateString = date[0] + ' ' + item.selected_slot_id[0]?.start_time
                 return moment(dateString, 'YYYY-MM-DD HH:mm')
             }
@@ -171,7 +170,7 @@ export default class ClientHome extends Component {
     }
 
     getRecentBookings() {
-        this.setState({showLoading: true});
+        this.setState({ showLoading: true });
         fetch(constants.ClientRecentBookings + "?client_id=" + Preference.get("userId"), {
             method: 'GET',
             headers: {
@@ -196,37 +195,37 @@ export default class ClientHome extends Component {
                         const aDate = this.getDateTime(a)
                         const bDate = this.getDateTime(b)
 
-                        if(aDate && bDate){
-                            if(aDate.isAfter(bDate)){
+                        if (aDate && bDate) {
+                            if (aDate.isAfter(bDate)) {
                                 return -1
-                            }else if(aDate.isBefore(bDate)){
+                            } else if (aDate.isBefore(bDate)) {
                                 return 1
-                            }else{
+                            } else {
                                 0
                             }
-                        }else{
-                            if(aDate){
+                        } else {
+                            if (aDate) {
                                 return -1
-                            }else{
+                            } else {
                                 return 1
                             }
                         }
                     })
 
-                    this.setState({dataSource: data});
+                    this.setState({ dataSource: data });
                     this.getFavoriteBarbers();
                 } else {
-                    this.setState({showLoading: false});
+                    this.setState({ showLoading: false });
                     if (response.ResultType === 0) {
                         alert(response.Message);
                     }
                 }
             }).catch(error => {
-            this.setState({showLoading: false});
-            //console.error('Errorr:', error);
-            console.log('Error:', error);
-            alert("Error: " + error);
-        });
+                this.setState({ showLoading: false });
+                //console.error('Errorr:', error);
+                console.log('Error:', error);
+                alert("Error: " + error);
+            });
     }
 
     getFavoriteBarbers() {
@@ -239,20 +238,20 @@ export default class ClientHome extends Component {
         }).then(response => response.json())
             .then(response => {
                 console.log("getFavoriteBarbers-->", "-" + JSON.stringify(response));
-                this.setState({showLoading: false});
+                this.setState({ showLoading: false });
                 if (response.ResultType === 1) {
-                    this.setState({dataSource2: response.Data});
+                    this.setState({ dataSource2: response.Data });
                 } else {
                     if (response.ResultType === 0) {
                         alert(response.Message);
                     }
                 }
             }).catch(error => {
-            this.setState({showLoading: false});
-            //console.error('Errorr:', error);
-            console.log('Error:', error);
-            alert("Error: " + error);
-        });
+                this.setState({ showLoading: false });
+                //console.error('Errorr:', error);
+                console.log('Error:', error);
+                alert("Error: " + error);
+            });
     }
 
     checkTodayAppointment() {
@@ -260,27 +259,27 @@ export default class ClientHome extends Component {
         let todayDate = getYear + "-" + getmonth + "-" + getDate;
         console.log("DateComparison:::" + "===" + todayDate);
         let allbookings = this.state.dataSource;
-        let hasAppoint=false;
+        let hasAppoint = false;
         for (let k = 0; k < allbookings.length; k++) {
             let AppointDate = allbookings[k].date;
             let AppointType = allbookings[k].appointment_type;
             AppointDate = AppointDate.split("T");
             console.log("DateComparison:::" + AppointDate[0] + "===" + todayDate);
-            console.log("DateComparison APPOINTMENT Type "+AppointType)
-            if (AppointDate[0] === todayDate && allbookings[k].appointment_type==="confirmed") {
+            console.log("DateComparison APPOINTMENT Type " + AppointType)
+            if (AppointDate[0] === todayDate && allbookings[k].appointment_type === "confirmed") {
                 console.log("DateComparison:  Got item::" + AppointDate[0] + "===" + todayDate);
-                console.log("TYPER "+  allbookings[k].appointment_type);
-                this.props.navigation.navigate("ClientQR", {qr_code: allbookings[k].qr_code});
+                console.log("TYPER " + allbookings[k].appointment_type);
+                this.props.navigation.navigate("ClientQR", { qr_code: allbookings[k].qr_code });
                 hasAppoint = true;
                 break;
             }
         }
-        if(hasAppoint===false){
+        if (hasAppoint === false) {
             alert("No Appointment Confirmed For Today")
         }
     }
 
-    renderRecentBookings(item,index) {
+    renderRecentBookings(item, index) {
         if (item.selected_slot_id.length > 0) {
             var date = item.date;
             date = date.split("T");
@@ -306,25 +305,25 @@ export default class ClientHome extends Component {
                         borderWidth: 0.5,
                         borderColor: "white"
                     }}>
-                    <Image resizeMode={"cover"} source={{uri: item.barber_image}} style={{
+                    <Image resizeMode={"cover"} source={{ uri: item.barber_image }} style={{
                         marginStart: 10, height: 50, width: 50, borderRadius: 25
-                    }}/>
-                    <View style={{flexDirection: "column", marginStart: 10}}>
+                    }} />
+                    <View style={{ flexDirection: "column", marginStart: 10 }}>
                         <Text
-                            style={{fontSize: 15, color: "white"}}
+                            style={{ fontSize: 15, color: "white" }}
                         >{item.barber}</Text>
-                        <View style={{flexDirection: "row", marginTop: 5}}>
+                        <View style={{ flexDirection: "row", marginTop: 5 }}>
                             <Image resizeMode={"contain"} source={require("../../../assets/images/time.png")}
-                                   style={{height: 12, width: 12}}/>
-                            <Text style={{fontSize: 10, color: "#939FB1", marginStart: 4}}>{moment(timeShow, "HH:mm A").format("LT")}</Text>
+                                style={{ height: 12, width: 12 }} />
+                            <Text style={{ fontSize: 10, color: "#939FB1", marginStart: 4 }}>{moment(timeShow, "HH:mm A").format("LT")}</Text>
                             <Image resizeMode={"contain"} source={require("../../../assets/images/date.png")}
-                                   style={{height: 12, width: 12, marginStart: 12}}/>
-                            <Text style={{fontSize: 10, color: "#939FB1", marginStart: 4}}>{date[0]}</Text>
+                                style={{ height: 12, width: 12, marginStart: 12 }} />
+                            <Text style={{ fontSize: 10, color: "#939FB1", marginStart: 4 }}>{date[0]}</Text>
                         </View>
                     </View>
                     {item.appointment_type === "completed" ?
                         <TouchableOpacity
-                            onPress={() => this.props.navigation.navigate("Receipt", {appointmentId: item._id})}
+                            onPress={() => this.props.navigation.navigate("Receipt", { appointmentId: item._id })}
                             style={{
                                 top: 0,
                                 right: 0,
@@ -344,14 +343,14 @@ export default class ClientHome extends Component {
                                 marginTop: 3,
                                 color: "white",
                                 fontSize: 10,
-                                width:"100%",
-                                textAlign:"center",
+                                width: "100%",
+                                textAlign: "center",
                                 fontWeight: "bold"
                             }}>{"Completed"}</Text>
                         </TouchableOpacity>
                         : item.appointment_type === "cancelled" ?
                             <TouchableOpacity
-                                onPress={() => this.props.navigation.navigate("ReceiptCancelled", {appointmentId: item._id})}
+                                onPress={() => this.props.navigation.navigate("ReceiptCancelled", { appointmentId: item._id })}
                                 style={{
                                     top: 0,
                                     right: 0,
@@ -369,15 +368,15 @@ export default class ClientHome extends Component {
                                 <Text style={{
                                     marginTop: 3,
                                     color: "white",
-                                    width:"100%",
-                                    textAlign:"center",
+                                    width: "100%",
+                                    textAlign: "center",
                                     fontSize: 10,
                                     fontWeight: "bold"
                                 }}>{"Canceled"}</Text>
                             </TouchableOpacity>
                             : item.appointment_type === "confirmed" ?
                                 <TouchableOpacity
-                                    onPress={() => this.props.navigation.navigate("ReceiptUpcoming", {appointmentId: item._id})}
+                                    onPress={() => this.props.navigation.navigate("ReceiptUpcoming", { appointmentId: item._id })}
                                     style={{
                                         top: 0,
                                         right: 0,
@@ -396,8 +395,8 @@ export default class ClientHome extends Component {
                                     <Text style={{
                                         color: "white",
                                         fontSize: 10,
-                                        width:"100%",
-                                        textAlign:"center",
+                                        width: "100%",
+                                        textAlign: "center",
                                         fontWeight: "bold"
                                     }}>{"Confirmed"}</Text>
                                 </TouchableOpacity>
@@ -420,8 +419,8 @@ export default class ClientHome extends Component {
                                         <Text style={{
                                             color: "white",
                                             fontSize: 10,
-                                            width:"100%",
-                                            textAlign:"center",
+                                            width: "100%",
+                                            textAlign: "center",
                                             fontWeight: "bold"
                                         }}>{"In-Progress"}</Text>
                                     </TouchableOpacity> : <TouchableOpacity
@@ -442,24 +441,23 @@ export default class ClientHome extends Component {
                                         <Text style={{
                                             color: "white",
                                             fontSize: 10,
-                                            width:"100%",
-                                            textAlign:"center",
+                                            width: "100%",
+                                            textAlign: "center",
                                             fontWeight: "bold"
                                         }}>{"No-Show"}</Text>
                                     </TouchableOpacity>
                     }
                 </View>
             }
-          else{
-              return false
+            else {
+                return false
             }
         }
     }
 
     renderFavBarbers(item) {
-        if(item.avilabeSlot!='Tomorrow')
-        {
-            item.avilabeSlot=moment(item.avilabeSlot,"hh:mm").format("hh:mm a");
+        if (item.avilabeSlot != 'Tomorrow') {
+            item.avilabeSlot = moment(item.avilabeSlot, "hh:mm").format("hh:mm a");
         }
         let ratings = Math.floor(Math.random() * 5 + 1);
         return <View
@@ -471,9 +469,9 @@ export default class ClientHome extends Component {
                 height: 150,
                 borderRadius: 30,
             }}>
-            <ImageBackground source={{uri:item.banner_image}}
-                             style={{width: "100%", height: "100%", borderRadius: 7, overflow: 'hidden',borderWidth:1,borderColor:"#84858f"}}>
-                <View style={{flexDirection: "row", width: "100%", height: "100%",}}>
+            <ImageBackground source={{ uri: item.banner_image }}
+                style={{ width: "100%", height: "100%", borderRadius: 7, overflow: 'hidden', borderWidth: 1, borderColor: "#84858f" }}>
+                <View style={{ flexDirection: "row", width: "100%", height: "100%", }}>
 
                     <View style={{
                         flexDirection: "column",
@@ -492,17 +490,17 @@ export default class ClientHome extends Component {
                             borderColor: "darkgrey",
                             opacity: 0.8
                         }}>
-                        <Text style={{
-                            fontSize: 14,
-                            fontWeight: "bold",
-                            textShadowColor: "black",
-                            textShadowOffset: {width: -2, height: 1},
-                            textShadowRadius: 3,
-                            color: Colors.white,
-                            marginStart:10,
-                            width:"90%",
-                            textAlign:"left",
-                        }}>{item.barber_name}</Text>
+                            <Text style={{
+                                fontSize: 14,
+                                fontWeight: "bold",
+                                textShadowColor: "black",
+                                textShadowOffset: { width: -2, height: 1 },
+                                textShadowRadius: 3,
+                                color: Colors.white,
+                                marginStart: 10,
+                                width: "90%",
+                                textAlign: "left",
+                            }}>{item.barber_name}</Text>
                         </View>
                         <View style={{
                             flexDirection: "row", alignItems: "center", backgroundColor: "#454656",
@@ -514,11 +512,11 @@ export default class ClientHome extends Component {
                             opacity: 0.8
                         }}>
                             <Image source={require("../../../assets/images/shop.png")} resizeMode={"contain"}
-                                   style={{width: 20, height: 20}}/>
+                                style={{ width: 20, height: 20 }} />
                             <Text style={{
                                 fontSize: 12, color: Colors.white,
                                 textShadowColor: "black",
-                                textShadowOffset: {width: -2, height: 1},
+                                textShadowOffset: { width: -2, height: 1 },
                                 textShadowRadius: 3,
                             }}>{item.shop_name}</Text>
                         </View>
@@ -536,34 +534,37 @@ export default class ClientHome extends Component {
                                 count={5}
                                 defaultRating={item.average_rating}
                                 size={10}
-                                style={{marginStart: 10, height: 30}}
+                                style={{ marginStart: 10, height: 30 }}
                             />
                             <Text style={{
                                 marginStart: 5, fontSize: 10, color: Colors.white,
                                 textShadowColor: "black",
-                                textShadowOffset: {width: -2, height: 1},
+                                textShadowOffset: { width: -2, height: 1 },
                                 textShadowRadius: 3,
                             }}>{"(" + item.total_reviews + " Reviews)"}</Text>
                         </View>
                     </View>
-                    <View style={{flexDirection: "column", width: "40%", height: "100%"}}>
-                        <View style={{alignItems: "flex-end", marginEnd: 20}}>
+                    <View style={{ flexDirection: "column", width: "40%", height: "100%" }}>
+                        <View style={{ alignItems: "flex-end", marginEnd: 20 }}>
 
                             <Image resizeMode={"contain"} source={require("../../../assets/images/star.png")}
-                                   style={{width: 20, height: 20, marginTop: 10}}/>
+                                style={{ width: 20, height: 20, marginTop: 10 }} />
                             {item.mobilePayEnabled &&
-                            <Image resizeMode={"contain"} source={require("../../../assets/images/price.png")}
-                                   style={{width: 20, height: 20, marginTop: 10}}/>}
+                                <Image resizeMode={"contain"} source={require("../../../assets/images/price.png")}
+                                    style={{ width: 20, height: 20, marginTop: 10 }} />}
                             {!item.mobilePayEnabled &&
-                            <Image resizeMode={"contain"} style={{width: 20, height: 20, marginTop: 10}}/>}
+                                <Image resizeMode={"contain"} style={{ width: 20, height: 20, marginTop: 10 }} />}
                             <TouchableOpacity
-                                onPress={() => this.props.navigation.push("ClientBarberProfile", {
+                                onPress={() => { /*  Linking.openURL('http://appcrates.net/barber/profile/'+item.barber_id) */
+                                this.props.navigation.push("ClientBarberProfile", {
                                     barberId: item.barber_id,
                                     barberRating: item.average_rating,
                                     barberReviews: item.total_reviews,
                                     barberMobilePay: item.mobilePayEnabled
-                                })}
-                                style={{width: "100%", alignItems: "flex-end"}}>
+                                })
+                                
+                            }}
+                                style={{ width: "100%", alignItems: "flex-end" }}>
                                 <View style={{
                                     marginTop: 20,
                                     flexDirection: "row",
@@ -574,10 +575,10 @@ export default class ClientHome extends Component {
                                     alignItems: "center",
                                     justifyContent: "center"
                                 }}>
-                                    <Text style={{marginStart: 5, fontSize: 10, color: "red"}}>{"Next Available"}</Text>
+                                    <Text style={{ marginStart: 5, fontSize: 10, color: "red" }}>{"Next Available"}</Text>
                                     <Image resizeMode={"contain"}
-                                           source={require("../../../assets/images/nextarrow.png")}
-                                           style={{width: 8, height: 8, marginStart: 5}}/>
+                                        source={require("../../../assets/images/nextarrow.png")}
+                                        style={{ width: 8, height: 8, marginStart: 5 }} />
                                 </View>
                             </TouchableOpacity>
                             <View style={{
@@ -591,7 +592,7 @@ export default class ClientHome extends Component {
                                 alignItems: "center",
                                 justifyContent: "center"
                             }}>
-                                <Text style={{fontSize: 12, color: "white"}}>{item.avilabeSlot}</Text>
+                                <Text style={{ fontSize: 12, color: "white" }}>{item.avilabeSlot}</Text>
                             </View>
                         </View>
                     </View>
@@ -604,10 +605,10 @@ export default class ClientHome extends Component {
         return (
             <View style={styles.container}>
                 <Header
-                    statusBarProps={{barStyle: "light-content"}}
+                    statusBarProps={{ barStyle: "light-content" }}
                     barStyle="light-content" // or directly
-                    style={{backgroundColor: "yellow"}}
-                    outerContainerStyles={{backgroundColor: "#1999CE"}}
+                    style={{ backgroundColor: "yellow" }}
+                    outerContainerStyles={{ backgroundColor: "#1999CE" }}
                     leftComponent={
                         <TouchableOpacity
                             onPress={() =>
@@ -625,7 +626,7 @@ export default class ClientHome extends Component {
                         </TouchableOpacity>
                     }
 
-                    centerComponent={{text: "WELCOME", style: {color: "#fff"}}}
+                    centerComponent={{ text: "WELCOME", style: { color: "#fff" } }}
                     containerStyle={{
                         backgroundColor: Colors.dark,
                         justifyContent: "space-around"
@@ -640,18 +641,18 @@ export default class ClientHome extends Component {
                             marginTop: 20
                         }}>{"Recent Bookings"} </Text>
                     </View>
-                    <View style={{marginTop: 0, marginStart: 20, marginEnd: 20}}>
+                    <View style={{ marginTop: 0, marginStart: 20, marginEnd: 20 }}>
                         {(this.state.dataSource.length > 0) &&
-                        <FlatList renderItem={({item,index}) => this.renderRecentBookings(item,index)}
-                                  data={this.state.dataSource}
-                                  keyExtractor={(item, index) => index}
-                                  numColumns={1}
-                        />}
+                            <FlatList renderItem={({ item, index }) => this.renderRecentBookings(item, index)}
+                                data={this.state.dataSource}
+                                keyExtractor={(item, index) => index}
+                                numColumns={1}
+                            />}
 
                         {!(this.state.dataSource.length > 0) &&
-                        <View style={{width: "100%", height: 80, alignItems: "center", justifyContent: "center"}}>
-                            <Text style={{fontSize: 15, color: "white"}}>{"You don't have any recent Bookings yet"}</Text>
-                        </View>}
+                            <View style={{ width: "100%", height: 80, alignItems: "center", justifyContent: "center" }}>
+                                <Text style={{ fontSize: 15, color: "white" }}>{"You don't have any recent Bookings yet"}</Text>
+                            </View>}
 
                     </View>
                     <View>
@@ -664,22 +665,22 @@ export default class ClientHome extends Component {
                         }}>{"Favorite Barbers"} </Text>
                     </View>
 
-                    <View style={{marginTop: 0, marginStart: 20, marginEnd: 20, marginBottom: 20}}>
+                    <View style={{ marginTop: 0, marginStart: 20, marginEnd: 20, marginBottom: 20 }}>
                         {(this.state.dataSource2.length > 0) &&
-                        <FlatList renderItem={({item}) => this.renderFavBarbers(item)}
-                                  data={this.state.dataSource2}
-                                  keyExtractor={(item, index) => index}
-                                  numColumns={1}
-                        />}
+                            <FlatList renderItem={({ item }) => this.renderFavBarbers(item)}
+                                data={this.state.dataSource2}
+                                keyExtractor={(item, index) => index}
+                                numColumns={1}
+                            />}
 
                         {!(this.state.dataSource2.length > 0) &&
-                        <View style={{width: "100%", height: 80, alignItems: "center", justifyContent: "center"}}>
-                            <Text style={{
-                                fontSize: 15,
-                                color: "white",
-                                textAlign: "center"
-                            }}>{"You don't have any Favorite barbers yet \n Search and find your favorite barber!"}</Text>
-                        </View>}
+                            <View style={{ width: "100%", height: 80, alignItems: "center", justifyContent: "center" }}>
+                                <Text style={{
+                                    fontSize: 15,
+                                    color: "white",
+                                    textAlign: "center"
+                                }}>{"You don't have any Favorite barbers yet \n Search and find your favorite barber!"}</Text>
+                            </View>}
                     </View>
                 </ScrollView>
                 {this.state.showLoading && <View style={{
@@ -692,19 +693,10 @@ export default class ClientHome extends Component {
                     justifyContent: "center"
                 }}>
                     <Image resizeMode={"contain"} source={require("../../../assets/images/loading.gif")}
-                           style={{width: 60, height: 60, opacity: 1,}}/>
+                        style={{ width: 60, height: 60, opacity: 1, }} />
                 </View>}
             </View>
 
         )
     }
 }
-
-
-
-
-
-
-
-
-

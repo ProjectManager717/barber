@@ -61,10 +61,12 @@ export const styles = StyleSheet.create({
   },
   input: {
     marginLeft: 10,
-    height:45,
+    height:50,
     width: Metric.width / 5 * 2.5,
     ...Metric.font.big,
     color: Colors.white,
+    // alignSelf:"center",
+    // backgroundColor:"yellow",
     marginBottom: 0,
   }
 });

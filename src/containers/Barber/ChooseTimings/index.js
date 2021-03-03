@@ -8,7 +8,7 @@ import {
     ScrollView,
     Platform,
     TextInput,
-    BackHandler
+    BackHandler,Dimensions
 } from "react-native";
 
 import {Header} from "react-native-elements";
@@ -40,6 +40,9 @@ let BreakStart = moment("2020/10/13 00:00").format("YYYY/MM/DD HH:mm")//new Date
 let BreakEnd = moment("2020/10/13 13:00").format("YYYY/MM/DD HH:mm")//new Date().setHours(13, 0, 0);
 console.log("startBreakTimeShow :", BreakStart);
 console.log("startBreakTimeShow1 :", BreakEnd);
+
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 
 export default class ChooseTimings extends Component {
     constructor() {
@@ -645,15 +648,24 @@ export default class ChooseTimings extends Component {
                                     marginBottom: 10,
                                     marginStart: 20
                                 }}>{"FROM"}</Text>
-                                <DatePicker
+                               {Platform.OS=='ios'? <DatePicker
                                     date={this.state.startTime}
-                                    style={{width: 200, backgroundColor: Colors.themeBackground, height: 120}}
+                                    style={{width:(windowWidth/2)-50,marginStart: 20, backgroundColor: Colors.themeBackground, height: 50}}
                                     minuteInterval={15}
                                     fadeToColor={"none"}
                                     onDateChange={date => this.setTimeStart(date)}
                                     mode={"time"}
                                     textColor={"#ffffff"}
-                                />
+                                />:
+                                <DatePicker
+                                    date={this.state.startTime}
+                                    style={{width:(windowWidth/2)-50,marginStart: 20, backgroundColor: Colors.themeBackground, height: 120}}
+                                    minuteInterval={15}
+                                    fadeToColor={"none"}
+                                    onDateChange={date => this.setTimeStart(date)}
+                                    mode={"time"}
+                                    textColor={"#ffffff"}
+                                />}
 
 
                             </View>
@@ -666,15 +678,24 @@ export default class ChooseTimings extends Component {
                                     marginStart: 20
                                 }}>{"TO"}</Text>
 
+                                {Platform.OS=='ios'?<DatePicker
+                                    date={this.state.endTime}
+                                    onDateChange={date => this.setTimeEnd(date)}
+                                    minuteInterval={15}
+                                    mode={"time"}
+                                    style={{width:(windowWidth/2)-50, backgroundColor: Colors.themeBackground, height: 50}}
+                                    fadeToColor={"none"}
+                                    textColor={"#ffffff"}
+                                />:
                                 <DatePicker
                                     date={this.state.endTime}
                                     onDateChange={date => this.setTimeEnd(date)}
                                     minuteInterval={15}
                                     mode={"time"}
-                                    style={{width: 200, backgroundColor: Colors.themeBackground, height: 120}}
+                                    style={{width:(windowWidth/2)-50, backgroundColor: Colors.themeBackground, height: 120}}
                                     fadeToColor={"none"}
                                     textColor={"#ffffff"}
-                                />
+                                />}
                             </View>
 
 
@@ -737,8 +758,19 @@ export default class ChooseTimings extends Component {
                                     marginBottom: 10,
                                     marginStart: 20,
                                     width: "100%",
-                                    textAlign: "center"
+                                    textAlign: "left"
                                 }}>{"START"}</Text>
+                                {Platform.OS=='ios'?<DatePicker
+                                    date={this.state.breakStart}
+                                    style={{width: 150, backgroundColor: Colors.themeBackground, height: 50}}
+                                    minuteInterval={15}
+                                    fadeToColor={"none"}
+                                    onDateChange={date => {
+                                        this.setState({breakStart: date})
+                                    }}
+                                    mode={"time"}
+                                    textColor={"#ffffff"}
+                                />:
                                 <DatePicker
                                     date={this.state.breakStart}
                                     style={{width: 150, backgroundColor: Colors.themeBackground, height: 120}}
@@ -749,7 +781,7 @@ export default class ChooseTimings extends Component {
                                     }}
                                     mode={"time"}
                                     textColor={"#ffffff"}
-                                />
+                                />}
 
 
                             </View>
@@ -768,8 +800,17 @@ export default class ChooseTimings extends Component {
                                     marginBottom: 10,
                                     marginStart: 20,
                                     width: "100%",
-                                    textAlign: "center",
+                                    textAlign: "left",
                                 }}>{"END"}</Text>
+                                {Platform.OS=='ios'?<DatePicker
+                                    date={this.state.breakEnd}
+                                    style={{width: 150, backgroundColor: Colors.themeBackground, height: 50}}
+                                    minuteInterval={15}
+                                    fadeToColor={"none"}
+                                    onDateChange={date => this.setState({breakEnd: date})}
+                                    mode={"time"}
+                                    textColor={"#ffffff"}
+                                />:
                                 <DatePicker
                                     date={this.state.breakEnd}
                                     style={{width: 150, backgroundColor: Colors.themeBackground, height: 120}}
@@ -778,7 +819,8 @@ export default class ChooseTimings extends Component {
                                     onDateChange={date => this.setState({breakEnd: date})}
                                     mode={"time"}
                                     textColor={"#ffffff"}
-                                />
+                                />}
+
 
 
                             </View>

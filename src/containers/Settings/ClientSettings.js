@@ -1,4 +1,4 @@
-import React, {Component} from "react";
+import React, { Component } from "react";
 import {
     View,
     Switch,
@@ -11,14 +11,14 @@ import {
     BackHandler,
     Platform
 } from "react-native";
-import {Colors} from "../../themes";
-import {globalStyles} from "../../themes/globalStyles";
+import { Colors } from "../../themes";
+import { globalStyles } from "../../themes/globalStyles";
 //import { styles } from "./styles";
-import {Header} from "react-native-elements";
+import { Header } from "react-native-elements";
 import Preference from 'react-native-preference';
 import { NavigationActions, StackActions } from "react-navigation";
 import firebase from "react-native-firebase";
-import {constants} from "../../utils/constants";
+import { constants } from "../../utils/constants";
 /*import {
     GoogleSignin,
     GoogleSigninButton,
@@ -29,12 +29,22 @@ const {
     LoginManager,
 } = FBSDK;
 
+let inviteBarber = "Yo Barbers!\nThere's this dope new barber app that will take your craft to the next level. It let's you set your own schedule, charge your own prices, and even handles all your payments and reviews! Stop messing with those other booking apps and get ready to boss up! Download CLYPR today and try it out now!\n"
+    + "iOS: https://apps.apple.com/pk/app/clypr-supreme-barber-booking/id1463922784 \n"
+    + "Android: https://play.google.com/store/apps/details?id=com.app.rn.barber";
+
+let inviteClient = "Yo!"
+    + "I'm using this dope new barber app to handle all of my barber appointments and it SAVES ME SO MUCH TIME! I simply search for my barber on the app, check their schedule, and reserve my appointment. It's that simple. I never have to wait at the barbershop again! Plus I leave my barber a review when they're done and I pay digitally. No more ATM's!\n"
+    + "Stop wasting your time waiting at the barbershop and start doing more with your valuable time! Download CLYPR today and try it out now!\n"
+    + "iOS: https://apps.apple.com/pk/app/clypr-supreme-barber-booking/id1463922784 \n"
+    + "Android: https://play.google.com/store/apps/details?id=com.app.rn.barber";
+
 
 export default class ClientSettings extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            notificationAlert:Preference.get("AlertNotification"),
+            notificationAlert: Preference.get("AlertNotification"),
         }
     }
 
@@ -78,37 +88,36 @@ export default class ClientSettings extends Component {
         });
     }
     renderRow(item) {
-        return <View style={{flex: 1, flexDirection: 'row', height: 36}}>
-            <Image style={styles.leftIcon} source={item.ic}/>
+        return <View style={{ flex: 1, flexDirection: 'row', height: 36 }}>
+            <Image style={styles.leftIcon} source={item.ic} />
             <Text style={styles.row_title}>{item.title}</Text>
-            <Image style={styles.right_arrow} source={require("../../assets/images/ic_forward_arrow.png")}/>
+            <Image style={styles.right_arrow} source={require("../../assets/images/ic_forward_arrow.png")} />
         </View>;
     }
 
     renderSeperator() {
-        return <View style={{marginLeft: 40, height: 0.5, backgroundColor: Colors.lightGrey}}></View>
+        return <View style={{ marginLeft: 40, height: 0.5, backgroundColor: Colors.lightGrey }}></View>
     }
 
 
 
     _signOut = async () => {
         //Remove user session from the device.
-       /* try {
-            await GoogleSignin.revokeAccess();
-            await GoogleSignin.signOut();
-            this.setState({
-                userInfo: null,
-                data: ''
-            }); // Remove the user from your app's state as well
-        } catch (error) {
-            console.error(error);
-        }*/
+        /* try {
+             await GoogleSignin.revokeAccess();
+             await GoogleSignin.signOut();
+             this.setState({
+                 userInfo: null,
+                 data: ''
+             }); // Remove the user from your app's state as well
+         } catch (error) {
+             console.error(error);
+         }*/
     };
-    Notifications()
-    {
-        var Details={
-            client_id:Preference.get("userId"),
-            notificationAlert:this.state.notificationAlert
+    Notifications() {
+        var Details = {
+            client_id: Preference.get("userId"),
+            notificationAlert: this.state.notificationAlert
         };
         var formBody = [];
         for (var property in Details) {
@@ -122,7 +131,7 @@ export default class ClientSettings extends Component {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/x-www-form-urlencoded'
-            },body:formBody
+            }, body: formBody
         }).then(response => response.json())
             .then(response => {
                 console.log("getFavoriteBarbers-->", "-" + JSON.stringify(response));
@@ -134,20 +143,20 @@ export default class ClientSettings extends Component {
                     }
                 }
             }).catch(error => {
-            //console.error('Errorr:', error);
-            console.log('Error:', error);
-            alert("Error: " + error);
-        });
+                //console.error('Errorr:', error);
+                console.log('Error:', error);
+                alert("Error: " + error);
+            });
 
     }
-    NoticationToggle(){
-        if(this.state.notificationAlert)
-            this.setState({notificationAlert:false},()=>{
+    NoticationToggle() {
+        if (this.state.notificationAlert)
+            this.setState({ notificationAlert: false }, () => {
                 this.Notifications();
             });
 
         else {
-            this.setState({notificationAlert:true},()=>{
+            this.setState({ notificationAlert: true }, () => {
                 this.Notifications();
             });
 
@@ -157,13 +166,13 @@ export default class ClientSettings extends Component {
         return (
             <View style={styles.container}>
                 <Header
-                    statusBarProps={{barStyle: "light-content"}}
+                    statusBarProps={{ barStyle: "light-content" }}
                     barStyle="light-content" // or directly
-                    style={{backgroundColor: "yellow"}}
-                    outerContainerStyles={{backgroundColor: "#1999CE"}}
-                    leftComponent={{color: "#fff"}}
-                    centerComponent={{text: "SETTINGS", style: {color: "#fff"}}}
-                    rightComponent={{color: "#fff"}}
+                    style={{ backgroundColor: "yellow" }}
+                    outerContainerStyles={{ backgroundColor: "#1999CE" }}
+                    leftComponent={{ color: "#fff" }}
+                    centerComponent={{ text: "SETTINGS", style: { color: "#fff" } }}
+                    rightComponent={{ color: "#fff" }}
                     containerStyle={{
                         backgroundColor: Colors.dark,
                         justifyContent: "space-around"
@@ -181,20 +190,20 @@ export default class ClientSettings extends Component {
                             })}
                         </TouchableOpacity>
                         {this.renderSeperator()}
-                        <TouchableOpacity  onPress={()=>this.props.navigation.navigate("ChangePassword")}  >
-                        {this.renderRow({
-                            title: "Change Password",
-                            ic: require("../../assets/images/ic_settings_lock.png")
-                        })}
+                        <TouchableOpacity onPress={() => this.props.navigation.navigate("ChangePassword")}  >
+                            {this.renderRow({
+                                title: "Change Password",
+                                ic: require("../../assets/images/ic_settings_lock.png")
+                            })}
                         </TouchableOpacity>
 
 
                     </View>
                     <Text style={styles.txtHeader}>NOTIFICATIONS</Text>
                     <View style={[globalStyles.rowBackground, styles.row]}>
-                        <View style={{flex: 1, flexDirection: 'row', height: 36}}>
+                        <View style={{ flex: 1, flexDirection: 'row', height: 36 }}>
                             <Image style={styles.leftIcon}
-                                   source={require("../../assets/images/ic_setting_alert.png")}/>
+                                source={require("../../assets/images/ic_setting_alert.png")} />
                             <Text style={styles.row_title}>Alert</Text>
                             <Switch value={this.state.notificationAlert} style={{
                                 transform: [{ scaleX: .8 }, { scaleY: .8 }],
@@ -203,7 +212,7 @@ export default class ClientSettings extends Component {
                                 alignSelf: 'center',
                                 tintColor: 'white'
                             }}
-                            onValueChange={()=>this.NoticationToggle()}/>
+                                onValueChange={() => this.NoticationToggle()} />
                         </View>
                     </View>
                     <Text style={styles.txtHeader}>PAYMENT</Text>
@@ -224,11 +233,11 @@ export default class ClientSettings extends Component {
                     <View style={[globalStyles.rowBackground, styles.row]}>
                         <TouchableOpacity onPress={() => {
 
-                            if(Platform.OS==="ios"){
-                                return  Linking.openURL('sms:&body=Invite Barbers')
+                            if (Platform.OS === "ios") {
+                                return Linking.openURL('sms:&body=' + inviteBarber)
 
-                            }else{
-                                return  Linking.openURL('sms:?body=Invite Barbers')
+                            } else {
+                                return Linking.openURL('sms:?body=' + inviteBarber)
                             }
 
                             //Linking.openURL('sms:1234567899&body=`Invite Barbers`')
@@ -240,11 +249,11 @@ export default class ClientSettings extends Component {
                         </TouchableOpacity>
                         {this.renderSeperator()}
                         <TouchableOpacity onPress={() => {
-                            if(Platform.OS==="ios"){
-                                return  Linking.openURL('sms:&body=Invite Clients')
+                            if (Platform.OS === "ios") {
+                                return Linking.openURL('sms:&body=' + inviteClient)
 
-                            }else{
-                                return  Linking.openURL('sms:?body=Invite Clients')
+                            } else {
+                                return Linking.openURL('sms:?body=' + inviteClient)
                             }
                             //Linking.openURL('sms:?addresses=``&body=Invite Clients')
                         }}>
@@ -269,7 +278,7 @@ export default class ClientSettings extends Component {
                         <TouchableOpacity onPress={() => {
                             Linking.openURL('https://facebook.com/teamCLYPR')
                         }}>
-                            {this.renderRow({title: "Facebook", ic: require("../../assets/images/ic_settings_fb.png")})}
+                            {this.renderRow({ title: "Facebook", ic: require("../../assets/images/ic_settings_fb.png") })}
                         </TouchableOpacity>
                         {this.renderSeperator()}
                         <TouchableOpacity onPress={() => {
@@ -313,9 +322,13 @@ export default class ClientSettings extends Component {
                         </TouchableOpacity>
                     </View>
                     <TouchableOpacity
-                        style={[globalStyles.button, {marginTop: 30, marginBottom: 30, textAlignVertical: "center"}]}
+                        style={[globalStyles.button, { marginTop: 30, marginBottom: 30, textAlignVertical: "center" }]}
                         onPress={() => {
+                            
+                            let appleEmail = Preference.get("appleLoginEmail"), appleGivenName = Preference.get("appleLoginGivenName"), appleFamilyName = Preference.get("appleLoginfamilyName")
+
                             Preference.clear();
+                            Preference.set({ "appleLoginEmail": appleEmail, "appleLoginGivenName": appleGivenName, "appleLoginFamilyName": appleFamilyName })
                             this._signOut();
                             LoginManager.logOut();
                             const goToIntoScreen = StackActions.reset({
@@ -323,7 +336,7 @@ export default class ClientSettings extends Component {
                                 actions: [NavigationActions.navigate({ routeName: 'SelectScreen' })],
                             });
                             this.props.navigation.dispatch(goToIntoScreen);
-                            //this.props.navigation.navigate('SelectScreen');
+                            this.props.navigation.navigate('SelectScreen');
                         }}>
                         <Text style={globalStyles.buttonText}>Logout</Text>
                     </TouchableOpacity>
@@ -333,12 +346,12 @@ export default class ClientSettings extends Component {
                         justifyContent: "center",
                         alignItems: "center",
                     }}>
-                        <Text style={{color: "grey", fontFamily: "AvertaStd-Thin"}}>{"CLYPR Technologies V1.0"}</Text>
-                        <View style={{flexDirection: "row", marginTop: 5, marginBottom: 10}}>
-                            <Text style={{color: "white", fontWeight: "bold", fontStyle: "italic"}}> Made in
+                        <Text style={{ color: "grey", fontFamily: "AvertaStd-Thin" }}>{"CLYPR Technologies V1.0"}</Text>
+                        <View style={{ flexDirection: "row", marginTop: 5, marginBottom: 10 }}>
+                            <Text style={{ color: "white", fontWeight: "bold", fontStyle: "italic" }}> Made in
                                 Miami </Text>
                             <Image resizeMode={"contain"} source={require("../../assets/images/beach.png")}
-                                   style={{height: 20, width: 20, marginStart: 10}}
+                                style={{ height: 20, width: 20, marginStart: 10 }}
 
                             />
                         </View>

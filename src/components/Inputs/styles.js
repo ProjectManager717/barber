@@ -16,6 +16,9 @@ export const styles = StyleSheet.create({
     ...Metric.font.input,
     flex: 1,
     marginLeft: 20,
+    // backgroundColor:"yellow",
+    height:40,
+    alignSelf:"center",
     color: Colors.white
   },
   icon: {

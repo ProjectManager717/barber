@@ -31,6 +31,10 @@ let Policy = "By booking now, you are \n" +
     "agreeing to be charged 25% if you cancel 30 minutes prior to your appointment and \n" +
     "also agreeing to be charged 50% of your total if you are a No-Show.";
 
+let covidterms = "I confirm that I am not infected with COVID-19 and I am not presenting any of the following symptoms: fever, shortness of breath, loss of sense of taste or smell, dry cough, runny nose or sore throat\n" +
+    "I confirm that I haven’t been around anyone exhibiting these symptoms within the past 14 days \n" +
+    "I confirm that I am not living with anyone who is diagnosed with COVID-19 or quarantined.";    
+
 Date.prototype.addDays = function (days) {
     var date = new Date(this.valueOf());
     date.setDate(date.getDate() + days);
@@ -86,6 +90,7 @@ export default class ClientBarberProfile extends Component {
             selectedCardImage: "Visa",
             barberFav: false,
             barberMobilePay: "",
+            percent10:0,
             //barberData:undefined,
             dataSource: [],
             monthSet: undefined,
@@ -530,7 +535,7 @@ export default class ClientBarberProfile extends Component {
             date: this.state.selectedDate,
             selected_slot_id: this.state.selectedSlotIds,
             total_price: this.state.totalPriceService + surgeP,
-            service_fee: "2.00",
+            service_fee: this.state.percent10,
             tip_price: this.state.percentPrice,
             selected_surge_price: false,
             cus_stripe_id: data.cus_stripe_id,
@@ -601,7 +606,7 @@ export default class ClientBarberProfile extends Component {
             date: this.state.selectedDate,
             selected_slot_id: this.state.selectedSlotIds,
             total_price: this.state.totalPriceService + surgeP,
-            service_fee: "2.00",
+            service_fee: this.state.percent10,
             tip_price: this.state.percentPrice,
             selected_surge_price: false,
             cus_stripe_id: "",
@@ -837,7 +842,7 @@ export default class ClientBarberProfile extends Component {
                     date: this.state.selectedDate,
                     selected_slot_id: this.state.selectedSlotIds,
                     total_price: this.state.totalPriceService,
-                    service_fee: "2.00",
+                    service_fee: this.state.percent10,
                     //selected_surge_price:this.state.surgePriceSelected,
                     selected_surge_price: true,
                     barberMobilePay: this.state.barberMobilePay
@@ -860,7 +865,7 @@ export default class ClientBarberProfile extends Component {
                                 date: this.state.selectedDate,
                                 selected_slot_id: this.state.selectedSlotIds,
                                 total_price: this.state.totalPriceService,
-                                service_fee: "2.00",
+                                service_fee: this.state.percent10,
                                 selected_surge_price: false,
                             })
                         } else {
@@ -894,8 +899,9 @@ export default class ClientBarberProfile extends Component {
             var details = {
                 barberID: barberId,
                 clientID: Preference.get("userId"),
-                amount: (this.state.totalPriceService + 2.00 + surgeP + tipPrice) * 100,
+                amount: parseFloat(this.state.totalPriceService  + surgeP + tipPrice) * 100,
                 card_id: selectedcard.id,
+                service_amount:parseFloat(this.state.percent10)* 100
             };
             console.log("CARD Email----->" + JSON.stringify(details));
             console.log("APi URL ----->" + JSON.stringify(constants.PaymentFLow));
@@ -940,6 +946,7 @@ export default class ClientBarberProfile extends Component {
     checkBoxClicked(id) {
         //console.log("IDforService---->" + id);
         let mainData = this.state.ListData2;
+        let _percent10=0
         if (mainData[id].check === true) {
             //console.log("IDforService---->"+mainData[id].check);
             mainData[id].check = false;
@@ -947,14 +954,16 @@ export default class ClientBarberProfile extends Component {
             let totalprice = this.state.totalPriceService;
             //totalprice = totalprice - mainData[id].price;
             totalprice = parseInt(totalprice) - parseInt(mainData[id].price);
-            this.setState({totalPriceService: totalprice});
+            _percent10= totalprice/10
+            this.setState({totalPriceService: totalprice, percent10:_percent10});
         } else {
             //console.log("IDforService---->"+ mainData[id].check);
             mainData[id].check = true;
             //console.log("IDforService---->"+mainData[id].check);
             let totalprice = this.state.totalPriceService;
             totalprice = parseInt(totalprice) + parseInt(mainData[id].price);
-            this.setState({totalPriceService: totalprice});
+            _percent10= totalprice/10
+            this.setState({totalPriceService: totalprice,percent10:_percent10});
         }
 
         this.setState({serviceTypeSelected: false, selectedServices: []});
@@ -1693,19 +1702,18 @@ export default class ClientBarberProfile extends Component {
                                                     textAlign: "left",
                                                     color: "white",
                                                 }}
-                                            >${(this.state.totalPriceService + 2.00 + this.state.percentPrice).toFixed(2)}</Text>
+                                                >${(this.state.totalPriceService +this.state.percent10 + this.state.percentPrice).toFixed(2)}</Text>
                                             <Text style={{
                                                 color: "white",
                                                 fontFamily: "AvertaStd-Thin",
                                                 fontSize: 12,
                                                 marginBottom: 5,
-                                            }}>Service
-                                                Fee:
+                                            }}>Service Fee:
                                                 <Text style={{
                                                     // fontWeight: "900",
 
                                                     color: "white"
-                                                }}>{" $2.00"}</Text>
+                                                }}>{" 10%"}</Text>
                                             </Text>
                                         </View>
                                     </View>
@@ -1898,7 +1906,7 @@ export default class ClientBarberProfile extends Component {
                         alignItems: "center",
                         justifyContent: "center"
                     }}>
-                        <Image style={{width: "100%", height: "100%", backgroundColor: "yellow"}}
+                        <Image resizeMode={'contain'} style={{width: "100%", height: "100%", backgroundColor: "transparent"}}
                                source={{uri: this.state.imageInFull}}/>
                         <TouchableOpacity onPress={() => this.setState({showFullImage: false})} style={{
                             alignItems: "center",
@@ -1915,7 +1923,23 @@ export default class ClientBarberProfile extends Component {
 
                     </View>}
                     {this.state.clientLogin && <TouchableOpacity
-                        onPress={() => Alert.alert("This barber has Cancelation & No-Show Policies activated.", Policy)}
+                        onPress={() => Alert.alert("This barber has Cancellation & No-Show Policies activated.", Policy)}
+                        style={{
+                            width: "100%",
+                            height: 30,
+                            backgroundColor: "white",
+                            paddingBottom: isIPhoneX() ? 10 : 0
+                        }}>
+
+                        <Text style={{
+                            width: "100%",
+                            fontSize: 12,
+                            color: "blue",
+                            textAlign: "center"
+                        }}>{"Cancellation & No-Show Policy"}</Text>
+                    </TouchableOpacity>}
+                    {this.state.clientLogin && <TouchableOpacity
+                        onPress={() => Alert.alert("Confirmation!", covidterms)}
                         style={{
                             width: "100%",
                             height: 40,
@@ -1928,7 +1952,7 @@ export default class ClientBarberProfile extends Component {
                             fontSize: 12,
                             color: "blue",
                             textAlign: "center"
-                        }}>{"Cancelation & No-Show Policy"}</Text>
+                        }}>{"Covid-19 Policy"}</Text>
                     </TouchableOpacity>}
                 </ScrollView>
                 {!Preference.get('clientlogin') &&<View style={{width: "100%", height: 100, position: "absolute", bottom: 0, alignItems: "center",backgroundColor:colors.themeBackground}}>

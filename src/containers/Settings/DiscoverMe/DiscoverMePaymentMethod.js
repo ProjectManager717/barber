@@ -229,7 +229,7 @@ export default class DiscoverMePaymentMethod extends Component {
                 card_id :selectedcard.cardInfo.id,
             };
             console.log("CARD Email----->"+JSON.stringify(details));
-            console.log("APi URL ----->"+JSON.stringify(constants.PaymentFLow));
+            console.log("APi URL ----->"+JSON.stringify(constants.DiscoverMePaymentMethod));
             var formBody = [];
             for (var property in details) {
                 var encodedKey = encodeURIComponent(property);

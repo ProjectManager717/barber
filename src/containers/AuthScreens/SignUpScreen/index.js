@@ -11,12 +11,7 @@ import { AccessToken, GraphRequest, GraphRequestManager } from "react-native-fbs
 import firebase from "react-native-firebase";
 import { GoogleSignin, statusCodes } from '@react-native-community/google-signin';
 import _ from 'lodash'
-import appleAuth, {
-    AppleButton,
-    AppleAuthRequestOperation,
-    AppleAuthRequestScope,
-    AppleAuthCredentialState,
-} from '@invertase/react-native-apple-authentication';
+import { AppleButton, appleAuth } from '@invertase/react-native-apple-authentication';
 
 const FBSDK = require('react-native-fbsdk');
 const {
@@ -89,7 +84,6 @@ class SignUpScreen extends Component {
                 confirmPassword: '',
                 userName: undefined,
                 fieldUsename: false,
-                isConnected: true,
             }
         };
         this.checkFieldsBarber = this.checkFieldsBarber.bind(this);
@@ -152,17 +146,46 @@ class SignUpScreen extends Component {
     }
 
     onAppleButtonPress = async () => {
-        console.log('onAppleButtonPress')
-        // performs login request
-        const appleAuthRequestResponse = await appleAuth.performRequest({
+        console.warn('Beginning Apple Authentication');
+    
+        // start a login request
+        try {
+          const appleAuthRequestResponse = await appleAuth.performRequest({
             requestedOperation: appleAuth.Operation.LOGIN,
-            requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME],
-        });
-        console.log('appleAuthRequestResponse:', JSON.stringify(appleAuthRequestResponse))
-
-        if (_.isNil(appleAuthRequestResponse.email)) {
-            Alert.alert('Email Required!', 'Please allow to share your email');
-        } else {
+            requestedScopes: [
+              appleAuth.Scope.EMAIL,
+              appleAuth.Scope.FULL_NAME,
+            ],
+          });
+    
+          console.log('appleAuthRequestResponse', appleAuthRequestResponse);
+    
+          const {
+            user: newUser,
+            email,
+            nonce,
+            identityToken,
+            realUserStatus /* etc */,
+          } = appleAuthRequestResponse;
+    
+          this.user = newUser;
+    
+          this.fetchAndUpdateCredentialState()
+            .then(res => this.setState({ credentialStateForUser: res }))
+            .catch(error =>
+              this.setState({ credentialStateForUser: `Error: ${error.code}` }),
+            );
+    
+          if (identityToken) {
+            // e.g. sign in with Firebase Auth using `nonce` & `identityToken`
+            console.log(nonce, identityToken);
+          } else {
+            // no token - failed sign-in?
+          }
+    
+          if (realUserStatus === appleAuth.UserStatus.LIKELY_REAL) {
+            console.log("I'm a real person!");
+          }
             this.socialLoginGoogle({
                 user: {
                     email: appleAuthRequestResponse.email,
@@ -171,7 +194,29 @@ class SignUpScreen extends Component {
                 },
                 idToken: appleAuthRequestResponse.user,
             }, "apple")
-        }
+    
+
+            console.warn(`Apple Authentication Completed, ${this.user}, ${email}`);
+          } catch (error) {
+            if (error.code === appleAuth.Error.CANCELED) {
+              console.warn('User canceled Apple Sign in.');
+            } else {
+              console.error(error);
+            }
+          }
+      }
+  
+      fetchAndUpdateCredentialState = async () => {
+          if (this.user === null) {
+            this.setState({ credentialStateForUser: 'N/A' });
+          } else {
+            const credentialState = await appleAuth.getCredentialStateForUser(this.user);
+            if (credentialState === appleAuth.State.AUTHORIZED) {
+              this.setState({ credentialStateForUser: 'AUTHORIZED' });
+            } else {
+              this.setState({ credentialStateForUser: credentialState });
+            }
+          }
     }
 
 
@@ -206,116 +251,108 @@ class SignUpScreen extends Component {
 
     socialLoginGoogle(userInfo, src) {
         if (itemId === "Client") {
-            if (this.state.isConnected) {
-                var details = {
-                    email: userInfo.user.email,
-                    authType: src,
-                    authId: userInfo.idToken,
-                    firstName: userInfo.user.givenName,
-                    lastName: userInfo.user.familyName,
-                    device_token: fcmToken
-                };
-                var formBody = [];
-                for (var property in details) {
-                    var encodedKey = encodeURIComponent(property);
-                    var encodedValue = encodeURIComponent(details[property]);
-                    formBody.push(encodedKey + "=" + encodedValue);
-                }
-                this.setState({ showLoading: true });
-                formBody = formBody.join("&");
-                fetch(constants.ClientSocialLogin, {
-                    method: 'POST',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: formBody
-                }).then(response => response.json())
-                    .then(response => {
-                        console.log("responseClientlogin-->", "-" + JSON.stringify(response));
-                        this.setState({ showLoading: false });
-                        if (response.ResultType === 1) {
-                            Preference.set({
-                                clientlogin: true,
-                                userEmail: response.Data.email,
-                                userId: response.Data.id,
-                                userName: userInfo.user.givenName,
-                                userType: "Client",
-                                userToken: response.Data.token
-                            });
-                            this.moveToHome();
-                        } else {
-                            if (response.ResultType === 0) {
-                                alert(response.Message);
-                            }
-                        }
-                    })
-                    .catch(error => {
-                        this.setState({ showLoading: false });
-                        //console.error('Errorr:', error);
-                        console.log('Error:', error);
-                        alert("Error: " + error);
-                    });
-                //Keyboard.dismiss();
-            } else {
-                alert("Please connect Internet");
+            var details = {
+                email: userInfo.user.email,
+                authType: src,
+                authId: userInfo.idToken,
+                firstName: userInfo.user.givenName,
+                lastName: userInfo.user.familyName,
+                device_token: fcmToken
+            };
+            var formBody = [];
+            for (var property in details) {
+                var encodedKey = encodeURIComponent(property);
+                var encodedValue = encodeURIComponent(details[property]);
+                formBody.push(encodedKey + "=" + encodedValue);
             }
-            //this.props.navigation.navigate('ClientTabNavigator');
+            this.setState({ showLoading: true });
+            formBody = formBody.join("&");
+            fetch(constants.ClientSocialLogin, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: formBody
+            }).then(response => response.json())
+                .then(response => {
+                    console.log("responseClientlogin-->", "-" + JSON.stringify(response));
+                    this.setState({ showLoading: false });
+                    if (response.ResultType === 1) {
+                        Preference.set({
+                            clientlogin: true,
+                            userEmail: response.Data.email,
+                            userId: response.Data.id,
+                            userName: userInfo.user.givenName,
+                            userType: "Client",
+                            userToken: response.Data.token
+                        });
+                        this.moveToHome();
+                    } else {
+                        if (response.ResultType === 0) {
+                            alert(response.Message);
+                        }
+                    }
+                })
+                .catch(error => {
+                    this.setState({ showLoading: false });
+                    //console.error('Errorr:', error);
+                    console.log('Error:', error);
+                    alert("Error: " + error);
+                });
+            //Keyboard.dismiss();
         } else {
-            if (this.state.isConnected) {
-                var details = {
-                    email: userInfo.user.email,
-                    authType: "google",
-                    authId: userInfo.idToken,
-                    firstName: userInfo.user.givenName,
-                    lastName: userInfo.user.familyName,
-                    device_token: fcmToken
-                };
-                var formBody = [];
-                for (var property in details) {
-                    var encodedKey = encodeURIComponent(property);
-                    var encodedValue = encodeURIComponent(details[property]);
-                    formBody.push(encodedKey + "=" + encodedValue);
-                }
-                this.setState({ showLoading: true });
-                formBody = formBody.join("&");
-                fetch(constants.BarberSocialLogin, {
-                    method: 'POST',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: formBody
-                }).then(response => response.json())
-                    .then(response => {
-                        console.log("responseBarberlogin-->", "-" + JSON.stringify(response));
-                        this.setState({ showLoading: false });
-                        if (response.ResultType === 1) {
-                            Preference.set({
-                                barberlogin: true,
-                                userEmail: response.Data.email,
-                                userName: userInfo.user.givenName,
-                                userId: response.Data.id,
-                                userType: "Barber",
-                                userToken: response.Data.token
-                            });
-                            this.moveToHome();
-                        } else {
-                            if (response.ResultType === 0) {
-                                alert(response.Message);
-                            }
-                        }
-                    })
-                    .catch(error => {
-                        this.setState({ showLoading: false });
-                        //console.error('Errorr:', error);
-                        console.log('Error:', error);
-                        alert("Error: " + error);
-                    });
-                //Keyboard.dismiss();
-            } else {
-                alert("Please connect Internet");
+
+            var details = {
+                email: userInfo.user.email,
+                authType: "google",
+                authId: userInfo.idToken,
+                firstName: userInfo.user.givenName,
+                lastName: userInfo.user.familyName,
+                device_token: fcmToken
+            };
+            var formBody = [];
+            for (var property in details) {
+                var encodedKey = encodeURIComponent(property);
+                var encodedValue = encodeURIComponent(details[property]);
+                formBody.push(encodedKey + "=" + encodedValue);
             }
+            this.setState({ showLoading: true });
+            formBody = formBody.join("&");
+            fetch(constants.BarberSocialLogin, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: formBody
+            }).then(response => response.json())
+                .then(response => {
+                    console.log("responseBarberlogin-->", "-" + JSON.stringify(response));
+                    this.setState({ showLoading: false });
+                    if (response.ResultType === 1) {
+                        Preference.set({
+                            barberlogin: true,
+                            userEmail: response.Data.email,
+                            userName: userInfo.user.givenName,
+                            userId: response.Data.id,
+                            userType: "Barber",
+                            userToken: response.Data.token
+                        });
+                        this.moveToHome();
+                    } else {
+                        if (response.ResultType === 0) {
+                            alert(response.Message);
+                        }
+                    }
+                })
+                .catch(error => {
+                    this.setState({ showLoading: false });
+                    //console.error('Errorr:', error);
+                    console.log('Error:', error);
+                    alert("Error: " + error);
+                });
+            //Keyboard.dismiss();
         }
 
     }
@@ -427,120 +464,112 @@ class SignUpScreen extends Component {
     }
     signinFacebook(data, accessToken) {
         if (itemId === "Client") {
-            if (this.state.isConnected) {
-                var details = {
-                    email: data.email,
-                    authType: "facebook",
-                    authId: accessToken,
-                    firstName: data.first_name,
-                    lastName: data.last_name,
-                    device_token: fcmToken
-                };
-                var formBody = [];
-                for (var property in details) {
-                    var encodedKey = encodeURIComponent(property);
-                    var encodedValue = encodeURIComponent(details[property]);
-                    formBody.push(encodedKey + "=" + encodedValue);
-                }
-                formBody = formBody.join("&");
-                fetch(constants.ClientSocialLogin, {
-                    method: 'POST',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: formBody
-                }).then(response => response.json())
-                    .then(response => {
-                        console.log("responseClientlogin-->", "-" + JSON.stringify(response));
-                        if (response.ResultType === 1) {
-                            Preference.set({
-                                clientlogin: true,
-                                userEmail: response.Data.email,
-                                userName: data.first_name,
-                                userId: response.Data.id,
-                                userType: "Client",
-                                userToken: response.Data.token
-                            });
-                            if (response.Data.firstTimeSignUp === true) {
-                                this.props.navigation.navigate("SMSScreen");
-                            } else {
-                                this.moveToHome();
-                            }
-
-                        } else {
-                            if (response.ResultType === 0) {
-                                alert(response.Message);
-                            }
-                        }
-                    })
-                    .catch(error => {
-                        //console.error('Errorr:', error);
-                        console.log('Error:', error);
-                        alert("Error: " + error);
-                    });
-                //Keyboard.dismiss();
-            } else {
-                alert("Please connect Internet");
+            var details = {
+                email: data.email,
+                authType: "facebook",
+                authId: accessToken,
+                firstName: data.first_name,
+                lastName: data.last_name,
+                device_token: fcmToken
+            };
+            var formBody = [];
+            for (var property in details) {
+                var encodedKey = encodeURIComponent(property);
+                var encodedValue = encodeURIComponent(details[property]);
+                formBody.push(encodedKey + "=" + encodedValue);
             }
+            formBody = formBody.join("&");
+            fetch(constants.ClientSocialLogin, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: formBody
+            }).then(response => response.json())
+                .then(response => {
+                    console.log("responseClientlogin-->", "-" + JSON.stringify(response));
+                    if (response.ResultType === 1) {
+                        Preference.set({
+                            clientlogin: true,
+                            userEmail: response.Data.email,
+                            userName: data.first_name,
+                            userId: response.Data.id,
+                            userType: "Client",
+                            userToken: response.Data.token
+                        });
+                        if (response.Data.firstTimeSignUp === true) {
+                            this.props.navigation.navigate("SMSScreen");
+                        } else {
+                            this.moveToHome();
+                        }
+
+                    } else {
+                        if (response.ResultType === 0) {
+                            alert(response.Message);
+                        }
+                    }
+                })
+                .catch(error => {
+                    //console.error('Errorr:', error);
+                    console.log('Error:', error);
+                    alert("Error: " + error);
+                });
+            //Keyboard.dismiss();
             //this.props.navigation.navigate('ClientTabNavigator');
         } else {
-            if (this.state.isConnected) {
-                var details = {
-                    email: data.email,
-                    authType: "google",
-                    authId: accessToken,
-                    firstName: data.first_name,
-                    lastName: data.last_name,
-                    device_token: fcmToken
-                };
-                var formBody = [];
-                for (var property in details) {
-                    var encodedKey = encodeURIComponent(property);
-                    var encodedValue = encodeURIComponent(details[property]);
-                    formBody.push(encodedKey + "=" + encodedValue);
-                }
-                formBody = formBody.join("&");
-                fetch(constants.BarberSocialLogin, {
-                    method: 'POST',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: formBody
-                }).then(response => response.json())
-                    .then(response => {
-                        console.log("responseBarberlogin-->", "-" + JSON.stringify(response));
-                        if (response.ResultType === 1) {
-                            Preference.set({
-                                barberlogin: true,
-                                userEmail: response.Data.email,
-                                userName: data.first_name,
-                                userId: response.Data.id,
-                                userType: "Barber",
-                                userToken: response.Data.token,
-                                MobilePayActivation: response.Data.mobile_pay_activation,
-                            });
-                            if (response.Data.firstTimeSignUp === true) {
-                                this.props.navigation.navigate("SMSScreen");
-                            } else {
-                                this.moveToHome();
-                            }
-                        } else {
-                            if (response.ResultType === 0) {
-                                alert(response.Message);
-                            }
-                        }
-                    })
-                    .catch(error => {
-                        //console.error('Errorr:', error);
-                        console.log('Error:', error);
-                        alert("Error: " + error);
-                    });
-                //Keyboard.dismiss();
-            } else {
-                alert("Please connect Internet");
+            var details = {
+                email: data.email,
+                authType: "google",
+                authId: accessToken,
+                firstName: data.first_name,
+                lastName: data.last_name,
+                device_token: fcmToken
+            };
+            var formBody = [];
+            for (var property in details) {
+                var encodedKey = encodeURIComponent(property);
+                var encodedValue = encodeURIComponent(details[property]);
+                formBody.push(encodedKey + "=" + encodedValue);
             }
+            formBody = formBody.join("&");
+            fetch(constants.BarberSocialLogin, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: formBody
+            }).then(response => response.json())
+                .then(response => {
+                    console.log("responseBarberlogin-->", "-" + JSON.stringify(response));
+                    if (response.ResultType === 1) {
+                        Preference.set({
+                            barberlogin: true,
+                            userEmail: response.Data.email,
+                            userName: data.first_name,
+                            userId: response.Data.id,
+                            userType: "Barber",
+                            userToken: response.Data.token,
+                            MobilePayActivation: response.Data.mobile_pay_activation,
+                        });
+                        if (response.Data.firstTimeSignUp === true) {
+                            this.props.navigation.navigate("SMSScreen");
+                        } else {
+                            this.moveToHome();
+                        }
+                    } else {
+                        if (response.ResultType === 0) {
+                            alert(response.Message);
+                        }
+                    }
+                })
+                .catch(error => {
+                    //console.error('Errorr:', error);
+                    console.log('Error:', error);
+                    alert("Error: " + error);
+                });
+            //Keyboard.dismiss();
         }
     }
 
@@ -842,13 +871,13 @@ class SignUpScreen extends Component {
 
                             </View>}
                             <View style={styles.termsContainer}>
-                                <Text style={[styles.whiteText, { width: "60%", textAlign: "right" }]}>
+                                <Text style={[styles.whiteText, { width: "60%", textAlign: "right", fontSize: 13 }]}>
                                     {'By Signing Up, you agree to our '}
                                 </Text>
                                 <TouchableOpacity onPress={() => { Linking.openURL('https://clypr.co/terms-of-service') }}
                                     style={{ width: "40%", textAlign: "left" }}>
-                                    <Text style={[styles.redText, { width: "100%", textAlign: "center" }]}>
-                                        {'Terms and Conditions'}
+                                    <Text style={[styles.redText, { width: "100%", textAlign: "center", fontSize: 13 }]}>
+                                        {'Terms & Conditions'}
                                     </Text>
                                 </TouchableOpacity>
                             </View>

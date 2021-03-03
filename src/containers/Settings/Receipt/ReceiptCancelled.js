@@ -89,6 +89,13 @@ export default class ReceiptCancelled extends Component {
                         punctuality: recieptData.punctuality,
                         professional: recieptData.professionol,
                     })
+                    
+                    if(!!recieptData.service_fee)
+                    {
+                        //serviceFee=recieptData.service_fee
+                        this.setState({ServiceFee:recieptData.service_fee.toFixed(2)})
+                    }
+
                     let totalPriceServices=0;
                     for(let i=0;i<recieptData.selected_services.length;i++)
                     {
@@ -96,12 +103,12 @@ export default class ReceiptCancelled extends Component {
                     }
                     if (recieptData.selected_surge_price === true) {
                         let surgePricee = totalPriceServices / 2
-                        let TotalMain = (parseFloat(totalPriceServices) + 2) + (parseFloat(surgePricee)+parseFloat(this.state.tipLeft) );
-                        this.setState({ surgePrice: surgePricee, totalMain: TotalMain });
+                        let TotalMain = (parseFloat(totalPriceServices) + parseFloat(this.state.ServiceFee)) + (parseFloat(surgePricee)+parseFloat(this.state.tipLeft) );
+                        this.setState({ surgePrice: surgePricee.toFixed(2) , totalMain: TotalMain.toFixed(2) });
                     } else {
                         let surgePricee = 0;
-                        let TotalMain = (parseFloat(totalPriceServices) +2) + (parseFloat(surgePricee)+parseFloat(this.state.tipLeft));
-                        this.setState({ surgePrice: surgePricee, totalMain: TotalMain });
+                        let TotalMain = (parseFloat(totalPriceServices) +parseFloat(this.state.ServiceFee)) + (parseFloat(surgePricee)+parseFloat(this.state.tipLeft));
+                        this.setState({ surgePrice: surgePricee.toFixed(2) , totalMain: TotalMain.toFixed(2)  });
                     }
                 } else {
                     this.setState({ showLoading: false })
@@ -125,6 +132,7 @@ export default class ReceiptCancelled extends Component {
     }
 
     renderRow2(item) {
+        let value = item.value.split("$")
         return (
             <View style={{ width: "100%", flexDirection: 'row', height: 30 }}>
                 <View style={{ width: "70%", flexDirection: 'row', height: '100%' }}>
@@ -135,7 +143,7 @@ export default class ReceiptCancelled extends Component {
                     }]}>{item.title}</Text>
                 </View>
                 <View style={{ width: "30%", flexDirection: 'row', height: '100%' }}>
-                    <Text style={[styles.row_title, { width: "100%", justifyContent: "flex-end", }]}>{item.value}</Text>
+                    <Text style={[styles.row_title, { width: "100%", justifyContent: "flex-end", }]}>{value[1] && "$" + parseFloat(value[1]).toFixed(2)}</Text>
                 </View>
             </View>
         )
@@ -246,7 +254,7 @@ export default class ReceiptCancelled extends Component {
                             </View>
                             {this.renderRow2({
                                 title: "Service Fee",
-                                value: "$2.00",
+                                value: "$" +this.state.ServiceFee,
                             })}
 
                             {this.renderRow2({

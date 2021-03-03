@@ -17,7 +17,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0</string>
+	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
@@ -35,14 +35,14 @@
 				<string>com.googleusercontent.apps.264908010858-90qei6m96daq2doi543gnahouvunl4v4</string>
 				<string>com.googleusercontent.apps.264908010858-bqe8r5rjhqfmqg4dah4a7l1q4ob3qick</string>
 				<string>com.googleusercontent.apps.264908010858-imh71lfsb360c40oq6c7hrgqdkhuqu3b</string>
-				<string>fb300952084145848</string>
+				<string>fb152710679649258</string>
 			</array>
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>FacebookAppID</key>
-	<string>300952084145848</string>
+	<string>152710679649258</string>
 	<key>FacebookDisplayName</key>
 	<string>CLYPR</string>
 	<key>FirebaseAppDelegateProxyEnabled</key>

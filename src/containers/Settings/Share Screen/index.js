@@ -8,8 +8,9 @@ import {
     ScrollView,
     TouchableOpacity,
     TouchableHighlight, Clipboard,
-    TextInput, Dimensions, ImageBackground, Alert, Platform, CameraRoll
+    TextInput, Dimensions, ImageBackground, Alert, Platform,
 } from "react-native";
+import CameraRoll from "@react-native-community/cameraroll";
 import LinearGradient from 'react-native-linear-gradient';
 import { Colors } from "../../../themes";
 import { globalStyles } from "../../../themes/globalStyles";
@@ -20,6 +21,7 @@ import { constants } from "../../../utils/constants";
 import { SafeAreaView } from "react-navigation";
 import moment from 'moment';
 import { Firebase } from "react-native-firebase";
+import { Linking } from "react-native";
 
 
 var RNFS = require('react-native-fs');
@@ -87,16 +89,17 @@ export default class Share extends Component {
 
     saveToClipboard = async (val) => {
         const sharedUrl = val
-        const link = new Firebase.links.DynamicLink(sharedUrl, 'https://clypr.page.link')
-            .android.setPackageName('com.barber')
-            .ios.setBundleId('com.reactjs.native.Barber')
-            .ios.setCustomScheme('CLYPR')
+        Clipboard.setString(val);
+        // const link = new Firebase.links.DynamicLink(sharedUrl, 'https://clypr.page.link')
+        //     .android.setPackageName('com.barber')
+        //     .ios.setBundleId('com.reactjs.native.Barber')
+        //     .ios.setCustomScheme('CLYPR')
 
-        firebase.links()
-            .createShortDynamicLink(link, 'SHORT')
-            .then((url) => {
-                Clipboard.setString(url);
-            })
+        // firebase.links()
+        //     .createShortDynamicLink(link, 'SHORT')
+        //     .then((url) => {
+                // Clipboard.setString(url);
+        //     })
 
     };
 
@@ -221,7 +224,10 @@ export default class Share extends Component {
                                 style={{ marginStart: 5, color: "grey", fontFamily: "AvertaStd-Thin" }}
                             >{"Copy & Paste the below link"}</Text></View>
                         <TouchableOpacity
-                            onPress={() => this.saveToClipboard("https://www.clypr.co/pro/" + this.state.barberInsta)}>
+                            onPress={() => {
+                                this.saveToClipboard('http://appcrates.net/barber/profile/' + Preference.get("userId"))
+                                // this.saveToClipboard("https://www.clypr.co/pro/" + this.state.barberInsta)
+                            }}>
                             <Text style={{
                                 color: "white",
                                 fontSize: 15,

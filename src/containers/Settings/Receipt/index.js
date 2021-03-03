@@ -78,7 +78,7 @@ export default class Receipt extends Component {
                         barberServices: recieptData.selected_services,
                         subTotal: recieptData.total_price,
                         ServiceFee: recieptData.service_fee,
-                        tipLeft:recieptData.tip_price.toFixed(2),
+                        tipLeft: recieptData.tip_price.toFixed(2),
                         surgePrice: "",
                         totalMain: 0,
                         rating: recieptData.rating,
@@ -87,23 +87,22 @@ export default class Receipt extends Component {
                         punctuality: recieptData.punctuality,
                         professional: recieptData.professionol,
                     })
-                    let totalPriceServices=0;
-                    for(let i=0;i<recieptData.selected_services.length;i++)
-                    {
-                        totalPriceServices=parseInt(totalPriceServices+recieptData.selected_services[i].price);
+                    let totalPriceServices = 0;
+                    for (let i = 0; i < recieptData.selected_services.length; i++) {
+                        totalPriceServices = parseInt(totalPriceServices + recieptData.selected_services[i].price);
                     }
 
                     this.setState({
-                        subTotal:totalPriceServices
+                        subTotal: totalPriceServices
                     })
                     if (recieptData.selected_surge_price === true) {
                         let surgePricee = totalPriceServices / 2
-                        let TotalMain = (parseInt(totalPriceServices) + 2) + (parseInt(surgePricee) + (recieptData.tip_price));
-                        this.setState({ surgePrice: surgePricee, totalMain: TotalMain.toFixed(2) });
+                        let TotalMain = (parseInt(totalPriceServices) + parseFloat(this.state.ServiceFee)) + (parseInt(surgePricee) + (recieptData.tip_price));
+                        this.setState({ surgePrice: surgePricee.toFixed(2), totalMain: TotalMain.toFixed(2) });
                     } else {
                         let surgePricee = 0;
-                        let TotalMain = (parseInt(totalPriceServices) + 2) + (parseInt(surgePricee) + (recieptData.tip_price));
-                        this.setState({ surgePrice: surgePricee, totalMain: TotalMain.toFixed(2) });
+                        let TotalMain = (parseInt(totalPriceServices) + parseFloat(this.state.ServiceFee)) + (parseInt(surgePricee) + (recieptData.tip_price));
+                        this.setState({ surgePrice: surgePricee.toFixed(2), totalMain: TotalMain.toFixed(2) });
                     }
                 } else {
                     this.setState({ showLoading: false })
@@ -130,9 +129,10 @@ export default class Receipt extends Component {
 
     renderRow2(item) {
         Subtotal = Subtotal + item.price;
+        let value = item.value.split("$")
         return (
             <View style={{ width: "100%", flexDirection: 'row', height: 30 }}>
-                <View style={{ width: "70%", flexDirection: 'row', height: '100%',  }}>
+                <View style={{ width: "70%", flexDirection: 'row', height: '100%', }}>
                     <Text style={[styles.row_title, {
                         width: "100%",
                         justifyContent: "flex-start",
@@ -140,7 +140,7 @@ export default class Receipt extends Component {
                     }]}>{item.title}</Text>
                 </View>
                 <View style={{ width: "30%", flexDirection: 'row', height: '100%' }}>
-                    <Text style={[styles.row_title, { width: "100%", justifyContent: "flex-end", }]}>{item.value}</Text>
+                    <Text style={[styles.row_title, { width: "100%", justifyContent: "flex-end" }]}>{value[1] && "$" + parseFloat(value[1]).toFixed(2)}</Text>
                 </View>
             </View>
         )
@@ -279,11 +279,11 @@ export default class Receipt extends Component {
                             </View>
                             {this.renderRow2({
                                 title: "Service Fee",
-                                value: "$2.00",
+                                value: "$" + this.state.ServiceFee,
                             })}
                             {this.renderRow2({
                                 title: "Tip Left",
-                                value: "$" +this.state.tipLeft,
+                                value: "$" + this.state.tipLeft,
                             })}
                             {this.renderRow2({
                                 title: "Surge Price",

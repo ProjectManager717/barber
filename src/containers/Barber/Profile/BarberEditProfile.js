@@ -467,7 +467,7 @@ export default class BarberEditProfile extends Component {
                 fetchDetails={true}
                 renderDescription={row => row.description|| row.vicinity} // custom description render
                 onPress={(data, details = null,) => { // 'details' is provided when fetchDetails = true
-                    console.log("GooglePlacesAutocomplete" + JSON.stringify(data));
+                    console.log("GooglePlacesAutocomplete data ========>" + JSON.stringify(data));
                     console.log("GooglePlacesAutocomplete" + JSON.stringify(details));
 
                     this.setState({places: []});
@@ -910,7 +910,7 @@ export default class BarberEditProfile extends Component {
                             <Image
                                 style={{tintColor: 'white', height: 20, resizeMode: 'contain'}}
                                 source={require("../../../assets/images/ic_back.png")}/></TouchableOpacity>}/>
-                <ScrollView>
+                <ScrollView keyboardShouldPersistTaps='always'>
                     <View style={styles.detailsContainer}>
                         <View style={styles.profileImageContainer}>
                             <Image
@@ -1023,7 +1023,7 @@ export default class BarberEditProfile extends Component {
                                                     flexDirection: "column",
                                                 }}/>
                                                 <Text style={{fontSize: 16, marginTop: 5, color: "black"}}>Barber Shop Name</Text>
-                                                <TextInput Color={"white"} placeholder={"Enter Shop Name"}
+                                                <TextInput placeholder={"Enter Shop Name"}
                                                            placeholderTextColor={"grey"}
                                                            onChangeText={(text) => {
                                                                this.setState({barberShopName: text});
@@ -1230,12 +1230,13 @@ export default class BarberEditProfile extends Component {
                                     flexDirection: "column",
                                 }}/>
                                 <Text style={{fontSize: 16, marginTop: 5}}>Instagram Username</Text>
-                                <TextInput Color={"white"} placeholder={"Enter Instagram username"}
+                                <TextInput placeholder={"Enter Instagram username"}
                                            placeholderTextColor={"grey"}
                                            onChangeText={(text) => this.setState({barberInsta: text})}
                                            style={{
                                                fontWeight: "bold",
-                                               fontSize: 16, marginTop: 10
+                                               fontSize: 16, marginTop: 10,
+                                               color:"#000"
                                            }}/>
 
                                 <TouchableOpacity onPress={() => this.setInstagramID()}
@@ -1356,16 +1357,18 @@ export default class BarberEditProfile extends Component {
                                     fontWeight: "bold",
                                     textAlign: "center"
                                 }}>Edit Service</Text>
-                                <TextInput Color={"white"} placeholder={"Enter Service name"}
+                                <TextInput placeholder={"Enter Service name"}
                                            placeholderTextColor={"grey"}
                                            value={this.state.serviceName}
                                            onChangeText={(text) => this.setState({serviceName: text})}
                                            style={{
-                                               fontSize: 14,
-                                               marginStart: 10,
-                                               marginTop: 10,
+                                                backgroundColor:"grey",
+                                                fontSize: 14,
+                                                marginStart: 10,
+                                                marginTop: 10,
+                                                color:"#000000"
                                            }}/>
-                                <TextInput Color={"white"} placeholder={"Enter Duration"}
+                                <TextInput Color={"black"} placeholder={"Enter Duration"}
                                            placeholderTextColor={"grey"}
                                            value={this.state.serviceDuration}
                                            onChangeText={(text) => this.setState({serviceDuration: text})}
@@ -1374,8 +1377,9 @@ export default class BarberEditProfile extends Component {
                                                fontSize: 14,
                                                marginStart: 10,
                                                marginTop: 10,
+
                                            }}/>
-                                <TextInput Color={"white"} placeholder={"Enter Price"}
+                                <TextInput Color={"black"} placeholder={"Enter Price"}
                                            placeholderTextColor={"grey"}
                                            value={this.state.servicePrice}
                                            onChangeText={(text) => this.setState({servicePrice: text})}
@@ -1384,6 +1388,7 @@ export default class BarberEditProfile extends Component {
                                                fontSize: 14,
                                                marginStart: 10,
                                                marginTop: 10,
+
                                            }}/>
 
                                 <TouchableOpacity
@@ -1441,8 +1446,7 @@ export default class BarberEditProfile extends Component {
                                     fontWeight: "bold",
                                     textAlign: "center"
                                 }}>Add Service</Text>
-                                <TextInput Color={"white"}
-                                           placeholder={"Enter Service name"}
+                                <TextInput placeholder={"Enter Service name"}
                                            placeholderTextColor={"grey"}
                                            value={this.state.serviceName}
                                            onChangeText={(text) => this.setState({serviceName: text})}
@@ -1450,8 +1454,9 @@ export default class BarberEditProfile extends Component {
                                                fontSize: 14,
                                                marginStart: 10,
                                                marginTop: 10,
+                                               color:"#000"
                                            }}/>
-                                <TextInput Color={"white"} placeholder={"Enter Duration in minutes"}
+                                <TextInput  placeholder={"Enter Duration in minutes"}
                                            placeholderTextColor={"grey"}
                                            value={this.state.serviceDuration}
                                            onChangeText={(text) => this.setState({serviceDuration: text})}
@@ -1460,8 +1465,9 @@ export default class BarberEditProfile extends Component {
                                                fontSize: 14,
                                                marginStart: 10,
                                                marginTop: 10,
+                                               color:"#000"
                                            }}/>
-                                <TextInput Color={"white"} placeholder={"Enter Price in $"}
+                                <TextInput  placeholder={"Enter Price in $"}
                                            placeholderTextColor={"grey"}
                                            value={this.state.servicePrice}
                                            onChangeText={(text) => this.setState({servicePrice: text})}
@@ -1470,6 +1476,7 @@ export default class BarberEditProfile extends Component {
                                                fontSize: 14,
                                                marginStart: 10,
                                                marginTop: 10,
+                                               color:"#000"
                                            }}/>
 
                                 <TouchableOpacity
@@ -1599,7 +1606,8 @@ const styles = StyleSheet.create({
         marginTop: 4,
         marginLeft: 18,
         marginRight: 18,
-        marginBottom: 10
+        marginBottom: 10,
+        borderWidth: 1
     },
     txtHeader: {
         color: colors.lightGrey,

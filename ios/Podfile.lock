@@ -313,6 +313,8 @@ PODS:
   - React-jsinspector (0.61.5)
   - react-native-camera-kit (8.0.4):
     - React
+  - react-native-cameraroll (4.0.2):
+    - React-Core
   - react-native-date-picker (2.7.13):
     - React
   - react-native-fbsdk (2.0.0):
@@ -432,6 +434,7 @@ DEPENDENCIES:
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - react-native-camera-kit (from `../node_modules/react-native-camera-kit`)
+  - "react-native-cameraroll (from `../node_modules/@react-native-community/cameraroll`)"
   - react-native-date-picker (from `../node_modules/react-native-date-picker`)
   - react-native-fbsdk (from `../node_modules/react-native-fbsdk`)
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
@@ -527,6 +530,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/jsinspector"
   react-native-camera-kit:
     :path: "../node_modules/react-native-camera-kit"
+  react-native-cameraroll:
+    :path: "../node_modules/@react-native-community/cameraroll"
   react-native-date-picker:
     :path: "../node_modules/react-native-date-picker"
   react-native-fbsdk:
@@ -629,6 +634,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: d5525f9ed5f782fdbacb64b9b01a43a9323d2386
   React-jsinspector: fa0ecc501688c3c4c34f28834a76302233e29dc0
   react-native-camera-kit: ded127598a48890a360fbf5e26cf7c44fcc5b873
+  react-native-cameraroll: 717193a0427fd0db78d3f10385a008fcc102213c
   react-native-date-picker: 4468aeac8de6a6e351b56be0014d4fd35476de4c
   react-native-fbsdk: 00c15d138bba6d4efa628670886fc58cec858c19
   react-native-image-picker: fd93361c666f397bdf72f9c6c23f13d2685b9173
@@ -662,4 +668,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: e2041ea298b8f4b76781aedcf381032a1ad15088
 
-COCOAPODS: 1.9.3
+COCOAPODS: 1.10.0

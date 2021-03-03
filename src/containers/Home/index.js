@@ -6,7 +6,7 @@ import {
     StyleSheet,
     ImageBackground,
     Image, Alert,
-    TouchableOpacity, Linking, AsyncStorage, Platform
+    TouchableOpacity, Linking, AsyncStorage, Platform,
 } from "react-native";
 import Header from "../../components/Header/";
 import {ScrollView} from "react-native-gesture-handler";
