@@ -10,7 +10,8 @@ import {
     TouchableHighlight,
     TouchableWithoutFeedback,
     Platform,
-    Alert
+    Alert,
+    Linking
 } from "react-native";
 import { Colors } from "../../../themes";
 import { globalStyles } from "../../../themes/globalStyles";
@@ -83,6 +84,7 @@ export default class Subscription extends Component {
         SelectedBasic: false,
         SelectedSupreme: false,
         productList: [],
+        isSubscription: false
 
     }
 
@@ -90,8 +92,8 @@ export default class Subscription extends Component {
         // setTimeout(() => {
         //     this.forceUpdate()
         // }, 5000);
-        this.getItems()
-        // this.SubscriptionInfo();
+        //this.getItems()
+        this.SubscriptionInfo();
         if (Platform.OS == 'ios') {
             try {
                 const result = await RNIap.initConnection();
@@ -124,7 +126,7 @@ export default class Subscription extends Component {
             // });
 
             purchaseErrorSubscription = purchaseErrorListener((error) => {
-                
+
                 console.log('initInAppPurchase', 'purchaseErrorListener', error);
                 if (this.purchaseErrorListenerCount >= 1) {
                     return
@@ -138,11 +140,11 @@ export default class Subscription extends Component {
                 } else if (error.code == 'PROMISE_BUY_ITEM') {
                     message = 'This item is not currently available.'
                 }
-                else if(error.code=="E_UNKNOWN"&&error.responseCode==0){
+                else if (error.code == "E_UNKNOWN" && error.responseCode == 0) {
                     this.setState({ showLoading: false });
                     message = 'Cannot connect to iTunes Store'
                 }
-                else if(error.code=="E_USER_CANCELLED"&&error.responseCode==2){
+                else if (error.code == "E_USER_CANCELLED" && error.responseCode == 2) {
                     this.setState({ showLoading: false });
                     // message = 'Cannot connect to iTunes Store'
                 }
@@ -207,7 +209,7 @@ export default class Subscription extends Component {
         }
     };
     requestPurchase = async (sku): void => {
-        
+
         try {
             this.purchaseUpdatedListenerCount = 0
             this.purchaseErrorListenerCount = 0
@@ -223,19 +225,19 @@ export default class Subscription extends Component {
             await this.getItems();
             const purchase = await RNIap.requestPurchase(sku);
             this.setState({ showLoading: false });
-            console.log("requestSubscription-result", purchase/* .productId */)
-           
-            // if (purchase && purchase.transactionReceipt) {
-            //     this.setState({ showLoading: false });
-            //     // console.log('initInAppPurchase', "purchase", purchase);
-            //     // alert(purchase.productId + "      " + purchase.transactionReceipt)
-            //     if (purchase.productId == "basic.membership.clypr") {
-            //         this.PaymentFlow(1, false)
-            //     }
-            //     else if (purchase.productId == "supreme.membership.clypr") {
-            //         this.PaymentFlow(2, true)
-            //     }
-            // }
+            console.log("requestSubscription-result", purchase.productId)
+
+            if (purchase && purchase.transactionReceipt) {
+                this.setState({ showLoading: false });
+                // console.log('initInAppPurchase', "purchase", purchase);
+                // alert(purchase.productId + "      " + purchase.transactionReceipt)
+                if (purchase.productId == "basic.membership.clypr") {
+                    this.PaymentFlow(1, false)
+                }
+                else if (purchase.productId == "supreme.membership.clypr") {
+                    this.PaymentFlow(2, true)
+                }
+            }
         } catch (err) {
             this.setState({ showLoading: false });
             console.log('requestSubscription-error => ', err);
@@ -263,7 +265,7 @@ export default class Subscription extends Component {
             //cardID: "",
         };
         console.log("CARD Email----->" + JSON.stringify(details));
-        console.log("APi URL ----->"+JSON.stringify(constants.PaymentFLow));
+        console.log("APi URL ----->" + JSON.stringify(constants.PaymentFLow));
         var formBody = [];
         for (var property in details) {
             var encodedKey = encodeURIComponent(property);
@@ -282,7 +284,13 @@ export default class Subscription extends Component {
             .then(response => {
                 console.log("responsePaymentCard-->", "-" + JSON.stringify(response));
                 this.setState({ showLoading: false });
-                this.SubscriptionInfo();
+                this.setState({ isSubscription: true });
+                if (Preference.get("newUser") === true) {
+                    this.props.navigation.navigate("BookingPreferences");
+                } else {
+                    this.props.navigation.goBack();
+                }
+                // this.SubscriptionInfo();
                 // this.setState({ showLoading: false })
                 // if (response.ResultType === 1) {
                 //     if (Preference.get("newUser") === true) {
@@ -362,9 +370,20 @@ export default class Subscription extends Component {
         //alert("You are already a Supreme User");
         if (Preference.get("newUser") === true) {
             if (this.state.SelectedBasic === true) {
-                Preference.set("userPackage", "basic");
-                this.CancelSubscription();
-                this.props.navigation.navigate("BookingPreferences");
+                if (this.state.SubscriptionInfo.account_subscription_type === 1 && this.state.SubscriptionInfo.supreme_barber === false) {
+                    alert("You are already a Basic User");
+                    this.props.navigation.navigate("BookingPreferences");
+                    Preference.set("userPackage", "basic");
+                } else {
+
+                    // this.CancelSubscription();
+                    // this.props.navigation.navigate("BookingPreferences");
+                    if (Platform.OS === "ios") {
+                        this.requestSubscription(this.state.SelectedSupreme ? SUPREME_SUB : BASIC_SUB)
+                    } else {
+                        this.props.navigation.navigate("BarberPaymentMethod")
+                    }
+                }
             } else if (this.state.SelectedSupreme === true) {
                 if (this.state.SubscriptionInfo.account_subscription_type === 2 && this.state.SubscriptionInfo.supreme_barber === true) {
                     alert("You are already a Supreme User");
@@ -372,8 +391,8 @@ export default class Subscription extends Component {
                     Preference.set("userPackage", "supreme");
                 } else {
                     //this.props.navigation.navigate("BarberPaymentMethod")}
-                    if (Platform.OS == "ios") {
-                        //this.setState({ SubscriptionPopUp: true })
+                    if (Platform.OS === "ios") {
+                        this.requestSubscription(this.state.SelectedSupreme ? SUPREME_SUB : BASIC_SUB)
                     } else {
                         this.props.navigation.navigate("BarberPaymentMethod")
                     }
@@ -383,17 +402,20 @@ export default class Subscription extends Component {
         } else {
             if (this.state.SelectedBasic === true) {
                 Preference.set("userPackage", "basic");
-                this.CancelSubscription();
-                this.props.navigation.goBack()
+                //this.CancelSubscription();
+                //this.props.navigation.goBack()
+                if (Platform.OS === "ios") {
+                    this.requestSubscription(this.state.SelectedSupreme ? SUPREME_SUB : BASIC_SUB)
+                } else {
+                    this.props.navigation.navigate("BarberPaymentMethod")
+                }
             } else if (this.state.SelectedSupreme === true) {
                 if (this.state.SubscriptionInfo.account_subscription_type === 2 && this.state.SubscriptionInfo.supreme_barber === true) {
                     alert("You are already a Supreme User");
                     Preference.set("userPackage", "supreme");
                 } else {
-                    if (Platform.OS == "ios") {
-                        //alert("hello");
-                        this.getItems();
-                        //this.setState({ SubscriptionPopUp: true })
+                    if (Platform.OS === "ios") {
+                        this.requestSubscription(this.state.SelectedSupreme ? SUPREME_SUB : BASIC_SUB)
                     } else {
                         this.props.navigation.navigate("BarberPaymentMethod")
                     }
@@ -429,25 +451,30 @@ export default class Subscription extends Component {
             body: formBody
         }).then(response => response.json())
             .then(response => {
-                console.log("responsePaymentCard-->", "-" + JSON.stringify(response));
+                console.log("responseSubscriptionInfo-->", "-" + JSON.stringify(response));
                 this.setState({ showLoading: false });
-                
-                // if (response.ResultType === 1) {
-                    this.setState({ SubscriptionInfo: response.Data }, () => {
-                        console.log("SUBCRIPTIOn INfo" + JSON.stringify(this.state.SubscriptionInfo))
-                        if (this.state.SubscriptionInfo.supreme_barber === true && this.state.SubscriptionInfo.account_subscription_type === 2) {
-                            this._selectedSupreme();
-                        }
-                        else if (this.state.SubscriptionInfo.supreme_barber === false && this.state.SubscriptionInfo.account_subscription_type === 1) {
-                            this._selectedBasic();
-                        }
-                    })
-                // } else {
-                //     if (response.ResultType === 0) {
-                //         alert(response.Message);
 
-                //     }
-                // }
+                // if (response.ResultType === 1) {
+                this.setState({ SubscriptionInfo: response.Data }, () => {
+                    var todayDate =moment(new Date()).format("YYYY-MM-DD") ;
+                    var SubsDate =moment(response.Data.exp_on).format("YYYY-MM-DD")
+                   
+                    console.log("BothDates: ",JSON.stringify(todayDate +"---"+SubsDate) )
+                   
+                    console.log("SUBCRIPTIOn INfo" + JSON.stringify(this.state.SubscriptionInfo))
+                    if (this.state.SubscriptionInfo.supreme_barber === true && this.state.SubscriptionInfo.account_subscription_type === 2 && todayDate<SubsDate) {
+                        this.setState({ isSubscription: true })
+                        this._selectedSupreme();
+                    }
+                    else if (this.state.SubscriptionInfo.supreme_barber === false && this.state.SubscriptionInfo.account_subscription_type === 1 && todayDate<SubsDate) {
+                        this.setState({ isSubscription: true })
+                        this._selectedBasic();
+                    }
+                    else if (this.state.SubscriptionInfo.supreme_barber === false && this.state.SubscriptionInfo.account_subscription_type === 0) {
+                        this.setState({ isSubscription: false })
+                    }
+                })
+               
             })
             .catch(error => {
                 console.log('Error:', error);
@@ -463,8 +490,9 @@ export default class Subscription extends Component {
         this.setState({ showLoading: true });
         var details = {
             barberEmail: Preference.get("userEmail"),
-            accountSubscriptionType: 1,
-            supremeBarber: false
+            accountSubscriptionType: 0,
+            supremeBarber: false,
+            pform: Platform.OS
         };
         console.log("userid----->" + JSON.stringify(details));
 
@@ -484,18 +512,20 @@ export default class Subscription extends Component {
             body: formBody
         }).then(response => response.json())
             .then(response => {
-                console.log("responsePaymentCard-->", "-" + JSON.stringify(response));
+                console.log("CancelSubscriptionResponse-->", "-" + JSON.stringify(response));
                 this.setState({ showLoading: false });
-                if (response.ResultType === 1) {
-                    alert("Basic Subscription Activated");
+                if (response.ResultType === 0) {
+                    alert("Subscription Cancel Successfully");
+                    //this.SubscriptionInfo();
                     this.SubscriptionInfo();
-
+                    this.props.navigation.goBack()
 
                 } else {
-                    if (response.ResultType === 0) {
-                        //alert(response.Message);
-
-                    }
+                    // if (response.ResultType === 0) {
+                    alert("Subscription Cancel Successfully");
+                    this.SubscriptionInfo();
+                    this.props.navigation.goBack()
+                    // }
                 }
             })
             .catch(error => {
@@ -546,9 +576,9 @@ export default class Subscription extends Component {
                             width: 180
                         }} />
                     <Text style={{ fontSize: 14, color: "white" }}>{"Current Subscription:"}</Text>
-                    <Text style={{ fontSize: 17, color: "white", marginBottom: 10 }}>{this.state.SubscriptionInfo.supreme_barber ? "Supreme Membership" : "Basic Membership"}</Text>
+                    <Text style={{ fontSize: 17, color: "white", marginBottom: 10 }}>{(this.state.SubscriptionInfo.supreme_barber && this.state.isSubscription) ? "Supreme Membership" : (this.state.SubscriptionInfo.supreme_barber == false && this.state.isSubscription) ? "Basic Membership" : "none"}</Text>
                     <Text style={{ fontSize: 14, color: "white" }}>{"Next Renewal Date:"}</Text>
-                    <Text style={{ fontSize: 17, color: "white", marginBottom: 10 }}>{moment(this.state.SubscriptionInfo.exp_on).format("LL")}</Text>
+                    <Text style={{ fontSize: 17, color: "white", marginBottom: 10 }}>{this.state.isSubscription ? moment(this.state.SubscriptionInfo.exp_on).format("LL") : "Please Subscribe First"}</Text>
                     <View style={{
                         flexDirection: "column",
                         width: "100%",
@@ -577,7 +607,8 @@ export default class Subscription extends Component {
                                 //backgroundColor: "yellow",
                             }}>{"BASIC"}</Text>
                         </View>
-                        <TouchableWithoutFeedback onPress={() => this._selectedBasic()}>
+                        {console.log(this.state.isSubscription, this.state.SelectedSupreme, this.state.SelectedBasic)}
+                        <TouchableWithoutFeedback onPress={() => this._selectedBasic()} disabled={(this.state.SelectedSupreme == true && this.state.isSubscription == true) && true}>
                             <View style={{
                                 backgroundColor: this.state.basic.mainBgColor,
                                 width: "90%",
@@ -653,7 +684,7 @@ export default class Subscription extends Component {
                             }}>SUPREME</Text>
 
                         </View>
-                        <TouchableWithoutFeedback onPress={() => this._selectedSupreme()}>
+                        <TouchableWithoutFeedback onPress={() => this._selectedSupreme()} disabled={(this.state.SelectedBasic && this.state.isSubscription) && true}>
                             <View style={{
                                 backgroundColor: this.state.supreme.supremeMainBgColor,
                                 width: "90%",
@@ -709,12 +740,15 @@ export default class Subscription extends Component {
                         </TouchableWithoutFeedback>
                         {/* {
                             this.state.SubscriptionInfo.supreme_barber === false ? */}
-                        <TouchableOpacity
+                        {!this.state.isSubscription && <TouchableOpacity /* disabled={(this.state.SelectedSupreme == true || this.state.SelectedBasic == true) && true} */
                             onPress={() => {
-                                if (Platform.OS === "ios") {
-                                    this.requestSubscription(this.state.SelectedSupreme ? SUPREME_SUB : BASIC_SUB)
-                                }
-                                else this.Onsubmit()
+                                // if (Platform.OS === "ios") {
+                                //     this.requestSubscription(this.state.SelectedSupreme ? SUPREME_SUB : BASIC_SUB)
+                                // }
+                                // else {
+                                //     // this.props.navigation.navigate("BarberPaymentMethod")
+                                this.Onsubmit()
+                                // }
                             }}
                             style={[globalStyles.button, {
                                 marginTop: 100,
@@ -724,7 +758,7 @@ export default class Subscription extends Component {
                             }]}>
                             <Text style={globalStyles.buttonText}>{Platform.OS === "ios" ? "Pay now" : "SUBMIT"}</Text>
 
-                        </TouchableOpacity>
+                        </TouchableOpacity>}
 
                         <PopupDialog
                             visible={this.state.SubscriptionPopUp}
@@ -778,10 +812,18 @@ export default class Subscription extends Component {
                         </PopupDialog>
 
 
-                        <TouchableOpacity onPress={() => this.CancelSubscription()}
-                            style={{ bottom: 20, marginBottom: 40 }}>
+                        {this.state.isSubscription && <TouchableOpacity onPress={() => {
+                            if (Platform.OS == "ios") {
+                                // Linking.openURL('https://apps.apple.com/account/subscriptions')
+                                this.CancelSubscription()
+                            }
+                            else {
+                                this.CancelSubscription()
+                            }
+                        }}
+                            style={{ bottom: 20, marginBottom: 40, marginTop: 40 }}>
                             <Text style={{ color: "grey", fontSize: 12 }}>I'd Like to Cancel My Membership</Text>
-                        </TouchableOpacity>
+                        </TouchableOpacity>}
 
                     </View>
 

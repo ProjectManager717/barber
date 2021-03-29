@@ -90,7 +90,7 @@ export const constants = {
     ClientUpdateAppointmentStatus: Base_url + clientPath1 + "updateAppointmentStatus",
     BarberCashOut:Base_url+path3+"stripes/payout",
 
-     //StripeKey:"pk_live_BXlctkFE5BDLwdwxP67IFm1D",//Live account
-     StripeKey : 'pk_test_U4Ri0H7rP3PClZwTI5Z2r78J',//testing account*/
+     StripeKey:"pk_live_BXlctkFE5BDLwdwxP67IFm1D",//Live account
+    // StripeKey : 'pk_test_U4Ri0H7rP3PClZwTI5Z2r78J',//testing account*/
 
 };
